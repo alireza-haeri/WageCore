@@ -1,0 +1,13 @@
+/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Web/bin/Debug/net8.0/Shared.Web.deps.json
+/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Web/bin/Debug/net8.0/Shared.Web.dll
+/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Web/bin/Debug/net8.0/Shared.Web.pdb
+/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Web/obj/Debug/net8.0/Shared.Web.csproj.AssemblyReference.cache
+/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Web/obj/Debug/net8.0/Shared.Web.GeneratedMSBuildEditorConfig.editorconfig
+/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Web/obj/Debug/net8.0/Shared.Web.AssemblyInfoInputs.cache
+/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Web/obj/Debug/net8.0/Shared.Web.AssemblyInfo.cs
+/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Web/obj/Debug/net8.0/Shared.Web.csproj.CoreCompileInputs.cache
+/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Web/obj/Debug/net8.0/Shared.Web.sourcelink.json
+/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Web/obj/Debug/net8.0/Shared.Web.dll
+/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Web/obj/Debug/net8.0/refint/Shared.Web.dll
+/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Web/obj/Debug/net8.0/Shared.Web.pdb
+/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Web/obj/Debug/net8.0/ref/Shared.Web.dll

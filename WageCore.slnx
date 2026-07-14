@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Solution Items\docker-compose.yml" />
+  </Folder>
+  <Folder Name="/src/">
+    <File Path="src\Directory.Build.props" />
+    <File Path="src\Directory.Packages.props" />
+    <Project Path="src/Web.Api/Web.Api.csproj" />
+  </Folder>
+  <Folder Name="/src/Shareds/">
+    <Project Path="src/Shareds/Shared.Kernel/Shared.Kernel.csproj" />
+    <Project Path="src/Shareds/Shared.Web/Shared.Web.csproj" />
+  </Folder>
+</Solution>

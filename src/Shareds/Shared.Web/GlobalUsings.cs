@@ -1,0 +1,14 @@
+global using Microsoft.AspNetCore.Diagnostics;
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.Extensions.Logging;
+global using Microsoft.AspNetCore.Builder;
+global using Serilog;
+global using System.Text.Json.Nodes;
+global using Microsoft.OpenApi;
+global using Swashbuckle.AspNetCore.SwaggerGen;
+global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.OpenApi;
+global using Microsoft.OpenApi;
+global using Swashbuckle.AspNetCore.SwaggerGen;
+global using Scalar.AspNetCore;

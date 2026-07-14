@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+    <ItemGroup>
+      <Content Include="..\..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
+    </ItemGroup>
+    
+
+    
+    <ItemGroup>
+      <ProjectReference Include="..\Shareds\Shared.Kernel\Shared.Kernel.csproj" />
+      <ProjectReference Include="..\Shareds\Shared.Web\Shared.Web.csproj" />
+    </ItemGroup>
+</Project>
