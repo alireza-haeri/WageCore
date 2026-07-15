@@ -1,9 +1,6 @@
-using SamarPlanner.Identity.Core.Abstractions;
-using SamarPlanner.Shared.Tests.Assertions;
+namespace Infrastructure.Tests.Repositories;
 
-namespace SamarPlanner.Identity.Infrastructure.Tests.Repositories;
-
-public class UserRepositoryTests(IdentityFixture fixture) : IClassFixture<IdentityFixture>, IAsyncLifetime
+public class UserRepositoryTests(WageCoreDbContextFixture fixture) : IClassFixture<WageCoreDbContextFixture>, IAsyncLifetime
 {
     private const string ValidPhone = "09123456789";
     private const string ValidPassword = "Pass123456";

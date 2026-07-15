@@ -1,4 +1,5 @@
-namespace SamarPlanner.Shared.Tests.Assertions;
+
+namespace Shared.Tests.Assertions;
 
 public static class DomainResultAssertions
 {
@@ -10,7 +11,7 @@ public static class DomainResultAssertions
         var response = result.Response;
         response.Should().NotBeNull();
 
-        return response;
+        return response!;
     }
 
     public static string ShouldBeFailure<T>(this DomainResult<T> result, string? expectedMessagePart = null)

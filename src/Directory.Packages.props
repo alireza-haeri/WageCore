@@ -33,4 +33,9 @@
         <!-- MediatR -->
         <PackageVersion Include="MediatR" Version="12.0.0" />
     </ItemGroup>
+
+    <ItemGroup>
+        <!-- Testing -->
+        <PackageVersion Include="FluentAssertions" Version="6.12.0" />
+    </ItemGroup>
 </Project>

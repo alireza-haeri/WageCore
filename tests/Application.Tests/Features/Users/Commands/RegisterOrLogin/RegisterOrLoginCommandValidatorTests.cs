@@ -1,8 +1,4 @@
-using Application.Features.Users.Commands;
-using Shared.Tests.TestData;
-
-namespace Application.Tests.Features.Users.Commands.RegisterOrLoginCommand;
-
+namespace Application.Tests.Features.Users.Commands.RegisterOrLogin;
 
 public class RegisterOrLoginCommandValidatorTests
 {

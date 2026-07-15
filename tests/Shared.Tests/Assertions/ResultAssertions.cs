@@ -1,4 +1,6 @@
-namespace SamarPlanner.Shared.Tests.Assertions;
+using FluentAssertions;
+
+namespace Shared.Tests.Assertions;
 
 public static class ResultAssertions
 {
@@ -10,7 +12,7 @@ public static class ResultAssertions
         var response = result.Response;
         response.Should().NotBeNull();
 
-        return response;
+        return response!;
     }
 
     public static IDictionary<string, string[]>? ShouldBeFailure<T>(this Result<T> result,
@@ -22,7 +24,7 @@ public static class ResultAssertions
         errorMessage.Should().NotBeNull();
 
         if (expectedMessagePart is not null)
-            errorMessage.Any(e => e.Value.Contains(expectedMessagePart)).Should().BeTrue();
+            errorMessage?.Any(e => e.Value.Contains(expectedMessagePart)).Should().BeTrue();
 
         if (expectedResultType is not null)
             result.BadResultType.Should().Be(expectedResultType);

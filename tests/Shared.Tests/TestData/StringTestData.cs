@@ -1,4 +1,4 @@
-namespace SamarPlanner.Shared.Tests.TestData;
+namespace Shared.Tests.TestData;
 
 public static class StringTestData
 {

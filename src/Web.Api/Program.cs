@@ -62,9 +62,10 @@ try
 catch (Exception e)
 {
     Log.Fatal(e, "Application terminated unexpectedly");
-    throw new ArgumentException();
 }
 finally
 {
     Log.CloseAndFlush();
 }
+
+public partial class Program();

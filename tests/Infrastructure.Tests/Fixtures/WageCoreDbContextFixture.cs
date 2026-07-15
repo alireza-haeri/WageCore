@@ -1,19 +1,14 @@
-using Infrastructure.Persistence;
-using Infrastructure.Repositories;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+
 
 namespace Infrastructure.Tests.Fixtures;
 
-public sealed class IdentityFixture : IDisposable
+public sealed class WageCoreDbContextFixture : IDisposable
 {
     private readonly string _databaseName = $"IdentityTestDb_{Guid.NewGuid()}";
 
     private ServiceProvider RootProvider { get; }
 
-    public IdentityFixture()
+    public WageCoreDbContextFixture()
     {
         var services = new ServiceCollection();
 
@@ -28,7 +23,7 @@ public sealed class IdentityFixture : IDisposable
                 options.Password.RequireLowercase = false;
                 options.Password.RequireDigit = false;
             })
-            .AddEntityFrameworkStores<IdentityDbContext>()
+            .AddEntityFrameworkStores<WageCoreDbContext>()
             .AddDefaultTokenProviders();
 
         services.AddLogging();
@@ -45,7 +40,7 @@ public sealed class IdentityFixture : IDisposable
     public async Task ResetDatabaseAsync()
     {
         await using var scope = CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
+        var dbContext = scope.ServiceProvider.GetRequiredService<WageCoreDbContext>();
 
         await dbContext.Database.EnsureDeletedAsync();
         await dbContext.Database.EnsureCreatedAsync();

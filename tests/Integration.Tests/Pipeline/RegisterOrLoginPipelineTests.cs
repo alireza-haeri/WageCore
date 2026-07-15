@@ -1,20 +1,21 @@
-using SamarPlanner.Shared.Tests.Assertions;
+namespace Integration.Tests.Pipeline;
 
-namespace SamarPlanner.Identity.Integration.Tests.Pipeline;
-
-public class RegisterOrLoginPipelineTests(IdentityApiFixture fixture)
-    : IClassFixture<IdentityApiFixture>, IAsyncLifetime
+public class RegisterOrLoginPipelineTests(ApiFixture fixture)
+    : IClassFixture<ApiFixture>, IAsyncLifetime
 {
-    public async System.Threading.Tasks.Task InitializeAsync() => await fixture.ResetDatabaseAsync();
-    public System.Threading.Tasks.Task DisposeAsync() => System.Threading.Tasks.Task.CompletedTask;
+    private const string ValidPhoneNumber = "09123456789";
+    private const string ValidPassword = "Pass123456";
+    
+    public async Task InitializeAsync() => await fixture.ResetDatabaseAsync();
+    public Task DisposeAsync() => Task.CompletedTask;
 
     [Fact]
-    public async System.Threading.Tasks.Task RegisterNewUser_WithValidData_ShouldSucceed()
+    public async Task RegisterNewUser_WithValidData_ShouldSucceed()
     {
         using var scope = fixture.Services.CreateScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        var command = new RegisterOrLoginCommand("09123456789", "Pass123456");
+        var command = new RegisterOrLoginCommand(ValidPhoneNumber, ValidPassword);
 
         var result = await mediator.Send(command);
 
@@ -24,39 +25,39 @@ public class RegisterOrLoginPipelineTests(IdentityApiFixture fixture)
     }
 
     [Fact]
-    public async System.Threading.Tasks.Task LoginExistingUser_WithCorrectPassword_ShouldSucceed()
+    public async Task LoginExistingUser_WithCorrectPassword_ShouldSucceed()
     {
         using var scope = fixture.Services.CreateScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        await mediator.Send(new RegisterOrLoginCommand("09123456789", "Pass123456"));
+        await mediator.Send(new RegisterOrLoginCommand(ValidPhoneNumber, ValidPassword));
 
-        var result = await mediator.Send(new RegisterOrLoginCommand("09123456789", "Pass123456"));
+        var result = await mediator.Send(new RegisterOrLoginCommand(ValidPhoneNumber, ValidPassword));
 
         var response = result.ShouldBeSuccess();
         response.Token.Should().NotBeNullOrWhiteSpace();
     }
 
     [Fact]
-    public async System.Threading.Tasks.Task LoginExistingUser_WithWrongPassword_ShouldFail()
+    public async Task LoginExistingUser_WithWrongPassword_ShouldFail()
     {
         using var scope = fixture.Services.CreateScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        await mediator.Send(new RegisterOrLoginCommand("09123456789", "Pass123456"));
+        await mediator.Send(new RegisterOrLoginCommand(ValidPhoneNumber, ValidPassword));
 
-        var result = await mediator.Send(new RegisterOrLoginCommand("09123456789", "WrongPassword"));
+        var result = await mediator.Send(new RegisterOrLoginCommand(ValidPhoneNumber, "WrongPassword"));
 
         result.ShouldBeFailure(null, BadResultType.NotFound);
     }
 
     [Fact]
-    public async System.Threading.Tasks.Task Register_WithInvalidPhoneNumber_ShouldFailValidation()
+    public async Task Register_WithInvalidPhoneNumber_ShouldFailValidation()
     {
         using var scope = fixture.Services.CreateScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        var command = new RegisterOrLoginCommand("123", "Pass123456");
+        var command = new RegisterOrLoginCommand("123", ValidPassword);
 
         var result = await mediator.Send(command);
 
@@ -64,12 +65,12 @@ public class RegisterOrLoginPipelineTests(IdentityApiFixture fixture)
     }
 
     [Fact]
-    public async System.Threading.Tasks.Task Register_WithShortPassword_ShouldFailValidation()
+    public async Task Register_WithShortPassword_ShouldFailValidation()
     {
         using var scope = fixture.Services.CreateScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        var command = new RegisterOrLoginCommand("09123456789", "123");
+        var command = new RegisterOrLoginCommand(ValidPhoneNumber, "123");
 
         var result = await mediator.Send(command);
 

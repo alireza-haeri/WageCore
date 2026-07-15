@@ -1,21 +1,19 @@
-using SamarPlanner.Shared.Tests.Assertions;
+namespace Integration.Tests.Api;
 
-namespace SamarPlanner.Identity.Integration.Tests.Api;
-
-public class IdentityControllerTests(IdentityApiFixture fixture) : IClassFixture<IdentityApiFixture>, IAsyncLifetime
+public class UsersControllerTests(ApiFixture fixture) : IClassFixture<ApiFixture>, IAsyncLifetime
 {
     private readonly HttpClient _client = fixture.CreateClient();
 
     private const string ValidPhoneNumber = "09123456789";
     private const string ValidPassword = "Pass123456";
 
-    private const string RegisterOrLoginUrl = "/api/v1/identity/authentication";
+    private const string RegisterOrLoginUrl = "/api/v1/users/authentication";
 
-    public async System.Threading.Tasks.Task InitializeAsync() => await fixture.ResetDatabaseAsync();
-    public System.Threading.Tasks.Task DisposeAsync() => System.Threading.Tasks.Task.CompletedTask;
+    public async Task InitializeAsync() => await fixture.ResetDatabaseAsync();
+    public Task DisposeAsync() => Task.CompletedTask;
 
     [Fact]
-    public async System.Threading.Tasks.Task Register_WithValidData_ShouldReturnOkWithToken()
+    public async Task Register_WithValidData_ShouldReturnOkWithToken()
     {
         var request = new RegisterOrLoginCommand(ValidPhoneNumber, ValidPassword);
 
@@ -28,7 +26,7 @@ public class IdentityControllerTests(IdentityApiFixture fixture) : IClassFixture
     }
 
     [Fact]
-    public async System.Threading.Tasks.Task Register_WithInvalidData_ShouldReturnBadRequest()
+    public async Task Register_WithInvalidData_ShouldReturnBadRequest()
     {
         var request = new RegisterOrLoginCommand("1", "123");
 
@@ -37,7 +35,7 @@ public class IdentityControllerTests(IdentityApiFixture fixture) : IClassFixture
     }
 
     [Fact]
-    public async System.Threading.Tasks.Task Login_WithWrongPassword_ShouldNotReturnToken()
+    public async Task Login_WithWrongPassword_ShouldNotReturnToken()
     {
         var request = new RegisterOrLoginCommand(ValidPhoneNumber, ValidPassword);
         var request2 = new RegisterOrLoginCommand(ValidPhoneNumber, ValidPassword + "something");

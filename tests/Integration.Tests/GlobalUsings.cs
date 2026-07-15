@@ -1,0 +1,13 @@
+global using Xunit;
+global using Infrastructure.Persistence;
+global using Microsoft.AspNetCore.Hosting;
+global using Microsoft.AspNetCore.Mvc.Testing;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.DependencyInjection;
+global using Application.Features.Users.Commands;
+global using FluentAssertions;
+global using Integration.Tests.Fixtures;
+global using MediatR;
+global using Shared.Kernel.Common;
+global using Shared.Tests.Assertions;
+global using System.Net.Http.Json;

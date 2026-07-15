@@ -25,24 +25,27 @@ public static class DependencyInjection
             })
             .AddEntityFrameworkStores<WageCoreDbContext>()
             .AddDefaultTokenProviders();
-        
+
         builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
         builder.Services.AddScoped<IUserRepository, UserRepository>();
 
         return builder;
     }
-    
-    public static async Task MigrateDatabaseAsync(this IHost app)
-    
+
+    public static async Task MigrateDatabaseAsync(this WebApplication app)
+
     {
-        using var scope = app.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<WageCoreDbContext>();
-        await dbContext.Database.MigrateAsync();
+        if (!app.Environment.IsEnvironment("Testing"))
+        {
+            await using var scope = app.Services.CreateAsyncScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<WageCoreDbContext>();
+            await dbContext.Database.MigrateAsync();
+        }
     }
-    
+
     public static WebApplicationBuilder AddAuthentication(this WebApplicationBuilder builder)
     {
-        var jwtSettings =  builder.GetApplicationSettings().JwtToken;
+        var jwtSettings = builder.GetApplicationSettings().JwtToken;
 
         var key = Encoding.UTF8.GetBytes(jwtSettings.SigningKey);
 

@@ -1,4 +1,4 @@
-namespace SamarPlanner.Shared.Tests.Assertions;
+namespace Shared.Tests.Assertions;
 
 public static class HttpResponseAssertions
 {
@@ -13,10 +13,10 @@ public static class HttpResponseAssertions
         body.BadResultType.Should().BeNull();
         body.Errors.Should().BeNull();
         
-        return body.Response;
+        return body.Response!;
     }
     
-    public static async Task<TResponse> ShouldBeFailure<TResponse>(this HttpResponseMessage response,BadResultType? expectedBadResultType = null)
+    public static async Task ShouldBeFailure<TResponse>(this HttpResponseMessage response,BadResultType? expectedBadResultType = null)
     {
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         
@@ -29,14 +29,12 @@ public static class HttpResponseAssertions
         
         if(expectedBadResultType != null)
             body.BadResultType.Should().Be(expectedBadResultType);
-        
-        return body.Response;
     }
     
     private static async Task<Result<TResponse>> ReadResultFromResponse<TResponse>(HttpResponseMessage response)
     {
         var body = await response.Content.ReadFromJsonAsync<Result<TResponse>>();
         body.Should().NotBeNull();
-        return body;
+        return body!;
     }
 }

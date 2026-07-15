@@ -1,4 +1,5 @@
-namespace SamarPlanner.Shared.Tests.Helpers;
+
+namespace Shared.Tests.Helpers;
 
 public static class TestApplicationSettings
 {
@@ -10,27 +11,20 @@ public static class TestApplicationSettings
         ExpiresInMinutes = 60
     };
 
-    public static IOptions<ApplicationSettings> Create(
-        JwtTokenSettings? jwtSettings = null)
+    public static IOptions<ApplicationSettings> Create()
     {
         var settings = new ApplicationSettings
         {
-            JwtToken = jwtSettings ?? DefaultJwtSettings,
+            ApplicationName = "test-application",
+            ApplicationVersion = "test-application-version",
+            JwtToken = DefaultJwtSettings,
             Databases = new DatabaseSettings
             {
-                IdentityConnectionString = "fake",
-                GoalConnectionString = "fake",
-                TaskConnectionString = "fake",
-                ReportConnectionString = "fake",
-                NoteConnectionString = "fake"
+                ConnectionString = "fake"
             },
             CorsPolicy = new CorsPolicySettings
             {
                 Origins = ["http://localhost"]
-            },
-            NoteFiles = new NoteFilesSettings
-            {
-                FilesPath = "/tmp/test"
             }
         };
 

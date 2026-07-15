@@ -1,7 +1,4 @@
-using SamarPlanner.Shared.Tests.Assertions;
-using SamarPlanner.Shared.Tests.Helpers;
-
-namespace SamarPlanner.Identity.Infrastructure.Tests.Services;
+namespace Infrastructure.Tests.Services;
 
 public class JwtTokenServiceTests
 {
@@ -11,8 +8,8 @@ public class JwtTokenServiceTests
 
     public JwtTokenServiceTests()
     {
-        _jwtSettings = TestApplicationSettings.DefaultJwtSettings;
-        var options = TestApplicationSettings.Create(_jwtSettings);
+        var options = TestApplicationSettings.Create();
+        _jwtSettings = options.Value.JwtToken;
         _service = new JwtTokenService(options);
         _userBuilder = new UserBuilder();
     }

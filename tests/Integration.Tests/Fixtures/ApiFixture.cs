@@ -1,11 +1,5 @@
-using Infrastructure.Persistence;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-
 namespace Integration.Tests.Fixtures;
-public class IdentityApiFixture : WebApplicationFactory<Program>
+public class ApiFixture : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -23,7 +17,7 @@ public class IdentityApiFixture : WebApplicationFactory<Program>
         });
     }
 
-    public async System.Threading.Tasks.Task ResetDatabaseAsync()
+    public async Task ResetDatabaseAsync()
     {
         using var scope = Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<WageCoreDbContext>();

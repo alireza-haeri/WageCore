@@ -1,4 +1,4 @@
-namespace SamarPlanner.Identity.Infrastructure.Tests.Helpers;
+namespace Infrastructure.Tests.Helpers;
 
 public static class JwtTokenHelper
 {

@@ -1,0 +1,13 @@
+global using Xunit;
+global using Application.Features.Users.Commands;
+global using FluentValidation.TestHelper;
+global using Shared.Tests.TestData;
+global using Core.Abstractions.Repositories;
+global using Core.Abstractions.Services;
+global using Core.Contracts;
+global using Core.Domain;
+global using FluentAssertions;
+global using NSubstitute;
+global using Shared.Kernel.Common;
+global using Shared.Tests.Assertions;
+global using Shared.Tests.Builders;
