@@ -1,20 +1,20 @@
 ﻿FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-COPY ["src/Directory.Build.props", "src/"]
-COPY ["src/Directory.Packages.props", "src/"]
+COPY ["Directory.Build.props", "./"]
+COPY ["Directory.Packages.props", "./"]
 
-COPY ["src/Web.Api/Web.Api.csproj", "src/Web.Api/"]
-COPY ["src/Application/Application.csproj", "src/Application/"]
-COPY ["src/Core/Core.csproj", "src/Core/"]
-COPY ["src/Infrastructure/Infrastructure.csproj", "src/Infrastructure/"]
-COPY ["src/Shareds/Shared.Kernel/Shared.Kernel.csproj", "src/Shareds/Shared.Kernel/"]
-COPY ["src/Shareds/Shared.Web/Shared.Web.csproj", "src/Shareds/Shared.Web/"]
+COPY ["Web.Api/Web.Api.csproj", "Web.Api/"]
+COPY ["Application/Application.csproj", "Application/"]
+COPY ["Core/Core.csproj", "Core/"]
+COPY ["Infrastructure/Infrastructure.csproj", "Infrastructure/"]
+COPY ["Shareds/Shared.Kernel/Shared.Kernel.csproj", "Shareds/Shared.Kernel/"]
+COPY ["Shareds/Shared.Web/Shared.Web.csproj", "Shareds/Shared.Web/"]
 
-RUN dotnet restore "src/Web.Api/Web.Api.csproj"
+RUN dotnet restore "Web.Api/Web.Api.csproj"
 
 COPY . .
-WORKDIR "/src/src/Web.Api"
+WORKDIR "Web.Api"
 RUN dotnet build "Web.Api.csproj" -c Release -o /app/build
 
 FROM build AS publish

@@ -2,8 +2,8 @@ services:
   wagecore-api:
     container_name: wagecore-api
     build:
-      context: ..
-      dockerfile: src/Web.Api/Dockerfile
+      context: ../src
+      dockerfile: Web.Api/Dockerfile
     ports:
       - "9090:8080"
     environment:
