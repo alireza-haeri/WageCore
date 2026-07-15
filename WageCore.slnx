@@ -2,12 +2,28 @@
   <Folder Name="/Solution Items/">
     <File Path="Solution Items\docker-compose.yml" />
   </Folder>
+  <Folder Name="/Solution Items/Ai/">
+    <File Path="Solution Items\Ai\Ai.md" />
+  </Folder>
+  <Folder Name="/Solution Items/Ai/rules/">
+    <File Path="Solution Items\Ai\rules\api-conventions.md" />
+    <File Path="Solution Items\Ai\rules\architecture.md" />
+    <File Path="Solution Items\Ai\rules\coding-standard.md" />
+    <File Path="Solution Items\Ai\rules\cqrs-conventions.md" />
+    <File Path="Solution Items\Ai\rules\domain-rules.md" />
+    <File Path="Solution Items\Ai\rules\git-wrokflow.md" />
+    <File Path="Solution Items\Ai\rules\testing.md" />
+  </Folder>
   <Folder Name="/src/">
-    <File Path="src\Directory.Build.props" />
-    <File Path="src\Directory.Packages.props" />
+<!--    <File Path="src\Directory.Build.props" />-->
+<!--    <File Path="src\Directory.Packages.props" />-->
+    <Project Path="src/Application/Application.csproj" />
+    <Project Path="src/Core/Core.csproj" />
+    <Project Path="src/Infrastructure/Infrastructure.csproj" />
     <Project Path="src/Web.Api/Web.Api.csproj" />
   </Folder>
   <Folder Name="/src/Shareds/">
+    <Project Path="src/Shareds/Shared.Application/Shared.Application.csproj" />
     <Project Path="src/Shareds/Shared.Kernel/Shared.Kernel.csproj" />
     <Project Path="src/Shareds/Shared.Web/Shared.Web.csproj" />
   </Folder>

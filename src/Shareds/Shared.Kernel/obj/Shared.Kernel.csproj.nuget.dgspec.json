@@ -13,6 +13,7 @@
         "packagesPath": "/home/alirezahaeri/.nuget/packages/",
         "outputPath": "/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Kernel/obj/",
         "projectStyle": "PackageReference",
+        "centralPackageVersionsManagementEnabled": true,
         "configFilePaths": [
           "/home/alirezahaeri/.nuget/NuGet/NuGet.Config"
         ],
@@ -45,6 +46,14 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "centralPackageVersions": {
+            "FluentValidation.DependencyInjectionExtensions": "12.1.1",
+            "MediatR": "12.0.0",
+            "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.11",
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "8.0.8",
+            "Microsoft.EntityFrameworkCore.Abstractions": "8.0.8",
+            "Microsoft.EntityFrameworkCore.Design": "8.0.28",
+            "Microsoft.EntityFrameworkCore.SqlServer": "8.0.8",
+            "Microsoft.EntityFrameworkCore.Tools": "8.0.8",
             "Scalar.AspNetCore": "2.16.6",
             "Serilog.AspNetCore": "10.0.0",
             "Serilog.Settings.Configuration": "10.0.1",
@@ -63,6 +72,9 @@
           "assetTargetFallback": true,
           "warn": true,
           "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }

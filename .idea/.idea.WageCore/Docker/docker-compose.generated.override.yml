@@ -2,20 +2,19 @@
 services:
   wagecore-api:
     build:
-      context: "/home/alirezahaeri/Desktop/WageCore/Solution Items"
-      dockerfile: "../src/Web.Api/Dockerfile"
-      target: "base"
+      context: "/home/alirezahaeri/Desktop/WageCore"
+      dockerfile: "src/Web.Api/Dockerfile"
+      target: "build"
     command: []
     entrypoint:
     - "dotnet"
     - "/app/bin/Debug/net8.0/Web.Api.dll"
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
-      DOTNET_USE_POLLING_FILE_WATCHER: "true"
     image: "web.api:dev"
     ports: []
     volumes:
     - "/home/alirezahaeri/Desktop/WageCore/src/Web.Api:/app:rw"
     - "/home/alirezahaeri/Desktop/WageCore:/src:rw"
-    - "/home/alirezahaeri/.nuget/packages:/home/app/.nuget/packages"
+    - "/home/alirezahaeri/.nuget/packages:/root/.nuget/packages"
     working_dir: "/app"

@@ -1,23 +1,26 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER $APP_UID
-WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
-
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
+﻿FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
+
+COPY ["src/Directory.Build.props", "src/"]
+COPY ["src/Directory.Packages.props", "src/"]
+
 COPY ["src/Web.Api/Web.Api.csproj", "src/Web.Api/"]
+COPY ["src/Application/Application.csproj", "src/Application/"]
+COPY ["src/Core/Core.csproj", "src/Core/"]
+COPY ["src/Infrastructure/Infrastructure.csproj", "src/Infrastructure/"]
+COPY ["src/Shareds/Shared.Kernel/Shared.Kernel.csproj", "src/Shareds/Shared.Kernel/"]
+COPY ["src/Shareds/Shared.Web/Shared.Web.csproj", "src/Shareds/Shared.Web/"]
+
 RUN dotnet restore "src/Web.Api/Web.Api.csproj"
+
 COPY . .
 WORKDIR "/src/src/Web.Api"
-RUN dotnet build "./Web.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "Web.Api.csproj" -c Release -o /app/build
 
 FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Web.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Web.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
-FROM base AS final
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Web.Api.dll"]

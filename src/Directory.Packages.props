@@ -6,7 +6,31 @@
         <PackageVersion Include="Serilog.Sinks.File" Version="7.0.0"/>
 
         <!-- Scalar/Swagger -->
-        <PackageVersion Include="Scalar.AspNetCore" Version="2.16.6" />
-        <PackageVersion Include="Swashbuckle.AspNetCore.Annotations" Version="10.2.1" />
+        <PackageVersion Include="Scalar.AspNetCore" Version="2.16.6"/>
+        <PackageVersion Include="Swashbuckle.AspNetCore.Annotations" Version="10.2.1"/>
+
+        <!-- Jwt -->
+        <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.11"/>
+        
+        <!-- EF Core -->
+        <PackageVersion Include="Microsoft.EntityFrameworkCore.Abstractions" Version="8.0.8"/>
+        <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.8"/>
+        <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageVersion>
+        <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.28">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageVersion>
+
+        <!-- Identity -->
+        <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.8" />
+
+        <!-- Fluent Validation -->
+        <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1"/>
+        
+        <!-- MediatR -->
+        <PackageVersion Include="MediatR" Version="12.0.0" />
     </ItemGroup>
 </Project>

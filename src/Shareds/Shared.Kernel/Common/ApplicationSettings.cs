@@ -11,7 +11,7 @@ public sealed class ApplicationSettings
 
 public sealed class DatabaseSettings
 {
-    public required string ConnectionStirng { get; init; }
+    public required string ConnectionString { get; init; }
 }
 
 public sealed class JwtTokenSettings

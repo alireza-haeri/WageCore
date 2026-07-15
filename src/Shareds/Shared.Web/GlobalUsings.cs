@@ -12,3 +12,6 @@ global using Microsoft.OpenApi;
 global using Microsoft.OpenApi;
 global using Swashbuckle.AspNetCore.SwaggerGen;
 global using Scalar.AspNetCore;
+global using Shared.Kernel.Common;
+global using Shared.Web.Extensions;
+global using System.Security.Claims;

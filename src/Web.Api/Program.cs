@@ -12,13 +12,17 @@ builder.Services.AddProblemDetails();
 
 //Configure Application Settings
 builder.Services.Configure<ApplicationSettings>(builder.Configuration.GetSection(nameof(ApplicationSettings)));
-var applicationSettings = builder.Configuration.GetSection(nameof(ApplicationSettings)).Get<ApplicationSettings>()
-                          ?? throw new InvalidOperationException(nameof(ApplicationSettings));
+var applicationSettings = builder.GetApplicationSettings();
 
 //Add Project Services
+builder
+    .ConfigureCore()
+    .ConfigureInfrastructure();
 
 builder.Services.AddControllers();
+
 //Add Authentication
+builder.AddAuthentication();
 
 //Add Cors Policies
 builder.Services.AddCors(options =>
@@ -49,7 +53,8 @@ app.MapControllers();
 
 try
 {
-    //Migrations
+    Log.Information("Starting migration database...");
+    await app.MigrateDatabaseAsync();
     
     Log.Information("Starting web application...");
     await app.RunAsync();
@@ -57,6 +62,7 @@ try
 catch (Exception e)
 {
     Log.Fatal(e, "Application terminated unexpectedly");
+    throw new ArgumentException();
 }
 finally
 {

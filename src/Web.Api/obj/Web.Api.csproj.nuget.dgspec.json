@@ -4,6 +4,370 @@
     "/home/alirezahaeri/Desktop/WageCore/src/Web.Api/Web.Api.csproj": {}
   },
   "projects": {
+    "/home/alirezahaeri/Desktop/WageCore/src/Application/Application.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/alirezahaeri/Desktop/WageCore/src/Application/Application.csproj",
+        "projectName": "Application",
+        "projectPath": "/home/alirezahaeri/Desktop/WageCore/src/Application/Application.csproj",
+        "packagesPath": "/home/alirezahaeri/.nuget/packages/",
+        "outputPath": "/home/alirezahaeri/Desktop/WageCore/src/Application/obj/",
+        "projectStyle": "PackageReference",
+        "centralPackageVersionsManagementEnabled": true,
+        "configFilePaths": [
+          "/home/alirezahaeri/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "/usr/lib64/dotnet/library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/home/alirezahaeri/Desktop/WageCore/src/Core/Core.csproj": {
+                "projectPath": "/home/alirezahaeri/Desktop/WageCore/src/Core/Core.csproj"
+              },
+              "/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Application/Shared.Application.csproj": {
+                "projectPath": "/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Application/Shared.Application.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "centralPackageVersions": {
+            "FluentValidation.DependencyInjectionExtensions": "12.1.1",
+            "MediatR": "12.0.0",
+            "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.11",
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "8.0.8",
+            "Microsoft.EntityFrameworkCore.Abstractions": "8.0.8",
+            "Microsoft.EntityFrameworkCore.Design": "8.0.28",
+            "Microsoft.EntityFrameworkCore.SqlServer": "8.0.8",
+            "Microsoft.EntityFrameworkCore.Tools": "8.0.8",
+            "Scalar.AspNetCore": "2.16.6",
+            "Serilog.AspNetCore": "10.0.0",
+            "Serilog.Settings.Configuration": "10.0.1",
+            "Serilog.Sinks.File": "7.0.0",
+            "Swashbuckle.AspNetCore.Annotations": "10.2.1"
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/lib64/dotnet/sdk/10.0.109/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/alirezahaeri/Desktop/WageCore/src/Core/Core.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/alirezahaeri/Desktop/WageCore/src/Core/Core.csproj",
+        "projectName": "Core",
+        "projectPath": "/home/alirezahaeri/Desktop/WageCore/src/Core/Core.csproj",
+        "packagesPath": "/home/alirezahaeri/.nuget/packages/",
+        "outputPath": "/home/alirezahaeri/Desktop/WageCore/src/Core/obj/",
+        "projectStyle": "PackageReference",
+        "centralPackageVersionsManagementEnabled": true,
+        "configFilePaths": [
+          "/home/alirezahaeri/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "/usr/lib64/dotnet/library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Kernel/Shared.Kernel.csproj": {
+                "projectPath": "/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Kernel/Shared.Kernel.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "centralPackageVersions": {
+            "FluentValidation.DependencyInjectionExtensions": "12.1.1",
+            "MediatR": "12.0.0",
+            "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.11",
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "8.0.8",
+            "Microsoft.EntityFrameworkCore.Abstractions": "8.0.8",
+            "Microsoft.EntityFrameworkCore.Design": "8.0.28",
+            "Microsoft.EntityFrameworkCore.SqlServer": "8.0.8",
+            "Microsoft.EntityFrameworkCore.Tools": "8.0.8",
+            "Scalar.AspNetCore": "2.16.6",
+            "Serilog.AspNetCore": "10.0.0",
+            "Serilog.Settings.Configuration": "10.0.1",
+            "Serilog.Sinks.File": "7.0.0",
+            "Swashbuckle.AspNetCore.Annotations": "10.2.1"
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/lib64/dotnet/sdk/10.0.109/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/alirezahaeri/Desktop/WageCore/src/Infrastructure/Infrastructure.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/alirezahaeri/Desktop/WageCore/src/Infrastructure/Infrastructure.csproj",
+        "projectName": "Infrastructure",
+        "projectPath": "/home/alirezahaeri/Desktop/WageCore/src/Infrastructure/Infrastructure.csproj",
+        "packagesPath": "/home/alirezahaeri/.nuget/packages/",
+        "outputPath": "/home/alirezahaeri/Desktop/WageCore/src/Infrastructure/obj/",
+        "projectStyle": "PackageReference",
+        "centralPackageVersionsManagementEnabled": true,
+        "configFilePaths": [
+          "/home/alirezahaeri/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "/usr/lib64/dotnet/library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/home/alirezahaeri/Desktop/WageCore/src/Core/Core.csproj": {
+                "projectPath": "/home/alirezahaeri/Desktop/WageCore/src/Core/Core.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[8.0.11, )",
+              "versionCentrallyManaged": true
+            },
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.8, )",
+              "versionCentrallyManaged": true
+            },
+            "Microsoft.EntityFrameworkCore.Abstractions": {
+              "target": "Package",
+              "version": "[8.0.8, )",
+              "versionCentrallyManaged": true
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[8.0.8, )",
+              "versionCentrallyManaged": true
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.8, )",
+              "versionCentrallyManaged": true
+            }
+          },
+          "centralPackageVersions": {
+            "FluentValidation.DependencyInjectionExtensions": "12.1.1",
+            "MediatR": "12.0.0",
+            "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.11",
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "8.0.8",
+            "Microsoft.EntityFrameworkCore.Abstractions": "8.0.8",
+            "Microsoft.EntityFrameworkCore.Design": "8.0.28",
+            "Microsoft.EntityFrameworkCore.SqlServer": "8.0.8",
+            "Microsoft.EntityFrameworkCore.Tools": "8.0.8",
+            "Scalar.AspNetCore": "2.16.6",
+            "Serilog.AspNetCore": "10.0.0",
+            "Serilog.Settings.Configuration": "10.0.1",
+            "Serilog.Sinks.File": "7.0.0",
+            "Swashbuckle.AspNetCore.Annotations": "10.2.1"
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/lib64/dotnet/sdk/10.0.109/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Application/Shared.Application.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Application/Shared.Application.csproj",
+        "projectName": "Shared.Application",
+        "projectPath": "/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Application/Shared.Application.csproj",
+        "packagesPath": "/home/alirezahaeri/.nuget/packages/",
+        "outputPath": "/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Application/obj/",
+        "projectStyle": "PackageReference",
+        "centralPackageVersionsManagementEnabled": true,
+        "configFilePaths": [
+          "/home/alirezahaeri/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "/usr/lib64/dotnet/library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Kernel/Shared.Kernel.csproj": {
+                "projectPath": "/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Kernel/Shared.Kernel.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "FluentValidation.DependencyInjectionExtensions": {
+              "target": "Package",
+              "version": "[12.1.1, )",
+              "versionCentrallyManaged": true
+            },
+            "MediatR": {
+              "target": "Package",
+              "version": "[12.0.0, )",
+              "versionCentrallyManaged": true
+            }
+          },
+          "centralPackageVersions": {
+            "FluentValidation.DependencyInjectionExtensions": "12.1.1",
+            "MediatR": "12.0.0",
+            "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.11",
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "8.0.8",
+            "Microsoft.EntityFrameworkCore.Abstractions": "8.0.8",
+            "Microsoft.EntityFrameworkCore.Design": "8.0.28",
+            "Microsoft.EntityFrameworkCore.SqlServer": "8.0.8",
+            "Microsoft.EntityFrameworkCore.Tools": "8.0.8",
+            "Scalar.AspNetCore": "2.16.6",
+            "Serilog.AspNetCore": "10.0.0",
+            "Serilog.Settings.Configuration": "10.0.1",
+            "Serilog.Sinks.File": "7.0.0",
+            "Swashbuckle.AspNetCore.Annotations": "10.2.1"
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/lib64/dotnet/sdk/10.0.109/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
     "/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Kernel/Shared.Kernel.csproj": {
       "version": "1.0.0",
       "restore": {
@@ -13,6 +377,7 @@
         "packagesPath": "/home/alirezahaeri/.nuget/packages/",
         "outputPath": "/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Kernel/obj/",
         "projectStyle": "PackageReference",
+        "centralPackageVersionsManagementEnabled": true,
         "configFilePaths": [
           "/home/alirezahaeri/.nuget/NuGet/NuGet.Config"
         ],
@@ -45,6 +410,14 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "centralPackageVersions": {
+            "FluentValidation.DependencyInjectionExtensions": "12.1.1",
+            "MediatR": "12.0.0",
+            "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.11",
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "8.0.8",
+            "Microsoft.EntityFrameworkCore.Abstractions": "8.0.8",
+            "Microsoft.EntityFrameworkCore.Design": "8.0.28",
+            "Microsoft.EntityFrameworkCore.SqlServer": "8.0.8",
+            "Microsoft.EntityFrameworkCore.Tools": "8.0.8",
             "Scalar.AspNetCore": "2.16.6",
             "Serilog.AspNetCore": "10.0.0",
             "Serilog.Settings.Configuration": "10.0.1",
@@ -63,6 +436,9 @@
           "assetTargetFallback": true,
           "warn": true,
           "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
@@ -80,6 +456,7 @@
         "packagesPath": "/home/alirezahaeri/.nuget/packages/",
         "outputPath": "/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Web/obj/",
         "projectStyle": "PackageReference",
+        "centralPackageVersionsManagementEnabled": true,
         "configFilePaths": [
           "/home/alirezahaeri/.nuget/NuGet/NuGet.Config"
         ],
@@ -93,7 +470,11 @@
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
-            "projectReferences": {}
+            "projectReferences": {
+              "/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Kernel/Shared.Kernel.csproj": {
+                "projectPath": "/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Kernel/Shared.Kernel.csproj"
+              }
+            }
           }
         },
         "warningProperties": {
@@ -139,6 +520,14 @@
             }
           },
           "centralPackageVersions": {
+            "FluentValidation.DependencyInjectionExtensions": "12.1.1",
+            "MediatR": "12.0.0",
+            "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.11",
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "8.0.8",
+            "Microsoft.EntityFrameworkCore.Abstractions": "8.0.8",
+            "Microsoft.EntityFrameworkCore.Design": "8.0.28",
+            "Microsoft.EntityFrameworkCore.SqlServer": "8.0.8",
+            "Microsoft.EntityFrameworkCore.Tools": "8.0.8",
             "Scalar.AspNetCore": "2.16.6",
             "Serilog.AspNetCore": "10.0.0",
             "Serilog.Settings.Configuration": "10.0.1",
@@ -174,6 +563,7 @@
         "packagesPath": "/home/alirezahaeri/.nuget/packages/",
         "outputPath": "/home/alirezahaeri/Desktop/WageCore/src/Web.Api/obj/",
         "projectStyle": "PackageReference",
+        "centralPackageVersionsManagementEnabled": true,
         "configFilePaths": [
           "/home/alirezahaeri/.nuget/NuGet/NuGet.Config"
         ],
@@ -188,6 +578,15 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
+              "/home/alirezahaeri/Desktop/WageCore/src/Application/Application.csproj": {
+                "projectPath": "/home/alirezahaeri/Desktop/WageCore/src/Application/Application.csproj"
+              },
+              "/home/alirezahaeri/Desktop/WageCore/src/Core/Core.csproj": {
+                "projectPath": "/home/alirezahaeri/Desktop/WageCore/src/Core/Core.csproj"
+              },
+              "/home/alirezahaeri/Desktop/WageCore/src/Infrastructure/Infrastructure.csproj": {
+                "projectPath": "/home/alirezahaeri/Desktop/WageCore/src/Infrastructure/Infrastructure.csproj"
+              },
               "/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Kernel/Shared.Kernel.csproj": {
                 "projectPath": "/home/alirezahaeri/Desktop/WageCore/src/Shareds/Shared.Kernel/Shared.Kernel.csproj"
               },
@@ -212,7 +611,22 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore.Design": {
+              "target": "Package",
+              "version": "[8.0.28, )",
+              "versionCentrallyManaged": true
+            }
+          },
           "centralPackageVersions": {
+            "FluentValidation.DependencyInjectionExtensions": "12.1.1",
+            "MediatR": "12.0.0",
+            "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.11",
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "8.0.8",
+            "Microsoft.EntityFrameworkCore.Abstractions": "8.0.8",
+            "Microsoft.EntityFrameworkCore.Design": "8.0.28",
+            "Microsoft.EntityFrameworkCore.SqlServer": "8.0.8",
+            "Microsoft.EntityFrameworkCore.Tools": "8.0.8",
             "Scalar.AspNetCore": "2.16.6",
             "Serilog.AspNetCore": "10.0.0",
             "Serilog.Settings.Configuration": "10.0.1",

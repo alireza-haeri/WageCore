@@ -7,4 +7,7 @@
         <PackageReference Include="Scalar.AspNetCore" />
         <PackageReference Include="Swashbuckle.AspNetCore.Annotations" />
     </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Shared.Kernel\Shared.Kernel.csproj" />
+    </ItemGroup>
 </Project>

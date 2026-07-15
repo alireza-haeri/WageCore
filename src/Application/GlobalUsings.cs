@@ -1,0 +1,10 @@
+global using MediatR;
+global using Core.Abstractions.Repositories;
+global using Core.Abstractions.Services;
+global using Shared.Kernel.Common;
+global using Core.Domain;
+global using FluentValidation;
+global using System.Reflection;
+global using Microsoft.AspNetCore.Builder;
+global using Microsoft.Extensions.DependencyInjection;
+global using Shared.Application.Extensions;
