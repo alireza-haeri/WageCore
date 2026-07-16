@@ -54,8 +54,8 @@ jobs:
             --base main \
             --head develop \
             --title "Merge develop into main" \
-            --body "Automated PR created by CI
-  
-  This PR merges changes from the develop branch into main after all tests pass.
-  
-  Review changes and merge when ready."
+            --body "Automated PR created by CI 
+          
+          This PR merges changes from the develop branch into main after all tests pass.
+                    
+          Review changes and merge when ready."
