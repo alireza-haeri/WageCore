@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ develop ]
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,7 +22,7 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Restore dependencies
-        run: dotnet restore --disable-parallel
+        run: dotnet restore
 
       - name: Build
         run: dotnet build --no-restore
