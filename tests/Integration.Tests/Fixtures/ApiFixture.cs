@@ -1,6 +1,10 @@
 namespace Integration.Tests.Fixtures;
+
 public class ApiFixture : WebApplicationFactory<Program>
 {
+    // یک نام یکتا برای هر instance از ApiFixture
+    private readonly string _dbName = $"WageCoreInMemoryDb_{Guid.NewGuid()}";
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Testing");
@@ -13,7 +17,7 @@ public class ApiFixture : WebApplicationFactory<Program>
                 services.Remove(descriptor);
 
             services.AddDbContext<WageCoreDbContext>(options =>
-                options.UseInMemoryDatabase($"IdentityTestDb"));
+                options.UseInMemoryDatabase(_dbName));
         });
     }
 
