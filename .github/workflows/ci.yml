@@ -37,25 +37,25 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # اگه قبلا یه PR باز از develop به main وجود داشته باشه، دوباره نساز
           existing_pr=$(gh pr list --base main --head develop --state open --json number --jq '.[0].number')
           if [ -n "$existing_pr" ]; then
             echo "PR #$existing_pr already exists, skipping."
             exit 0
           fi
-          
-          # اگه چیزی برای مرج کردن نباشه (develop و main یکسان باشن)، هیچ کاری نکن
-          if [ -z "$(git rev-list main..develop)" ]; then
+
+          git fetch origin main --depth=1000 2>/dev/null || git fetch origin main
+
+          if [ -z "$(git rev-list origin/main..origin/develop)" ]; then
             echo "Nothing to merge, develop and main are in sync."
             exit 0
           fi
-          
+
           gh pr create \
             --base main \
             --head develop \
             --title "Merge develop into main" \
-            --body "Automated PR created by CI 
-          
+            --body "Automated PR created by CI
+
           This PR merges changes from the develop branch into main after all tests pass.
-                    
+
           Review changes and merge when ready."
