@@ -16,6 +16,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
@@ -31,16 +33,29 @@ jobs:
         run: dotnet test --no-build --verbosity normal
 
       - name: Create Pull Request if tests pass
-        if: success()
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: develop
-          base: main
-          title: 'Merge develop into main'
-          body: |-
-            Automated PR created by CI
-            
-            This PR merges changes from the develop branch into main after all tests pass.
-            
-            Review changes and merge when ready.
+        if: success() && github.ref == 'refs/heads/develop'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # اگه قبلا یه PR باز از develop به main وجود داشته باشه، دوباره نساز
+          existing_pr=$(gh pr list --base main --head develop --state open --json number --jq '.[0].number')
+          if [ -n "$existing_pr" ]; then
+            echo "PR #$existing_pr already exists, skipping."
+            exit 0
+          fi
+          
+          # اگه چیزی برای مرج کردن نباشه (develop و main یکسان باشن)، هیچ کاری نکن
+          if [ -z "$(git rev-list main..develop)" ]; then
+            echo "Nothing to merge, develop and main are in sync."
+            exit 0
+          fi
+          
+          gh pr create \
+            --base main \
+            --head develop \
+            --title "Merge develop into main" \
+            --body "Automated PR created by CI
+  
+  This PR merges changes from the develop branch into main after all tests pass.
+  
+  Review changes and merge when ready."
