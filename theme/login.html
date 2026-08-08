@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ورود به سامانه — حقوق و دستمزد</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e3830'/%3E%3Cpath d='M14 20h36M14 32h20M14 44h36' stroke='%23f0c86a' stroke-width='4.5' stroke-linecap='round'/%3E%3Ccircle cx='44' cy='32' r='9.5' fill='%23f6f1e2'/%3E%3Cpath d='M39.5 32l3.2 3.2 6-6.8' stroke='%23175349' stroke-width='2.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/vazirmatn@5.0.1/300.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/vazirmatn@5.0.1/400.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/vazirmatn@5.0.1/700.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/vazirmatn@5.0.1/800.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/lalezar@5.0.1/400.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/core.css">
+<link rel="stylesheet" href="assets/css/auth.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-logo" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#0e3830"/><path d="M14 20h36M14 32h20M14 44h36" stroke="#f0c86a" stroke-width="4.5" stroke-linecap="round" fill="none"/><circle cx="44" cy="32" r="9.5" fill="#f6f1e2"/><path d="M39.5 32l3.2 3.2 6-6.8" stroke="#175349" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m4.5 12.5 5 5 10-11"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></symbol>
+    <symbol id="i-eyeoff" viewBox="0 0 24 24"><path d="M4 4l16 16M9.9 6.3A9.6 9.6 0 0 1 12 5.8c6 0 9.5 6.2 9.5 6.2a17 17 0 0 1-3.2 3.8M6 8a16 16 0 0 0-3.5 4S6 18.2 12 18.2a9.5 9.5 0 0 0 3.3-.6"/><path d="M9.6 9.8a2.9 2.9 0 0 0 4 4.1"/></symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24"><path d="M14 4h-7v16h7M10 12h11M17.5 8.5 21 12l-3.5 3.5"/></symbol>
+  </defs>
+</svg>
+<div id="pbar"></div>
+<div id="authLayer">
+  <section class="view" id="v-login" data-title="ورود">
+    <div class="auth-layer">
+      <aside class="auth-brand">
+        <svg class="lg"><use href="#i-logo"/></svg>
+        <h2>دفترِ حسابِ <em>کارکنان</em> شما</h2>
+        <div class="abs">ورود و ثبت‌نام مدیر کارگاه‌ها — یک حساب برای همهٔ کارگاه‌ها</div>
+        <ul class="ab-list">
+          <li><svg class="ic"><use href="#i-check"/></svg>فرم‌های کامل مطابق سند دامنه؛ آمادهٔ اتصال به دیتابیس شما</li>
+          <li><svg class="ic"><use href="#i-check"/></svg>فیش قابل چاپ با مُهر وضعیت پرداخت</li>
+          <li><svg class="ic"><use href="#i-check"/></svg>جابه‌جایی سریع بین فیلدها با کلید Enter — مخصوص سرعت حسابدار</li>
+          <li><svg class="ic"><use href="#i-check"/></svg>جدایی کامل تصمیم‌های داخلی (حکم) از اعداد دولتی (قوانین)</li>
+        </ul>
+        <div class="mock-slip">
+          <div class="mock-stamp">پرداخت شد</div>
+          <div class="ms-h"><span>فیش حقوقی</span><span>مرداد ۱۴۰۵</span></div>
+          <div class="ms-r"><span>جمع ناخالص</span><span class="num">۲٬۰۹۹٬۷۰۰٬۹۲۸</span></div>
+          <div class="ms-r"><span>جمع کسورات</span><span class="num">۱۱۴٬۸۰۰٬۰۰۰</span></div>
+          <div class="ms-n"><span>خالص پرداختی</span><span class="num">۱٬۹۸۴٬۹۰۰٬۹۲۸ ریال</span></div>
+        </div>
+      </aside>
+      <div class="auth-side">
+        <div class="auth-card">
+          <div class="ac-head">
+            <svg class="lg"><use href="#i-logo"/></svg>
+            <h1>ورود به سامانه</h1>
+            <p>شمارهٔ موبایل ثبت‌شده هنگام ثبت‌نام را وارد کنید</p>
+          </div>
+          <div class="ac-tabs">
+            <a href="login.html" class="on">ورود</a>
+            <a href="register.html">ثبت‌نام</a>
+          </div>
+          <form>
+            <div class="field">
+              <label class="f-label" for="lg-phone"><span class="req-s">*</span>شماره موبایل</label>
+              <input class="in in-ltr" id="lg-phone" inputmode="numeric" maxlength="11" placeholder="09xxxxxxxxx" data-autofocus>
+            </div>
+            <div class="field">
+              <label class="f-label" for="lg-pass"><span class="req-s">*</span>گذرواژه</label>
+              <div class="pw">
+                <input class="in" id="lg-pass" type="password" placeholder="گذرواژهٔ خود را وارد کنید">
+                <button type="button" class="pw-eye" data-for="lg-pass" title="نمایش گذرواژه"><svg class="ic e-on"><use href="#i-eye"/></svg><svg class="ic e-off" style="display:none"><use href="#i-eyeoff"/></svg></button>
+              </div>
+            </div>
+            <div class="ac-row">
+              <label class="rch"><input type="checkbox" checked>مرا به خاطر بسپار</label>
+              <a href="#" data-demo="در پیاده‌سازی اصلی به صفحهٔ بازیابی گذرواژه می‌رود.">گذرواژه را فراموش کرده‌ام</a>
+            </div>
+            <button type="button" class="btn btn-p btn-lg btn-block" onclick="window.location.href='dashboard.html'"><svg class="ic"><use href="#i-logout"/></svg>ورود به پنل</button>
+          </form>
+          <div class="ac-foot">حساب ندارید؟ <a href="register.html">ثبت‌نام مدیر</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+<script src="assets/js/core.js"></script>
+<script src="assets/js/forms.js"></script>
+</body>
+</html>
