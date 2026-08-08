@@ -1,0 +1,43 @@
+
+.slip{position:relative;border:1.5px solid var(--grn);border-radius:13px;overflow:hidden;background:var(--bg2)}
+.slip-head{background:var(--grn-d);color:var(--bg2);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:3px double var(--gold-b)}
+.slip-head h3{color:#fff;font-size:15px;font-weight:800;display:flex;gap:10px;align-items:center}
+.slip-head h3 .lg{width:30px;height:30px}
+.slip-head small{color:#a6c1b6;font-size:10.8px;display:block}
+.slip-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line2);border-bottom:1px solid var(--line2)}
+.slip-grid>div{background:var(--bg2);padding:9px 16px;font-size:12px}
+.slip-grid b{display:block;font-size:13px;color:var(--grn-d);font-variant-numeric:tabular-nums}
+.slip-grid span{color:var(--faint);font-size:10.3px}
+.slip-sec{font-family:var(--fd);font-weight:400;font-size:15px;color:var(--grn);background:var(--grn-s);padding:5px 16px;border-bottom:1px solid var(--line2)}
+.slip-sec.red{background:var(--red-s);color:var(--red)}
+.slip-tbl{width:100%;font-size:12.5px;border-collapse:collapse}
+.slip-tbl td{padding:7.5px 16px;border-bottom:1.5px dashed var(--line2)}
+.slip-tbl tr:last-child td{border-bottom:0}
+.slip-tbl .amt{text-align:left;font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums}
+.slip-net{display:flex;justify-content:space-between;align-items:center;background:var(--gold-s);border-top:2px dotted var(--gold-l);padding:12px 18px}
+.slip-net span{font-weight:800;font-size:13px}
+.slip-net b{font-family:var(--fd);font-weight:400;font-size:22px;color:var(--gold)}
+.slip-stamp{position:absolute;top:92px;inset-inline-end:34px;transform:rotate(-13deg);border:3px double var(--grn);color:var(--grn);border-radius:11px;
+  padding:5px 22px;font-family:var(--fd);font-size:18px;background:rgba(226,238,231,.8);pointer-events:none;z-index:2;text-align:center;
+  animation:stampIn .55s cubic-bezier(.2,.9,.3,1.4) .25s both}
+.slip-stamp small{display:block;font-family:var(--ff);font-size:9.5px;font-weight:600}
+/* پنل پیش‌نمایش محاسبه در فرم فیش */
+.calc-box{background:var(--bg2);border:1.5px solid var(--line);border-radius:13px;padding:16px;position:sticky;top:86px}
+.calc-box h4{font-family:var(--fd);font-weight:400;font-size:16.5px;color:var(--grn);display:flex;gap:8px;align-items:center;margin-bottom:12px}
+.calc-box h4 svg.ic{width:17px;height:17px;color:var(--gold)}
+.crow{display:flex;justify-content:space-between;font-size:12.3px;padding:6.5px 2px;border-bottom:1.5px dashed var(--line2)}
+.crow span:last-child{font-weight:700;font-variant-numeric:tabular-nums}
+.crow.ded span{color:var(--red)}
+.crow.tot{border-bottom:0;font-weight:800}
+.cnet{display:flex;justify-content:space-between;align-items:center;background:var(--grn-d);color:#fff;border-radius:10px;padding:11px 15px;margin-top:11px}
+.cnet span{font-size:12px}
+.cnet b{font-family:var(--fd);font-weight:400;font-size:20px;color:var(--gold-b)}
+.calc-note{font-size:10.5px;color:var(--faint);margin-top:10px;display:flex;gap:6px;align-items:flex-start}
+.calc-note svg.ic{width:12px;height:12px;margin-top:3px}
+@media print{
+  body *{visibility:hidden}
+  #slipDoc,#slipDoc *{visibility:visible}
+  #slipDoc{position:fixed;inset:0;overflow:visible;box-shadow:none;border:none;border-radius:0}
+  .mback{position:static;background:none;padding:0;display:block}
+}
+
