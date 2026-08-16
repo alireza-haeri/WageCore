@@ -4,7 +4,7 @@ public class JwtTokenServiceTests
 {
     private readonly JwtTokenService _service;
     private readonly JwtTokenSettings _jwtSettings;
-    private readonly UserBuilder  _userBuilder;
+    private readonly UserBuilder _userBuilder;
 
     public JwtTokenServiceTests()
     {
@@ -48,11 +48,14 @@ public class JwtTokenServiceTests
     }
 
     [Fact]
-    public void GenerateToken_ShouldContainPhoneNumberClaim()
+    public void GenerateToken_ShouldContainPhoneNumberClaim_WhenPhoneNumberProvided()
     {
         var validPhoneNumber = "09123456789";
-        var user = _userBuilder.WithPhoneNumber(validPhoneNumber).CreateResult().ShouldBeSuccess();
-        
+        var user = _userBuilder
+            .WithPhoneNumber(validPhoneNumber)
+            .CreateResult()
+            .ShouldBeSuccess();
+
         var result = _service.GenerateToken(user);
 
         var claims = JwtTokenHelper.GetTokenClaims(result.Token);
@@ -62,9 +65,56 @@ public class JwtTokenServiceTests
     }
 
     [Fact]
+    public void GenerateToken_ShouldNotContainPhoneNumberClaim_WhenPhoneNumberIsNull()
+    {
+        var user = _userBuilder
+            .WithPhoneNumber(null)
+            .WithEmail("test@example.com")
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        var result = _service.GenerateToken(user);
+
+        var claims = JwtTokenHelper.GetTokenClaims(result.Token);
+        claims.Should().NotContain(c => c.Type == ClaimTypes.MobilePhone);
+    }
+
+    [Fact]
+    public void GenerateToken_ShouldContainEmailClaim_WhenEmailProvided()
+    {
+        var validEmail = "test@example.com";
+        var user = _userBuilder
+            .WithEmail(validEmail)
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        var result = _service.GenerateToken(user);
+
+        var claims = JwtTokenHelper.GetTokenClaims(result.Token);
+        claims.Should().Contain(c =>
+            c.Type == ClaimTypes.Email &&
+            c.Value == validEmail);
+    }
+
+    [Fact]
+    public void GenerateToken_ShouldNotContainEmailClaim_WhenEmailIsNull()
+    {
+        var user = _userBuilder
+            .WithPhoneNumber("09123456789")
+            .WithEmail(null)
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        var result = _service.GenerateToken(user);
+
+        var claims = JwtTokenHelper.GetTokenClaims(result.Token);
+        claims.Should().NotContain(c => c.Type == ClaimTypes.Email);
+    }
+
+    [Fact]
     public void GenerateToken_ShouldHaveCorrectIssuer()
     {
-        var user = _userBuilder.CreateResult().ShouldBeSuccess()!;
+        var user = _userBuilder.CreateResult().ShouldBeSuccess();
 
         var result = _service.GenerateToken(user);
 
@@ -86,7 +136,7 @@ public class JwtTokenServiceTests
     [Fact]
     public void GenerateToken_TokenShouldBeValidatable()
     {
-        var user = _userBuilder.CreateResult().ShouldBeSuccess()!;
+        var user = _userBuilder.CreateResult().ShouldBeSuccess();
 
         var result = _service.GenerateToken(user);
 
@@ -110,5 +160,4 @@ public class JwtTokenServiceTests
 
         validateAction.Should().NotThrow();
     }
-  
 }

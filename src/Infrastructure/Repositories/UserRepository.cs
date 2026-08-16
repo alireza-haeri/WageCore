@@ -1,8 +1,8 @@
 namespace Infrastructure.Repositories;
 
-public class UserRepository(UserManager<ApplicationUser> userManager,ILogger<UserRepository> logger) : IUserRepository
+public class UserRepository(UserManager<ApplicationUser> userManager, ILogger<UserRepository> logger) : IUserRepository
 {
-     public async Task<IdentityResult> CreateAsync(User user, string password,
+    public async Task<IdentityResult> CreateAsync(User user, string password,
         CancellationToken cancellationToken = default)
     {
         try
@@ -22,24 +22,35 @@ public class UserRepository(UserManager<ApplicationUser> userManager,ILogger<Use
         }
     }
 
-    public async Task<bool> CheckPasswordAsync(string phoneNumber, string password,
+    public async Task<bool> CheckPasswordAsync(User user, string password,
         CancellationToken cancellationToken = default)
     {
         var applicationUser =
-            await userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == phoneNumber, cancellationToken);
+            await userManager.Users.AsNoTracking()
+                .FirstOrDefaultAsync(u => u.PhoneNumber == user.PhoneNumber || u.Email == user.Email,
+                cancellationToken);
         if (applicationUser is null)
             return false;
         return await userManager.CheckPasswordAsync(applicationUser, password);
     }
 
-    public async Task<User?> GetAsync(string phoneNumber, CancellationToken cancellationToken = default)
+    public async Task<User?> GetAsync(string? phoneNumber, string? email, CancellationToken cancellationToken = default)
     {
         var applicationUser = await userManager.Users
-            .SingleOrDefaultAsync(u => u.PhoneNumber == phoneNumber, cancellationToken);
+            .SingleOrDefaultAsync(u => u.PhoneNumber == phoneNumber || u.Email == email, cancellationToken);
         if (applicationUser is null)
             return null;
 
-        return User.Create(applicationUser.Id, applicationUser.PhoneNumber!).Response;
+        return User.Create(applicationUser.Id, applicationUser.PhoneNumber!, applicationUser.Email,
+            applicationUser.FullName).Response;
+    }
+
+    public async Task<bool> ExistsAsync(string? phoneNumber, string? email,
+        CancellationToken cancellationToken = default)
+    {
+        return await userManager.Users.AsNoTracking()
+            .AnyAsync(u => (phoneNumber != null && u.PhoneNumber == phoneNumber) ||
+                           (email != null && u.Email == email), cancellationToken);
     }
 
     private IdentityResult ToIdentityResult(Microsoft.AspNetCore.Identity.IdentityResult result) =>
@@ -61,11 +72,15 @@ public class UserRepository(UserManager<ApplicationUser> userManager,ILogger<Use
 
 public class ApplicationUser : IdentityUser<Guid>
 {
+    public string FullName { get; private set; } = null!;
+
     public static ApplicationUser CrateFromUser(User user) =>
         new()
         {
             Id = user.Id,
+            Email = user.Email,
             PhoneNumber = user.PhoneNumber,
-            UserName = user.PhoneNumber
+            FullName = user.FullName,
+            UserName = user.PhoneNumber ?? user.Email!
         };
 }

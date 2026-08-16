@@ -1,0 +1,21 @@
+﻿@using System.Net.Http
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.JSInterop
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Authorization
+@using Web.Ui.Layout
+@using Web.Ui.Models
+@using Web.Ui.Services
+@using Web.Ui.Pages
+@inject NavigationManager NavigationManager
+@inject IAuthenticationService AuthService
+@inject IApiService ApiService
+@inject IApiClient ApiClient
+@inject CustomAuthenticationStateProvider AuthProvider
+@inject IToastService ToastService
+@inject IJSRuntime JsRuntime

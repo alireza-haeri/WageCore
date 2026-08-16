@@ -23,8 +23,7 @@ public static class DependencyInjection
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
                 options.Lockout.MaxFailedAccessAttempts = 5;
             })
-            .AddEntityFrameworkStores<WageCoreDbContext>()
-            .AddDefaultTokenProviders();
+            .AddEntityFrameworkStores<WageCoreDbContext>();
 
         builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
         builder.Services.AddScoped<IUserRepository, UserRepository>();

@@ -11,6 +11,7 @@ services:
     depends_on:
       wagecore-sql:
         condition: service_healthy
+
   wagecore-sql:
     container_name: wagecore-sql
     image: mcr.microsoft.com/mssql/server:2025-latest
@@ -26,6 +27,14 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5' 
+          memory: 2048M
+        reservations:
+          cpus: '0.25'
+          memory: 1024M
 
 volumes:
   sql_data:

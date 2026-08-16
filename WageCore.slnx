@@ -21,6 +21,7 @@
     <Project Path="src/Core/Core.csproj" />
     <Project Path="src/Infrastructure/Infrastructure.csproj" />
     <Project Path="src/Web.Api/Web.Api.csproj" />
+    <Project Path="src/Web.Ui/Web.Ui.csproj" />
   </Folder>
   <Folder Name="/src/Shareds/">
     <Project Path="src/Shareds/Shared.Application/Shared.Application.csproj" />

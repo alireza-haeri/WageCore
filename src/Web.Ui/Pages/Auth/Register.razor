@@ -1,0 +1,225 @@
+@page "/register"
+@using System.Collections.Concurrent
+@using Web.Ui.Models
+@using Web.Ui.Services
+@layout AuthLayout
+
+<aside class="auth-brand">
+    <svg class="lg">
+        <use href="assets/img/icons.svg#i-logo"/>
+    </svg>
+    <h2>دفترِ حسابِ <em>کارکنان</em> شما</h2>
+    <div class="abs">ورود و ثبتنام مدیر کارگاهها — یک حساب برای همهٔ کارگاهها</div>
+    <ul class="ab-list">
+        <li>
+            <svg class="ic">
+                <use href="/assets/img/icons.svg#i-check"/>
+            </svg>
+            همه فرمهای مورد نیاز برای محاسبه حقوق از قبل آمادهست؛ فقط اطلاعات پرسنل را وارد کنید
+        </li>
+        <li>
+            <svg class="ic">
+                <use href="/assets/img/icons.svg#i-check"/>
+            </svg>
+            فیش حقوقی را با تمام جزئیات بهصورت شفاف و خوانا مشاهده کنید
+        </li>
+        <li>
+            <svg class="ic">
+                <use href="/assets/img/icons.svg#i-check"/>
+            </svg>
+            بدون برداشتن دست از روی کیبورد، همه کارها را با Enter انجام دهید
+        </li>
+        <li>
+            <svg class="ic">
+                <use href="/assets/img/icons.svg#i-check"/>
+            </svg>
+            تغییرات داخلی شرکت را بدون اثرگذاری روی اعداد قانونی اعمال کنید
+        </li>
+    </ul>
+    <div class="mock-slip">
+        <div class="mock-stamp">پرداخت شد</div>
+        <div class="ms-h"><span>فیش حقوقی</span><span>مرداد ۱۴۰۵</span></div>
+        <div class="ms-r"><span>جمع ناخالص</span><span class="num">۲٬۰۹۹٬۷۰۰٬۹۲۸</span></div>
+        <div class="ms-r"><span>جمع کسورات</span><span class="num">۱۱۴٬۸۰۰٬۰۰۰</span></div>
+        <div class="ms-n"><span>خالص پرداختی</span><span class="num">۱٬۹۸۴٬۹۰۰٬۹۲۸ ریال</span></div>
+    </div>
+</aside>
+<div class="auth-side">
+    <div class="auth-card">
+        <div class="ac-head">
+            <svg class="lg">
+                <use href="assets/img/icons.svg#i-logo"/>
+            </svg>
+            <h1>ثبت نام در سامانه</h1>
+            <p>نام و نام خانوادگی، و یکی از روش‌های تماس را وارد کنید</p>
+        </div>
+        <div class="ac-tabs">
+            <a href="/login">ورود</a>
+            <a href="/register" class="on">ثبت نام</a>
+        </div>
+        <EditForm EditContext="@_formHelper.EditContext" OnSubmit="@HandleRegister">
+            <ValidationMessage TValue="string" For="() => _formHelper.Model.General" class="f-help text-danger"/>
+
+            <div class="field">
+                <label class="f-label" for="rg-fullname"><span class="req-s">*</span>نام و نام خانوادگی</label>
+                <InputText @bind-Value="_formHelper.Model.FullName" class="in" id="rg-fullname"
+                           placeholder="علی رضایی" data-autofocus/>
+                <ValidationMessage TValue="string" For="() => _formHelper.Model.FullName" class="f-help text-danger"/>
+            </div>
+
+            <div class="toggle-login-method"
+                 style="margin-bottom: 1rem; display: flex; gap: 0.5rem; align-items: center;">
+                <button type="button"
+                        class="btn btn-sm @(!_formHelper.Model.UseEmail ? "btn-primary" : "btn-secondary")"
+                        @onclick="() => { _formHelper.Model.UseEmail = false; _formHelper.Model.PhoneNumber = null; _formHelper.Model.Email = null; }">
+                    ثبت‌نام با شماره موبایل
+                </button>
+                <button type="button" class="btn btn-sm @(_formHelper.Model.UseEmail ? "btn-primary" : "btn-secondary")"
+                        @onclick="() => { _formHelper.Model.UseEmail = true; _formHelper.Model.PhoneNumber = null; _formHelper.Model.Email = null; }">
+                    ثبت‌نام با ایمیل
+                </button>
+            </div>
+            
+            @if (!_formHelper.Model.UseEmail)
+            {
+                <div class="field">
+                    <label class="f-label" for="rg-phone"><span class="req-s">*</span>شماره موبایل</label>
+                    <InputText @bind-Value="_formHelper.Model.PhoneNumber" class="in in-ltr" id="rg-phone"
+                               inputmode="numeric" maxlength="11" placeholder="09xxxxxxxxx" data-autofocus/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.PhoneNumber"
+                                       class="f-help text-danger"/>
+                </div>
+            }
+            else
+            {
+                <div class="field">
+                    <label class="f-label" for="rg-email"><span class="req-s">*</span>ایمیل</label>
+                    <InputText @bind-Value="_formHelper.Model.Email" class="in in-ltr" id="rg-email"
+                               placeholder="example@domain.com" data-autofocus/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.Email" class="f-help text-danger"/>
+                </div>
+            }
+
+            <div class="field">
+                <label class="f-label" for="rg-pass"><span class="req-s">*</span>گذرواژه</label>
+                <div class="pw">
+                    <InputText @bind-Value="_formHelper.Model.Password" class="in" id="rg-pass" type="password"
+                               placeholder="گذرواژهٔ خود را وارد کنید"/>
+                    <button type="button" class="pw-eye" data-for="rg-pass" title="نمایش گذرواژه">
+                        <svg class="ic e-on">
+                            <use href="assets/img/icons.svg#i-eye"/>
+                        </svg>
+                        <svg class="ic e-off" style="display:none">
+                            <use href="assets/img/icons.svg#i-eyeoff"/>
+                        </svg>
+                    </button>
+                </div>
+                <ValidationMessage TValue="string" For="() => _formHelper.Model.Password" class="f-help text-danger"/>
+            </div>
+
+            <button type="submit" class="btn btn-p btn-lg btn-block">
+                <svg class="ic">
+                    <use href="assets/img/icons.svg#i-logout"/>
+                </svg>
+                ثبت نام
+            </button>
+        </EditForm>
+        <div class="ac-foot">حساب دارید؟ <a href="/login">ورود</a></div>
+    </div>
+</div>
+
+@code
+{
+    private FormHelper<RegisterModel> _formHelper = new();
+    private bool _isLoading;
+    private string? _returnUrl;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var query = NavigationManager.ToAbsoluteUri(NavigationManager.Uri).Query;
+        var queryParams = System.Web.HttpUtility.ParseQueryString(query);
+        _returnUrl = queryParams["returnUrl"] ?? "/";
+
+        if (await AuthService.IsAuthenticatedAsync())
+        {
+            NavigationManager.NavigateTo(_returnUrl);
+        }
+    }
+
+    private async Task HandleRegister()
+    {
+        if (_isLoading) return;
+        _isLoading = true;
+
+        _formHelper.ClearErrors();
+
+        if (!_formHelper.Model.ValidateRequiredEmailOrPhoneNumber())
+            _formHelper.SetServerErrors(
+                new Dictionary<string, ICollection<string>>()
+                {
+                    { nameof(RegisterModel.PhoneNumber), ["شماره تلفن الزامی است."] },
+                    { nameof(RegisterModel.Email), ["ایمیل الزامی است."] },
+                });
+
+        if (!_formHelper.Validate())
+        {
+            _isLoading = false;
+            return;
+        }
+
+        var result = await ApiService.SendAsync(
+            apiCall: () => ApiClient.RegisterUserAsync(new RegisterUserRequest(
+                phoneNumber: _formHelper.Model.PhoneNumber,
+                email: _formHelper.Model.Email,
+                fullName: _formHelper.Model.FullName,
+                password: _formHelper.Model.Password
+            )),
+            successMessage: "ثبت‌نام با موفقیت انجام شد.",
+            showErrorToastValidation: false
+        );
+
+        if (result != null)
+        {
+            if (result.IsSuccess)
+            {
+                await AuthService.LoginAsync(result.Response.Token, result.Response.ExpireInMinutes);
+                AuthProvider.NotifyUserAuthentication(result.Response.Token);
+                NavigationManager.NavigateTo(_returnUrl!);
+            }
+            else
+            {
+                _formHelper.SetServerErrors(result.Errors);
+                ToastService.ShowToastWarning("لطفاً خطاها را بررسی کنید.");
+            }
+        }
+
+        _isLoading = false;
+    }
+
+    public class RegisterModel : BaseModel
+    {
+        public bool UseEmail { get; set; } = false;
+
+        [Required(ErrorMessage = "نام و نام خانوادگی اجباری است.")]
+        [Display(Name = "نام و نام خانوادگی")]
+        [StringLength(50, MinimumLength = 3, ErrorMessage = "نام و نام خانوادگی نمیتواند کمتر از 3 کاراکتر و بیشتر از 50 کاراکتر باشد.")]
+        public string FullName { get; set; } = null!;
+
+        [Display(Name = "شماره تلفن")]
+        [RegularExpression(@"^09\d{9}$", ErrorMessage = "شماره تلفن باید با 09 شروع شده و دقیقاً ۱۱ رقم باشد.")]
+        public string? PhoneNumber { get; set; }
+
+        [Display(Name = "ایمیل")]
+        [EmailAddress(ErrorMessage = "فرمت ایمیل را درست وارد کنید.")]
+        public string? Email { get; set; }
+
+        [Required(ErrorMessage = "رمز عبور اجباری است.")]
+        [Display(Name = "رمز عبور")]
+        [DataType(DataType.Password)]
+        [StringLength(50, MinimumLength = 6, ErrorMessage = "رمز عبور نمیتواند کمتر از 6 کاراکتر و بیشتر از 50 کاراکتر باشد.")]
+        public string Password { get; set; } = null!;
+
+        public bool ValidateRequiredEmailOrPhoneNumber() =>
+            !(string.IsNullOrWhiteSpace(PhoneNumber) && string.IsNullOrWhiteSpace(Email));
+    }
+}
