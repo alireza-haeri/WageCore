@@ -1,0 +1,24 @@
+﻿@inject NavigationManager NavigationManager
+
+<ErrorBoundary>
+    <ChildContent>
+        <Router AppAssembly="@typeof(App).Assembly">
+            <Found Context="routeData">
+                <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(AuthLayout)">
+                    <NotAuthorized>
+                        @{
+                            var returnUrl = NavigationManager.Uri;
+                            NavigationManager.NavigateTo($"/login?returnUrl={Uri.EscapeDataString(returnUrl)}");
+                        }
+                    </NotAuthorized>
+                </AuthorizeRouteView>
+            </Found>
+            <NotFound>
+                <RouteView RouteData="@(new RouteData(typeof(NotFound), new Dictionary<string, object>()!))" />
+            </NotFound>
+        </Router>
+    </ChildContent>
+    <ErrorContent>
+        <RouteView RouteData="@(new RouteData(typeof(Error), new Dictionary<string, object>()!))" />
+    </ErrorContent>
+</ErrorBoundary>

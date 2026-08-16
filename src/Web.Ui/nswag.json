@@ -1,0 +1,60 @@
+{
+  "runtime": "Net100",
+  "documentGenerator": {
+    "fromDocument": {
+      "url": "http://localhost:9090/swagger/v1/swagger.json",
+      "output": "swagger.json",
+      "newLineBehavior": "Auto"
+    }
+  },
+  "codeGenerators": {
+    "openApiToCSharpClient": {
+      "namespace": "Web.Ui.Services",
+      "output": "./Services/ApiClient.g.cs",
+      "generateClientInterfaces": true,
+      "generateClientClasses": true,
+      "generateExceptionClasses": true,
+      "exceptionClass": "ApiException",
+      "wrapDtoExceptions": true,
+      "useBaseUrl": false,
+      "generateBaseUrlProperty": false,
+      "injectHttpClient": true,
+      "disposeHttpClient": false, //true
+      "operationGenerationMode": "SingleClientFromOperationId",
+      "className": "ApiClient",
+      "clientClassAccessModifier": "public",
+      "typeAccessModifier": "public",
+      "generateDtoTypes": true,
+      "generateDataAnnotations": true,
+      "jsonLibrary": "NewtonsoftJson",
+      "arrayType": "System.Collections.Generic.ICollection",
+      "arrayInstanceType": "System.Collections.ObjectModel.Collection",
+      "dictionaryType": "System.Collections.Generic.IDictionary",
+      "dictionaryInstanceType": "System.Collections.Generic.Dictionary",
+      "dateType": "System.DateTimeOffset",
+      "dateTimeType": "System.DateTimeOffset",
+      "timeType": "System.TimeSpan",
+      "timeSpanType": "System.TimeSpan",
+      "requiredPropertiesMustBeDefined": true,
+      "excludedTypeNames": [],
+      "excludedParameterNames": [],
+      "handleReferences": false,
+      "generateDefaultValues": true,
+      "parameterDateTimeFormat": "s",
+      "parameterDateFormat": "yyyy-MM-dd",
+      "serializeTypeInformation": false,
+      "queryNullValue": "",
+      "additionalNamespaceUsages": [],
+      "additionalContractNamespaceUsages": [],
+      "wrapResponses": false,
+      "wrapResponseMethods": [],
+      "generateResponseClasses": true,
+      "responseClass": "SwaggerResponse",
+      "newLineBehavior": "Auto",
+      "generateNativeRecords": true,
+      "classStyle": "Record",
+      "writeAccessor": "init",
+      "generateOptionalParameters": true
+    }
+  }
+}

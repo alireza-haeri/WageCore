@@ -1,0 +1,148 @@
+@page "/"
+@layout AuthLayout
+
+<section class="view" id="v-home" data-title="صفحهٔ نخست">
+    <nav class="home-nav">
+        <svg class="lg">
+            <use href="assets/icons.svg#i-logo"/>
+        </svg>
+        <b>سامانهٔ حقوق و دستمزد</b>
+        <div class="ms-auto d-flex gap-2">
+            <a class="btn btn-g" href="/login" >ورود</a>
+            <a class="btn btn-p" href="/register">ثبتنام</a>
+        </div>
+    </nav>
+
+    <header class="home-hero">
+        <div class="rv in">
+            <span class="hh-tag"><svg class="ic"><use href="assets/icons.svg#i-shield"/></svg> محاسبهٔ خودکار اضافهکاری، شبکاری و بیمه</span>
+            <h1>حسابِ حقوق کارکنان، <em>دقیق</em> مثل خود حسابدار</h1>
+            <p class="hsub">کارگاه و بخش بسازید، پروندهٔ کارکنان را کامل کنید و هر ماه فیشها را با محاسبهٔ خودکار صادر
+                کنید — از اضافهکاری تا حق اولاد.</p>
+            <div class="d-flex gap-2 flex-wrap">
+                <a class="btn btn-p btn-lg" href="register.html" data-go="register">
+                    <svg class="ic">
+                        <use href="assets/icons.svg#i-plus"/>
+                    </svg>
+                    شروع کنید — ثبتنام مدیر</a>
+                <a class="btn btn-g btn-lg" href="login.html" data-go="login">حساب دارم، وارد میشوم</a>
+            </div>
+            <div class="hh-stats">
+                <span><svg class="ic"><use href="assets/icons.svg#i-factory"/></svg> ساختار کارگاه و بخش</span>
+                <span><svg class="ic"><use href="assets/icons.svg#i-users"/></svg> پروندهٔ کامل کارکنان</span>
+                <span><svg class="ic"><use href="assets/icons.svg#i-receipt"/></svg> فیش قابل چاپ</span>
+                <span><svg class="ic"><use href="assets/icons.svg#i-doc"/></svg> احکام تاریخدار</span>
+            </div>
+        </div>
+        <div class="hh-art">
+            <div class="mock-slip" style="margin:26px auto 0">
+                <div class="mock-stamp">پرداخت شد</div>
+                <div class="ms-h"><span>فیش حقوقی</span><span>مرداد ۱۴۰۵</span></div>
+                <div class="ms-r"><span>حقوق پایه (۳۰ روز)</span><span class="num">۱٬۲۸۰٬۰۰۰٬۰۰۰</span></div>
+                <div class="ms-r"><span>اضافهکاری ×۱٫۴</span><span class="num">۱۹۵٬۴۹۰٬۹۰۰</span></div>
+                <div class="ms-r"><span>مسکن، بن و حق اولاد</span><span class="num">۵۶۸٬۹۳۷٬۳۲۸</span></div>
+                <div class="ms-r" style="color:var(--red)"><span>بیمهٔ سهم کارگر ۷٪</span><span
+                        class="num">−۱۱۴٬۸۰۰٬۰۰۰</span></div>
+                <div class="ms-n"><span>خالص پرداختی</span><span class="num">۱٬۹۸۴٬۹۰۰٬۹۲۸ ریال</span></div>
+            </div>
+        </div>
+    </header>
+
+    <section class="home-sec rv in">
+        <h2>همهچیز سر جای خودش</h2>
+        <div class="ss">ساختار مثل بایگانی تودرتو است: کارگاه، بعد بخش، بعد کارمند — و برای هر نفر، حکم تاریخدار و فیش
+            هر ماه.
+        </div>
+        <div class="row g-3">
+            <div class="col-sm-6 col-xl-3">
+                <div class="feat-c">
+                    <div class="fi fi-g">
+                        <svg class="ic">
+                            <use href="assets/icons.svg#i-factory"/>
+                        </svg>
+                    </div>
+                    <h3>کارگاه و بخش</h3>
+                    <p>ثبت کارگاه با شناسهٔ ملی و نوع منطقه، سپس چیدن بخشهای سازمانی زیر هر کارگاه.</p></div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="feat-c">
+                    <div class="fi fi-b">
+                        <svg class="ic">
+                            <use href="assets/icons.svg#i-users"/>
+                        </svg>
+                    </div>
+                    <h3>پروندهٔ کارکنان</h3>
+                    <p>هویت، بیمه، شبا و وضعیت مالیاتی هر نفر یکجا — با کنترل صحت کد ملی و شبا.</p></div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="feat-c">
+                    <div class="fi fi-y">
+                        <svg class="ic">
+                            <use href="assets/icons.svg#i-doc"/>
+                        </svg>
+                    </div>
+                    <h3>احکام تاریخدار</h3>
+                    <p>هر تغییر حقوق یک حکم جدید است؛ تاریخچهٔ حکمهای قبلی دستنخورده میماند.</p></div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="feat-c">
+                    <div class="fi fi-r">
+                        <svg class="ic">
+                            <use href="assets/icons.svg#i-receipt"/>
+                        </svg>
+                    </div>
+                    <h3>فیش با محاسبهٔ خودکار</h3>
+                    <p>کارکرد را وارد کنید؛ اضافهکاری، شبکاری، جمعهکاری و بیمه خودکار حساب میشود.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="home-sec rv in">
+        <h2>در چهار گام</h2>
+        <div class="ss">از ثبتنام تا اولین فیش، کمتر از ده دقیقه.</div>
+        <div class="row g-3">
+            <div class="col-md-6 col-xl-3">
+                <div class="stp">
+                    <div class="sn">۱</div>
+                    <div><b>ثبتنام مدیر</b><span>با نام کامل و شمارهٔ موبایل، حساب خود را بسازید.</span></div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="stp">
+                    <div class="sn">۲</div>
+                    <div><b>ساخت ساختار</b><span>کارگاهها و بخشها را مثل پوشههای بایگانی بچینید.</span></div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="stp">
+                    <div class="sn">۳</div>
+                    <div><b>ثبت کارکنان و احکام</b><span>پروندهٔ هر نفر را کامل و حکم حقوقیاش را صادر کنید.</span></div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="stp">
+                    <div class="sn">۴</div>
+                    <div><b>صدور فیش ماهانه</b><span>کارکرد ماه را وارد کنید و خالص را تحویل بگیرید.</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="home-band rv in">
+        <div class="band">
+            <div class="flex-grow-1">
+                <h3>همین حالا شروع کنید</h3>
+                <p>این نسخه یک قالب نمایشی است؛ منطق درج، ویرایش و محاسبه با .NET تکمیل خواهد شد.</p>
+            </div>
+            <a class="btn btn-d btn-lg" href="register.html" data-go="register">
+                <svg class="ic">
+                    <use href="assets/icons.svg#i-plus"/>
+                </svg>
+                ساخت حساب مدیر</a>
+        </div>
+    </div>
+    <footer class="home-foot">
+        <div class="fl">✻ ✻ ✻</div>
+        سامانهٔ حقوق و دستمزد · قالب اختصاصی حسابدار · مرداد ۱۴۰۵
+    </footer>
+</section>

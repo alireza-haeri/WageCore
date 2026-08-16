@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>فیش حقوقی — سامانهٔ حقوق و دستمزد</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e3830'/%3E%3Cpath d='M14 20h36M14 32h20M14 44h36' stroke='%23f0c86a' stroke-width='4.5' stroke-linecap='round'/%3E%3Ccircle cx='44' cy='32' r='9.5' fill='%23f6f1e2'/%3E%3Cpath d='M39.5 32l3.2 3.2 6-6.8' stroke='%23175349' stroke-width='2.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/vazirmatn@5.0.1/300.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/vazirmatn@5.0.1/400.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/vazirmatn@5.0.1/700.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/vazirmatn@5.0.1/800.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/lalezar@5.0.1/400.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/core.css">
+</head>
+<body>
+    <div class="app-shell" id="appLayer" style="display:flex">
+
+        <!-- سایدبار مشترک -->
+        <aside class="sidebar" id="sideEl">
+            <div class="sb-brand">
+                <svg class="lg"><use href="assets/icons.svg#i-logo"/></svg>
+                <div><b>سامانهٔ حقوق و دستمزد</b><small>پنل مدیر کارگاهها</small></div>
+            </div>
+            <div class="sb-group">عملیات ماهانه</div>
+            <nav class="sb-nav">
+                <a class="sb-item" href="dashboard.html" data-go="dashboard"><svg class="ic"><use href="assets/icons.svg#i-grid"/></svg>داشبورد</a>
+                <a class="sb-item" href="payslips.html" data-go="payslips"><svg class="ic"><use href="assets/icons.svg#i-receipt"/></svg>فیشهای حقوقی<span class="sb-count">۵</span></a>
+                <a class="sb-item" href="profiles.html" data-go="profiles"><svg class="ic"><use href="assets/icons.svg#i-doc"/></svg>احکام حقوقی<span class="sb-count">۶</span></a>
+                <a class="sb-item" href="employees.html" data-go="employees"><svg class="ic"><use href="assets/icons.svg#i-users"/></svg>کارکنان<span class="sb-count">۶</span></a>
+            </nav>
+            <div class="sb-group">ساختار سازمانی</div>
+            <nav class="sb-nav">
+                <a class="sb-item" href="workshops.html" data-go="workshops"><svg class="ic"><use href="assets/icons.svg#i-factory"/></svg>کارگاهها<span class="sb-count">۳</span></a>
+                <a class="sb-item" href="departments.html" data-go="departments"><svg class="ic"><use href="assets/icons.svg#i-dept"/></svg>بخشها<span class="sb-count">۷</span></a>
+            </nav>
+            <div class="sb-foot">
+                <div class="sb-user">
+                    <div class="sb-av">ح</div>
+                    <div><b>حمید رضایی</b><small class="ltr">0913 123 4567</small></div>
+                    <button class="icobtn" title="خروج از سامانه" data-go="login"><svg class="ic"><use href="assets/icons.svg#i-logout"/></svg></button>
+                </div>
+            </div>
+        </aside>
+        <div class="sb-backdrop" id="sbBack"></div>
+
+        <div class="main-col">
+            <!-- تاپبار مشترک -->
+            <header class="topbar">
+                <button class="icobtn tb-burger" id="btnBurger" title="منو"><svg class="ic"><use href="assets/icons.svg#i-menu"/></svg></button>
+                <div class="tb-title"><h1 id="tbTitle">فیشهای حقوقی</h1><small id="tbSub"></small></div>
+                <div class="ms-auto d-flex align-items-center gap-2">
+                    <span class="tb-date"><svg class="ic"><use href="assets/icons.svg#i-calendar"/></svg>شنبه، ۱۷ مرداد ۱۴۰۵</span>
+                    <button class="icobtn tb-bell" title="اعلانها" data-demo="۲ اعلان: یک فیش پیشنویس در انتظار تأیید است."><svg class="ic"><use href="assets/icons.svg#i-bell"/></svg></button>
+                </div>
+            </header>
+
+            <main class="main-content">
+
+                <!-- ════════════════════ فرم فیش (view: payslip-form) ════════════════════ -->
+                <section class="view" id="v-payslip-form" data-title="فرم فیش حقوقی" data-sub="PayrollRecord — ورودیهای کارکرد + نتایج محاسبه" hidden>
+                    <div class="page-head">
+                        <div class="ph-t">
+                            <div class="crumb">پنل<svg class="ic"><use href="assets/icons.svg#i-chl"/></svg><a href="payslips.html" data-go="payslips">فیشهای حقوقی</a><svg class="ic"><use href="assets/icons.svg#i-chl"/></svg>فیش جدید</div>
+                            <h1>صدور فیش جدید</h1>
+                            <p>فقط ورودیهای کارکرد را وارد کنید — نتایج در پیادهسازی اصلی سمت سرور محاسبه میشود.</p>
+                        </div>
+                        <div class="ph-actions">
+                            <a class="btn btn-g" href="payslips.html" data-go="payslips"><svg class="ic"><use href="assets/icons.svg#i-x"/></svg>انصراف</a>
+                            <button class="btn btn-p" data-demo="فیش بهصورت پیشنویس ثبت شد (نمایشی)."><svg class="ic"><use href="assets/icons.svg#i-check"/></svg>صدور فیش</button>
+                        </div>
+                    </div>
+
+                    <div class="row g-4">
+                        <div class="col-lg-8">
+                            <div class="panel"><div class="panel-b">
+                                <form>
+                                    <input type="hidden" name="Id">
+                                    <div class="sec"><svg class="ic"><use href="assets/icons.svg#i-calendar"/></svg>دوره و کارمند</div>
+                                    <div class="row g-3">
+                                        <div class="col-md-6 field">
+                                            <label class="f-label" for="r-emp"><span class="req-s">*</span>فیشِ چه کسی؟ <span class="f-badge fb-grn">EmployeeId</span></label>
+                                            <select class="in" id="r-emp" data-autofocus>
+                                                <option>رضا محمدی — P-1001</option><option>زهرا کریمی — P-1002</option><option>حسین عباسی — P-1003</option>
+                                                <option>فاطمه نادری — P-1004</option><option>مریم صادقی — P-1005</option>
+                                            </select>
+                                            <div class="f-help">ترکیب (کارمند، سال، ماه) یکتاست.</div>
+                                        </div>
+                                        <div class="col-md-3 field">
+                                            <label class="f-label" for="r-year"><span class="req-s">*</span>سال <span class="f-badge fb-grn">PeriodYear</span></label>
+                                            <select class="in" id="r-year"><option>۱۴۰۴</option><option selected>۱۴۰۵</option><option>۱۴۰۶</option></select>
+                                        </div>
+                                        <div class="col-md-3 field">
+                                            <label class="f-label" for="r-month"><span class="req-s">*</span>ماه <span class="f-badge fb-grn">PeriodMonth</span></label>
+                                            <select class="in" id="r-month"><option>فروردین</option><option>اردیبهشت</option><option>خرداد</option><option>تیر</option><option selected>مرداد</option><option>شهریور</option><option>مهر</option><option>آبان</option><option>آذر</option><option>دی</option><option>بهمن</option><option>اسفند</option></select>
+                                        </div>
+                                    </div>
+
+                                    <div class="sec"><svg class="ic"><use href="assets/icons.svg#i-clock"/></svg>کارکرد ماه — روزها</div>
+                                    <div class="row g-3">
+                                        <div class="col-md-3 col-6 field">
+                                            <label class="f-label" for="r-wdays"><span class="req-s">*</span>روزهای کارکرد <span class="f-badge fb-grn">WorkedDaysCount</span></label>
+                                            <input type="number" class="in num" id="r-wdays" value="30" min="0" max="31" step="0.5">
+                                        </div>
+                                        <div class="col-md-3 col-6 field">
+                                            <label class="f-label" for="r-leave"><span class="req-s">*</span>روزهای مرخصی</label>
+                                            <input type="number" class="in num" id="r-leave" value="0" min="0" max="31">
+                                            <div class="f-help">استحقاقی با حقوق؛ جزو کارکرد است.</div>
+                                        </div>
+                                        <div class="col-md-3 col-6 field">
+                                            <label class="f-label" for="r-abs"><span class="req-s">*</span>روزهای غیبت</label>
+                                            <input type="number" class="in num" id="r-abs" value="0" min="0" max="31">
+                                            <div class="f-help">هر روز = کسر حقوق همان روز.</div>
+                                        </div>
+                                        <div class="col-md-3 col-6 field">
+                                            <label class="f-label" for="r-mission"><span class="req-s">*</span>روزهای مأموریت</label>
+                                            <input type="number" class="in num" id="r-mission" value="0" min="0" max="31">
+                                        </div>
+                                    </div>
+
+                                    <div class="sec"><svg class="ic"><use href="assets/icons.svg#i-clock"/></svg>کارکرد ماه — ساعتها</div>
+                                    <div class="row g-3">
+                                        <div class="col-md-4 field">
+                                            <label class="f-label" for="r-ot"><span class="req-s">*</span>ساعات اضافهکاری <span class="f-badge fb-grn">OvertimeHours</span></label>
+                                            <input type="number" class="in num" id="r-ot" value="24" min="0">
+                                            <div class="f-help">سقف قانونی: ۴ ساعت در روز.</div>
+                                        </div>
+                                        <div class="col-md-4 field">
+                                            <label class="f-label" for="r-night"><span class="req-s">*</span>ساعات شبکاری <span class="f-badge fb-grn">NightShiftHours</span></label>
+                                            <input type="number" class="in num" id="r-night" value="18" min="0">
+                                            <div class="f-help">شب = ساعت ۲۲ تا ۶.</div>
+                                        </div>
+                                        <div class="col-md-4 field">
+                                            <label class="f-label" for="r-fri"><span class="req-s">*</span>ساعات جمعهکاری <span class="f-badge fb-grn">FridayWorkHours</span></label>
+                                            <input type="number" class="in num" id="r-fri" value="8" min="0">
+                                        </div>
+                                    </div>
+
+                                    <div class="sec"><svg class="ic"><use href="assets/icons.svg#i-percent"/></svg>مالیات و وضعیت</div>
+                                    <div class="row g-3">
+                                        <div class="col-md-5 field">
+                                            <label class="f-label" for="r-tax">مبلغ مالیات <span class="f-badge fb-blu">منشأ خارجی</span></label>
+                                            <div class="amount"><input class="in" id="r-tax" value="0" inputmode="numeric"><span class="unit">ریال</span></div>
+                                            <div class="f-help">از سامانهٔ مالیات حقوق میآید؛ اگر کارمند مشمول نباشد حتماً صفر است.</div>
+                                        </div>
+                                        <div class="col-md-4 field">
+                                            <label class="f-label" for="r-status"><span class="req-s">*</span>وضعیت فیش <span class="f-badge fb-grn">Status</span></label>
+                                            <select class="in" id="r-status"><option>پیشنویس</option><option disabled>نهایی</option><option disabled>پرداختشده</option></select>
+                                            <div class="f-help">فیش جدید همیشه پیشنویس ایجاد میشود.</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-foot">
+                                        <button type="button" class="btn btn-g" data-demo="فیش بهعنوان پیشنویس ذخیره شد (نمایشی).">ذخیره پیشنویس</button>
+                                        <button type="button" class="btn btn-p" data-demo="فیش بهصورت نمایشی صادر شد."><svg class="ic"><use href="assets/icons.svg#i-check"/></svg>صدور فیش</button>
+                                        <a class="btn btn-g ms-auto" href="payslips.html" data-go="payslips">انصراف</a>
+                                    </div>
+                                </form>
+                            </div></div>
+                        </div>
+
+                        <!-- پنل پیشنمایش محاسبه -->
+                        <div class="col-lg-4">
+                            <div class="calc-box">
+                                <h4><svg class="ic"><use href="assets/icons.svg#i-receipt"/></svg>پیشنمایش محاسبه</h4>
+                                <div class="crow"><span>مزد هر ساعت (پایه ÷ ۲۲۰)</span><span>۵٬۸۱۸٬۱۸۲</span></div>
+                                <div class="crow"><span>حقوق پایه (۳۰ روز)</span><span>۱٬۲۸۰٬۰۰۰٬۰۰۰</span></div>
+                                <div class="crow"><span>اضافهکاری ×۱٫۴ (۲۴ ساعت)</span><span>۱۹۵٬۴۹۰٬۹۰۰</span></div>
+                                <div class="crow"><span>مازاد شبکاری ۳۵٪ (۱۸ ساعت)</span><span>۳۶٬۶۵۴٬۵۰۰</span></div>
+                                <div class="crow"><span>فوقالعادهٔ جمعهکاری ۴۰٪ (۸ ساعت)</span><span>۱۸٬۶۱۸٬۲۰۰</span></div>
+                                <div class="crow"><span>مسکن + بن + حق اولاد (۲ فرزند)</span><span>۵۶۸٬۹۳۷٬۳۲۸</span></div>
+                                <div class="crow tot"><span>جمع ناخالص</span><span>۲٬۰۹۹٬۷۰۰٬۹۲۸</span></div>
+                                <div class="crow ded"><span>بیمهٔ سهم کارگر ۷٪</span><span>−۱۱۴٬۸۰۰٬۰۰۰</span></div>
+                                <div class="crow ded"><span>مالیات</span><span>۰</span></div>
+                                <div class="cnet"><span>خالص پرداختی</span><b>۱٬۹۸۴٬۹۰۰٬۹۲۸</b></div>
+                                <div class="calc-note"><svg class="ic"><use href="assets/icons.svg#i-info"/></svg><div>این اعداد نمونهاند؛ فرمولها مطابق سند دامنه و در پیادهسازی اصلی سمت سرور اجرا میشوند.</div></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+            <footer class="app-foot">سامانهٔ حقوق و دستمزد · قالب نمایشی — منطق درج، ویرایش، حذف و محاسبه با <b>.NET</b> تکمیل میشود · مرداد ۱۴۰۵</footer>
+        </div>
+    </div>
+
+    <script src="js/core.js"></script>
+</body>
+</html>

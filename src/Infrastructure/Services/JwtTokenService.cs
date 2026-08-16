@@ -9,14 +9,16 @@ public class JwtTokenService(IOptions<ApplicationSettings> options) : IJwtTokenS
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtTokenSettings.SigningKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
+        List<Claim> claims = [new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())];
+        if (user.PhoneNumber != null)
+            claims.Add(new(ClaimTypes.MobilePhone, user.PhoneNumber));
+        if (user.Email != null)
+            claims.Add(new(ClaimTypes.Email, user.Email));
+
         var token = new JwtSecurityToken(
             audience: _jwtTokenSettings.Audience,
             issuer: _jwtTokenSettings.Issuer,
-            claims:
-            [
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.MobilePhone, user.PhoneNumber)
-            ],
+            claims:claims,
             expires: DateTime.UtcNow.AddMinutes(_jwtTokenSettings.ExpiresInMinutes),
             signingCredentials: creds);
 
