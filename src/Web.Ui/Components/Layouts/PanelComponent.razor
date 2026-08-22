@@ -1,0 +1,88 @@
+@using System.Security.Claims
+@namespace Web.Ui.Components.Layouts
+
+<aside class="sidebar" id="sideEl">
+    <div class="sb-brand">
+        <svg class="lg">
+            <use href="assets/img/icons.svg#i-logo"/>
+        </svg>
+        <div><b>سامانهٔ حقوق و دستمزد</b><small>پنل مدیر کارگاه‌ها</small></div>
+    </div>
+    <div class="sb-group">عملیات ماهانه</div>
+    <nav class="sb-nav">
+        <NavLink ActiveClass="active" Match="NavLinkMatch.Prefix" class="sb-item" href="/dashboard">
+            <svg class="ic">
+                <use href="assets/img/icons.svg#i-grid"/>
+            </svg>
+            داشبورد
+        </NavLink>
+        <a class="sb-item" href="payslips.html">
+            <svg class="ic">
+                <use href="assets/img/icons.svg#i-receipt"/>
+            </svg>
+            فیش‌های حقوقی<span class="sb-count">۵</span></a>
+        <a class="sb-item" href="profiles.html">
+            <svg class="ic">
+                <use href="assets/img/icons.svg#i-doc"/>
+            </svg>
+            احکام حقوقی<span class="sb-count">۶</span></a>
+        <a class="sb-item" href="employees.html">
+            <svg class="ic">
+                <use href="assets/img/icons.svg#i-users"/>
+            </svg>
+            کارکنان<span class="sb-count">۶</span></a>
+    </nav>
+    <div class="sb-group">ساختار سازمانی</div>
+    <nav class="sb-nav">
+        <NavLink @ActiveClass="active" Match="NavLinkMatch.Prefix" class="sb-item" href="/workshops">
+            <svg class="ic">
+                <use href="assets/img/icons.svg#i-factory"/>
+            </svg>
+            کارگاه‌ها
+        </NavLink>
+        <a class="sb-item" href="departments.html">
+            <svg class="ic">
+                <use href="assets/img/icons.svg#i-dept"/>
+            </svg>
+            بخش‌ها<span class="sb-count">۷</span></a>
+    </nav>
+    @if (_managerFullName is not null)
+    {
+        <div class="sb-foot">
+            <div class="sb-user">
+                <div class="sb-av">@_managerFullName[0]</div>
+                <div><b>@_managerFullName</b><small class="ltr">@_managerPhoneNumberOrEmail</small></div>
+                <button class="icobtn" title="خروج از سامانه" @onclick="Logout">
+                    <svg class="ic">
+                        <use href="assets/img/icons.svg#i-logout"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    }
+</aside>
+
+@code
+{
+    private string? _managerFullName;
+    private string? _managerPhoneNumberOrEmail;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        _managerFullName = user.Identity?.Name;
+        _managerPhoneNumberOrEmail = user.Claims
+            .FirstOrDefault(c =>
+                c.Type is ClaimTypes.MobilePhone or ClaimTypes.Email)?.Value;
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task Logout()
+    {
+        await AuthService.LogoutAsync();
+        AuthProvider.NotifyUserLogout();
+        NavigationManager.NavigateTo("/login", true);
+    }
+}

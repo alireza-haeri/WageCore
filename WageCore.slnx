@@ -34,5 +34,6 @@
     <Project Path="tests/Infrastructure.Tests/Infrastructure.Tests.csproj" />
     <Project Path="tests/Integration.Tests/Integration.Tests.csproj" />
     <Project Path="tests/Shared.Tests/Shared.Tests.csproj" />
+    <Project Path="tests/Shared.Web.Tests /Shared.Web.Tests.csproj" />
   </Folder>
 </Solution>

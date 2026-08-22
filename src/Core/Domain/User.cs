@@ -10,6 +10,9 @@ public class User
     public string? PhoneNumber { get; private set; }
     public string? Email { get; private set; }
     public string FullName { get; private set; } = string.Empty;
+    
+    private readonly List<Workshop> _workshops = [];
+    public IReadOnlyCollection<Workshop> Workshops => _workshops.AsReadOnly();
 
     public static DomainResult<User> Create(Guid id, string? phoneNumber, string? email, string? fullName)
     {

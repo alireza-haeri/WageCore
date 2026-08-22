@@ -48,6 +48,23 @@ public class JwtTokenServiceTests
     }
 
     [Fact]
+    public void GenerateToken_ShouldContainFullNameClaim()
+    {
+        var fullName = "علی رضایی";
+        var user = _userBuilder
+            .WithFullName(fullName)
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        var result = _service.GenerateToken(user);
+
+        var claims = JwtTokenHelper.GetTokenClaims(result.Token);
+        claims.Should().Contain(c =>
+            c.Type == ClaimTypes.Name &&
+            c.Value == fullName);
+    }
+
+    [Fact]
     public void GenerateToken_ShouldContainPhoneNumberClaim_WhenPhoneNumberProvided()
     {
         var validPhoneNumber = "09123456789";

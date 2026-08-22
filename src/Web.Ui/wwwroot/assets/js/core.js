@@ -63,6 +63,9 @@ function closeSide() {
     if (sbBack) sbBack.classList.remove("show");
 }
 
+// برای استفاده در onclick توی HTML (دسترسی سراسری)
+window.closeSide = closeSide;
+
 /* ===== مودال‌ها ===== */
 function openM(id) {
     const el = document.getElementById(id);
@@ -93,7 +96,7 @@ function toast(msg) {
     setTimeout(() => {
         t.classList.add("out");
         setTimeout(() => t.remove(), 320);
-    }, 33000);
+    }, 3300);
 }
 
 /* ===== راه‌اندازی ===== */
@@ -119,7 +122,12 @@ function runApp() {
     const sbBack = $("#sbBack");
 
     if (btnBurger && sideEl && sbBack) {
-        btnBurger.addEventListener("click", () => {
+        // حذف کلاس open از sideEl در صورت وجود (برای جلوگیری از باز بودن پیش‌فرض)
+        sideEl.classList.remove("open");
+        sbBack.classList.remove("show");
+
+        btnBurger.addEventListener("click", (e) => {
+            e.stopPropagation();
             sideEl.classList.toggle("open");
             sbBack.classList.toggle("show");
         });
@@ -128,7 +136,7 @@ function runApp() {
 
         // بستن سایدبار با کلیک بیرون
         document.addEventListener("click", e => {
-            if (sideEl && btnBurger) {
+            if (sideEl.classList.contains("open")) {
                 if (!sideEl.contains(e.target) && !btnBurger.contains(e.target)) {
                     closeSide();
                 }
@@ -151,7 +159,10 @@ function runApp() {
         const confirmBtn = e.target.closest("[data-confirm]");
         if (confirmBtn) {
             const msg = confirmBtn.dataset.confirm || "تأیید";
-            $("#confirmText").textContent = msg + " — این عملیات در قالب نمایشی است.";
+            const confirmText = $("#confirmText");
+            if (confirmText) {
+                confirmText.textContent = msg + " — این عملیات در قالب نمایشی است.";
+            }
             openM("mConfirm");
         }
 
@@ -194,17 +205,20 @@ function runApp() {
     go(initialView);
 }
 
-/* ===== صبر برای آماده‌شدن کامل DOM (مناسب Blazor) ===== */
+/* ===== صبر برای آماده‌شدن کامل DOM ===== */
 let attempts = 0;
 const MAX_ATTEMPTS = 60;
 
 function waitForDomAndRun() {
     attempts++;
 
-    const authLayer = document.getElementById("authLayer");
-    const appLayer = document.getElementById("appLayer");
+    // وجود حداقل یکی از المان‌های کلیدی برای شروع
+    const hasAuthLayer = document.getElementById("authLayer") !== null;
+    const hasAppLayer = document.getElementById("appLayer") !== null;
+    const hasSidebar = document.getElementById("sideEl") !== null;
 
-    if ((authLayer && appLayer) || attempts >= MAX_ATTEMPTS) {
+    // اگر المان‌های لاگین وجود دارن یا سایدبار وجود داره یا تعداد تلاش به حد نهایی رسیده
+    if ((hasAuthLayer && hasAppLayer) || hasSidebar || attempts >= MAX_ATTEMPTS) {
         runApp();
         return;
     }

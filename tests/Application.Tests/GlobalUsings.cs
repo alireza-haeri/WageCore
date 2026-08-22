@@ -11,3 +11,7 @@ global using NSubstitute;
 global using Shared.Kernel.Common;
 global using Shared.Tests.Assertions;
 global using Shared.Tests.Builders;
+global using Application.Features.Workshops;
+global using Core.Abstractions.Repositories.Workshops;
+global using Application.Validations;
+global using Core.Contracts.Workshops;

@@ -17,6 +17,9 @@ public class ApiFixture : WebApplicationFactory<Program>
 
             services.AddDbContext<WageCoreDbContext>(options =>
                 options.UseInMemoryDatabase(_dbName));
+            
+            services.AddControllers()
+                .AddApplicationPart(typeof(TestDateTimeController).Assembly);
         });
     }
 

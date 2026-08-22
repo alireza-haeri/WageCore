@@ -19,7 +19,13 @@ builder
     .ConfigureCore()
     .ConfigureInfrastructure();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new PersianDateJsonConverter());
+        options.JsonSerializerOptions.Converters.Add(new PersianTimeJsonConverter());
+        options.JsonSerializerOptions.Converters.Add(new PersianDateTimeJsonConverter());
+    });
 
 //Add Authentication
 builder.AddAuthentication();

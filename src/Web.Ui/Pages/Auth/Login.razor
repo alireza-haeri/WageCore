@@ -107,11 +107,18 @@
                 <ValidationMessage TValue="string" For="() => _formHelper.Model.Password" class="f-help text-danger"/>
             </div>
 
-            <button type="submit" class="btn btn-p btn-lg btn-block">
-                <svg class="ic">
-                    <use href="assets/img/icons.svg#i-logout"/>
-                </svg>
-                ورود به پنل
+            <button type="submit" class="btn btn-p btn-lg btn-block" disabled="@_isLoading">
+                @if (_isLoading)
+                {
+                    <span>در حال پردازش...</span>
+                }
+                else
+                {
+                    <svg class="ic">
+                        <use href="assets/img/icons.svg#i-logout" />
+                    </svg>
+                    <span>ورود به پنل</span>
+                }
             </button>
         </EditForm>
         <div class="ac-foot">حساب ندارید؟ <a href="/register">ثبت‌نام</a></div>
@@ -128,7 +135,7 @@
     {
         var query = NavigationManager.ToAbsoluteUri(NavigationManager.Uri).Query;
         var queryParams = System.Web.HttpUtility.ParseQueryString(query);
-        _returnUrl = queryParams["returnUrl"] ?? "/";
+        _returnUrl = queryParams["returnUrl"] ?? "/dashboard";
 
         if (await AuthService.IsAuthenticatedAsync())
         {

@@ -1,7 +1,4 @@
 @page "/register"
-@using System.Collections.Concurrent
-@using Web.Ui.Models
-@using Web.Ui.Services
 @layout AuthLayout
 
 <aside class="auth-brand">
@@ -116,12 +113,18 @@
                 </div>
                 <ValidationMessage TValue="string" For="() => _formHelper.Model.Password" class="f-help text-danger"/>
             </div>
-
-            <button type="submit" class="btn btn-p btn-lg btn-block">
-                <svg class="ic">
-                    <use href="assets/img/icons.svg#i-logout"/>
-                </svg>
-                ثبت نام
+            <button type="submit" class="btn btn-p btn-lg btn-block" disabled="@_isLoading">
+                @if (_isLoading)
+                {
+                    <span>در حال پردازش...</span>
+                }
+                else
+                {
+                    <svg class="ic">
+                        <use href="assets/img/icons.svg#i-logout"/>
+                    </svg>
+                    <span>ثبت نام</span>
+                }
             </button>
         </EditForm>
         <div class="ac-foot">حساب دارید؟ <a href="/login">ورود</a></div>

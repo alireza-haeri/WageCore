@@ -11,3 +11,8 @@ global using Shared.Web;
 global using Swashbuckle.AspNetCore.Annotations;
 global using Web.Api.Controllers.Users.Contracts;
 global using Application;
+global using Application.Features.Workshops;
+global using Core.Domain;
+global using Web.Api.Controllers.Workshops.Contracts;
+global using Shared.Web.DateTimeHandling.JsonConvertor;
+global using Shared.Web.DateTimeHandling.CustomTypes;

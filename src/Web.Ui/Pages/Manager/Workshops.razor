@@ -1,0 +1,171 @@
+@page "/workshops"
+@layout ManagerLayout
+
+<div class="page-head">
+    <div class="ph-t">
+        <div class="crumb">پنل
+            <svg class="ic">
+                <use href="assets/img/icons.svg#i-chl"/>
+            </svg>
+            کارگاه‌ها
+        </div>
+        <h1>کارگاه‌ها</h1>
+        <p>هر کارگاه یک مدیر دارد و چترِ همهٔ بخش‌ها و کارکنان است.</p>
+    </div>
+    <div class="ph-actions">
+        <button class="btn btn-g" data-demo="خروجی اکسل در پیاده‌سازی اصلی تولید می‌شود.">
+            <svg
+                class="ic">
+                <use href="assets/img/icons.svg#i-dl"/>
+            </svg>
+            خروجی اکسل
+        </button>
+        <a class="btn btn-p" href="/workshop-form">
+            <svg class="ic">
+                <use href="assets/img/icons.svg#i-plus"/>
+            </svg>
+            کارگاه جدید</a>
+    </div>
+</div>
+<div class="panel">
+    <div class="toolbar">
+        <div class="srch">
+            <svg class="ic">
+                <use href="assets/img/icons.svg#i-search"/>
+            </svg>
+            <input placeholder="جست‌وجو در نام یا آدرس کارگاه…"></div>
+        <select class="in tb-sel">
+            <option>همهٔ مناطق</option>
+            <option>عادی</option>
+            <option>کمتر توسعه‌یافته</option>
+        </select>
+        <span class="chip c-grn ms-auto"><span class="c-dot"></span>۳ کارگاه فعال</span>
+    </div>
+    <div class="panel-b">
+        <div class="row g-3">
+            <div class="col-md-6 col-xl-4">
+                <div class="panel h-100" style="box-shadow:none">
+                    <div class="panel-b pb-2">
+                        <div class="d-flex gap-3 align-items-start">
+                            <div class="ti fi-y"
+                                 style="width:44px;height:44px;border-radius:12px;display:grid;place-items:center">
+                                <svg class="ic">
+                                    <use href="assets/img/icons.svg#i-factory"/>
+                                </svg>
+                            </div>
+                            <div class="flex-grow-1">
+                                <b style="font-size:14.5px">کارخانهٔ نساجی پارس</b>
+                                <div style="font-size:11.5px;color:var(--muted)">اصفهان، شهرک صنعتی جی،
+                                    خیابان ششم، پلاک ۱۲
+                                </div>
+                            </div>
+                            <span class="chip c-blu">عادی</span>
+                        </div>
+                        <div class="d-flex gap-3 flex-wrap mt-3"
+                             style="font-size:11.5px;color:var(--muted)">
+                            <span>شناسهٔ ملی: <span class="ltr">10380457211</span></span>
+                            <span>ثبت: ۱۳۹۵/۰۳/۱۲</span>
+                        </div>
+                    </div>
+                    <div class="panel-f">
+                        <span>۴ بخش</span>·<span>۴ کارمند</span>
+                        <span class="rowact ms-auto">
+                                            <a class="icobtn" href="workshop-form.html" title="ویرایش"><svg class="ic">
+                                                    <use href="assets/img/icons.svg#i-pen"/>
+                                                </svg></a>
+                                            <button class="icobtn danger" title="حذف"
+                                                    data-confirm="حذف کارگاه «کارخانهٔ نساجی پارس»"><svg class="ic">
+                                                    <use href="assets/img/icons.svg#i-trash"/>
+                                                </svg></button>
+                                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-4">
+                <div class="panel h-100" style="box-shadow:none">
+                    <div class="panel-b pb-2">
+                        <div class="d-flex gap-3 align-items-start">
+                            <div class="ti fi-b"
+                                 style="width:44px;height:44px;border-radius:12px;display:grid;place-items:center">
+                                <svg class="ic">
+                                    <use href="assets/img/icons.svg#i-factory"/>
+                                </svg>
+                            </div>
+                            <div class="flex-grow-1">
+                                <b style="font-size:14.5px">شرکت پخش آریا</b>
+                                <div style="font-size:11.5px;color:var(--muted)">تهران، خیابان ولیعصر،
+                                    بالاتر از پارک ساعی، پلاک ۲۲۰
+                                </div>
+                            </div>
+                            <span class="chip c-blu">عادی</span>
+                        </div>
+                        <div class="d-flex gap-3 flex-wrap mt-3"
+                             style="font-size:11.5px;color:var(--muted)">
+                            <span>شناسهٔ ملی: <span class="ltr">10860234950</span></span>
+                            <span>ثبت: ۱۳۹۸/۰۷/۰۲</span>
+                        </div>
+                    </div>
+                    <div class="panel-f">
+                        <span>۲ بخش</span>·<span>۱ کارمند</span>
+                        <span class="rowact ms-auto">
+                                            <a class="icobtn" href="workshop-form.html" title="ویرایش"><svg class="ic">
+                                                    <use href="assets/img/icons.svg#i-pen"/>
+                                                </svg></a>
+                                            <button class="icobtn danger" title="حذف"
+                                                    data-confirm="حذف کارگاه «شرکت پخش آریا»"><svg class="ic">
+                                                    <use href="assets/img/icons.svg#i-trash"/>
+                                                </svg></button>
+                                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-4">
+                <div class="panel h-100" style="box-shadow:none">
+                    <div class="panel-b pb-2">
+                        <div class="d-flex gap-3 align-items-start">
+                            <div class="ti fi-g"
+                                 style="width:44px;height:44px;border-radius:12px;display:grid;place-items:center">
+                                <svg class="ic">
+                                    <use href="assets/img/icons.svg#i-factory"/>
+                                </svg>
+                            </div>
+                            <div class="flex-grow-1">
+                                <b style="font-size:14.5px">کارگاه بسته‌بندی سپید</b>
+                                <div style="font-size:11.5px;color:var(--muted)">شهرکرد، بلوار کارگر،
+                                    کوچهٔ سوم، پلاک ۸
+                                </div>
+                            </div>
+                            <span class="chip c-gold">کمتر توسعه‌یافته</span>
+                        </div>
+                        <div class="d-flex gap-3 flex-wrap mt-3"
+                             style="font-size:11.5px;color:var(--muted)">
+                            <span>شناسهٔ ملی: <span class="ltr">14020118763</span></span>
+                            <span>ثبت: ۱۴۰۵/۰۴/۲۰</span>
+                        </div>
+                    </div>
+                    <div class="panel-f">
+                        <span>۱ بخش</span>·<span>بدون کارمند</span>
+                        <span class="rowact ms-auto">
+                            <a class="icobtn" href="workshop-form.html" title="ویرایش">
+                                <svg class="ic">
+                                    <use href="assets/img/icons.svg#i-pen"/>
+                                </svg></a>
+                            <button class="icobtn danger" title="حذف"
+                                    data-confirm="حذف کارگاه «کارگاه بسته‌بندی سپید»">
+                                <svg class="ic">
+                                    <use href="assets/img/icons.svg#i-trash"/>
+                                </svg></button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-f">
+        <svg class="ic" style="width:14px;height:14px">
+            <use href="assets/img/icons.svg#i-info"/>
+        </svg>
+        کارگاه فقط «نوع» منطقه را نگه می‌دارد؛ مبالغ حداقل حقوق هر منطقه در بخشنامه‌هاست و سالانه
+        یک‌جا به‌روز می‌شود.
+    </div>
+</div>
