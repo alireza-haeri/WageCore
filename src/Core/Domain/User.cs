@@ -6,6 +6,8 @@ namespace Core.Domain;
 
 public class User
 {
+    public const string TableName = "Users";
+    
     public Guid Id { get; private init; }
     public string? PhoneNumber { get; private set; }
     public string? Email { get; private set; }

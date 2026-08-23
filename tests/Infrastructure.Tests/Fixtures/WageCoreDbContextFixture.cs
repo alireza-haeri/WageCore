@@ -1,19 +1,36 @@
-
+using Infrastructure.Persistence.Dapper;
 
 namespace Infrastructure.Tests.Fixtures;
 
-public sealed class WageCoreDbContextFixture : IDisposable
+public sealed class WageCoreDbContextFixture : IAsyncLifetime
 {
-    private readonly string _databaseName = $"IdentityTestDb_{Guid.NewGuid()}";
+    private static readonly MsSqlContainer SqlContainer = new MsSqlBuilder()
+        .WithImage("mcr.microsoft.com/mssql/server:2025-latest")
+        .Build();
 
-    private ServiceProvider RootProvider { get; }
+    private readonly string _databaseName = $"TestDb_{Guid.NewGuid():N}";
+    private ServiceProvider _serviceProvider = null!;
+    private string _connectionString = null!;
+    private Respawner _respawner = null!;
 
-    public WageCoreDbContextFixture()
+    public async Task InitializeAsync()
     {
+        if (SqlContainer.State != TestcontainersStates.Running)
+        {
+            await SqlContainer.StartAsync();
+        }
+
+        var baseConnectionString = SqlContainer.GetConnectionString();
+        var builder = new SqlConnectionStringBuilder(baseConnectionString)
+        {
+            InitialCatalog = _databaseName
+        };
+        _connectionString = builder.ConnectionString;
+
         var services = new ServiceCollection();
 
         services.AddDbContext<WageCoreDbContext>(options =>
-            options.UseInMemoryDatabase(_databaseName));
+            options.UseSqlServer(_connectionString));
 
         services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
             {
@@ -26,28 +43,49 @@ public sealed class WageCoreDbContextFixture : IDisposable
             .AddEntityFrameworkStores<WageCoreDbContext>()
             .AddDefaultTokenProviders();
 
+        DapperTypeHandlers.Register();
+        services.AddSingleton<IDbConnectionFactory>(
+            new TestSqlConnectionFactory(_connectionString));
+
         services.AddLogging();
         services.AddScoped<UserRepository>();
+        services.AddScoped<WorkshopRepository>();
+        services.AddScoped<IWorkshopQuery, WorkshopQuery>();
 
-        RootProvider = services.BuildServiceProvider();
+        _serviceProvider = services.BuildServiceProvider();
+
+        await using (var scope = _serviceProvider.CreateAsyncScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<WageCoreDbContext>();
+            //await dbContext.Database.EnsureCreatedAsync();
+            await dbContext.Database.MigrateAsync();
+        }
+
+        await using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        _respawner = await Respawner.CreateAsync(connection, new RespawnerOptions
+        {
+            DbAdapter = DbAdapter.SqlServer,
+        });
     }
 
-    public AsyncServiceScope CreateScope()
+    public async Task DisposeAsync()
     {
-        return RootProvider.CreateAsyncScope();
+        await _serviceProvider.DisposeAsync();
     }
-
+    
     public async Task ResetDatabaseAsync()
     {
-        await using var scope = CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<WageCoreDbContext>();
-
-        await dbContext.Database.EnsureDeletedAsync();
-        await dbContext.Database.EnsureCreatedAsync();
+        await using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+        await _respawner.ResetAsync(connection);
     }
 
-    public void Dispose()
+    public AsyncServiceScope CreateScope() => _serviceProvider.CreateAsyncScope();
+
+    private sealed class TestSqlConnectionFactory(string connectionString) : IDbConnectionFactory
     {
-        RootProvider.Dispose();
+        public IDbConnection CreateConnection() => new SqlConnection(connectionString);
     }
 }

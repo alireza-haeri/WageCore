@@ -1,6 +1,9 @@
 namespace Core.Contracts;
 
-public record PaginationDto(int PageNumber, int PageSize);
+public record PaginationDto(int PageNumber, int PageSize)
+{
+    public int Offset => (PageNumber - 1) * PageSize;
+};
 
 public record PagedResult<T>(List<T> Items, int TotalCount, int PageNumber, int PageSize)
 {

@@ -2,6 +2,9 @@ namespace Core.Domain;
 
 public class Workshop
 {
+    public const string TableName = "Workshops";
+    public const int MaxDisplayNameLength = 20;
+
     public Guid Id { get; private init; }
     public Guid UserId { get; private init; }
     public string Name { get; private set; } = null!;
@@ -10,8 +13,6 @@ public class Workshop
     public DateOnly RegistrationDate { get; private set; }
     public string NationalId { get; private set; } = null!;
     public string? PostalCode { get; private set; }
-
-    public User User { get; set; } = null!;
 
     public static DomainResult<Workshop> Create(Guid workshopId, Guid userId, string name, string address,
         WorkshopRegion? region,
