@@ -1,37 +1,60 @@
 using Microsoft.AspNetCore.Components.Forms;
+using System.Reflection;
 using Web.Ui.Models;
 
 namespace Web.Ui.Services;
 
-public class FormHelper<TModel> where TModel : BaseModel, new()
+public class FormHelper<TModel> : IDisposable where TModel : BaseModel, new()
 {
     public TModel Model { get; set; }
-    public EditContext EditContext { get; set; }
-    private readonly ValidationMessageStore _validationMessageStore;
+    public EditContext? EditContext { get; private set; } = null!;
+    
+    // ✅ حذف readonly برای اینکه در Rebuild دوباره مقداردهی شود
+    private ValidationMessageStore _validationMessageStore = null!; 
     private readonly Dictionary<string, string> _fieldMapping = new();
 
     public FormHelper(TModel? model = null, Dictionary<string, string>? fieldMapping = null)
     {
         Model = model ?? new TModel();
-        EditContext = new EditContext(Model);
-        EditContext.AddDataAnnotationsValidation();
-        _validationMessageStore = new ValidationMessageStore(EditContext);
         
         if (fieldMapping == null)
         {
             foreach (var propertyInfo in Model.GetType().GetProperties())
             {
-                _fieldMapping.Add(propertyInfo.Name, propertyInfo.Name);
+                _fieldMapping[propertyInfo.Name] = propertyInfo.Name;
             }
         }
         else
-            _fieldMapping = fieldMapping;
-
-        EditContext.OnFieldChanged += (sender, args) =>
         {
-            _validationMessageStore.Clear(args.FieldIdentifier);
-            EditContext.NotifyValidationStateChanged();
-        };
+            _fieldMapping = fieldMapping;
+        }
+
+        InitializeEditContext();
+    }
+
+    private void InitializeEditContext()
+    {
+        if (EditContext != null)
+        {
+            EditContext.OnFieldChanged -= HandleFieldChanged;
+        }
+
+        EditContext = new EditContext(Model);
+        EditContext.AddDataAnnotationsValidation(); // فعال‌سازی ولیدیشن توکار
+        _validationMessageStore = new ValidationMessageStore(EditContext);
+        
+        EditContext.OnFieldChanged += HandleFieldChanged;
+    }
+
+    private void HandleFieldChanged(object? sender, FieldChangedEventArgs args)
+    {
+        _validationMessageStore.Clear(args.FieldIdentifier);
+        EditContext?.NotifyValidationStateChanged();
+    }
+
+    public void RebuildEditContext()
+    {
+        InitializeEditContext();
     }
 
     public void SetServerErrors(IDictionary<string, ICollection<string>> errors)
@@ -40,13 +63,18 @@ public class FormHelper<TModel> where TModel : BaseModel, new()
         {
             var fieldName = errorGroup.Key;
             var propertyName = _fieldMapping.GetValueOrDefault(fieldName, fieldName);
+
+            if (string.IsNullOrWhiteSpace(propertyName))
+            {
+                propertyName = "General";
+            }
+
             var propertyInfo = typeof(TModel).GetProperty(propertyName,
-                System.Reflection.BindingFlags.IgnoreCase | System.Reflection.BindingFlags.Public |
-                System.Reflection.BindingFlags.Instance);
+                BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
 
             var fieldIdentifier = propertyInfo != null
                 ? new FieldIdentifier(Model, propertyInfo.Name)
-                : new FieldIdentifier(Model, string.Empty);
+                : new FieldIdentifier(Model, "General");
 
             _validationMessageStore.Clear(fieldIdentifier);
 
@@ -70,15 +98,20 @@ public class FormHelper<TModel> where TModel : BaseModel, new()
     public IEnumerable<string> GetErrorsForField(string fieldName)
     {
         var propertyInfo = typeof(TModel).GetProperty(fieldName,
-            System.Reflection.BindingFlags.IgnoreCase | System.Reflection.BindingFlags.Public |
-            System.Reflection.BindingFlags.Instance);
+            BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
 
         if (propertyInfo == null)
-            return [];
+            return Array.Empty<string>();
 
         var fieldIdentifier = new FieldIdentifier(Model, propertyInfo.Name);
+        return _validationMessageStore[fieldIdentifier];
+    }
 
-        var messages = _validationMessageStore[fieldIdentifier];
-        return messages ?? [];
+    public void Dispose()
+    {
+        if (EditContext != null)
+        {
+            EditContext.OnFieldChanged -= HandleFieldChanged;
+        }
     }
 }
