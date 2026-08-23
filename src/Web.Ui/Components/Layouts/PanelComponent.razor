@@ -69,14 +69,25 @@
 
     protected override async Task OnInitializedAsync()
     {
+        NavigationManager.LocationChanged += OnLocationChanged;
+
         var authState = await AuthProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         _managerFullName = user.Identity?.Name;
         _managerPhoneNumberOrEmail = user.Claims
-            .FirstOrDefault(c =>
-                c.Type is ClaimTypes.MobilePhone or ClaimTypes.Email)?.Value;
+            .FirstOrDefault(c => c.Type is ClaimTypes.MobilePhone or ClaimTypes.Email)?.Value;
+    }
 
-        await base.OnInitializedAsync();
+    private async void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        try
+        {
+            await JsRuntime.InvokeVoidAsync("closeSide");
+        }
+        catch
+        {
+           
+        }
     }
 
     private async Task Logout()
@@ -84,5 +95,11 @@
         await AuthService.LogoutAsync();
         AuthProvider.NotifyUserLogout();
         NavigationManager.NavigateTo("/login", true);
+    }
+
+    // حتماً رویداد را در دیسپوز لغو کنیم تا نشت حافظه رخ ندهد
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
     }
 }

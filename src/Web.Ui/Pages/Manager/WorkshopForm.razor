@@ -1,5 +1,5 @@
-@page "/workshop-form"
 @page "/workshop-form/{id:guid}"
+@page "/workshop-form"
 @layout ManagerLayout
 
 <div class="page-head">
@@ -24,9 +24,8 @@
 
 <div class="panel">
     <div class="panel-b">
-        <EditForm EditContext="@_formHelper.EditContext" OnSubmit="@HandleSubmit">
+        <EditForm EditContext="@_formHelper.EditContext" OnValidSubmit="@HandleSubmit">
             <ValidationMessage TValue="string" For="() => _formHelper.Model.General" class="f-help text-danger"/>
-
             <div class="sec">
                 <svg class="ic"><use href="assets/img/icons.svg#i-factory"/></svg>
                 مشخصات کارگاه
@@ -45,25 +44,27 @@
                     <label class="f-label" for="w-region"><span class="req-s">*</span>نوع منطقه</label>
                     <InputSelect @bind-Value="_formHelper.Model.Region" class="in" id="w-region">
                         <option value="">انتخاب کنید...</option>
-                        <option value="Normal">عادی</option>
-                        <option value="LessDeveloped">کمتر توسعه‌یافته</option>
+                        <option value="@CreateWorkshopRequestRegion.Normal">عادی</option>
+                        <option value="@CreateWorkshopRequestRegion.LessDeveloped">کمتر توسعه‌یافته</option>
                     </InputSelect>
-                    <ValidationMessage TValue="string" For="() => _formHelper.Model.Region" class="f-help text-danger"/>
-                    <div class="f-help">مبالغ حداقل هر منطقه از جدول بخشنامه‌ها خوانده می‌شود.</div>
+                    <ValidationMessage TValue="CreateWorkshopRequestRegion" For="() => _formHelper.Model.Region"
+                                       class="f-help text-danger"/>
                 </div>
 
                 <div class="col-12 field">
                     <label class="f-label" for="w-addr"><span class="req-s">*</span>آدرس</label>
                     <InputText @bind-Value="_formHelper.Model.Address" class="in" id="w-addr"
-                               placeholder="حداقل ۱۰ نویسه — برای سربرگ لیست بیمه لازم است"/>
-                    <ValidationMessage TValue="string" For="() => _formHelper.Model.Address" class="f-help text-danger"/>
+                               placeholder="حداقل ۱۰ نویسه"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.Address"
+                                       class="f-help text-danger"/>
                 </div>
-
+                
                 <div class="col-md-4 field">
                     <label class="f-label" for="w-regdate"><span class="req-s">*</span>تاریخ ثبت</label>
                     <InputText @bind-Value="_formHelper.Model.RegistrationDate" class="in num" id="w-regdate"
                                inputmode="numeric" placeholder="۱۴۰۵/۰۵/۱۷"/>
-                    <ValidationMessage TValue="string" For="() => _formHelper.Model.RegistrationDate" class="f-help text-danger"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.RegistrationDate"
+                                       class="f-help text-danger"/>
                     <div class="f-help">شمسی؛ نمی‌تواند بزرگ‌تر از امروز باشد.</div>
                 </div>
 
@@ -71,7 +72,8 @@
                     <label class="f-label" for="w-nid"><span class="req-s">*</span>شناسهٔ ملی کارگاه</label>
                     <InputText @bind-Value="_formHelper.Model.NationalId" class="in in-ltr" id="w-nid"
                                inputmode="numeric" maxlength="11" placeholder="11 رقم"/>
-                    <ValidationMessage TValue="string" For="() => _formHelper.Model.NationalId" class="f-help text-danger"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.NationalId"
+                                       class="f-help text-danger"/>
                     <div class="f-help">شخص حقوقی: شناسهٔ ملی ۱۱ رقمی · کارگاه انفرادی: کد ملی ۱۰ رقمی مؤسس.</div>
                 </div>
 
@@ -79,14 +81,14 @@
                     <label class="f-label" for="w-postal">کد پستی <span class="f-badge fb-gold">اختیاری</span></label>
                     <InputText @bind-Value="_formHelper.Model.PostalCode" class="in in-ltr" id="w-postal"
                                inputmode="numeric" maxlength="10" placeholder="10 رقم"/>
-                    <ValidationMessage TValue="string" For="() => _formHelper.Model.PostalCode" class="f-help text-danger"/>
-                    <div class="f-help">برای سربرگ‌های رسمی.</div>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.PostalCode"
+                                       class="f-help text-danger"/>
                 </div>
             </div>
 
             <div class="note n-blu mt-2">
                 <svg class="ic"><use href="assets/img/icons.svg#i-info"/></svg>
-                <div>تاریخ استخدام هیچ کارمندی نمی‌تواند قبل از تاریخ ثبت این کارگاه باشد — این کنترل در پیاده‌سازی اصلی اعمال می‌شود.</div>
+                <div>تاریخ استخدام هیچ کارمندی نمی‌تواند قبل از تاریخ ثبت این کارگاه باشد.</div>
             </div>
 
             <div class="form-foot">
@@ -108,8 +110,7 @@
 </div>
 
 @code {
-    [Parameter]
-    public Guid? Id { get; set; }
+    [Parameter] public Guid? Id { get; set; }
 
     private FormHelper<WorkshopFormModel> _formHelper = new();
     private bool _isLoading;
@@ -122,25 +123,24 @@
             _isLoading = true;
             try
             {
-                // دریافت اطلاعات کارگاه از API
                 var result = await ApiService.SendAsync(
-                    apiCall: () => ApiClient.GetWorkshopByIdAsync(Id!.Value),
-                    showErrorToast: false
+                    apiCall: () => ApiClient.GetWorkshopForEditAsync(Id!.Value)
                 );
 
-                if (result != null && result.IsSuccess)
+                if (result is { IsSuccess: true })
                 {
                     var workshop = result.Response;
                     _formHelper.Model = new WorkshopFormModel
                     {
-                        Id = workshop.Id,
                         Name = workshop.Name,
-                        Region = workshop.Region,
+                        Region = (CreateWorkshopRequestRegion)workshop.Region,
                         Address = workshop.Address,
                         RegistrationDate = workshop.RegistrationDate,
                         NationalId = workshop.NationalId,
                         PostalCode = workshop.PostalCode
                     };
+
+                    _formHelper.RebuildEditContext();
                 }
                 else
                 {
@@ -155,8 +155,8 @@
         }
         else
         {
-            // مقدار پیش‌فرض برای تاریخ ثبت
-            _formHelper.Model.RegistrationDate = DateTime.Now.ToString("yyyy/MM/dd");
+            //todo change this with persian date today
+            _formHelper.Model.RegistrationDate = "1405/01/01";
         }
     }
 
@@ -167,37 +167,36 @@
 
         _formHelper.ClearErrors();
 
-        if (!_formHelper.Validate())
-        {
-            _isLoading = false;
-            return;
-        }
-
         var model = _formHelper.Model;
-
         if (IsEdit)
         {
             var result = await ApiService.SendAsync(
-                apiCall: () => ApiClient.UpdateWorkshopAsync(new UpdateWorkshopRequest(
-                    Id!.Value,
-                    model.Name,
-                    model.Region,
+                apiCall: () => ApiClient.UpdateWorkshopAsync(Id!.Value, new UpdateWorkshopRequest(
                     model.Address,
-                    model.RegistrationDate,
+                    model.Name,
                     model.NationalId,
-                    model.PostalCode
+                    model.PostalCode,
+                    (UpdateWorkshopRequestRegion)model.Region,
+                    model.RegistrationDate
                 )),
                 successMessage: "کارگاه با موفقیت ویرایش شد.",
                 showErrorToastValidation: false
             );
 
-            if (result != null && result.IsSuccess)
+            if (result is { IsSuccess: true })
             {
                 NavigationManager.NavigateTo("/workshops");
             }
             else if (result != null)
             {
                 _formHelper.SetServerErrors(result.Errors);
+                foreach (var er in result.Errors)
+                {
+                    foreach (var e in er.Value)
+                    {
+                        ToastService.ShowToastInfo(er.Key + e);
+                    }
+                }
                 ToastService.ShowToastWarning("لطفاً خطاها را بررسی کنید.");
             }
         }
@@ -205,18 +204,18 @@
         {
             var result = await ApiService.SendAsync(
                 apiCall: () => ApiClient.CreateWorkshopAsync(new CreateWorkshopRequest(
-                    model.Name,
-                    model.Region,
-                    model.Address,
-                    model.RegistrationDate,
-                    model.NationalId,
-                    model.PostalCode
+                    address: model.Address,
+                    name: model.Name,
+                    nationalId: model.NationalId,
+                    postalCode: model.PostalCode,
+                    region: model.Region,
+                    registrationDate: model.RegistrationDate
                 )),
                 successMessage: "کارگاه با موفقیت ثبت شد.",
                 showErrorToastValidation: false
             );
 
-            if (result != null && result.IsSuccess)
+            if (result is { IsSuccess: true })
             {
                 NavigationManager.NavigateTo("/workshops");
             }
@@ -232,8 +231,6 @@
 
     public class WorkshopFormModel : BaseModel
     {
-        public Guid? Id { get; set; }
-
         [Required(ErrorMessage = "نام کارگاه اجباری است.")]
         [StringLength(200, MinimumLength = 2, ErrorMessage = "نام کارگاه باید بین ۲ تا ۲۰۰ نویسه باشد.")]
         [Display(Name = "نام کارگاه")]
@@ -241,17 +238,18 @@
 
         [Required(ErrorMessage = "نوع منطقه اجباری است.")]
         [Display(Name = "نوع منطقه")]
-        public string Region { get; set; } = string.Empty;
+        public CreateWorkshopRequestRegion Region { get; set; }
 
         [Required(ErrorMessage = "آدرس اجباری است.")]
-        [StringLength(500, MinimumLength = 10, ErrorMessage = "آدرس باید حداقل ۱۰ نویسه باشد.")]
+        [MinLength(10, ErrorMessage = "آدرس باید حداقل ۱۰ نویسه باشد.")]
+        [MaxLength(1000, ErrorMessage = "آدرس نمی‌تواند بیش از ۱۰۰۰ نویسه باشد.")]
         [Display(Name = "آدرس")]
         public string Address { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "تاریخ ثبت اجباری است.")]
         [Display(Name = "تاریخ ثبت")]
         [RegularExpression(@"^\d{4}/\d{2}/\d{2}$", ErrorMessage = "تاریخ را به فرمت ۱۴۰۵/۰۵/۱۷ وارد کنید.")]
-        public string RegistrationDate { get; set; } = string.Empty;
+        public string RegistrationDate { get; set; } = null!;
 
         [Required(ErrorMessage = "شناسهٔ ملی اجباری است.")]
         [RegularExpression(@"^\d{10,11}$", ErrorMessage = "شناسهٔ ملی باید ۱۰ یا ۱۱ رقم باشد.")]
