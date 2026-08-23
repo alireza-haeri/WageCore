@@ -73,4 +73,26 @@ public class WorkshopQuery(IDbConnectionFactory dbConnectionFactory) : IWorkshop
 
         return workshops;
     }
+
+    public async Task<UserWorkshopByIdResult?> GetUserWorkshopByIdAsync(Guid userId, Guid workshopId, CancellationToken cancellationToken = default)
+    {
+        string sql = $"""
+                      SELECT 
+                          Name AS Name,
+                          Address AS Address,
+                          Region AS Region,
+                          RegistrationDate AS RegistrationDate,
+                          NationalId AS NationalId,
+                          PostalCode AS PostalCode
+                      FROM {Core.Domain.Workshop.TableName}
+                      WHERE UserId = @UserId AND Id = @WorkshopId;
+                      """;
+
+        var command = new CommandDefinition(sql, new { UserId = userId, WorkshopId = workshopId }, cancellationToken: cancellationToken);
+
+        using var connection = dbConnectionFactory.CreateConnection();
+        var workshop = await connection.QueryFirstOrDefaultAsync<UserWorkshopByIdResult>(command);
+
+        return workshop;
+    }
 }

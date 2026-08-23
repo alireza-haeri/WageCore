@@ -7,4 +7,6 @@ public interface IWorkshopQuery
 
     Task<List<UserWorkshopNameResult>> GetUserWorkshopsNameAsync(Guid userId,
         CancellationToken cancellationToken = default);
+
+    Task<UserWorkshopByIdResult?> GetUserWorkshopByIdAsync(Guid userId, Guid workshopId, CancellationToken cancellationToken = default);
 }

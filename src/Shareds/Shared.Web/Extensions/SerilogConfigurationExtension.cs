@@ -16,4 +16,10 @@ public static class SerilogConfigurationExtension
         );
         return builder;
     }
+    
+    public static WebApplication ConfigureSerilog(this WebApplication app)
+    {
+        app.UseSerilogRequestLogging();
+        return app;
+    }
 }

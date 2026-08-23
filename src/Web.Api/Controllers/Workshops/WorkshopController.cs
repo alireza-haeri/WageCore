@@ -102,4 +102,27 @@ public class WorkshopController(IMediator mediator) : BaseController
 
         return Result(result);
     }
+
+    [HttpGet("{workshopId:guid}/edit")]
+    [SwaggerOperation(OperationId = "GetWorkshopForEdit")]
+    public async Task<ActionResult<Result<GetWorkshopForEditResponse>>> GetWorkshopForEdit(
+        Guid workshopId,
+        CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(new GetWorkshopForEditQuery(
+            UserId: UserId,
+            WorkshopId: workshopId
+        ), cancellationToken);
+
+        var response = result.Map(w=> new GetWorkshopForEditResponse(
+            w.Name,
+            w.Address,
+            w.Region,
+            PersianDate.ToRawValue(w.RegistrationDate),
+            w.NationalId,
+            w.PostalCode
+        ));
+        
+        return Result(response);
+    }
 }

@@ -390,4 +390,113 @@ public class WorkshopQueryTests(WageCoreDbContextFixture fixture)
     }
 
     #endregion
+
+    #region GetUserWorkshopByIdAsync
+
+    [Fact]
+    public async Task GetUserWorkshopByIdAsync_WhenWorkshopExists_ShouldReturnWorkshop()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
+        var query = scope.ServiceProvider.GetRequiredService<IWorkshopQuery>();
+        var userId = await CreateUserAsync(scope);
+
+        var workshop = _workshopBuilder
+            .WithUserId(userId)
+            .WithName("کارگاه آریا")
+            .WithAddress("تهران، خیابان اصلی، پلاک ۱۰")
+            .WithRegion(WorkshopRegion.LessDeveloped)
+            .WithNationalId("1234567890")
+            .WithPostalCode("0987654321")
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        await repository.CreateAsync(workshop);
+
+        var result = await query.GetUserWorkshopByIdAsync(userId, workshop.Id);
+
+        result.Should().NotBeNull();
+        result!.Name.Should().Be("کارگاه آریا");
+        result.Address.Should().Be("تهران، خیابان اصلی، پلاک ۱۰");
+        result.Region.Should().Be(WorkshopRegion.LessDeveloped);
+        result.RegistrationDate.Should().Be(workshop.RegistrationDate);
+        result.NationalId.Should().Be("1234567890");
+        result.PostalCode.Should().Be("0987654321");
+    }
+
+    [Fact]
+    public async Task GetUserWorkshopByIdAsync_WithNullPostalCode_ShouldReturnNullPostalCode()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
+        var query = scope.ServiceProvider.GetRequiredService<IWorkshopQuery>();
+        var userId = await CreateUserAsync(scope);
+
+        var workshop = _workshopBuilder
+            .WithUserId(userId)
+            .WithPostalCode(null)
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        await repository.CreateAsync(workshop);
+
+        var result = await query.GetUserWorkshopByIdAsync(userId, workshop.Id);
+
+        result.Should().NotBeNull();
+        result!.PostalCode.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task GetUserWorkshopByIdAsync_WhenWorkshopDoesNotExist_ShouldReturnNull()
+    {
+        await using var scope = fixture.CreateScope();
+        var query = scope.ServiceProvider.GetRequiredService<IWorkshopQuery>();
+        var userId = await CreateUserAsync(scope);
+
+        var result = await query.GetUserWorkshopByIdAsync(userId, Guid.NewGuid());
+
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task GetUserWorkshopByIdAsync_WithWrongUserId_ShouldReturnNull()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
+        var query = scope.ServiceProvider.GetRequiredService<IWorkshopQuery>();
+        var userId = await CreateUserAsync(scope);
+
+        var workshop = _workshopBuilder
+            .WithUserId(userId)
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        await repository.CreateAsync(workshop);
+
+        var result = await query.GetUserWorkshopByIdAsync(Guid.NewGuid(), workshop.Id);
+
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task GetUserWorkshopByIdAsync_WithWrongWorkshopId_ShouldReturnNull()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
+        var query = scope.ServiceProvider.GetRequiredService<IWorkshopQuery>();
+        var userId = await CreateUserAsync(scope);
+
+        var workshop = _workshopBuilder
+            .WithUserId(userId)
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        await repository.CreateAsync(workshop);
+
+        var result = await query.GetUserWorkshopByIdAsync(userId, Guid.NewGuid());
+
+        result.Should().BeNull();
+    }
+
+    #endregion
 }

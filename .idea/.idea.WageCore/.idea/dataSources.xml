@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="WageCore@localhost" uuid="e45d2520-9fd9-4333-aa51-cee838557fd9">
+    <data-source source="LOCAL" name="WageCore@localhost [2]" uuid="b5e30e43-096c-40df-a590-16156f03910f">
       <driver-ref>sqlserver.jb</driver-ref>
       <synchronize>true</synchronize>
       <configured-by-url>true</configured-by-url>

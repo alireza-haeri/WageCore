@@ -12,6 +12,7 @@ public readonly struct PersianDate(string rawValue)
     }
 
     public static PersianDate FromDateOnly(DateOnly date) => new(PersianCalendarHelper.FormatDate(date));
+    public static string ToRawValue(DateOnly date) => PersianCalendarHelper.FormatDate(date);
 
     public string ToDisplay(string format) => PersianCalendarHelper.FormatDate(ToDateOnly(), format);
 

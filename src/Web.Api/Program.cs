@@ -45,6 +45,7 @@ builder.ConfigureSwagger(applicationSettings.ApplicationName, applicationSetting
 var app = builder.Build();
 
 app.UseExceptionHandler();
+app.ConfigureSerilog();
 
 app.UseSwagger(applicationSettings.ApplicationName);
 
