@@ -9,4 +9,6 @@ public interface IWorkshopQuery
         CancellationToken cancellationToken = default);
 
     Task<UserWorkshopByIdResult?> GetUserWorkshopByIdAsync(Guid userId, Guid workshopId, CancellationToken cancellationToken = default);
+    Task<bool> IsExistWorkshopName(Guid userId,string workshopName, Guid? excludeWorkshopId = null, CancellationToken cancellationToken = default);
+    Task<bool> IsExistWorkshopNationalId(Guid userId,string nationalId, Guid? excludeWorkshopId = null, CancellationToken cancellationToken = default);
 }

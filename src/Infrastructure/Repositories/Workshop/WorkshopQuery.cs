@@ -95,4 +95,50 @@ public class WorkshopQuery(IDbConnectionFactory dbConnectionFactory) : IWorkshop
 
         return workshop;
     }
+
+    public async Task<bool> IsExistWorkshopName(Guid userId, string workshopName, Guid? excludeWorkshopId = null,
+        CancellationToken cancellationToken = default)
+    {
+        string sql = $"""
+                       SELECT CASE WHEN EXISTS (
+                           SELECT 1
+                           FROM {Core.Domain.Workshop.TableName}
+                           WHERE LOWER(TRIM(Name)) = LOWER(TRIM(@WorkshopName))
+                           AND UserId = @UserId
+                           AND (@ExcludeWorkshopId IS NULL OR Id <> @ExcludeWorkshopId)
+                       ) THEN 1 ELSE 0 END
+                       """;
+
+        var command = new CommandDefinition(sql,
+            new { WorkshopName = workshopName, ExcludeWorkshopId = excludeWorkshopId, UserId = userId }
+            , cancellationToken: cancellationToken);
+
+        using var connection = dbConnectionFactory.CreateConnection();
+        var exist = await connection.ExecuteScalarAsync<bool>(command);
+
+        return exist;
+    }
+
+    public async Task<bool> IsExistWorkshopNationalId(Guid userId,string nationalId, Guid? excludeWorkshopId = null,
+        CancellationToken cancellationToken = default)
+    {
+        string sql = $"""
+                       SELECT CASE WHEN EXISTS (
+                           SELECT 1
+                           FROM {Core.Domain.Workshop.TableName}
+                           WHERE LOWER(TRIM(NationalId)) = LOWER(TRIM(@NationalId))
+                           AND UserId = @UserId
+                           AND (@ExcludeWorkshopId IS NULL OR Id <> @ExcludeWorkshopId)
+                       ) THEN 1 ELSE 0 END
+                       """;
+
+        var command = new CommandDefinition(sql,
+            new { NationalId = nationalId, ExcludeWorkshopId = excludeWorkshopId, UserId = userId }
+            , cancellationToken: cancellationToken);
+
+        using var connection = dbConnectionFactory.CreateConnection();
+        var exist = await connection.ExecuteScalarAsync<bool>(command);
+
+        return exist;
+    }
 }

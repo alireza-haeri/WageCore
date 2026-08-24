@@ -8,10 +8,10 @@ public class WorkshopQueryTests(WageCoreDbContextFixture fixture)
     public async Task InitializeAsync() => await fixture.ResetDatabaseAsync();
     public Task DisposeAsync() => Task.CompletedTask;
 
-    private async Task<Guid> CreateUserAsync(AsyncServiceScope scope)
+    private async Task<Guid> CreateUserAsync(AsyncServiceScope scope,string? phoneNumber = "09123456789")
     {
         var userRepository = scope.ServiceProvider.GetRequiredService<UserRepository>();
-        var user = new UserBuilder().CreateResult().ShouldBeSuccess();
+        var user = new UserBuilder().WithPhoneNumber(phoneNumber).CreateResult().ShouldBeSuccess();
         var result = await userRepository.CreateAsync(user, "Pass123456");
         result.Succeeded.Should().BeTrue();
         return user.Id;
@@ -496,6 +496,386 @@ public class WorkshopQueryTests(WageCoreDbContextFixture fixture)
         var result = await query.GetUserWorkshopByIdAsync(userId, Guid.NewGuid());
 
         result.Should().BeNull();
+    }
+
+    #endregion
+
+    #region IsExistWorkshopName
+
+    [Fact]
+    public async Task IsExistWorkshopName_WhenNameExists_ShouldReturnTrue()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
+        var query = scope.ServiceProvider.GetRequiredService<IWorkshopQuery>();
+        var userId = await CreateUserAsync(scope);
+
+        var workshop = _workshopBuilder
+            .WithId(Guid.NewGuid())
+            .WithUserId(userId)
+            .WithName("کارگاه آریا")
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        await repository.CreateAsync(workshop);
+
+        var result = await query.IsExistWorkshopName(userId, "کارگاه آریا");
+
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task IsExistWorkshopName_WhenNameDoesNotExist_ShouldReturnFalse()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
+        var query = scope.ServiceProvider.GetRequiredService<IWorkshopQuery>();
+        var userId = await CreateUserAsync(scope);
+
+        var workshop = _workshopBuilder
+            .WithId(Guid.NewGuid())
+            .WithUserId(userId)
+            .WithName("کارگاه آریا")
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        await repository.CreateAsync(workshop);
+
+        var result = await query.IsExistWorkshopName(userId, "کارگاه دیگر");
+
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task IsExistWorkshopName_WhenNoWorkshopsExist_ShouldReturnFalse()
+    {
+        await using var scope = fixture.CreateScope();
+        var query = scope.ServiceProvider.GetRequiredService<IWorkshopQuery>();
+
+        var result = await query.IsExistWorkshopName(Guid.NewGuid(), "کارگاه آریا");
+
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task IsExistWorkshopName_WithDifferentCase_ShouldReturnTrue()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
+        var query = scope.ServiceProvider.GetRequiredService<IWorkshopQuery>();
+        var userId = await CreateUserAsync(scope);
+
+        var workshop = _workshopBuilder
+            .WithId(Guid.NewGuid())
+            .WithUserId(userId)
+            .WithName("Workshop ARIA")
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        await repository.CreateAsync(workshop);
+
+        var result = await query.IsExistWorkshopName(userId, "workshop aria");
+
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task IsExistWorkshopName_WithLeadingOrTrailingSpaces_ShouldReturnTrue()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
+        var query = scope.ServiceProvider.GetRequiredService<IWorkshopQuery>();
+        var userId = await CreateUserAsync(scope);
+
+        var workshop = _workshopBuilder
+            .WithId(Guid.NewGuid())
+            .WithUserId(userId)
+            .WithName("کارگاه آریا")
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        await repository.CreateAsync(workshop);
+
+        var result = await query.IsExistWorkshopName(userId, "   کارگاه آریا   ");
+
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task IsExistWorkshopName_WithExcludeWorkshopId_ShouldExcludeThatWorkshop()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
+        var query = scope.ServiceProvider.GetRequiredService<IWorkshopQuery>();
+        var userId = await CreateUserAsync(scope);
+
+        var workshop = _workshopBuilder
+            .WithId(Guid.NewGuid())
+            .WithUserId(userId)
+            .WithName("کارگاه آریا")
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        await repository.CreateAsync(workshop);
+
+        var result = await query.IsExistWorkshopName(userId, "کارگاه آریا", excludeWorkshopId: workshop.Id);
+
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task IsExistWorkshopName_WithExcludeWorkshopIdAndOtherDuplicate_ShouldReturnTrue()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
+        var query = scope.ServiceProvider.GetRequiredService<IWorkshopQuery>();
+        var userId = await CreateUserAsync(scope);
+
+        var workshop1 = _workshopBuilder
+            .WithId(Guid.NewGuid())
+            .WithUserId(userId)
+            .WithName("کارگاه آریا")
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        var workshop2 = _workshopBuilder
+            .WithId(Guid.NewGuid())
+            .WithUserId(userId)
+            .WithName("کارگاه آریا")
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        await repository.CreateAsync(workshop1);
+        await repository.CreateAsync(workshop2);
+
+        var result = await query.IsExistWorkshopName(userId, "کارگاه آریا", excludeWorkshopId: workshop1.Id);
+
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task IsExistWorkshopName_WithNullExcludeId_ShouldCheckAllWorkshops()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
+        var query = scope.ServiceProvider.GetRequiredService<IWorkshopQuery>();
+        var userId = await CreateUserAsync(scope);
+
+        var workshop = _workshopBuilder
+            .WithId(Guid.NewGuid())
+            .WithUserId(userId)
+            .WithName("کارگاه آریا")
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        await repository.CreateAsync(workshop);
+
+        var result = await query.IsExistWorkshopName(userId, "کارگاه آریا", excludeWorkshopId: null);
+
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task IsExistWorkshopName_WhenNameExistsForAnotherUser_ShouldReturnFalse()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
+        var query = scope.ServiceProvider.GetRequiredService<IWorkshopQuery>();
+
+        var user1Id = await CreateUserAsync(scope);
+        var user2Id = await CreateUserAsync(scope,"09123456780");
+
+        var workshop = _workshopBuilder
+            .WithId(Guid.NewGuid())
+            .WithUserId(user1Id)
+            .WithName("کارگاه آریا")
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        await repository.CreateAsync(workshop);
+
+        var result = await query.IsExistWorkshopName(user2Id, "کارگاه آریا");
+
+        result.Should().BeFalse();
+    }
+
+    #endregion
+
+    #region IsExistWorkshopNationalId
+
+    [Fact]
+    public async Task IsExistWorkshopNationalId_WhenNationalIdExists_ShouldReturnTrue()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
+        var query = scope.ServiceProvider.GetRequiredService<IWorkshopQuery>();
+        var userId = await CreateUserAsync(scope);
+
+        var workshop = _workshopBuilder
+            .WithId(Guid.NewGuid())
+            .WithUserId(userId)
+            .WithNationalId("1234567890")
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        await repository.CreateAsync(workshop);
+
+        var result = await query.IsExistWorkshopNationalId(userId, "1234567890");
+
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task IsExistWorkshopNationalId_WhenNationalIdDoesNotExist_ShouldReturnFalse()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
+        var query = scope.ServiceProvider.GetRequiredService<IWorkshopQuery>();
+        var userId = await CreateUserAsync(scope);
+
+        var workshop = _workshopBuilder
+            .WithId(Guid.NewGuid())
+            .WithUserId(userId)
+            .WithNationalId("1234567890")
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        await repository.CreateAsync(workshop);
+
+        var result = await query.IsExistWorkshopNationalId(userId, "98765432100");
+
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task IsExistWorkshopNationalId_WhenNoWorkshopsExist_ShouldReturnFalse()
+    {
+        await using var scope = fixture.CreateScope();
+        var query = scope.ServiceProvider.GetRequiredService<IWorkshopQuery>();
+
+        var result = await query.IsExistWorkshopNationalId(Guid.NewGuid(), "1234567890");
+
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task IsExistWorkshopNationalId_WithLeadingOrTrailingSpaces_ShouldReturnTrue()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
+        var query = scope.ServiceProvider.GetRequiredService<IWorkshopQuery>();
+        var userId = await CreateUserAsync(scope);
+
+        var workshop = _workshopBuilder
+            .WithId(Guid.NewGuid())
+            .WithUserId(userId)
+            .WithNationalId("1234567890")
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        await repository.CreateAsync(workshop);
+
+        var result = await query.IsExistWorkshopNationalId(userId, "   1234567890   ");
+
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task IsExistWorkshopNationalId_WithExcludeWorkshopId_ShouldExcludeThatWorkshop()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
+        var query = scope.ServiceProvider.GetRequiredService<IWorkshopQuery>();
+        var userId = await CreateUserAsync(scope);
+
+        var workshop = _workshopBuilder
+            .WithId(Guid.NewGuid())
+            .WithUserId(userId)
+            .WithNationalId("1234567890")
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        await repository.CreateAsync(workshop);
+
+        var result = await query.IsExistWorkshopNationalId(userId, "1234567890", excludeWorkshopId: workshop.Id);
+
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task IsExistWorkshopNationalId_WithExcludeWorkshopIdAndOtherDuplicate_ShouldReturnTrue()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
+        var query = scope.ServiceProvider.GetRequiredService<IWorkshopQuery>();
+        var userId = await CreateUserAsync(scope);
+
+        var workshop1 = _workshopBuilder
+            .WithId(Guid.NewGuid())
+            .WithUserId(userId)
+            .WithNationalId("1234567890")
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        var workshop2 = _workshopBuilder
+            .WithId(Guid.NewGuid())
+            .WithUserId(userId)
+            .WithNationalId("1234567890")
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        await repository.CreateAsync(workshop1);
+        await repository.CreateAsync(workshop2);
+
+        var result = await query.IsExistWorkshopNationalId(userId, "1234567890", excludeWorkshopId: workshop1.Id);
+
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task IsExistWorkshopNationalId_WithNullExcludeId_ShouldCheckAllWorkshops()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
+        var query = scope.ServiceProvider.GetRequiredService<IWorkshopQuery>();
+        var userId = await CreateUserAsync(scope);
+
+        var workshop = _workshopBuilder
+            .WithId(Guid.NewGuid())
+            .WithUserId(userId)
+            .WithNationalId("1234567890")
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        await repository.CreateAsync(workshop);
+
+        var result = await query.IsExistWorkshopNationalId(userId, "1234567890", excludeWorkshopId: null);
+
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task IsExistWorkshopNationalId_WhenNationalIdExistsForAnotherUser_ShouldReturnFalse()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
+        var query = scope.ServiceProvider.GetRequiredService<IWorkshopQuery>();
+
+        var user1Id = await CreateUserAsync(scope);
+        var user2Id = await CreateUserAsync(scope,"09123456780");
+
+        var workshop = _workshopBuilder
+            .WithId(Guid.NewGuid())
+            .WithUserId(user1Id)
+            .WithNationalId("1234567890")
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        await repository.CreateAsync(workshop);
+
+        var result = await query.IsExistWorkshopNationalId(user2Id, "1234567890");
+
+        result.Should().BeFalse();
     }
 
     #endregion
