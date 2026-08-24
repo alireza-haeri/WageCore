@@ -10,6 +10,7 @@ public record GetUserWorkshopsResponse(
     Guid Id,
     string Name,
     string Address,
+    string NationalId,
     WorkshopRegion Region,
     string DisplayRegistrationDate,
     int EmployeesCount,

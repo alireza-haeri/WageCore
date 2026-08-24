@@ -17,7 +17,7 @@ public class WorkshopQueryTests(WageCoreDbContextFixture fixture)
         return user.Id;
     }
 
-    #region GetUserWorkshopsAsync
+     #region GetUserWorkshopsAsync
 
     [Fact]
     public async Task GetUserWorkshopsAsync_WithoutFilters_ShouldReturnAllUserWorkshops()
@@ -31,6 +31,7 @@ public class WorkshopQueryTests(WageCoreDbContextFixture fixture)
             .WithId(Guid.NewGuid())
             .WithUserId(userId)
             .WithName("کارگاه اول")
+            .WithNationalId("1111111111")
             .CreateResult()
             .ShouldBeSuccess();
 
@@ -38,6 +39,7 @@ public class WorkshopQueryTests(WageCoreDbContextFixture fixture)
             .WithId(Guid.NewGuid())
             .WithUserId(userId)
             .WithName("کارگاه دوم")
+            .WithNationalId("2222222222")
             .WithRegion(WorkshopRegion.LessDeveloped)
             .CreateResult()
             .ShouldBeSuccess();
@@ -51,8 +53,9 @@ public class WorkshopQueryTests(WageCoreDbContextFixture fixture)
         result.Should().NotBeNull();
         result.TotalCount.Should().Be(2);
         result.Items.Should().HaveCount(2);
-        result.Items.Should().Contain(w => w.Name == "کارگاه اول");
-        result.Items.Should().Contain(w => w.Name == "کارگاه دوم");
+        
+        result.Items.Should().Contain(w => w.Name == "کارگاه اول" && w.NationalId == "1111111111");
+        result.Items.Should().Contain(w => w.Name == "کارگاه دوم" && w.NationalId == "2222222222");
     }
 
     [Fact]
@@ -64,14 +67,18 @@ public class WorkshopQueryTests(WageCoreDbContextFixture fixture)
         var userId = await CreateUserAsync(scope);
 
         var workshop1 = _workshopBuilder
+            .WithId(Guid.NewGuid())
             .WithUserId(userId)
             .WithName("کارگاه آریا")
+            .WithNationalId("1234567890")
             .CreateResult()
             .ShouldBeSuccess();
 
         var workshop2 = _workshopBuilder
+            .WithId(Guid.NewGuid())
             .WithUserId(userId)
             .WithName("تراشکاری نوین")
+            .WithNationalId("9876543210")
             .CreateResult()
             .ShouldBeSuccess();
 
@@ -85,6 +92,7 @@ public class WorkshopQueryTests(WageCoreDbContextFixture fixture)
         result.TotalCount.Should().Be(1);
         result.Items.Should().ContainSingle();
         result.Items.First().Name.Should().Be("کارگاه آریا");
+        result.Items.First().NationalId.Should().Be("1234567890");
     }
 
     [Fact]
@@ -99,6 +107,7 @@ public class WorkshopQueryTests(WageCoreDbContextFixture fixture)
             .WithId(Guid.NewGuid())
             .WithUserId(userId)
             .WithName("کارگاه عادی")
+            .WithNationalId("1234567890")
             .WithRegion(WorkshopRegion.Normal)
             .CreateResult()
             .ShouldBeSuccess();
@@ -107,6 +116,7 @@ public class WorkshopQueryTests(WageCoreDbContextFixture fixture)
             .WithId(Guid.NewGuid())
             .WithUserId(userId)
             .WithName("کارگاه محروم")
+            .WithNationalId("9876543210")
             .WithRegion(WorkshopRegion.LessDeveloped)
             .CreateResult()
             .ShouldBeSuccess();
@@ -121,6 +131,7 @@ public class WorkshopQueryTests(WageCoreDbContextFixture fixture)
         result.TotalCount.Should().Be(1);
         result.Items.Should().ContainSingle();
         result.Items.First().Name.Should().Be("کارگاه محروم");
+        result.Items.First().NationalId.Should().Be("9876543210");
     }
 
     [Fact]
@@ -215,6 +226,7 @@ public class WorkshopQueryTests(WageCoreDbContextFixture fixture)
             .WithId(Guid.NewGuid())
             .WithUserId(userId)
             .WithName("کارگاه آریا")
+            .WithNationalId("1111111111")
             .WithRegion(WorkshopRegion.Normal)
             .CreateResult()
             .ShouldBeSuccess();
@@ -223,6 +235,7 @@ public class WorkshopQueryTests(WageCoreDbContextFixture fixture)
             .WithId(Guid.NewGuid())
             .WithUserId(userId)
             .WithName("آریا تراش")
+            .WithNationalId("2222222222")
             .WithRegion(WorkshopRegion.LessDeveloped)
             .CreateResult()
             .ShouldBeSuccess();
@@ -231,6 +244,7 @@ public class WorkshopQueryTests(WageCoreDbContextFixture fixture)
             .WithId(Guid.NewGuid())
             .WithUserId(userId)
             .WithName("کارگاه نوین")
+            .WithNationalId("3333333333")
             .WithRegion(WorkshopRegion.Normal)
             .CreateResult()
             .ShouldBeSuccess();
@@ -247,6 +261,7 @@ public class WorkshopQueryTests(WageCoreDbContextFixture fixture)
         result.TotalCount.Should().Be(1);
         result.Items.Should().ContainSingle();
         result.Items.First().Name.Should().Be("کارگاه آریا");
+        result.Items.First().NationalId.Should().Be("1111111111");
     }
 
     [Fact]
@@ -258,7 +273,9 @@ public class WorkshopQueryTests(WageCoreDbContextFixture fixture)
         var userId = await CreateUserAsync(scope);
 
         var workshop = _workshopBuilder
+            .WithId(Guid.NewGuid())
             .WithUserId(userId)
+            .WithNationalId("1234567890")
             .CreateResult()
             .ShouldBeSuccess();
 
@@ -268,6 +285,7 @@ public class WorkshopQueryTests(WageCoreDbContextFixture fixture)
         var result = await query.GetUserWorkshopsAsync(userId, pagination);
 
         result.Items.Should().ContainSingle();
+        result.Items.First().NationalId.Should().Be("1234567890");
         result.Items.First().EmployeesCount.Should().Be(0);
         result.Items.First().DepartmentsCount.Should().Be(0);
     }

@@ -743,6 +743,10 @@
             "type": "string",
             "nullable": true
           },
+          "nationalId": {
+            "type": "string",
+            "nullable": true
+          },
           "region": {
             "type": "integer",
             "format": "int32",

@@ -1173,11 +1173,12 @@ namespace Web.Ui.Services
     public partial record GetUserWorkshopsResponse
     {
         [Newtonsoft.Json.JsonConstructor]
-        public GetUserWorkshopsResponse(string @address, int @departmentsCount, string @displayRegistrationDate, int @employeesCount, System.Guid @id, string @name, GetUserWorkshopsResponseRegion @region)
+        public GetUserWorkshopsResponse(string @address, int @departmentsCount, string @displayRegistrationDate, int @employeesCount, System.Guid @id, string @name, string @nationalId, GetUserWorkshopsResponseRegion @region)
         {
             this.Id = @id;
             this.Name = @name;
             this.Address = @address;
+            this.NationalId = @nationalId;
             this.Region = @region;
             this.DisplayRegistrationDate = @displayRegistrationDate;
             this.EmployeesCount = @employeesCount;
@@ -1192,6 +1193,9 @@ namespace Web.Ui.Services
 
         [Newtonsoft.Json.JsonProperty("address", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Address { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("nationalId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string NationalId { get; init; }
 
         [Newtonsoft.Json.JsonProperty("region", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public GetUserWorkshopsResponseRegion Region { get; init; }

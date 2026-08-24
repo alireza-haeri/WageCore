@@ -13,6 +13,7 @@ public record GetUserWorkshopsQueryResponse(
     Guid Id,
     string Name,
     string Address,
+    string NationalId,
     WorkshopRegion Region,
     DateOnly RegistrationDate,
     int EmployeesCount,

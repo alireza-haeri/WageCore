@@ -14,6 +14,7 @@ public class WorkshopQuery(IDbConnectionFactory dbConnectionFactory) : IWorkshop
                                  Id AS WorkshopId, 
                                  Name, 
                                  Address, 
+                                 NationalId,
                                  Region, 
                                  RegistrationDate,
                                  0 AS EmployeesCount,

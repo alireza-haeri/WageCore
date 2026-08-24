@@ -80,6 +80,7 @@ public class WorkshopController(IMediator mediator) : BaseController
                         w.Id,
                         w.Name,
                         w.Address,
+                        w.NationalId,
                         w.Region,
                         PersianDate.FromDateOnly(w.RegistrationDate).ToDisplay(UserPersianDateFormat),
                         w.EmployeesCount,

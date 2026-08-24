@@ -28,8 +28,8 @@ public class GetUserWorkshopsQueryHandlerTests
 
         var results = new List<UserWorkshopResult>
         {
-            new(Guid.NewGuid(), "کارگاه اول", "آدرس ۱", WorkshopRegion.Normal, DateOnly.FromDateTime(DateTime.Now), 5, 3),
-            new(Guid.NewGuid(), "کارگاه دوم", "آدرس ۲", WorkshopRegion.LessDeveloped, DateOnly.FromDateTime(DateTime.Now), 10, 4)
+            new(Guid.NewGuid(), "کارگاه اول", "آدرس ۱", "11111111111", WorkshopRegion.Normal, DateOnly.FromDateTime(DateTime.Now), 5, 3),
+            new(Guid.NewGuid(), "کارگاه دوم", "آدرس ۲", "22222222222", WorkshopRegion.LessDeveloped, DateOnly.FromDateTime(DateTime.Now), 10, 4)
         };
         var pagedResult = new PagedResult<UserWorkshopResult>(results, 2, 1, 10);
 
@@ -56,6 +56,7 @@ public class GetUserWorkshopsQueryHandlerTests
         firstItem.Id.Should().Be(results[0].WorkshopId);
         firstItem.Name.Should().Be("کارگاه اول");
         firstItem.Address.Should().Be("آدرس ۱");
+        firstItem.NationalId.Should().Be("11111111111");
         firstItem.Region.Should().Be(WorkshopRegion.Normal);
         firstItem.EmployeesCount.Should().Be(5);
         firstItem.DepartmentsCount.Should().Be(3);
@@ -64,6 +65,7 @@ public class GetUserWorkshopsQueryHandlerTests
         secondItem.Id.Should().Be(results[1].WorkshopId);
         secondItem.Name.Should().Be("کارگاه دوم");
         secondItem.Address.Should().Be("آدرس ۲");
+        secondItem.NationalId.Should().Be("22222222222");
         secondItem.Region.Should().Be(WorkshopRegion.LessDeveloped);
         secondItem.EmployeesCount.Should().Be(10);
         secondItem.DepartmentsCount.Should().Be(4);

@@ -18,7 +18,7 @@ public class GetUserWorkshopsQueryHandler(IWorkshopQuery workshopQuery)
 
         var response = userWorkshopsPaged.Map(x =>
             new GetUserWorkshopsQueryResponse(
-                x.WorkshopId, x.Name, x.Address, x.Region,
+                x.WorkshopId, x.Name, x.Address, x.NationalId,x.Region,
                 x.RegistrationDate, x.EmployeesCount, x.DepartmentsCount)
         );
 
