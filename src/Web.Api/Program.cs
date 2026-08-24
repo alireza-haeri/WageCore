@@ -25,6 +25,8 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new PersianDateJsonConverter());
         options.JsonSerializerOptions.Converters.Add(new PersianTimeJsonConverter());
         options.JsonSerializerOptions.Converters.Add(new PersianDateTimeJsonConverter());
+        
+        options.JsonSerializerOptions.Converters.Add(new NormalizedStringJsonConverter());
     });
 
 //Add Authentication

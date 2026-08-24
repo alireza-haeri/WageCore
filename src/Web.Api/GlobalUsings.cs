@@ -17,3 +17,4 @@ global using Web.Api.Controllers.Workshops.Contracts;
 global using Shared.Web.DateTimeHandling.JsonConvertor;
 global using Shared.Web.DateTimeHandling.CustomTypes;
 global using Core.Contracts;
+global using Shared.Web.JsonConvertors;
