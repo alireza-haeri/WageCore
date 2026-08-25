@@ -188,4 +188,44 @@ public class ControlDepartmentTests
 
         result.ShouldBeFailure();
     }
+
+    [Fact]
+    public void DeleteDepartment_WithValidData_ShouldReturnSuccess()
+    {
+        var workshop = _builder.CreateResult().ShouldBeSuccess();
+        var department = workshop.CreateDepartment("دپارتمان نمونه").ShouldBeSuccess();
+
+        var result = workshop.DeleteDepartment(department.Id);
+
+        result.ShouldBeSuccess();
+        workshop.Departments.Should().NotContain(department);
+    }
+
+    [Fact]
+    public void DeleteDepartment_WithNotFoundDepartment_ShouldFail()
+    {
+        var workshop = _builder.CreateResult().ShouldBeSuccess();
+
+        var result = workshop.DeleteDepartment(Guid.NewGuid());
+
+        result.ShouldBeFailure();
+    }
+
+    [Fact]
+    public void DeleteDepartment_ShouldOnlyRemoveTargetDepartment()
+    {
+        var workshop = _builder.CreateResult().ShouldBeSuccess();
+        var department1 = workshop.CreateDepartment("دپارتمان اول").ShouldBeSuccess();
+        var department2 = workshop.CreateDepartment("دپارتمان دوم").ShouldBeSuccess();
+
+        var result = workshop.DeleteDepartment(department1.Id);
+
+        result.ShouldBeSuccess();
+        using (new AssertionScope())
+        {
+            workshop.Departments.Should().NotContain(department1);
+            workshop.Departments.Should().Contain(department2);
+            workshop.Departments.Should().HaveCount(1);
+        }
+    }
 }

@@ -20,8 +20,18 @@ public class WorkshopRepository(WageCoreDbContext context, ILogger<WorkshopRepos
     public async Task<Core.Domain.Workshop?> GetByIdAsync(Guid userId, Guid workshopId,
         CancellationToken cancellationToken = default)
     {
-        return await context.Workshops.FirstOrDefaultAsync(w => w.UserId == userId && w.Id == workshopId,
-            cancellationToken);
+        return await context.Workshops
+            .Include(w => w.Departments)
+            .FirstOrDefaultAsync(w => w.UserId == userId && w.Id == workshopId, cancellationToken);
+    }
+
+    public async Task<Core.Domain.Workshop?> GetByDepartmentIdAsync(Guid userId, Guid departmentId,
+        CancellationToken cancellationToken = default)
+    {
+        return await context.Workshops
+            .Include(w => w.Departments)
+            .FirstOrDefaultAsync(w => w.UserId == userId && w.Departments.Any(d => d.Id == departmentId),
+                cancellationToken);
     }
 
     public async Task<bool> UpdateAsync(Core.Domain.Workshop workshop, CancellationToken cancellationToken = default)
@@ -43,7 +53,9 @@ public class WorkshopRepository(WageCoreDbContext context, ILogger<WorkshopRepos
     {
         try
         {
-            var workshop = await context.Workshops.FirstOrDefaultAsync(w => w.UserId == userId && w.Id == workshopId, cancellationToken);
+            var workshop = await context.Workshops
+                .Include(w => w.Departments)
+                .FirstOrDefaultAsync(w => w.UserId == userId && w.Id == workshopId, cancellationToken);
             if (workshop == null)
                 return false;
 

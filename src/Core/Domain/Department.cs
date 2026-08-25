@@ -3,7 +3,7 @@ namespace Core.Domain;
 public class Department
 {
     public const string TableName = "Departments";
-    public const int MaxDisplayNameLength = 100;
+    public const int MaxDisplayNameLength = 20;
 
     public Guid Id { get; private init; }
     public Guid WorkshopId { get; private init; }

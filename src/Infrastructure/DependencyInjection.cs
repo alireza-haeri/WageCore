@@ -35,6 +35,7 @@ public static class DependencyInjection
         
         builder.Services.AddScoped<IWorkShopRepository, WorkshopRepository>();
         builder.Services.AddScoped<IWorkshopQuery, WorkshopQuery>();
+        builder.Services.AddScoped<IDepartmentQuery, DepartmentQuery>();
 
         return builder;
     }
