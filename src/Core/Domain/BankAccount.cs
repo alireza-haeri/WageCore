@@ -2,6 +2,8 @@ namespace Core.Domain;
 
 public class BankAccount
 {
+    public const string TableName = "EmployeeBankAccounts";
+
     public Guid Id { get; private init; }
     public string? Title { get; private set; }
     public string Iban { get; private set; } = null!;

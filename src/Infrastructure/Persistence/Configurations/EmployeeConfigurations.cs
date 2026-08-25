@@ -124,15 +124,17 @@ public class EmployeeConfigurations : IEntityTypeConfiguration<Employee>
 
         builder.OwnsMany(x => x.BankAccounts, bankAccountBuilder =>
         {
-            bankAccountBuilder.ToTable("EmployeeBankAccounts");
+            var employeeIdColumnName = $"{nameof(Employee)}Id";
+
+            bankAccountBuilder.ToTable(BankAccount.TableName);
 
             bankAccountBuilder.WithOwner()
-                .HasForeignKey("EmployeeId");
+                .HasForeignKey(employeeIdColumnName);
 
             bankAccountBuilder.HasKey(x => x.Id);
             bankAccountBuilder.Property(x => x.Id).ValueGeneratedNever();
 
-            bankAccountBuilder.Property<Guid>("EmployeeId")
+            bankAccountBuilder.Property<Guid>(employeeIdColumnName)
                 .IsRequired();
 
             bankAccountBuilder.Property(x => x.Title)
@@ -144,7 +146,7 @@ public class EmployeeConfigurations : IEntityTypeConfiguration<Employee>
                 .IsUnicode(false)
                 .HasMaxLength(24);
 
-            bankAccountBuilder.HasIndex("EmployeeId");
+            bankAccountBuilder.HasIndex(employeeIdColumnName);
         });
 
         builder.Navigation(x => x.BankAccounts)
