@@ -146,11 +146,11 @@ public class CreateEmployeeTests
     }
 
     [Fact]
-    public void Create_WithDuplicatePersonalCodeInWorkshop_ShouldFail()
+    public void Create_WithDuplicatePersonalCodeForUser_ShouldFail()
     {
-        var result = _builder.WithPersonalCodeUniqueInWorkshop(false).CreateResult();
+        var result = _builder.WithPersonalCodeUniqueForUser(false).CreateResult();
 
-        result.ShouldBeFailure("کد پرسنلی در این کارگاه تکراری است.");
+        result.ShouldBeFailure("کد پرسنلی در بین کارکنان این کاربر تکراری است.");
     }
 
     [Theory]

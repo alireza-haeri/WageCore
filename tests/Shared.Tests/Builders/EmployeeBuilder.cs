@@ -25,7 +25,7 @@ public class EmployeeBuilder
     private bool _isSubjectTo20PercentInsurance = true;
     private bool _isSubjectTo3PercentInsurance = false;
     private InsuranceCalculationProfile? _insuranceCalculationProfile = InsuranceCalculationProfile.FullLegal;
-    private bool _isPersonalCodeUniqueInWorkshop = true;
+    private bool _isPersonalCodeUniqueForUser = true;
     private bool _isNationalCodeUniqueForUser = true;
 
     public EmployeeBuilder WithId(Guid id)
@@ -166,9 +166,9 @@ public class EmployeeBuilder
         return this;
     }
 
-    public EmployeeBuilder WithPersonalCodeUniqueInWorkshop(bool isPersonalCodeUniqueInWorkshop)
+    public EmployeeBuilder WithPersonalCodeUniqueForUser(bool isPersonalCodeUniqueForUser)
     {
-        _isPersonalCodeUniqueInWorkshop = isPersonalCodeUniqueInWorkshop;
+        _isPersonalCodeUniqueForUser = isPersonalCodeUniqueForUser;
         return this;
     }
 
@@ -189,7 +189,6 @@ public class EmployeeBuilder
             _gender,
             _maritalStatus,
             _childrenCount,
-            _workshopRegistrationDate,
             _hireDate,
             _phoneNumber,
             _jobTitle,
@@ -210,9 +209,10 @@ public class EmployeeBuilder
         return Employee.Create(
             _id,
             _workshopId,
+            _workshopRegistrationDate,
             BuildEmployeeDto(),
             BuildInsuranceDto(),
-            _isPersonalCodeUniqueInWorkshop,
+            _isPersonalCodeUniqueForUser,
             _isNationalCodeUniqueForUser);
     }
 }

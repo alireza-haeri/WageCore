@@ -25,7 +25,7 @@ public class CreateEmployeeCommandHandler(
             return Result<CreateEmployeeCommandResponse>.NotfoundFailure("بخش مورد نظر یافت نشد.");
 
         var existEmployeePersonalCode = await employeeQuery.IsExistEmployeePersonalCode(
-            request.WorkshopId,
+            request.UserId,
             request.Employee.PersonalCode,
             null,
             cancellationToken);
@@ -33,7 +33,7 @@ public class CreateEmployeeCommandHandler(
         if (existEmployeePersonalCode)
             return Result<CreateEmployeeCommandResponse>.ValidationFailure(new Dictionary<string, string[]>()
             {
-                { nameof(EmployeeDto.PersonalCode), ["کد پرسنلی در این کارگاه تکراری است"] }
+                { nameof(EmployeeDto.PersonalCode), ["کد پرسنلی در بین کارکنان این کاربر تکراری است"] }
             });
 
         var existEmployeeNationalCode = await employeeQuery.IsExistEmployeeNationalCode(
@@ -48,9 +48,12 @@ public class CreateEmployeeCommandHandler(
                 { nameof(EmployeeDto.NationalCode), ["کد ملی در بین کارکنان این کاربر تکراری است"] }
             });
 
-        var employeeDto = request.Employee with { WorkshopRegistrationDate = workshop.RegistrationDate };
+        var employee = Employee.Create(
+            request.WorkshopId,
+            workshop.RegistrationDate,
+            request.Employee,
+            request.Insurance);
 
-        var employee = Employee.Create(request.WorkshopId, employeeDto, request.Insurance);
         if (!employee.IsSuccess)
             return Result<CreateEmployeeCommandResponse>.GeneralFailure(employee.ErrorMessage!);
 

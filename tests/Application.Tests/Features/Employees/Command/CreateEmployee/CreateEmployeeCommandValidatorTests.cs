@@ -1,6 +1,3 @@
-using Application.Features.Employees;
-using Core.Contracts.Employees;
-
 namespace Application.Tests.Features.Employees.Command.CreateEmployee;
 
 public class CreateEmployeeCommandValidatorTests
@@ -14,7 +11,7 @@ public class CreateEmployeeCommandValidatorTests
     private CreateEmployeeCommand CreateValidCommand(EmployeeDto? employee = null, EmployeeInsuranceDto? insurance = null,
         Guid? userId = null, Guid? workshopId = null)
     {
-        var employeeDto = employee ?? (_employeeBuilder.BuildEmployeeDto() with { WorkshopRegistrationDate = null });
+        var employeeDto = employee ?? _employeeBuilder.BuildEmployeeDto();
         var insuranceDto = insurance ?? _employeeBuilder.BuildInsuranceDto();
 
         return new CreateEmployeeCommand(
@@ -28,17 +25,6 @@ public class CreateEmployeeCommandValidatorTests
     public void Validate_WithValidCommand_ShouldNotHaveAnyErrors()
     {
         var command = CreateValidCommand();
-
-        var result = _validator.TestValidate(command);
-
-        result.ShouldNotHaveAnyValidationErrors();
-    }
-
-    [Fact]
-    public void Validate_WithNullWorkshopRegistrationDateInEmployee_ShouldNotHaveAnyErrors()
-    {
-        var employee = _employeeBuilder.BuildEmployeeDto() with { WorkshopRegistrationDate = null };
-        var command = CreateValidCommand(employee: employee);
 
         var result = _validator.TestValidate(command);
 

@@ -29,16 +29,18 @@ public class Employee
     public static DomainResult<Employee> Create(
         Guid employeeId,
         Guid workshopId,
+        DateOnly? workshopRegistrationDate,
         EmployeeDto? employee,
         EmployeeInsuranceDto? insurance,
-        bool isPersonalCodeUniqueInWorkshop = true,
+        bool isPersonalCodeUniqueForUser = true,
         bool isNationalCodeUniqueForUser = true)
     {
         var validationResult = Validate(
             employeeId,
             workshopId,
+            workshopRegistrationDate,
             employee,
-            isPersonalCodeUniqueInWorkshop,
+            isPersonalCodeUniqueForUser,
             isNationalCodeUniqueForUser);
 
         if (!validationResult.IsSuccess)
@@ -71,21 +73,24 @@ public class Employee
 
     public static DomainResult<Employee> Create(
         Guid workshopId,
+        DateOnly? workshopRegistrationDate,
         EmployeeDto? employee,
         EmployeeInsuranceDto? insurance,
-        bool isPersonalCodeUniqueInWorkshop = true,
+        bool isPersonalCodeUniqueForUser = true,
         bool isNationalCodeUniqueForUser = true) =>
         Create(
             Guid.NewGuid(),
             workshopId,
+            workshopRegistrationDate,
             employee,
             insurance,
-            isPersonalCodeUniqueInWorkshop,
+            isPersonalCodeUniqueForUser,
             isNationalCodeUniqueForUser);
 
     public DomainResult Update(
         EmployeeDto? employee,
-        bool isPersonalCodeUniqueInWorkshop = true,
+        DateOnly? workshopRegistrationDate,
+        bool isPersonalCodeUniqueForUser = true,
         bool isNationalCodeUniqueForUser = true)
     {
         var canModifyResult = EnsureCanModify();
@@ -95,10 +100,11 @@ public class Employee
         var validationResult = Validate(
             Id,
             WorkshopId,
+            workshopRegistrationDate,
             employee,
             (employee is not null &&
              string.Equals(PersonalCode, employee.PersonalCode, StringComparison.OrdinalIgnoreCase)) ||
-            isPersonalCodeUniqueInWorkshop,
+            isPersonalCodeUniqueForUser,
             (employee is not null &&
              string.Equals(NationalCode, employee.NationalCode, StringComparison.Ordinal)) ||
             isNationalCodeUniqueForUser);
@@ -250,8 +256,9 @@ public class Employee
     private static DomainResult Validate(
         Guid employeeId,
         Guid workshopId,
+        DateOnly? workshopRegistrationDate,
         EmployeeDto? employee,
-        bool isPersonalCodeUniqueInWorkshop,
+        bool isPersonalCodeUniqueForUser,
         bool isNationalCodeUniqueForUser)
     {
         if (employeeId == Guid.Empty)
@@ -272,8 +279,8 @@ public class Employee
         if (!RegexExtensions.ValidEmployeePersonalCodeRegex().IsMatch(employee.PersonalCode))
             return DomainResult.Failure("کد پرسنلی باید بین 1 تا 20 کاراکتر و فقط شامل حروف و اعداد انگلیسی باشد.");
 
-        if (!isPersonalCodeUniqueInWorkshop)
-            return DomainResult.Failure("کد پرسنلی در این کارگاه تکراری است.");
+        if (!isPersonalCodeUniqueForUser)
+            return DomainResult.Failure("کد پرسنلی در بین کارکنان این کاربر تکراری است.");
 
         if (string.IsNullOrWhiteSpace(employee.FullName))
             return DomainResult.Failure("نام و نام خانوادگی نمیتواند خالی باشد.");
@@ -314,7 +321,7 @@ public class Employee
         if (employee.ChildrenCount < 0 || employee.ChildrenCount > 20)
             return DomainResult.Failure("تعداد فرزندان باید بین 0 تا 20 باشد.");
 
-        if (employee.WorkshopRegistrationDate is null)
+        if (workshopRegistrationDate is null)
             return DomainResult.Failure("تاریخ ثبت کارگاه نمیتواند خالی باشد.");
 
         if (employee.HireDate is null)
@@ -323,7 +330,7 @@ public class Employee
         if (employee.HireDate > DateOnly.FromDateTime(DateTime.Now))
             return DomainResult.Failure("تاریخ استخدام نباید برای آینده باشد.");
 
-        if (employee.HireDate < employee.WorkshopRegistrationDate)
+        if (employee.HireDate < workshopRegistrationDate)
             return DomainResult.Failure("تاریخ استخدام نباید قبل از تاریخ ثبت کارگاه باشد.");
 
         if (string.IsNullOrWhiteSpace(employee.PhoneNumber))

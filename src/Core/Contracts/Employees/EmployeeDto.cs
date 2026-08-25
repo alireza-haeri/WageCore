@@ -10,7 +10,6 @@ public record EmployeeDto(
     EmployeeGender? Gender,
     EmployeeMaritalStatus? MaritalStatus,
     int? ChildrenCount,
-    DateOnly? WorkshopRegistrationDate,
     DateOnly? HireDate,
     string PhoneNumber,
     string? JobTitle,

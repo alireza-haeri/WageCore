@@ -1,7 +1,3 @@
-using Application.Features.Employees;
-using Core.Abstractions.Repositories.Employees;
-using Core.Contracts.Employees;
-
 namespace Application.Tests.Features.Employees.Command.CreateEmployee;
 
 public class CreateEmployeeCommandHandlerTests
@@ -28,12 +24,12 @@ public class CreateEmployeeCommandHandlerTests
         _handler = new CreateEmployeeCommandHandler(_employeeRepository, _employeeQuery, _workshopRepository);
     }
 
-    private Workshop CreateValidWorkshop(Guid? workshopId = null)
+    private Workshop CreateValidWorkshop(Guid? workshopId = null, DateOnly? registrationDate = null)
     {
         return _workshopBuilder
             .WithId(workshopId ?? ValidWorkshopId)
             .WithUserId(ValidUserId)
-            .WithRegistrationDate(ValidWorkshopRegistrationDate)
+            .WithRegistrationDate(registrationDate ?? ValidWorkshopRegistrationDate)
             .CreateResult()
             .ShouldBeSuccess();
     }
@@ -43,7 +39,6 @@ public class CreateEmployeeCommandHandlerTests
         var employeeDto = employee ?? _employeeBuilder
             .WithWorkshopId(ValidWorkshopId)
             .WithDepartmentId(ValidDepartmentId)
-            .WithWorkshopRegistrationDate(null)
             .BuildEmployeeDto();
 
         var insuranceDto = insurance ?? _employeeBuilder.BuildInsuranceDto();
@@ -53,7 +48,7 @@ public class CreateEmployeeCommandHandlerTests
 
     private void SetupNoDuplicates()
     {
-        _employeeQuery.IsExistEmployeePersonalCode(ValidWorkshopId, Arg.Any<string>(), null, Arg.Any<CancellationToken>())
+        _employeeQuery.IsExistEmployeePersonalCode(ValidUserId, Arg.Any<string>(), null, Arg.Any<CancellationToken>())
             .Returns(false);
         _employeeQuery.IsExistEmployeeNationalCode(ValidUserId, Arg.Any<string>(), null, Arg.Any<CancellationToken>())
             .Returns(false);
@@ -84,6 +79,30 @@ public class CreateEmployeeCommandHandlerTests
                 x.DepartmentId == ValidDepartmentId &&
                 x.PersonalCode == command.Employee.PersonalCode &&
                 x.NationalCode == command.Employee.NationalCode),
+            Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_ShouldCheckPersonalCodeDuplicateByUserId()
+    {
+        var command = CreateValidCommand();
+        var workshop = CreateValidWorkshop();
+
+        _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        _workshopRepository.GetByDepartmentIdAsync(ValidUserId, ValidDepartmentId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        SetupNoDuplicates();
+
+        _employeeRepository.CreateAsync(Arg.Any<Employee>(), Arg.Any<CancellationToken>())
+            .Returns(Guid.NewGuid());
+
+        await _handler.Handle(command, CancellationToken.None);
+
+        await _employeeQuery.Received(1).IsExistEmployeePersonalCode(
+            ValidUserId,
+            command.Employee.PersonalCode,
+            null,
             Arg.Any<CancellationToken>());
     }
 
@@ -143,7 +162,7 @@ public class CreateEmployeeCommandHandlerTests
             .Returns(workshop);
         _workshopRepository.GetByDepartmentIdAsync(ValidUserId, ValidDepartmentId, Arg.Any<CancellationToken>())
             .Returns(workshop);
-        _employeeQuery.IsExistEmployeePersonalCode(ValidWorkshopId, command.Employee.PersonalCode, null,
+        _employeeQuery.IsExistEmployeePersonalCode(ValidUserId, command.Employee.PersonalCode, null,
                 Arg.Any<CancellationToken>())
             .Returns(true);
 
@@ -162,7 +181,7 @@ public class CreateEmployeeCommandHandlerTests
             .Returns(workshop);
         _workshopRepository.GetByDepartmentIdAsync(ValidUserId, ValidDepartmentId, Arg.Any<CancellationToken>())
             .Returns(workshop);
-        _employeeQuery.IsExistEmployeePersonalCode(ValidWorkshopId, command.Employee.PersonalCode, null,
+        _employeeQuery.IsExistEmployeePersonalCode(ValidUserId, command.Employee.PersonalCode, null,
                 Arg.Any<CancellationToken>())
             .Returns(false);
         _employeeQuery.IsExistEmployeeNationalCode(ValidUserId, command.Employee.NationalCode, null,
@@ -175,11 +194,31 @@ public class CreateEmployeeCommandHandlerTests
     }
 
     [Fact]
+    public async Task Handle_WhenHireDateIsBeforeWorkshopRegistrationDate_ShouldReturnGeneralFailure()
+    {
+        var employee = _employeeBuilder
+            .WithDepartmentId(ValidDepartmentId)
+            .WithHireDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-20)))
+            .BuildEmployeeDto();
+        var command = CreateValidCommand(employee: employee);
+        var workshop = CreateValidWorkshop(registrationDate: DateOnly.FromDateTime(DateTime.Now.AddDays(-10)));
+
+        _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        _workshopRepository.GetByDepartmentIdAsync(ValidUserId, ValidDepartmentId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        SetupNoDuplicates();
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.ShouldBeFailure("تاریخ استخدام نباید قبل از تاریخ ثبت کارگاه باشد.", BadResultType.General);
+    }
+
+    [Fact]
     public async Task Handle_WhenDomainCreationFails_ShouldReturnGeneralFailure()
     {
         var employee = _employeeBuilder
             .WithDepartmentId(ValidDepartmentId)
-            .WithWorkshopRegistrationDate(null)
             .WithFullName(string.Empty)
             .BuildEmployeeDto();
         var command = CreateValidCommand(employee: employee);
@@ -217,32 +256,6 @@ public class CreateEmployeeCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_WhenEmployeeWorkshopRegistrationDateIsNull_ShouldUseWorkshopRegistrationDate()
-    {
-        var employee = _employeeBuilder
-            .WithDepartmentId(ValidDepartmentId)
-            .WithWorkshopRegistrationDate(null)
-            .BuildEmployeeDto();
-        var command = CreateValidCommand(employee: employee);
-        var workshop = CreateValidWorkshop();
-        var employeeId = Guid.NewGuid();
-
-        _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
-            .Returns(workshop);
-        _workshopRepository.GetByDepartmentIdAsync(ValidUserId, ValidDepartmentId, Arg.Any<CancellationToken>())
-            .Returns(workshop);
-        SetupNoDuplicates();
-
-        _employeeRepository.CreateAsync(Arg.Any<Employee>(), Arg.Any<CancellationToken>())
-            .Returns(employeeId);
-
-        var result = await _handler.Handle(command, CancellationToken.None);
-
-        var response = result.ShouldBeSuccess();
-        response.EmployeeId.Should().Be(employeeId);
-    }
-
-    [Fact]
     public async Task Handle_WhenWorkshopNotFound_ShouldNotCallCreateAsync()
     {
         var command = CreateValidCommand();
@@ -265,7 +278,7 @@ public class CreateEmployeeCommandHandlerTests
             .Returns(workshop);
         _workshopRepository.GetByDepartmentIdAsync(ValidUserId, ValidDepartmentId, Arg.Any<CancellationToken>())
             .Returns(workshop);
-        _employeeQuery.IsExistEmployeePersonalCode(ValidWorkshopId, command.Employee.PersonalCode, null,
+        _employeeQuery.IsExistEmployeePersonalCode(ValidUserId, command.Employee.PersonalCode, null,
                 Arg.Any<CancellationToken>())
             .Returns(true);
 

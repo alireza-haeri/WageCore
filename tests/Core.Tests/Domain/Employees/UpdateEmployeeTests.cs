@@ -9,6 +9,7 @@ public class UpdateEmployeeTests
     {
         var employee = _builder.CreateResult().ShouldBeSuccess();
         var workshopId = employee.WorkshopId;
+        var workshopRegistrationDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-30));
         var newDepartmentId = Guid.NewGuid();
         var employeeDto = new EmployeeDto(
             newDepartmentId,
@@ -20,13 +21,12 @@ public class UpdateEmployeeTests
             EmployeeGender.Woman,
             EmployeeMaritalStatus.Married,
             2,
-            DateOnly.FromDateTime(DateTime.Now.AddDays(-30)),
             DateOnly.FromDateTime(DateTime.Now.AddDays(-1)),
             "09987654321",
             "سرپرست",
             false);
 
-        var result = employee.Update(employeeDto);
+        var result = employee.Update(employeeDto, workshopRegistrationDate);
 
         result.ShouldBeSuccess();
         using (new AssertionScope())
@@ -62,13 +62,12 @@ public class UpdateEmployeeTests
             employee.Gender,
             employee.MaritalStatus,
             employee.ChildrenCount,
-            DateOnly.FromDateTime(DateTime.Now.AddDays(-30)),
             employee.HireDate,
             employee.PhoneNumber,
             employee.JobTitle,
             employee.IsTaxSubject);
 
-        var result = employee.Update(employeeDto);
+        var result = employee.Update(employeeDto, DateOnly.FromDateTime(DateTime.Now.AddDays(-30)));
 
         result.ShouldBeSuccess();
         employee.WorkshopId.Should().Be(workshopId);
@@ -88,15 +87,14 @@ public class UpdateEmployeeTests
             employee.Gender,
             employee.MaritalStatus,
             employee.ChildrenCount,
-            DateOnly.FromDateTime(DateTime.Now.AddDays(-30)),
             employee.HireDate,
             employee.PhoneNumber,
             employee.JobTitle,
             employee.IsTaxSubject);
 
-        var result = employee.Update(employeeDto, false, true);
+        var result = employee.Update(employeeDto, DateOnly.FromDateTime(DateTime.Now.AddDays(-30)), false, true);
 
-        result.ShouldBeFailure("کد پرسنلی در این کارگاه تکراری است.");
+        result.ShouldBeFailure("کد پرسنلی در بین کارکنان این کاربر تکراری است.");
     }
 
     [Fact]
@@ -113,13 +111,12 @@ public class UpdateEmployeeTests
             employee.Gender,
             employee.MaritalStatus,
             employee.ChildrenCount,
-            DateOnly.FromDateTime(DateTime.Now.AddDays(-30)),
             employee.HireDate,
             employee.PhoneNumber,
             employee.JobTitle,
             employee.IsTaxSubject);
 
-        var result = employee.Update(employeeDto, true, false);
+        var result = employee.Update(employeeDto, DateOnly.FromDateTime(DateTime.Now.AddDays(-30)), true, false);
 
         result.ShouldBeFailure("کد ملی در بین کارکنان این کاربر تکراری است.");
     }
@@ -139,13 +136,12 @@ public class UpdateEmployeeTests
             employee.Gender,
             employee.MaritalStatus,
             employee.ChildrenCount,
-            DateOnly.FromDateTime(DateTime.Now.AddDays(-30)),
             employee.HireDate,
             employee.PhoneNumber,
             employee.JobTitle,
             employee.IsTaxSubject);
 
-        var result = employee.Update(employeeDto);
+        var result = employee.Update(employeeDto, DateOnly.FromDateTime(DateTime.Now.AddDays(-30)));
 
         result.ShouldBeFailure("کارمند ترک کار شده است");
     }
