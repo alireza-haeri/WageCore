@@ -2,7 +2,7 @@ namespace Core.Abstractions.Repositories.Employees;
 
 public interface IEmployeeQuery
 {
-    Task<PagedResult<UserEmployeeResult>> GetUserEmployyesAsync(
+    Task<PagedResult<UserEmployeeResult>> GetUserEmployeesAsync(
         Guid userId,
         PaginationDto pagination,
         string? search = null,

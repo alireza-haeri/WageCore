@@ -1,8 +1,8 @@
 namespace Application.Features.Employees;
 
-public class GetUserEmployyesQueryValidator : AbstractValidator<GetUserEmployyesQuery>
+public class GetUserEmployeesQueryValidator : AbstractValidator<GetUserEmployeesQuery>
 {
-    public GetUserEmployyesQueryValidator()
+    public GetUserEmployeesQueryValidator()
     {
         RuleFor(x => x.UserId)
             .NotEmpty().WithMessage("شناسه کاربر نمیتواند خالی باشد.");

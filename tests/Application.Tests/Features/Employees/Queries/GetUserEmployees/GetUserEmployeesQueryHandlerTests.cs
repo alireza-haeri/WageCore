@@ -1,9 +1,9 @@
-namespace Application.Tests.Features.Employees.Queries.GetUserEmployyes;
+namespace Application.Tests.Features.Employees.Queries.GetUserEmployees;
 
-public class GetUserEmployyesQueryHandlerTests
+public class GetUserEmployeesQueryHandlerTests
 {
     private readonly IEmployeeQuery _employeeQuery;
-    private readonly GetUserEmployyesQueryHandler _handler;
+    private readonly GetUserEmployeesQueryHandler _handler;
 
     private static readonly Guid ValidUserId = Guid.NewGuid();
     private static readonly Guid ValidWorkshopId = Guid.NewGuid();
@@ -12,16 +12,16 @@ public class GetUserEmployyesQueryHandlerTests
     private const EmployeeStatus ValidStatus = EmployeeStatus.Employed;
     private static readonly PaginationDto ValidPagination = new(1, 10);
 
-    public GetUserEmployyesQueryHandlerTests()
+    public GetUserEmployeesQueryHandlerTests()
     {
         _employeeQuery = Substitute.For<IEmployeeQuery>();
-        _handler = new GetUserEmployyesQueryHandler(_employeeQuery);
+        _handler = new GetUserEmployeesQueryHandler(_employeeQuery);
     }
 
     [Fact]
     public async Task Handle_WithValidData_ShouldReturnPagedResult()
     {
-        var query = new GetUserEmployyesQuery(
+        var query = new GetUserEmployeesQuery(
             ValidUserId,
             ValidPagination,
             ValidSearch,
@@ -54,7 +54,7 @@ public class GetUserEmployyesQueryHandlerTests
         };
         var pagedResult = new PagedResult<UserEmployeeResult>(results, 2, 1, 10);
 
-        _employeeQuery.GetUserEmployyesAsync(
+        _employeeQuery.GetUserEmployeesAsync(
                 ValidUserId,
                 ValidPagination,
                 ValidSearch,
@@ -99,7 +99,7 @@ public class GetUserEmployyesQueryHandlerTests
     [Fact]
     public async Task Handle_WithNoEmployees_ShouldReturnEmptyPagedResult()
     {
-        var query = new GetUserEmployyesQuery(
+        var query = new GetUserEmployeesQuery(
             ValidUserId,
             ValidPagination,
             ValidSearch,
@@ -109,7 +109,7 @@ public class GetUserEmployyesQueryHandlerTests
 
         var emptyPagedResult = new PagedResult<UserEmployeeResult>([], 0, 1, 10);
 
-        _employeeQuery.GetUserEmployyesAsync(
+        _employeeQuery.GetUserEmployeesAsync(
                 ValidUserId,
                 ValidPagination,
                 ValidSearch,
@@ -130,9 +130,9 @@ public class GetUserEmployyesQueryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldCallGetUserEmployyesAsyncOnce()
+    public async Task Handle_ShouldCallGetUserEmployeesAsyncOnce()
     {
-        var query = new GetUserEmployyesQuery(
+        var query = new GetUserEmployeesQuery(
             ValidUserId,
             ValidPagination,
             ValidSearch,
@@ -142,7 +142,7 @@ public class GetUserEmployyesQueryHandlerTests
 
         var pagedResult = new PagedResult<UserEmployeeResult>([], 0, 1, 10);
 
-        _employeeQuery.GetUserEmployyesAsync(
+        _employeeQuery.GetUserEmployeesAsync(
                 ValidUserId,
                 ValidPagination,
                 ValidSearch,
@@ -154,7 +154,7 @@ public class GetUserEmployyesQueryHandlerTests
 
         await _handler.Handle(query, CancellationToken.None);
 
-        await _employeeQuery.Received(1).GetUserEmployyesAsync(
+        await _employeeQuery.Received(1).GetUserEmployeesAsync(
             ValidUserId,
             ValidPagination,
             ValidSearch,
@@ -167,7 +167,7 @@ public class GetUserEmployyesQueryHandlerTests
     [Fact]
     public async Task Handle_WithNullFilters_ShouldCallRepositoryWithNullValues()
     {
-        var query = new GetUserEmployyesQuery(
+        var query = new GetUserEmployeesQuery(
             ValidUserId,
             ValidPagination,
             null,
@@ -177,7 +177,7 @@ public class GetUserEmployyesQueryHandlerTests
 
         var pagedResult = new PagedResult<UserEmployeeResult>([], 0, 1, 10);
 
-        _employeeQuery.GetUserEmployyesAsync(
+        _employeeQuery.GetUserEmployeesAsync(
                 ValidUserId,
                 ValidPagination,
                 null,
@@ -189,7 +189,7 @@ public class GetUserEmployyesQueryHandlerTests
 
         await _handler.Handle(query, CancellationToken.None);
 
-        await _employeeQuery.Received(1).GetUserEmployyesAsync(
+        await _employeeQuery.Received(1).GetUserEmployeesAsync(
             ValidUserId,
             ValidPagination,
             null,
@@ -203,7 +203,7 @@ public class GetUserEmployyesQueryHandlerTests
     public async Task Handle_WithSearch_ShouldPassSearchToRepository()
     {
         var search = "1234567890";
-        var query = new GetUserEmployyesQuery(
+        var query = new GetUserEmployeesQuery(
             ValidUserId,
             ValidPagination,
             search,
@@ -213,7 +213,7 @@ public class GetUserEmployyesQueryHandlerTests
 
         var pagedResult = new PagedResult<UserEmployeeResult>([], 0, 1, 10);
 
-        _employeeQuery.GetUserEmployyesAsync(
+        _employeeQuery.GetUserEmployeesAsync(
                 ValidUserId,
                 ValidPagination,
                 search,
@@ -225,7 +225,7 @@ public class GetUserEmployyesQueryHandlerTests
 
         await _handler.Handle(query, CancellationToken.None);
 
-        await _employeeQuery.Received(1).GetUserEmployyesAsync(
+        await _employeeQuery.Received(1).GetUserEmployeesAsync(
             ValidUserId,
             ValidPagination,
             search,
@@ -239,7 +239,7 @@ public class GetUserEmployyesQueryHandlerTests
     public async Task Handle_WithStatus_ShouldPassStatusToRepository()
     {
         var status = EmployeeStatus.Unemployed;
-        var query = new GetUserEmployyesQuery(
+        var query = new GetUserEmployeesQuery(
             ValidUserId,
             ValidPagination,
             ValidSearch,
@@ -249,7 +249,7 @@ public class GetUserEmployyesQueryHandlerTests
 
         var pagedResult = new PagedResult<UserEmployeeResult>([], 0, 1, 10);
 
-        _employeeQuery.GetUserEmployyesAsync(
+        _employeeQuery.GetUserEmployeesAsync(
                 ValidUserId,
                 ValidPagination,
                 ValidSearch,
@@ -261,7 +261,7 @@ public class GetUserEmployyesQueryHandlerTests
 
         await _handler.Handle(query, CancellationToken.None);
 
-        await _employeeQuery.Received(1).GetUserEmployyesAsync(
+        await _employeeQuery.Received(1).GetUserEmployeesAsync(
             ValidUserId,
             ValidPagination,
             ValidSearch,

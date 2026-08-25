@@ -1,8 +1,8 @@
-namespace Application.Tests.Features.Employees.Queries.GetUserEmployyes;
+namespace Application.Tests.Features.Employees.Queries.GetUserEmployees;
 
-public class GetUserEmployyesQueryValidatorTests
+public class GetUserEmployeesQueryValidatorTests
 {
-    private readonly GetUserEmployyesQueryValidator _validator = new();
+    private readonly GetUserEmployeesQueryValidator _validator = new();
 
     private static readonly Guid ValidUserId = Guid.NewGuid();
     private static readonly Guid ValidWorkshopId = Guid.NewGuid();
@@ -14,7 +14,7 @@ public class GetUserEmployyesQueryValidatorTests
     [Fact]
     public void Validate_WithValidQuery_ShouldNotHaveAnyErrors()
     {
-        var query = new GetUserEmployyesQuery(
+        var query = new GetUserEmployeesQuery(
             ValidUserId,
             ValidPagination,
             ValidSearch,
@@ -29,7 +29,7 @@ public class GetUserEmployyesQueryValidatorTests
     [Fact]
     public void Validate_WithNullOptionalFilters_ShouldNotHaveAnyErrors()
     {
-        var query = new GetUserEmployyesQuery(
+        var query = new GetUserEmployeesQuery(
             ValidUserId,
             ValidPagination,
             null,
@@ -45,7 +45,7 @@ public class GetUserEmployyesQueryValidatorTests
     public void Validate_WithSearchExactly100Characters_ShouldNotHaveErrors()
     {
         var search = new string('a', 100);
-        var query = new GetUserEmployyesQuery(
+        var query = new GetUserEmployeesQuery(
             ValidUserId,
             ValidPagination,
             search,
@@ -60,7 +60,7 @@ public class GetUserEmployyesQueryValidatorTests
     [Fact]
     public void Validate_WithEmptyUserId_ShouldHaveValidationError()
     {
-        var query = new GetUserEmployyesQuery(
+        var query = new GetUserEmployeesQuery(
             Guid.Empty,
             ValidPagination,
             ValidSearch,
@@ -75,7 +75,7 @@ public class GetUserEmployyesQueryValidatorTests
     [Fact]
     public void Validate_WithEmptyWorkshopId_ShouldHaveValidationError()
     {
-        var query = new GetUserEmployyesQuery(
+        var query = new GetUserEmployeesQuery(
             ValidUserId,
             ValidPagination,
             ValidSearch,
@@ -90,7 +90,7 @@ public class GetUserEmployyesQueryValidatorTests
     [Fact]
     public void Validate_WithEmptyDepartmentId_ShouldHaveValidationError()
     {
-        var query = new GetUserEmployyesQuery(
+        var query = new GetUserEmployeesQuery(
             ValidUserId,
             ValidPagination,
             ValidSearch,
@@ -105,7 +105,7 @@ public class GetUserEmployyesQueryValidatorTests
     [Fact]
     public void Validate_WithInvalidStatus_ShouldHaveValidationError()
     {
-        var query = new GetUserEmployyesQuery(
+        var query = new GetUserEmployeesQuery(
             ValidUserId,
             ValidPagination,
             ValidSearch,
@@ -121,7 +121,7 @@ public class GetUserEmployyesQueryValidatorTests
     public void Validate_WithSearchMoreThan100Characters_ShouldHaveValidationError()
     {
         var search = new string('a', 101);
-        var query = new GetUserEmployyesQuery(
+        var query = new GetUserEmployeesQuery(
             ValidUserId,
             ValidPagination,
             search,
@@ -137,7 +137,7 @@ public class GetUserEmployyesQueryValidatorTests
     public void Validate_WithInvalidPaginationPageNumber_ShouldHaveValidationError()
     {
         var invalidPagination = new PaginationDto(0, 10);
-        var query = new GetUserEmployyesQuery(
+        var query = new GetUserEmployeesQuery(
             ValidUserId,
             invalidPagination,
             ValidSearch,
@@ -153,7 +153,7 @@ public class GetUserEmployyesQueryValidatorTests
     public void Validate_WithInvalidPaginationPageSize_ShouldHaveValidationError()
     {
         var invalidPagination = new PaginationDto(1, 101);
-        var query = new GetUserEmployyesQuery(
+        var query = new GetUserEmployeesQuery(
             ValidUserId,
             invalidPagination,
             ValidSearch,

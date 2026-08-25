@@ -2,16 +2,16 @@ using Core.Contracts;
 
 namespace Application.Features.Employees;
 
-public record GetUserEmployyesQuery(
+public record GetUserEmployeesQuery(
     Guid UserId,
     PaginationDto Pagination,
     string? Search = null,
     Guid? WorkshopId = null,
     Guid? DepartmentId = null,
     EmployeeStatus? Status = null)
-    : IRequest<Result<PagedResult<GetUserEmployyesQueryResponse>>>;
+    : IRequest<Result<PagedResult<GetUserEmployeesQueryResponse>>>;
 
-public record GetUserEmployyesQueryResponse(
+public record GetUserEmployeesQueryResponse(
     Guid Id,
     string PersonalCode,
     string FullName,
