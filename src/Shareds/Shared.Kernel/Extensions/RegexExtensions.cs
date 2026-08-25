@@ -13,4 +13,13 @@ public static partial class RegexExtensions
 
     [GeneratedRegex(@"^[0-9]{10}$")]
     public static partial Regex ValidPostalCodeRegex();
+
+    [GeneratedRegex(@"^[a-zA-Z0-9]{1,20}$")]
+    public static partial Regex ValidEmployeePersonalCodeRegex();
+
+    [GeneratedRegex(@"^[0-9]{1,20}$")]
+    public static partial Regex ValidBirthCertificateNumberRegex();
+
+    [GeneratedRegex(@"^IR[0-9]{24}$", RegexOptions.IgnoreCase)]
+    public static partial Regex ValidIranianIbanRegex();
 }

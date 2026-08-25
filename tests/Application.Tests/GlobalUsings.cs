@@ -16,5 +16,8 @@ global using Application.Features.Departments;
 global using Core.Abstractions.Repositories.Workshops;
 global using Core.Abstractions.Repositories.Departments;
 global using Application.Validations;
+global using Application.Features.Employees;
+global using Core.Abstractions.Repositories.Employees;
 global using Core.Contracts.Workshops;
 global using Core.Contracts.Departments;
+global using Core.Contracts.Employees;

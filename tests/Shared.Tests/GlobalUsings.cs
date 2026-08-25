@@ -5,3 +5,4 @@ global using Microsoft.Extensions.Options;
 global using FluentAssertions;
 global using System.Net;
 global using System.Net.Http.Json;
+global using Core.Contracts.Employees;
