@@ -10,7 +10,7 @@ public class GetUserDepartmentsQueryValidator : AbstractValidator<GetUserDepartm
             .NotEmpty().WithMessage("شناسه کاربر نمیتواند خالی باشد.");
 
         RuleFor(x => x.WorkshopId)
-            .NotEmpty().WithMessage("شناسه کارگاه نمیتواند خالی باشد.")
+            .NotEqual(Guid.Empty).WithMessage("شناسه کارگاه نمیتواند خالی باشد.")
             .When(x => x.WorkshopId.HasValue);
 
         RuleFor(x => x.SearchName)
