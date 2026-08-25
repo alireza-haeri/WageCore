@@ -245,4 +245,163 @@ public class WorkshopRepositoryTests(WageCoreDbContextFixture fixture)
 
         result.Should().BeFalse();
     }
+
+    [Fact]
+    public async Task UpdateAsync_WithNewDepartment_ShouldPersistDepartment()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
+        var userId = await CreateUserAsync(scope);
+
+        var workshop = _workshopBuilder
+            .WithUserId(userId)
+            .CreateResult()
+            .ShouldBeSuccess();
+        await repository.CreateAsync(workshop);
+
+        var department = workshop.CreateDepartment("بخش تولید").ShouldBeSuccess();
+
+        var result = await repository.UpdateAsync(workshop);
+
+        result.Should().BeTrue();
+
+        var updatedWorkshop = await repository.GetByIdAsync(workshop.UserId, workshop.Id);
+        updatedWorkshop.Should().NotBeNull();
+        updatedWorkshop!.Departments.Should().ContainSingle();
+        updatedWorkshop.Departments.First().Id.Should().Be(department.Id);
+        updatedWorkshop.Departments.First().Name.Should().Be("بخش تولید");
+        updatedWorkshop.Departments.First().WorkshopId.Should().Be(workshop.Id);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_WithUpdatedDepartment_ShouldPersistChanges()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
+        var userId = await CreateUserAsync(scope);
+
+        var workshop = _workshopBuilder
+            .WithUserId(userId)
+            .CreateResult()
+            .ShouldBeSuccess();
+        await repository.CreateAsync(workshop);
+
+        var department = workshop.CreateDepartment("بخش تولید").ShouldBeSuccess();
+        await repository.UpdateAsync(workshop);
+
+        workshop.UpdateDepartment(department.Id, "بخش جدید").ShouldBeSuccess();
+        var result = await repository.UpdateAsync(workshop);
+
+        result.Should().BeTrue();
+
+        var updatedWorkshop = await repository.GetByIdAsync(workshop.UserId, workshop.Id);
+        updatedWorkshop.Should().NotBeNull();
+        updatedWorkshop!.Departments.Should().ContainSingle();
+        updatedWorkshop.Departments.First().Name.Should().Be("بخش جدید");
+    }
+
+    [Fact]
+    public async Task UpdateAsync_WithDeletedDepartment_ShouldRemoveDepartment()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
+        var userId = await CreateUserAsync(scope);
+
+        var workshop = _workshopBuilder
+            .WithUserId(userId)
+            .CreateResult()
+            .ShouldBeSuccess();
+        await repository.CreateAsync(workshop);
+
+        var department = workshop.CreateDepartment("بخش تولید").ShouldBeSuccess();
+        await repository.UpdateAsync(workshop);
+
+        workshop.DeleteDepartment(department.Id).ShouldBeSuccess();
+        var result = await repository.UpdateAsync(workshop);
+
+        result.Should().BeTrue();
+
+        var updatedWorkshop = await repository.GetByIdAsync(workshop.UserId, workshop.Id);
+        updatedWorkshop.Should().NotBeNull();
+        updatedWorkshop!.Departments.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task GetByDepartmentIdAsync_WhenDepartmentExists_ShouldReturnWorkshop()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
+        var userId = await CreateUserAsync(scope);
+
+        var workshop = _workshopBuilder
+            .WithUserId(userId)
+            .CreateResult()
+            .ShouldBeSuccess();
+        await repository.CreateAsync(workshop);
+
+        var department = workshop.CreateDepartment("بخش تولید").ShouldBeSuccess();
+        await repository.UpdateAsync(workshop);
+
+        var result = await repository.GetByDepartmentIdAsync(userId, department.Id);
+
+        result.Should().NotBeNull();
+        result!.Id.Should().Be(workshop.Id);
+        result.Departments.Should().Contain(d => d.Id == department.Id);
+    }
+
+    [Fact]
+    public async Task GetByDepartmentIdAsync_WhenDepartmentDoesNotExist_ShouldReturnNull()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
+        var userId = await CreateUserAsync(scope);
+
+        var result = await repository.GetByDepartmentIdAsync(userId, Guid.NewGuid());
+
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task GetByDepartmentIdAsync_WithWrongUserId_ShouldReturnNull()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
+        var userId = await CreateUserAsync(scope);
+
+        var workshop = _workshopBuilder
+            .WithUserId(userId)
+            .CreateResult()
+            .ShouldBeSuccess();
+        await repository.CreateAsync(workshop);
+
+        var department = workshop.CreateDepartment("بخش تولید").ShouldBeSuccess();
+        await repository.UpdateAsync(workshop);
+
+        var result = await repository.GetByDepartmentIdAsync(Guid.NewGuid(), department.Id);
+
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_ShouldIncludeDepartments()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
+        var userId = await CreateUserAsync(scope);
+
+        var workshop = _workshopBuilder
+            .WithUserId(userId)
+            .CreateResult()
+            .ShouldBeSuccess();
+        await repository.CreateAsync(workshop);
+
+        workshop.CreateDepartment("بخش اول").ShouldBeSuccess();
+        workshop.CreateDepartment("بخش دوم").ShouldBeSuccess();
+        await repository.UpdateAsync(workshop);
+
+        var result = await repository.GetByIdAsync(userId, workshop.Id);
+
+        result.Should().NotBeNull();
+        result!.Departments.Should().HaveCount(2);
+    }
 }

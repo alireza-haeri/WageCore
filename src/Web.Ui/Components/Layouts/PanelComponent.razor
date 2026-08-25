@@ -40,11 +40,12 @@
             </svg>
             کارگاه‌ها
         </NavLink>
-        <a class="sb-item" href="departments.html">
+        <NavLink ActiveClass="active" Match="NavLinkMatch.Prefix" class="sb-item" href="/departments">
             <svg class="ic">
                 <use href="assets/img/icons.svg#i-dept"/>
             </svg>
-            بخش‌ها<span class="sb-count">۷</span></a>
+            بخش‌ها
+        </NavLink>
     </nav>
     @if (_managerFullName is not null)
     {
@@ -86,7 +87,6 @@
         }
         catch
         {
-           
         }
     }
 

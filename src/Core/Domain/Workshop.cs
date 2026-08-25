@@ -14,6 +14,9 @@ public class Workshop
     public string NationalId { get; private set; } = null!;
     public string? PostalCode { get; private set; }
 
+    private readonly List<Department> _departments = [];
+    public IReadOnlyCollection<Department> Departments => _departments.AsReadOnly();
+
     public static DomainResult<Workshop> Create(Guid workshopId, Guid userId, string name, string address,
         WorkshopRegion? region,
         DateOnly? registrationDate, string nationalId, string? postalCode = null)
@@ -122,6 +125,38 @@ public class Workshop
         NationalId = nationalId;
         PostalCode = postalCode;
 
+        return DomainResult.Success();
+    }
+
+    public DomainResult<Department> CreateDepartment(Guid departmentId, string name)
+    {
+        var departmentResult = Department.Create(departmentId, Id, name);
+        if (!departmentResult.IsSuccess)
+            return DomainResult<Department>.Failure(departmentResult.ErrorMessage!);
+
+        _departments.Add(departmentResult.Response);
+        return departmentResult;
+    }
+
+    public DomainResult<Department> CreateDepartment(string name) =>
+        CreateDepartment(Guid.NewGuid(), name);
+
+    public DomainResult UpdateDepartment(Guid departmentId, string name)
+    {
+        var department = _departments.FirstOrDefault(x => x.Id == departmentId);
+        if (department is null)
+            return DomainResult.Failure("بخش مورد نظر یافت نشد.");
+
+        return department.Update(name);
+    }
+
+    public DomainResult DeleteDepartment(Guid departmentId)
+    {
+        var department = _departments.FirstOrDefault(x => x.Id == departmentId);
+        if (department is null)
+            return DomainResult.Failure("بخش مورد نظر یافت نشد.");
+
+        _departments.Remove(department);
         return DomainResult.Success();
     }
 }

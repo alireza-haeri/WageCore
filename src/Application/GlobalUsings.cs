@@ -10,3 +10,4 @@ global using Microsoft.Extensions.DependencyInjection;
 global using Shared.Application.Extensions;
 global using Shared.Kernel.Extensions;
 global using Core.Abstractions.Repositories.Workshops;
+global using Core.Abstractions.Repositories.Departments;
