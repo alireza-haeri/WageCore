@@ -51,6 +51,7 @@ public sealed class WageCoreDbContextFixture : IAsyncLifetime
         services.AddScoped<UserRepository>();
         services.AddScoped<WorkshopRepository>();
         services.AddScoped<IWorkshopQuery, WorkshopQuery>();
+        services.AddScoped<IDepartmentQuery, DepartmentQuery>();
 
         _serviceProvider = services.BuildServiceProvider();
 

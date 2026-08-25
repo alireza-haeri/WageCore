@@ -149,6 +149,16 @@ public class Workshop
 
         return department.Update(name);
     }
+
+    public DomainResult DeleteDepartment(Guid departmentId)
+    {
+        var department = _departments.FirstOrDefault(x => x.Id == departmentId);
+        if (department is null)
+            return DomainResult.Failure("دپارتمان مورد نظر یافت نشد.");
+
+        _departments.Remove(department);
+        return DomainResult.Success();
+    }
 }
 
 public enum WorkshopRegion
