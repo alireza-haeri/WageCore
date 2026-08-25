@@ -1,0 +1,276 @@
+using Application.Features.Employees;
+using Core.Abstractions.Repositories.Employees;
+using Core.Contracts.Employees;
+
+namespace Application.Tests.Features.Employees.Command.CreateEmployee;
+
+public class CreateEmployeeCommandHandlerTests
+{
+    private readonly IEmployeeRepository _employeeRepository;
+    private readonly IEmployeeQuery _employeeQuery;
+    private readonly IWorkShopRepository _workshopRepository;
+    private readonly CreateEmployeeCommandHandler _handler;
+    private readonly EmployeeBuilder _employeeBuilder;
+    private readonly WorkshopBuilder _workshopBuilder;
+
+    private static readonly Guid ValidUserId = Guid.NewGuid();
+    private static readonly Guid ValidWorkshopId = Guid.NewGuid();
+    private static readonly Guid ValidDepartmentId = Guid.NewGuid();
+    private static readonly DateOnly ValidWorkshopRegistrationDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-30));
+
+    public CreateEmployeeCommandHandlerTests()
+    {
+        _employeeRepository = Substitute.For<IEmployeeRepository>();
+        _employeeQuery = Substitute.For<IEmployeeQuery>();
+        _workshopRepository = Substitute.For<IWorkShopRepository>();
+        _employeeBuilder = new EmployeeBuilder();
+        _workshopBuilder = new WorkshopBuilder();
+        _handler = new CreateEmployeeCommandHandler(_employeeRepository, _employeeQuery, _workshopRepository);
+    }
+
+    private Workshop CreateValidWorkshop(Guid? workshopId = null)
+    {
+        return _workshopBuilder
+            .WithId(workshopId ?? ValidWorkshopId)
+            .WithUserId(ValidUserId)
+            .WithRegistrationDate(ValidWorkshopRegistrationDate)
+            .CreateResult()
+            .ShouldBeSuccess();
+    }
+
+    private CreateEmployeeCommand CreateValidCommand(EmployeeDto? employee = null, EmployeeInsuranceDto? insurance = null)
+    {
+        var employeeDto = employee ?? _employeeBuilder
+            .WithWorkshopId(ValidWorkshopId)
+            .WithDepartmentId(ValidDepartmentId)
+            .WithWorkshopRegistrationDate(null)
+            .BuildEmployeeDto();
+
+        var insuranceDto = insurance ?? _employeeBuilder.BuildInsuranceDto();
+
+        return new CreateEmployeeCommand(ValidUserId, ValidWorkshopId, employeeDto, insuranceDto);
+    }
+
+    private void SetupNoDuplicates()
+    {
+        _employeeQuery.IsExistEmployeePersonalCode(ValidWorkshopId, Arg.Any<string>(), null, Arg.Any<CancellationToken>())
+            .Returns(false);
+        _employeeQuery.IsExistEmployeeNationalCode(ValidUserId, Arg.Any<string>(), null, Arg.Any<CancellationToken>())
+            .Returns(false);
+    }
+
+    [Fact]
+    public async Task Handle_WithValidData_ShouldCreateEmployeeAndReturnId()
+    {
+        var command = CreateValidCommand();
+        var workshop = CreateValidWorkshop();
+
+        _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        _workshopRepository.GetByDepartmentIdAsync(ValidUserId, ValidDepartmentId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        SetupNoDuplicates();
+
+        _employeeRepository.CreateAsync(Arg.Any<Employee>(), Arg.Any<CancellationToken>())
+            .Returns(Guid.NewGuid());
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        var response = result.ShouldBeSuccess();
+        response.EmployeeId.Should().NotBeEmpty();
+        await _employeeRepository.Received(1).CreateAsync(
+            Arg.Is<Employee>(x =>
+                x.WorkshopId == ValidWorkshopId &&
+                x.DepartmentId == ValidDepartmentId &&
+                x.PersonalCode == command.Employee.PersonalCode &&
+                x.NationalCode == command.Employee.NationalCode),
+            Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_WhenWorkshopNotFound_ShouldReturnNotFoundFailure()
+    {
+        var command = CreateValidCommand();
+
+        _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
+            .Returns((Workshop?)null);
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.ShouldBeFailure(null, BadResultType.NotFound);
+    }
+
+    [Fact]
+    public async Task Handle_WhenDepartmentNotFound_ShouldReturnNotFoundFailure()
+    {
+        var command = CreateValidCommand();
+        var workshop = CreateValidWorkshop();
+
+        _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        _workshopRepository.GetByDepartmentIdAsync(ValidUserId, ValidDepartmentId, Arg.Any<CancellationToken>())
+            .Returns((Workshop?)null);
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.ShouldBeFailure(null, BadResultType.NotFound);
+    }
+
+    [Fact]
+    public async Task Handle_WhenDepartmentBelongsToAnotherWorkshop_ShouldReturnNotFoundFailure()
+    {
+        var command = CreateValidCommand();
+        var workshop = CreateValidWorkshop();
+        var otherWorkshop = CreateValidWorkshop(Guid.NewGuid());
+
+        _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        _workshopRepository.GetByDepartmentIdAsync(ValidUserId, ValidDepartmentId, Arg.Any<CancellationToken>())
+            .Returns(otherWorkshop);
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.ShouldBeFailure(null, BadResultType.NotFound);
+    }
+
+    [Fact]
+    public async Task Handle_WhenPersonalCodeIsDuplicate_ShouldReturnValidationFailure()
+    {
+        var command = CreateValidCommand();
+        var workshop = CreateValidWorkshop();
+
+        _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        _workshopRepository.GetByDepartmentIdAsync(ValidUserId, ValidDepartmentId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        _employeeQuery.IsExistEmployeePersonalCode(ValidWorkshopId, command.Employee.PersonalCode, null,
+                Arg.Any<CancellationToken>())
+            .Returns(true);
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.ShouldBeFailure(null, BadResultType.Validation);
+    }
+
+    [Fact]
+    public async Task Handle_WhenNationalCodeIsDuplicate_ShouldReturnValidationFailure()
+    {
+        var command = CreateValidCommand();
+        var workshop = CreateValidWorkshop();
+
+        _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        _workshopRepository.GetByDepartmentIdAsync(ValidUserId, ValidDepartmentId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        _employeeQuery.IsExistEmployeePersonalCode(ValidWorkshopId, command.Employee.PersonalCode, null,
+                Arg.Any<CancellationToken>())
+            .Returns(false);
+        _employeeQuery.IsExistEmployeeNationalCode(ValidUserId, command.Employee.NationalCode, null,
+                Arg.Any<CancellationToken>())
+            .Returns(true);
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.ShouldBeFailure(null, BadResultType.Validation);
+    }
+
+    [Fact]
+    public async Task Handle_WhenDomainCreationFails_ShouldReturnGeneralFailure()
+    {
+        var employee = _employeeBuilder
+            .WithDepartmentId(ValidDepartmentId)
+            .WithWorkshopRegistrationDate(null)
+            .WithFullName(string.Empty)
+            .BuildEmployeeDto();
+        var command = CreateValidCommand(employee: employee);
+        var workshop = CreateValidWorkshop();
+
+        _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        _workshopRepository.GetByDepartmentIdAsync(ValidUserId, ValidDepartmentId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        SetupNoDuplicates();
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.ShouldBeFailure(null, BadResultType.General);
+    }
+
+    [Fact]
+    public async Task Handle_WhenRepositoryCreateFails_ShouldReturnGeneralFailure()
+    {
+        var command = CreateValidCommand();
+        var workshop = CreateValidWorkshop();
+
+        _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        _workshopRepository.GetByDepartmentIdAsync(ValidUserId, ValidDepartmentId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        SetupNoDuplicates();
+
+        _employeeRepository.CreateAsync(Arg.Any<Employee>(), Arg.Any<CancellationToken>())
+            .Returns((Guid?)null);
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.ShouldBeFailure(null, BadResultType.General);
+    }
+
+    [Fact]
+    public async Task Handle_WhenEmployeeWorkshopRegistrationDateIsNull_ShouldUseWorkshopRegistrationDate()
+    {
+        var employee = _employeeBuilder
+            .WithDepartmentId(ValidDepartmentId)
+            .WithWorkshopRegistrationDate(null)
+            .BuildEmployeeDto();
+        var command = CreateValidCommand(employee: employee);
+        var workshop = CreateValidWorkshop();
+        var employeeId = Guid.NewGuid();
+
+        _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        _workshopRepository.GetByDepartmentIdAsync(ValidUserId, ValidDepartmentId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        SetupNoDuplicates();
+
+        _employeeRepository.CreateAsync(Arg.Any<Employee>(), Arg.Any<CancellationToken>())
+            .Returns(employeeId);
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        var response = result.ShouldBeSuccess();
+        response.EmployeeId.Should().Be(employeeId);
+    }
+
+    [Fact]
+    public async Task Handle_WhenWorkshopNotFound_ShouldNotCallCreateAsync()
+    {
+        var command = CreateValidCommand();
+
+        _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
+            .Returns((Workshop?)null);
+
+        await _handler.Handle(command, CancellationToken.None);
+
+        await _employeeRepository.DidNotReceive().CreateAsync(Arg.Any<Employee>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_WhenPersonalCodeIsDuplicate_ShouldNotCallCreateAsync()
+    {
+        var command = CreateValidCommand();
+        var workshop = CreateValidWorkshop();
+
+        _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        _workshopRepository.GetByDepartmentIdAsync(ValidUserId, ValidDepartmentId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        _employeeQuery.IsExistEmployeePersonalCode(ValidWorkshopId, command.Employee.PersonalCode, null,
+                Arg.Any<CancellationToken>())
+            .Returns(true);
+
+        await _handler.Handle(command, CancellationToken.None);
+
+        await _employeeRepository.DidNotReceive().CreateAsync(Arg.Any<Employee>(), Arg.Any<CancellationToken>());
+    }
+}
