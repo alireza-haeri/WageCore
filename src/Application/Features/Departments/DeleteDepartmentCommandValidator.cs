@@ -8,6 +8,6 @@ public class DeleteDepartmentCommandValidator : AbstractValidator<DeleteDepartme
             .NotEmpty().WithMessage("شناسه کاربر اجباری است.");
 
         RuleFor(x => x.DepartmentId)
-            .NotEmpty().WithMessage("شناسه دپارتمان اجباری است.");
+            .NotEmpty().WithMessage("شناسه بخش اجباری است.");
     }
 }

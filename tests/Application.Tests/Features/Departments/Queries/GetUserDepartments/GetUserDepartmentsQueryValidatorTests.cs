@@ -6,7 +6,7 @@ public class GetUserDepartmentsQueryValidatorTests
 
     private static readonly Guid ValidUserId = Guid.NewGuid();
     private static readonly Guid ValidWorkshopId = Guid.NewGuid();
-    private const string ValidSearchName = "دپارتمان";
+    private const string ValidSearchName = "بخش";
     private static readonly PaginationDto ValidPagination = new(1, 10);
 
     [Fact]

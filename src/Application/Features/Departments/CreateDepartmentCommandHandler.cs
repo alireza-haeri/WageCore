@@ -13,11 +13,11 @@ public class CreateDepartmentCommandHandler(IWorkShopRepository workShopReposito
             return Result<CreateDepartmentCommandResponse>.NotfoundFailure("کارگاه مورد نظر یافت نشد.");
 
         var existDepartmentName =
-            await departmentQuery.IsExistDepartmentName(request.UserId, request.Name, null, cancellationToken);
+            await departmentQuery.IsExistDepartmentName(workshop.Id, request.Name, null, cancellationToken);
         if (existDepartmentName)
             return Result<CreateDepartmentCommandResponse>.ValidationFailure(new Dictionary<string, string[]>()
             {
-                { nameof(request.Name), ["نام دپارتمان تکراری است"] }
+                { nameof(request.Name), ["نام بخش تکراری است"] }
             });
 
         var departmentResult = workshop.CreateDepartment(request.Name);
@@ -26,7 +26,7 @@ public class CreateDepartmentCommandHandler(IWorkShopRepository workShopReposito
 
         var updateResult = await workShopRepository.UpdateAsync(workshop, cancellationToken);
         if (!updateResult)
-            return Result<CreateDepartmentCommandResponse>.GeneralFailure("خطا در ایجاد دپارتمان");
+            return Result<CreateDepartmentCommandResponse>.GeneralFailure("خطا در ایجاد بخش");
 
         return Result<CreateDepartmentCommandResponse>.Success(
             new CreateDepartmentCommandResponse(departmentResult.Response!.Id));

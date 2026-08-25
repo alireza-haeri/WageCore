@@ -14,7 +14,7 @@ public class CreateDepartmentTests
         {
             response.Id.Should().NotBeEmpty();
             response.WorkshopId.Should().NotBeEmpty();
-            response.Name.Should().Be("دپارتمان نمونه");
+            response.Name.Should().Be("بخش نمونه");
         }
     }
 
@@ -23,7 +23,7 @@ public class CreateDepartmentTests
     {
         var id = Guid.NewGuid();
         var workshopId = Guid.NewGuid();
-        var name = "دپارتمان نساجی";
+        var name = "بخش نساجی";
 
         var result = _builder
             .WithId(id)

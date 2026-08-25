@@ -9,7 +9,7 @@ public class UpdateDepartmentTests
     {
         var department = _builder.CreateResult().ShouldBeSuccess();
 
-        var newName = "دپارتمان جدید";
+        var newName = "بخش جدید";
 
         var result = department.Update(newName);
 

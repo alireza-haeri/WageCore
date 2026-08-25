@@ -8,12 +8,12 @@ public class UpdateDepartmentCommandValidator : AbstractValidator<UpdateDepartme
             .NotEmpty().WithMessage("شناسه کاربر نمیتواند خالی باشد.");
 
         RuleFor(x => x.DepartmentId)
-            .NotEmpty().WithMessage("شناسه دپارتمان نمیتواند خالی باشد.");
+            .NotEmpty().WithMessage("شناسه بخش نمیتواند خالی باشد.");
 
         RuleFor(x => x.Name)
-            .NotEmpty().WithMessage("نام دپارتمان اجباری است.")
-            .MinimumLength(2).WithMessage("نام دپارتمان نمیتواند کمتر از 2 کاراکتر باشد.")
-            .MaximumLength(100).WithMessage("نام دپارتمان نمیتواند بیشتر از 100 کاراکتر باشد.")
-            .WithName("نام دپارتمان");
+            .NotEmpty().WithMessage("نام بخش اجباری است.")
+            .MinimumLength(2).WithMessage("نام بخش نمیتواند کمتر از 2 کاراکتر باشد.")
+            .MaximumLength(100).WithMessage("نام بخش نمیتواند بیشتر از 100 کاراکتر باشد.")
+            .WithName("نام بخش");
     }
 }

@@ -259,7 +259,7 @@ public class WorkshopRepositoryTests(WageCoreDbContextFixture fixture)
             .ShouldBeSuccess();
         await repository.CreateAsync(workshop);
 
-        var department = workshop.CreateDepartment("دپارتمان تولید").ShouldBeSuccess();
+        var department = workshop.CreateDepartment("بخش تولید").ShouldBeSuccess();
 
         var result = await repository.UpdateAsync(workshop);
 
@@ -269,7 +269,7 @@ public class WorkshopRepositoryTests(WageCoreDbContextFixture fixture)
         updatedWorkshop.Should().NotBeNull();
         updatedWorkshop!.Departments.Should().ContainSingle();
         updatedWorkshop.Departments.First().Id.Should().Be(department.Id);
-        updatedWorkshop.Departments.First().Name.Should().Be("دپارتمان تولید");
+        updatedWorkshop.Departments.First().Name.Should().Be("بخش تولید");
         updatedWorkshop.Departments.First().WorkshopId.Should().Be(workshop.Id);
     }
 
@@ -286,10 +286,10 @@ public class WorkshopRepositoryTests(WageCoreDbContextFixture fixture)
             .ShouldBeSuccess();
         await repository.CreateAsync(workshop);
 
-        var department = workshop.CreateDepartment("دپارتمان تولید").ShouldBeSuccess();
+        var department = workshop.CreateDepartment("بخش تولید").ShouldBeSuccess();
         await repository.UpdateAsync(workshop);
 
-        workshop.UpdateDepartment(department.Id, "دپارتمان جدید").ShouldBeSuccess();
+        workshop.UpdateDepartment(department.Id, "بخش جدید").ShouldBeSuccess();
         var result = await repository.UpdateAsync(workshop);
 
         result.Should().BeTrue();
@@ -297,7 +297,7 @@ public class WorkshopRepositoryTests(WageCoreDbContextFixture fixture)
         var updatedWorkshop = await repository.GetByIdAsync(workshop.UserId, workshop.Id);
         updatedWorkshop.Should().NotBeNull();
         updatedWorkshop!.Departments.Should().ContainSingle();
-        updatedWorkshop.Departments.First().Name.Should().Be("دپارتمان جدید");
+        updatedWorkshop.Departments.First().Name.Should().Be("بخش جدید");
     }
 
     [Fact]
@@ -313,7 +313,7 @@ public class WorkshopRepositoryTests(WageCoreDbContextFixture fixture)
             .ShouldBeSuccess();
         await repository.CreateAsync(workshop);
 
-        var department = workshop.CreateDepartment("دپارتمان تولید").ShouldBeSuccess();
+        var department = workshop.CreateDepartment("بخش تولید").ShouldBeSuccess();
         await repository.UpdateAsync(workshop);
 
         workshop.DeleteDepartment(department.Id).ShouldBeSuccess();
@@ -339,7 +339,7 @@ public class WorkshopRepositoryTests(WageCoreDbContextFixture fixture)
             .ShouldBeSuccess();
         await repository.CreateAsync(workshop);
 
-        var department = workshop.CreateDepartment("دپارتمان تولید").ShouldBeSuccess();
+        var department = workshop.CreateDepartment("بخش تولید").ShouldBeSuccess();
         await repository.UpdateAsync(workshop);
 
         var result = await repository.GetByDepartmentIdAsync(userId, department.Id);
@@ -374,7 +374,7 @@ public class WorkshopRepositoryTests(WageCoreDbContextFixture fixture)
             .ShouldBeSuccess();
         await repository.CreateAsync(workshop);
 
-        var department = workshop.CreateDepartment("دپارتمان تولید").ShouldBeSuccess();
+        var department = workshop.CreateDepartment("بخش تولید").ShouldBeSuccess();
         await repository.UpdateAsync(workshop);
 
         var result = await repository.GetByDepartmentIdAsync(Guid.NewGuid(), department.Id);
@@ -395,8 +395,8 @@ public class WorkshopRepositoryTests(WageCoreDbContextFixture fixture)
             .ShouldBeSuccess();
         await repository.CreateAsync(workshop);
 
-        workshop.CreateDepartment("دپارتمان اول").ShouldBeSuccess();
-        workshop.CreateDepartment("دپارتمان دوم").ShouldBeSuccess();
+        workshop.CreateDepartment("بخش اول").ShouldBeSuccess();
+        workshop.CreateDepartment("بخش دوم").ShouldBeSuccess();
         await repository.UpdateAsync(workshop);
 
         var result = await repository.GetByIdAsync(userId, workshop.Id);

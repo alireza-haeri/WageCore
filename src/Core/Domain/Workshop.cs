@@ -145,7 +145,7 @@ public class Workshop
     {
         var department = _departments.FirstOrDefault(x => x.Id == departmentId);
         if (department is null)
-            return DomainResult.Failure("دپارتمان مورد نظر یافت نشد.");
+            return DomainResult.Failure("بخش مورد نظر یافت نشد.");
 
         return department.Update(name);
     }
@@ -154,7 +154,7 @@ public class Workshop
     {
         var department = _departments.FirstOrDefault(x => x.Id == departmentId);
         if (department is null)
-            return DomainResult.Failure("دپارتمان مورد نظر یافت نشد.");
+            return DomainResult.Failure("بخش مورد نظر یافت نشد.");
 
         _departments.Remove(department);
         return DomainResult.Success();

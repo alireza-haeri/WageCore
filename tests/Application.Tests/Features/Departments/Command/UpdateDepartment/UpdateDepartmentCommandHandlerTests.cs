@@ -7,8 +7,8 @@ public class UpdateDepartmentCommandHandlerTests
     private readonly UpdateDepartmentCommandHandler _handler;
     private readonly WorkshopBuilder _workshopBuilder;
 
-    private const string ValidName = "دپارتمان نمونه";
-    private const string UpdatedName = "دپارتمان جدید";
+    private const string ValidName = "بخش نمونه";
+    private const string UpdatedName = "بخش جدید";
     private static readonly Guid ValidUserId = Guid.NewGuid();
     private static readonly Guid ValidWorkshopId = Guid.NewGuid();
     private static readonly Guid ValidDepartmentId = Guid.NewGuid();
@@ -41,7 +41,7 @@ public class UpdateDepartmentCommandHandlerTests
 
     private void SetupNoDuplicates()
     {
-        _departmentQuery.IsExistDepartmentName(ValidUserId, Arg.Any<string>(), Arg.Any<Guid?>(), Arg.Any<CancellationToken>())
+        _departmentQuery.IsExistDepartmentName(ValidWorkshopId, Arg.Any<string>(), Arg.Any<Guid?>(), Arg.Any<CancellationToken>())
             .Returns(false);
     }
 
@@ -88,7 +88,7 @@ public class UpdateDepartmentCommandHandlerTests
         _workShopRepository.GetByDepartmentIdAsync(ValidUserId, ValidDepartmentId, Arg.Any<CancellationToken>())
             .Returns(workshop);
 
-        _departmentQuery.IsExistDepartmentName(ValidUserId, UpdatedName, ValidDepartmentId, Arg.Any<CancellationToken>())
+        _departmentQuery.IsExistDepartmentName(ValidWorkshopId, UpdatedName, ValidDepartmentId, Arg.Any<CancellationToken>())
             .Returns(true);
 
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -208,7 +208,7 @@ public class UpdateDepartmentCommandHandlerTests
         _workShopRepository.GetByDepartmentIdAsync(ValidUserId, ValidDepartmentId, Arg.Any<CancellationToken>())
             .Returns(workshop);
 
-        _departmentQuery.IsExistDepartmentName(ValidUserId, UpdatedName, ValidDepartmentId, Arg.Any<CancellationToken>())
+        _departmentQuery.IsExistDepartmentName(ValidWorkshopId, UpdatedName, ValidDepartmentId, Arg.Any<CancellationToken>())
             .Returns(true);
 
         await _handler.Handle(command, CancellationToken.None);

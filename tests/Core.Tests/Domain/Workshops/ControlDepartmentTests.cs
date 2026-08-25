@@ -9,14 +9,14 @@ public class ControlDepartmentTests
     {
         var workshop = _builder.CreateResult().ShouldBeSuccess();
 
-        var result = workshop.CreateDepartment("دپارتمان نمونه");
+        var result = workshop.CreateDepartment("بخش نمونه");
 
         var response = result.ShouldBeSuccess();
         using (new AssertionScope())
         {
             response.Id.Should().NotBeEmpty();
             response.WorkshopId.Should().Be(workshop.Id);
-            response.Name.Should().Be("دپارتمان نمونه");
+            response.Name.Should().Be("بخش نمونه");
             workshop.Departments.Should().Contain(response);
         }
     }
@@ -26,7 +26,7 @@ public class ControlDepartmentTests
     {
         var workshop = _builder.CreateResult().ShouldBeSuccess();
         var departmentId = Guid.NewGuid();
-        var name = "دپارتمان نساجی";
+        var name = "بخش نساجی";
 
         var result = workshop.CreateDepartment(departmentId, name);
 
@@ -45,7 +45,7 @@ public class ControlDepartmentTests
     {
         var workshop = _builder.CreateResult().ShouldBeSuccess();
 
-        var result = workshop.CreateDepartment(Guid.Empty, "دپارتمان نمونه");
+        var result = workshop.CreateDepartment(Guid.Empty, "بخش نمونه");
 
         result.ShouldBeFailure();
     }
@@ -109,12 +109,12 @@ public class ControlDepartmentTests
     public void UpdateDepartment_WithValidData_ShouldReturnSuccess()
     {
         var workshop = _builder.CreateResult().ShouldBeSuccess();
-        var department = workshop.CreateDepartment("دپارتمان نمونه").ShouldBeSuccess();
+        var department = workshop.CreateDepartment("بخش نمونه").ShouldBeSuccess();
 
-        var result = workshop.UpdateDepartment(department.Id, "دپارتمان جدید");
+        var result = workshop.UpdateDepartment(department.Id, "بخش جدید");
 
         result.ShouldBeSuccess();
-        department.Name.Should().Be("دپارتمان جدید");
+        department.Name.Should().Be("بخش جدید");
     }
 
     [Theory]
@@ -122,7 +122,7 @@ public class ControlDepartmentTests
     public void UpdateDepartment_WithNullOrWhiteSpaceName_ShouldFail(string? name)
     {
         var workshop = _builder.CreateResult().ShouldBeSuccess();
-        var department = workshop.CreateDepartment("دپارتمان نمونه").ShouldBeSuccess();
+        var department = workshop.CreateDepartment("بخش نمونه").ShouldBeSuccess();
 
         var result = workshop.UpdateDepartment(department.Id, name!);
 
@@ -135,7 +135,7 @@ public class ControlDepartmentTests
     public void UpdateDepartment_WithNameLessThan2Characters_ShouldFail(string name)
     {
         var workshop = _builder.CreateResult().ShouldBeSuccess();
-        var department = workshop.CreateDepartment("دپارتمان نمونه").ShouldBeSuccess();
+        var department = workshop.CreateDepartment("بخش نمونه").ShouldBeSuccess();
 
         var result = workshop.UpdateDepartment(department.Id, name);
 
@@ -146,7 +146,7 @@ public class ControlDepartmentTests
     public void UpdateDepartment_WithNameMoreThan100Characters_ShouldFail()
     {
         var workshop = _builder.CreateResult().ShouldBeSuccess();
-        var department = workshop.CreateDepartment("دپارتمان نمونه").ShouldBeSuccess();
+        var department = workshop.CreateDepartment("بخش نمونه").ShouldBeSuccess();
         var name = new string('a', 101);
 
         var result = workshop.UpdateDepartment(department.Id, name);
@@ -158,7 +158,7 @@ public class ControlDepartmentTests
     public void UpdateDepartment_WithNameExactly2Characters_ShouldReturnSuccess()
     {
         var workshop = _builder.CreateResult().ShouldBeSuccess();
-        var department = workshop.CreateDepartment("دپارتمان نمونه").ShouldBeSuccess();
+        var department = workshop.CreateDepartment("بخش نمونه").ShouldBeSuccess();
 
         var result = workshop.UpdateDepartment(department.Id, "اب");
 
@@ -170,7 +170,7 @@ public class ControlDepartmentTests
     public void UpdateDepartment_WithNameExactly100Characters_ShouldReturnSuccess()
     {
         var workshop = _builder.CreateResult().ShouldBeSuccess();
-        var department = workshop.CreateDepartment("دپارتمان نمونه").ShouldBeSuccess();
+        var department = workshop.CreateDepartment("بخش نمونه").ShouldBeSuccess();
         var name = new string('a', 100);
 
         var result = workshop.UpdateDepartment(department.Id, name);
@@ -184,7 +184,7 @@ public class ControlDepartmentTests
     {
         var workshop = _builder.CreateResult().ShouldBeSuccess();
 
-        var result = workshop.UpdateDepartment(Guid.NewGuid(), "دپارتمان جدید");
+        var result = workshop.UpdateDepartment(Guid.NewGuid(), "بخش جدید");
 
         result.ShouldBeFailure();
     }
@@ -193,7 +193,7 @@ public class ControlDepartmentTests
     public void DeleteDepartment_WithValidData_ShouldReturnSuccess()
     {
         var workshop = _builder.CreateResult().ShouldBeSuccess();
-        var department = workshop.CreateDepartment("دپارتمان نمونه").ShouldBeSuccess();
+        var department = workshop.CreateDepartment("بخش نمونه").ShouldBeSuccess();
 
         var result = workshop.DeleteDepartment(department.Id);
 
@@ -215,8 +215,8 @@ public class ControlDepartmentTests
     public void DeleteDepartment_ShouldOnlyRemoveTargetDepartment()
     {
         var workshop = _builder.CreateResult().ShouldBeSuccess();
-        var department1 = workshop.CreateDepartment("دپارتمان اول").ShouldBeSuccess();
-        var department2 = workshop.CreateDepartment("دپارتمان دوم").ShouldBeSuccess();
+        var department1 = workshop.CreateDepartment("بخش اول").ShouldBeSuccess();
+        var department2 = workshop.CreateDepartment("بخش دوم").ShouldBeSuccess();
 
         var result = workshop.DeleteDepartment(department1.Id);
 
