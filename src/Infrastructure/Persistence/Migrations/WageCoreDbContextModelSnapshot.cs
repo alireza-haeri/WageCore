@@ -297,8 +297,6 @@ namespace Infrastructure.Persistence.Migrations
 
                             b1.HasIndex("WorkshopId");
 
-                            b1.HasIndex("WorkshopId", "Id");
-
                             b1.ToTable("Departments", (string)null);
 
                             b1.WithOwner()

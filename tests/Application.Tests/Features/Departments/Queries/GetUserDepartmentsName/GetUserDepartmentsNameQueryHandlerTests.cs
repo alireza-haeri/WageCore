@@ -20,9 +20,9 @@ public class GetUserDepartmentsNameQueryHandlerTests
 
         var departmentNames = new List<UserDepartmentNameResult>
         {
-            new(Guid.NewGuid(), "دپارتمان اول"),
-            new(Guid.NewGuid(), "دپارتمان دوم"),
-            new(Guid.NewGuid(), "دپارتمان سوم")
+            new(Guid.NewGuid(), "بخش اول"),
+            new(Guid.NewGuid(), "بخش دوم"),
+            new(Guid.NewGuid(), "بخش سوم")
         };
 
         _departmentQuery.GetUserDepartmentsNameAsync(ValidUserId, Arg.Any<CancellationToken>())
@@ -33,11 +33,11 @@ public class GetUserDepartmentsNameQueryHandlerTests
         var response = result.ShouldBeSuccess();
         response.DepartmentNames.Should().HaveCount(3);
         response.DepartmentNames[0].DepartmentId.Should().Be(departmentNames[0].DepartmentId);
-        response.DepartmentNames[0].DisplayName.Should().Be("دپارتمان اول");
+        response.DepartmentNames[0].DisplayName.Should().Be("بخش اول");
         response.DepartmentNames[1].DepartmentId.Should().Be(departmentNames[1].DepartmentId);
-        response.DepartmentNames[1].DisplayName.Should().Be("دپارتمان دوم");
+        response.DepartmentNames[1].DisplayName.Should().Be("بخش دوم");
         response.DepartmentNames[2].DepartmentId.Should().Be(departmentNames[2].DepartmentId);
-        response.DepartmentNames[2].DisplayName.Should().Be("دپارتمان سوم");
+        response.DepartmentNames[2].DisplayName.Should().Be("بخش سوم");
     }
 
     [Fact]

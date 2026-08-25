@@ -4,7 +4,7 @@ public class CreateDepartmentCommandValidatorTests
 {
     private readonly CreateDepartmentCommandValidator _validator = new();
 
-    private const string ValidName = "دپارتمان نمونه";
+    private const string ValidName = "بخش نمونه";
     private static readonly Guid ValidUserId = Guid.NewGuid();
     private static readonly Guid ValidWorkshopId = Guid.NewGuid();
 

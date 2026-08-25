@@ -34,11 +34,6 @@ namespace Infrastructure.Persistence.Migrations
                 name: "IX_Departments_WorkshopId",
                 table: "Departments",
                 column: "WorkshopId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Departments_WorkshopId_Id",
-                table: "Departments",
-                columns: new[] { "WorkshopId", "Id" });
         }
 
         /// <inheritdoc />

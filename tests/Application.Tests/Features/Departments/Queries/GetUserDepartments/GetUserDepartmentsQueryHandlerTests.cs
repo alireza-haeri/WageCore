@@ -7,7 +7,7 @@ public class GetUserDepartmentsQueryHandlerTests
 
     private static readonly Guid ValidUserId = Guid.NewGuid();
     private static readonly Guid ValidWorkshopId = Guid.NewGuid();
-    private const string ValidSearchName = "دپارتمان";
+    private const string ValidSearchName = "بخش";
     private static readonly PaginationDto ValidPagination = new(1, 10);
 
     public GetUserDepartmentsQueryHandlerTests()
@@ -29,8 +29,8 @@ public class GetUserDepartmentsQueryHandlerTests
         var workshopId2 = Guid.NewGuid();
         var results = new List<UserDepartmentResult>
         {
-            new(Guid.NewGuid(), "دپارتمان تولید", workshopId1, "کارگاه اول", 5),
-            new(Guid.NewGuid(), "دپارتمان انبار", workshopId2, "کارگاه دوم", 10)
+            new(Guid.NewGuid(), "بخش تولید", workshopId1, "کارگاه اول", 5),
+            new(Guid.NewGuid(), "بخش انبار", workshopId2, "کارگاه دوم", 10)
         };
         var pagedResult = new PagedResult<UserDepartmentResult>(results, 2, 1, 10);
 
@@ -53,14 +53,14 @@ public class GetUserDepartmentsQueryHandlerTests
 
         var firstItem = response.Items[0];
         firstItem.Id.Should().Be(results[0].DepartmentId);
-        firstItem.Name.Should().Be("دپارتمان تولید");
+        firstItem.Name.Should().Be("بخش تولید");
         firstItem.WorkshopId.Should().Be(workshopId1);
         firstItem.WorkshopName.Should().Be("کارگاه اول");
         firstItem.EmployeesCount.Should().Be(5);
 
         var secondItem = response.Items[1];
         secondItem.Id.Should().Be(results[1].DepartmentId);
-        secondItem.Name.Should().Be("دپارتمان انبار");
+        secondItem.Name.Should().Be("بخش انبار");
         secondItem.WorkshopId.Should().Be(workshopId2);
         secondItem.WorkshopName.Should().Be("کارگاه دوم");
         secondItem.EmployeesCount.Should().Be(10);

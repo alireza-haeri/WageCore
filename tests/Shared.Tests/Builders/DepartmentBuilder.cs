@@ -4,7 +4,7 @@ public class DepartmentBuilder
 {
     private Guid _id = Guid.NewGuid();
     private Guid _workshopId = Guid.NewGuid();
-    private string _name = "دپارتمان نمونه";
+    private string _name = "بخش نمونه";
 
     public DepartmentBuilder WithId(Guid id)
     {

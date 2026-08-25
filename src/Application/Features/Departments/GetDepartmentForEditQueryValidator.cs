@@ -8,6 +8,6 @@ public class GetDepartmentForEditQueryValidator : AbstractValidator<GetDepartmen
             .NotEmpty().WithMessage("شناسه کاربر نمی‌تواند خالی باشد.");
 
         RuleFor(x => x.DepartmentId)
-            .NotEmpty().WithMessage("شناسه دپارتمان نمی‌تواند خالی باشد.");
+            .NotEmpty().WithMessage("شناسه بخش نمی‌تواند خالی باشد.");
     }
 }

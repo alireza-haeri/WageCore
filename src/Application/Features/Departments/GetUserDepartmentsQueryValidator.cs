@@ -14,7 +14,7 @@ public class GetUserDepartmentsQueryValidator : AbstractValidator<GetUserDepartm
             .When(x => x.WorkshopId.HasValue);
 
         RuleFor(x => x.SearchName)
-            .MaximumLength(100).WithMessage("نام دپارتمان نباید بیشتر از 100 حرف باشد.")
+            .MaximumLength(100).WithMessage("نام بخش نباید بیشتر از 100 حرف باشد.")
             .When(x => !string.IsNullOrWhiteSpace(x.SearchName));
 
         RuleFor(x => x.Pagination)

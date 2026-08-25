@@ -53,8 +53,8 @@ public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
         var departmentId1 = Guid.NewGuid();
         var departmentId2 = Guid.NewGuid();
         var workshop = await CreateWorkshopWithDepartmentsAsync(scope, userId,
-            (departmentId1, "دپارتمان تولید"),
-            (departmentId2, "دپارتمان انبار"));
+            (departmentId1, "بخش تولید"),
+            (departmentId2, "بخش انبار"));
 
         var pagination = new PaginationDto(1, 10);
         var result = await query.GetUserDepartmentsAsync(userId, pagination);
@@ -62,8 +62,8 @@ public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
         result.Should().NotBeNull();
         result.TotalCount.Should().Be(2);
         result.Items.Should().HaveCount(2);
-        result.Items.Should().Contain(d => d.Name == "دپارتمان تولید" && d.DepartmentId == departmentId1);
-        result.Items.Should().Contain(d => d.Name == "دپارتمان انبار" && d.DepartmentId == departmentId2);
+        result.Items.Should().Contain(d => d.Name == "بخش تولید" && d.DepartmentId == departmentId1);
+        result.Items.Should().Contain(d => d.Name == "بخش انبار" && d.DepartmentId == departmentId2);
         result.Items.Should().OnlyContain(d => d.WorkshopId == workshop.Id && d.WorkshopName == workshop.Name);
     }
 
@@ -75,8 +75,8 @@ public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
         var userId = await CreateUserAsync(scope);
 
         await CreateWorkshopWithDepartmentsAsync(scope, userId,
-            (Guid.NewGuid(), "دپارتمان تولید"),
-            (Guid.NewGuid(), "دپارتمان انبار"));
+            (Guid.NewGuid(), "بخش تولید"),
+            (Guid.NewGuid(), "بخش انبار"));
 
         var pagination = new PaginationDto(1, 10);
         var result = await query.GetUserDepartmentsAsync(userId, pagination, searchName: "تولید");
@@ -84,7 +84,7 @@ public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
         result.Should().NotBeNull();
         result.TotalCount.Should().Be(1);
         result.Items.Should().ContainSingle();
-        result.Items.First().Name.Should().Be("دپارتمان تولید");
+        result.Items.First().Name.Should().Be("بخش تولید");
     }
 
     [Fact]
@@ -96,7 +96,7 @@ public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
         var userId = await CreateUserAsync(scope);
 
         var workshop1 = await CreateWorkshopWithDepartmentsAsync(scope, userId,
-            (Guid.NewGuid(), "دپارتمان اول"));
+            (Guid.NewGuid(), "بخش اول"));
 
         var workshop2 = _workshopBuilder
             .WithId(Guid.NewGuid())
@@ -106,7 +106,7 @@ public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
             .CreateResult()
             .ShouldBeSuccess();
         await repository.CreateAsync(workshop2);
-        workshop2.CreateDepartment(Guid.NewGuid(), "دپارتمان دوم").ShouldBeSuccess();
+        workshop2.CreateDepartment(Guid.NewGuid(), "بخش دوم").ShouldBeSuccess();
         await repository.UpdateAsync(workshop2);
 
         var pagination = new PaginationDto(1, 10);
@@ -115,7 +115,7 @@ public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
         result.Should().NotBeNull();
         result.TotalCount.Should().Be(1);
         result.Items.Should().ContainSingle();
-        result.Items.First().Name.Should().Be("دپارتمان اول");
+        result.Items.First().Name.Should().Be("بخش اول");
         result.Items.First().WorkshopId.Should().Be(workshop1.Id);
     }
 
@@ -127,7 +127,7 @@ public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
         var userId = await CreateUserAsync(scope);
 
         var departments = Enumerable.Range(1, 5)
-            .Select(i => (Guid.NewGuid(), $"دپارتمان شماره {i}"))
+            .Select(i => (Guid.NewGuid(), $"بخش شماره {i}"))
             .ToArray();
         await CreateWorkshopWithDepartmentsAsync(scope, userId, departments);
 
@@ -147,7 +147,7 @@ public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
         var userId = await CreateUserAsync(scope);
 
         var departments = Enumerable.Range(1, 5)
-            .Select(i => (Guid.NewGuid(), $"دپارتمان شماره {i}"))
+            .Select(i => (Guid.NewGuid(), $"بخش شماره {i}"))
             .ToArray();
         await CreateWorkshopWithDepartmentsAsync(scope, userId, departments);
 
@@ -167,7 +167,7 @@ public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
         var userId = await CreateUserAsync(scope);
 
         await CreateWorkshopWithDepartmentsAsync(scope, userId,
-            (Guid.NewGuid(), "دپارتمان نمونه"));
+            (Guid.NewGuid(), "بخش نمونه"));
 
         var pagination = new PaginationDto(1, 10);
         var result = await query.GetUserDepartmentsAsync(Guid.NewGuid(), pagination);
@@ -186,8 +186,8 @@ public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
         var userId = await CreateUserAsync(scope);
 
         var workshop1 = await CreateWorkshopWithDepartmentsAsync(scope, userId,
-            (Guid.NewGuid(), "دپارتمان تولید"),
-            (Guid.NewGuid(), "دپارتمان انبار"));
+            (Guid.NewGuid(), "بخش تولید"),
+            (Guid.NewGuid(), "بخش انبار"));
 
         var workshop2 = _workshopBuilder
             .WithId(Guid.NewGuid())
@@ -197,7 +197,7 @@ public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
             .CreateResult()
             .ShouldBeSuccess();
         await repository.CreateAsync(workshop2);
-        workshop2.CreateDepartment(Guid.NewGuid(), "دپارتمان تولید").ShouldBeSuccess();
+        workshop2.CreateDepartment(Guid.NewGuid(), "بخش تولید").ShouldBeSuccess();
         await repository.UpdateAsync(workshop2);
 
         var pagination = new PaginationDto(1, 10);
@@ -207,7 +207,7 @@ public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
         result.Should().NotBeNull();
         result.TotalCount.Should().Be(1);
         result.Items.Should().ContainSingle();
-        result.Items.First().Name.Should().Be("دپارتمان تولید");
+        result.Items.First().Name.Should().Be("بخش تولید");
         result.Items.First().WorkshopId.Should().Be(workshop1.Id);
     }
 
@@ -219,7 +219,7 @@ public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
         var userId = await CreateUserAsync(scope);
 
         await CreateWorkshopWithDepartmentsAsync(scope, userId,
-            (Guid.NewGuid(), "دپارتمان نمونه"));
+            (Guid.NewGuid(), "بخش نمونه"));
 
         var pagination = new PaginationDto(1, 10);
         var result = await query.GetUserDepartmentsAsync(userId, pagination);
@@ -240,14 +240,14 @@ public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
         var userId = await CreateUserAsync(scope);
 
         await CreateWorkshopWithDepartmentsAsync(scope, userId,
-            (Guid.NewGuid(), "دپارتمان اول"),
-            (Guid.NewGuid(), "دپارتمان دوم"));
+            (Guid.NewGuid(), "بخش اول"),
+            (Guid.NewGuid(), "بخش دوم"));
 
         var result = await query.GetUserDepartmentsNameAsync(userId);
 
         result.Should().HaveCount(2);
-        result.Should().Contain(d => d.DisplayName == "دپارتمان اول");
-        result.Should().Contain(d => d.DisplayName == "دپارتمان دوم");
+        result.Should().Contain(d => d.DisplayName == "بخش اول");
+        result.Should().Contain(d => d.DisplayName == "بخش دوم");
     }
 
     [Fact]
@@ -277,7 +277,7 @@ public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
         var query = scope.ServiceProvider.GetRequiredService<IDepartmentQuery>();
         var userId = await CreateUserAsync(scope);
 
-        var shortName = "دپارتمان کوتاه";
+        var shortName = "بخش کوتاه";
 
         await CreateWorkshopWithDepartmentsAsync(scope, userId,
             (Guid.NewGuid(), shortName));
@@ -296,7 +296,7 @@ public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
         var userId = await CreateUserAsync(scope);
 
         await CreateWorkshopWithDepartmentsAsync(scope, userId,
-            (Guid.NewGuid(), "دپارتمان نمونه"));
+            (Guid.NewGuid(), "بخش نمونه"));
 
         var result = await query.GetUserDepartmentsNameAsync(Guid.NewGuid());
 
@@ -327,12 +327,12 @@ public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
 
         var departmentId = Guid.NewGuid();
         var workshop = await CreateWorkshopWithDepartmentsAsync(scope, userId,
-            (departmentId, "دپارتمان تولید"));
+            (departmentId, "بخش تولید"));
 
         var result = await query.GetUserDepartmentByIdAsync(userId, departmentId);
 
         result.Should().NotBeNull();
-        result!.Name.Should().Be("دپارتمان تولید");
+        result!.Name.Should().Be("بخش تولید");
         result.WorkshopId.Should().Be(workshop.Id);
     }
 
@@ -357,7 +357,7 @@ public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
 
         var departmentId = Guid.NewGuid();
         await CreateWorkshopWithDepartmentsAsync(scope, userId,
-            (departmentId, "دپارتمان نمونه"));
+            (departmentId, "بخش نمونه"));
 
         var result = await query.GetUserDepartmentByIdAsync(Guid.NewGuid(), departmentId);
 
@@ -372,7 +372,7 @@ public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
         var userId = await CreateUserAsync(scope);
 
         await CreateWorkshopWithDepartmentsAsync(scope, userId,
-            (Guid.NewGuid(), "دپارتمان نمونه"));
+            (Guid.NewGuid(), "بخش نمونه"));
 
         var result = await query.GetUserDepartmentByIdAsync(userId, Guid.NewGuid());
 
@@ -384,16 +384,16 @@ public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
     #region IsExistDepartmentName
 
     [Fact]
-    public async Task IsExistDepartmentName_WhenNameExists_ShouldReturnTrue()
+    public async Task IsExistDepartmentName_WhenNameExistsInWorkshop_ShouldReturnTrue()
     {
         await using var scope = fixture.CreateScope();
         var query = scope.ServiceProvider.GetRequiredService<IDepartmentQuery>();
         var userId = await CreateUserAsync(scope);
 
-        await CreateWorkshopWithDepartmentsAsync(scope, userId,
-            (Guid.NewGuid(), "دپارتمان تولید"));
+        var workshop = await CreateWorkshopWithDepartmentsAsync(scope, userId,
+            (Guid.NewGuid(), "بخش تولید"));
 
-        var result = await query.IsExistDepartmentName(userId, "دپارتمان تولید");
+        var result = await query.IsExistDepartmentName(workshop.Id, "بخش تولید");
 
         result.Should().BeTrue();
     }
@@ -405,21 +405,21 @@ public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
         var query = scope.ServiceProvider.GetRequiredService<IDepartmentQuery>();
         var userId = await CreateUserAsync(scope);
 
-        await CreateWorkshopWithDepartmentsAsync(scope, userId,
-            (Guid.NewGuid(), "دپارتمان تولید"));
+        var workshop = await CreateWorkshopWithDepartmentsAsync(scope, userId,
+            (Guid.NewGuid(), "بخش تولید"));
 
-        var result = await query.IsExistDepartmentName(userId, "دپارتمان دیگر");
+        var result = await query.IsExistDepartmentName(workshop.Id, "بخش دیگر");
 
         result.Should().BeFalse();
     }
 
     [Fact]
-    public async Task IsExistDepartmentName_WhenNoDepartmentsExist_ShouldReturnFalse()
+    public async Task IsExistDepartmentName_WhenWorkshopDoesNotExist_ShouldReturnFalse()
     {
         await using var scope = fixture.CreateScope();
         var query = scope.ServiceProvider.GetRequiredService<IDepartmentQuery>();
 
-        var result = await query.IsExistDepartmentName(Guid.NewGuid(), "دپارتمان تولید");
+        var result = await query.IsExistDepartmentName(Guid.NewGuid(), "بخش تولید");
 
         result.Should().BeFalse();
     }
@@ -431,10 +431,10 @@ public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
         var query = scope.ServiceProvider.GetRequiredService<IDepartmentQuery>();
         var userId = await CreateUserAsync(scope);
 
-        await CreateWorkshopWithDepartmentsAsync(scope, userId,
+        var workshop = await CreateWorkshopWithDepartmentsAsync(scope, userId,
             (Guid.NewGuid(), "Department ARIA"));
 
-        var result = await query.IsExistDepartmentName(userId, "department aria");
+        var result = await query.IsExistDepartmentName(workshop.Id, "department aria");
 
         result.Should().BeTrue();
     }
@@ -446,10 +446,10 @@ public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
         var query = scope.ServiceProvider.GetRequiredService<IDepartmentQuery>();
         var userId = await CreateUserAsync(scope);
 
-        await CreateWorkshopWithDepartmentsAsync(scope, userId,
-            (Guid.NewGuid(), "دپارتمان تولید"));
+        var workshop = await CreateWorkshopWithDepartmentsAsync(scope, userId,
+            (Guid.NewGuid(), "بخش تولید"));
 
-        var result = await query.IsExistDepartmentName(userId, "   دپارتمان تولید   ");
+        var result = await query.IsExistDepartmentName(workshop.Id, "   بخش تولید   ");
 
         result.Should().BeTrue();
     }
@@ -462,10 +462,10 @@ public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
         var userId = await CreateUserAsync(scope);
 
         var departmentId = Guid.NewGuid();
-        await CreateWorkshopWithDepartmentsAsync(scope, userId,
-            (departmentId, "دپارتمان تولید"));
+        var workshop = await CreateWorkshopWithDepartmentsAsync(scope, userId,
+            (departmentId, "بخش تولید"));
 
-        var result = await query.IsExistDepartmentName(userId, "دپارتمان تولید", excludeDepartmentId: departmentId);
+        var result = await query.IsExistDepartmentName(workshop.Id, "بخش تولید", excludeDepartmentId: departmentId);
 
         result.Should().BeFalse();
     }
@@ -479,49 +479,32 @@ public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
 
         var departmentId1 = Guid.NewGuid();
         var departmentId2 = Guid.NewGuid();
-        await CreateWorkshopWithDepartmentsAsync(scope, userId,
-            (departmentId1, "دپارتمان تولید"),
-            (departmentId2, "دپارتمان تولید"));
+        var workshop = await CreateWorkshopWithDepartmentsAsync(scope, userId,
+            (departmentId1, "بخش تولید"),
+            (departmentId2, "بخش تولید"));
 
-        var result = await query.IsExistDepartmentName(userId, "دپارتمان تولید", excludeDepartmentId: departmentId1);
+        var result = await query.IsExistDepartmentName(workshop.Id, "بخش تولید", excludeDepartmentId: departmentId1);
 
         result.Should().BeTrue();
     }
 
     [Fact]
-    public async Task IsExistDepartmentName_WithNullExcludeId_ShouldCheckAllDepartments()
+    public async Task IsExistDepartmentName_WithNullExcludeId_ShouldCheckAllDepartmentsOfWorkshop()
     {
         await using var scope = fixture.CreateScope();
         var query = scope.ServiceProvider.GetRequiredService<IDepartmentQuery>();
         var userId = await CreateUserAsync(scope);
 
-        await CreateWorkshopWithDepartmentsAsync(scope, userId,
-            (Guid.NewGuid(), "دپارتمان تولید"));
+        var workshop = await CreateWorkshopWithDepartmentsAsync(scope, userId,
+            (Guid.NewGuid(), "بخش تولید"));
 
-        var result = await query.IsExistDepartmentName(userId, "دپارتمان تولید", excludeDepartmentId: null);
+        var result = await query.IsExistDepartmentName(workshop.Id, "بخش تولید", excludeDepartmentId: null);
 
         result.Should().BeTrue();
     }
 
     [Fact]
-    public async Task IsExistDepartmentName_WhenNameExistsForAnotherUser_ShouldReturnFalse()
-    {
-        await using var scope = fixture.CreateScope();
-        var query = scope.ServiceProvider.GetRequiredService<IDepartmentQuery>();
-
-        var user1Id = await CreateUserAsync(scope);
-        var user2Id = await CreateUserAsync(scope, "09123456780");
-
-        await CreateWorkshopWithDepartmentsAsync(scope, user1Id,
-            (Guid.NewGuid(), "دپارتمان تولید"));
-
-        var result = await query.IsExistDepartmentName(user2Id, "دپارتمان تولید");
-
-        result.Should().BeFalse();
-    }
-
-    [Fact]
-    public async Task IsExistDepartmentName_WhenNameExistsInAnotherWorkshopOfSameUser_ShouldReturnTrue()
+    public async Task IsExistDepartmentName_WhenNameExistsInAnotherWorkshopOfSameUser_ShouldReturnFalse()
     {
         await using var scope = fixture.CreateScope();
         var repository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
@@ -529,7 +512,7 @@ public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
         var userId = await CreateUserAsync(scope);
 
         await CreateWorkshopWithDepartmentsAsync(scope, userId,
-            (Guid.NewGuid(), "دپارتمان تولید"));
+            (Guid.NewGuid(), "بخش تولید"));
 
         var workshop2 = _workshopBuilder
             .WithId(Guid.NewGuid())
@@ -540,7 +523,45 @@ public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
             .ShouldBeSuccess();
         await repository.CreateAsync(workshop2);
 
-        var result = await query.IsExistDepartmentName(userId, "دپارتمان تولید");
+        var result = await query.IsExistDepartmentName(workshop2.Id, "بخش تولید");
+
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task IsExistDepartmentName_WhenNameExistsInAnotherUsersWorkshop_ShouldReturnFalse()
+    {
+        await using var scope = fixture.CreateScope();
+        var query = scope.ServiceProvider.GetRequiredService<IDepartmentQuery>();
+
+        var user1Id = await CreateUserAsync(scope);
+        var user2Id = await CreateUserAsync(scope, "09123456780");
+
+        await CreateWorkshopWithDepartmentsAsync(scope, user1Id,
+            (Guid.NewGuid(), "بخش تولید"));
+
+        var workshop2 = await CreateWorkshopWithDepartmentsAsync(scope, user2Id,
+            (Guid.NewGuid(), "بخش انبار"));
+
+        var result = await query.IsExistDepartmentName(workshop2.Id, "بخش تولید");
+
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task IsExistDepartmentName_WhenSameNameExistsInBothWorkshops_ShouldReturnTrueForMatchingWorkshop()
+    {
+        await using var scope = fixture.CreateScope();
+        var query = scope.ServiceProvider.GetRequiredService<IDepartmentQuery>();
+        var userId = await CreateUserAsync(scope);
+
+        await CreateWorkshopWithDepartmentsAsync(scope, userId,
+            (Guid.NewGuid(), "بخش تولید"));
+
+        var workshop2 = await CreateWorkshopWithDepartmentsAsync(scope, userId,
+            (Guid.NewGuid(), "بخش تولید"));
+
+        var result = await query.IsExistDepartmentName(workshop2.Id, "بخش تولید");
 
         result.Should().BeTrue();
     }

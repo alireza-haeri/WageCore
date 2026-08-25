@@ -20,7 +20,7 @@ public class GetDepartmentForEditQueryHandlerTests
     {
         var query = new GetDepartmentForEditQuery(ValidUserId, ValidDepartmentId);
 
-        var department = new UserDepartmentByIdResult("دپارتمان تولید", ValidWorkshopId);
+        var department = new UserDepartmentByIdResult("بخش تولید", ValidWorkshopId);
 
         _departmentQuery.GetUserDepartmentByIdAsync(ValidUserId, ValidDepartmentId, Arg.Any<CancellationToken>())
             .Returns(department);
@@ -28,7 +28,7 @@ public class GetDepartmentForEditQueryHandlerTests
         var result = await _handler.Handle(query, CancellationToken.None);
 
         var response = result.ShouldBeSuccess();
-        response.Name.Should().Be("دپارتمان تولید");
+        response.Name.Should().Be("بخش تولید");
         response.WorkshopId.Should().Be(ValidWorkshopId);
     }
 

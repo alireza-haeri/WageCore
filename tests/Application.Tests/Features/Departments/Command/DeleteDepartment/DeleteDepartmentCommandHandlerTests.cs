@@ -6,7 +6,7 @@ public class DeleteDepartmentCommandHandlerTests
     private readonly DeleteDepartmentCommandHandler _handler;
     private readonly WorkshopBuilder _workshopBuilder;
 
-    private const string ValidName = "دپارتمان نمونه";
+    private const string ValidName = "بخش نمونه";
     private static readonly Guid ValidUserId = Guid.NewGuid();
     private static readonly Guid ValidWorkshopId = Guid.NewGuid();
     private static readonly Guid ValidDepartmentId = Guid.NewGuid();

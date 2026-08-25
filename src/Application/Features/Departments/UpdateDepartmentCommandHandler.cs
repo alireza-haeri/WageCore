@@ -10,15 +10,15 @@ public class UpdateDepartmentCommandHandler(IWorkShopRepository workShopReposito
         var workshop = await workShopRepository.GetByDepartmentIdAsync(request.UserId, request.DepartmentId,
             cancellationToken);
         if (workshop is null)
-            return Result<bool>.NotfoundFailure("دپارتمان مورد نظر یافت نشد.");
+            return Result<bool>.NotfoundFailure("بخش مورد نظر یافت نشد.");
 
         var existDepartmentName =
-            await departmentQuery.IsExistDepartmentName(request.UserId, request.Name, request.DepartmentId,
+            await departmentQuery.IsExistDepartmentName(workshop.Id, request.Name, request.DepartmentId,
                 cancellationToken);
         if (existDepartmentName)
             return Result<bool>.ValidationFailure(new Dictionary<string, string[]>()
             {
-                { nameof(request.Name), ["نام دپارتمان تکراری است"] }
+                { nameof(request.Name), ["نام بخش تکراری است"] }
             });
 
         var domainResult = workshop.UpdateDepartment(request.DepartmentId, request.Name);
@@ -27,7 +27,7 @@ public class UpdateDepartmentCommandHandler(IWorkShopRepository workShopReposito
 
         var updateResult = await workShopRepository.UpdateAsync(workshop, cancellationToken);
         if (!updateResult)
-            return Result<bool>.GeneralFailure("خطایی در بروزرسانی دپارتمان رخ داد.");
+            return Result<bool>.GeneralFailure("خطایی در بروزرسانی بخش رخ داد.");
 
         return Result<bool>.Success(true);
     }

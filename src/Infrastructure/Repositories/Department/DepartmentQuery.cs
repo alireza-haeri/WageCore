@@ -95,22 +95,21 @@ public class DepartmentQuery(IDbConnectionFactory dbConnectionFactory) : IDepart
         return department;
     }
 
-    public async Task<bool> IsExistDepartmentName(Guid userId, string departmentName, Guid? excludeDepartmentId = null,
+    public async Task<bool> IsExistDepartmentName(Guid workshopId, string departmentName, Guid? excludeDepartmentId = null,
         CancellationToken cancellationToken = default)
     {
         string sql = $"""
                        SELECT CASE WHEN EXISTS (
                            SELECT 1
                            FROM {Core.Domain.Department.TableName} d
-                           INNER JOIN {Core.Domain.Workshop.TableName} w ON w.Id = d.WorkshopId
                            WHERE LOWER(TRIM(d.Name)) = LOWER(TRIM(@DepartmentName))
-                           AND w.UserId = @UserId
+                           AND d.WorkshopId = @WorkshopId
                            AND (@ExcludeDepartmentId IS NULL OR d.Id <> @ExcludeDepartmentId)
                        ) THEN 1 ELSE 0 END
                        """;
 
         var command = new CommandDefinition(sql,
-            new { DepartmentName = departmentName, ExcludeDepartmentId = excludeDepartmentId, UserId = userId },
+            new { DepartmentName = departmentName, ExcludeDepartmentId = excludeDepartmentId, WorkshopId = workshopId },
             cancellationToken: cancellationToken);
 
         using var connection = dbConnectionFactory.CreateConnection();

@@ -7,7 +7,7 @@ public class CreateDepartmentCommandHandlerTests
     private readonly CreateDepartmentCommandHandler _handler;
     private readonly WorkshopBuilder _workshopBuilder;
 
-    private const string ValidName = "دپارتمان نمونه";
+    private const string ValidName = "بخش نمونه";
     private static readonly Guid ValidUserId = Guid.NewGuid();
     private static readonly Guid ValidWorkshopId = Guid.NewGuid();
 
@@ -31,7 +31,7 @@ public class CreateDepartmentCommandHandlerTests
 
     private void SetupNoDuplicates()
     {
-        _departmentQuery.IsExistDepartmentName(ValidUserId, Arg.Any<string>(), Arg.Any<Guid?>(), Arg.Any<CancellationToken>())
+        _departmentQuery.IsExistDepartmentName(ValidWorkshopId, Arg.Any<string>(), Arg.Any<Guid?>(), Arg.Any<CancellationToken>())
             .Returns(false);
     }
 
@@ -78,7 +78,7 @@ public class CreateDepartmentCommandHandlerTests
         _workShopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
             .Returns(workshop);
 
-        _departmentQuery.IsExistDepartmentName(ValidUserId, ValidName, null, Arg.Any<CancellationToken>())
+        _departmentQuery.IsExistDepartmentName(ValidWorkshopId, ValidName, null, Arg.Any<CancellationToken>())
             .Returns(true);
 
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -181,7 +181,7 @@ public class CreateDepartmentCommandHandlerTests
         _workShopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
             .Returns(workshop);
 
-        _departmentQuery.IsExistDepartmentName(ValidUserId, ValidName, null, Arg.Any<CancellationToken>())
+        _departmentQuery.IsExistDepartmentName(ValidWorkshopId, ValidName, null, Arg.Any<CancellationToken>())
             .Returns(true);
 
         await _handler.Handle(command, CancellationToken.None);

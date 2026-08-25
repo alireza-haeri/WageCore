@@ -12,16 +12,16 @@ public class Department
     public static DomainResult<Department> Create(Guid departmentId, Guid workshopId, string name)
     {
         if (departmentId == Guid.Empty)
-            return DomainResult<Department>.Failure("شناسه دپارتمان نمیتواند خالی باشد.");
+            return DomainResult<Department>.Failure("شناسه بخش نمیتواند خالی باشد.");
 
         if (workshopId == Guid.Empty)
             return DomainResult<Department>.Failure("شناسه کارگاه نمیتواند خالی باشد.");
 
         if (string.IsNullOrWhiteSpace(name))
-            return DomainResult<Department>.Failure("نام دپارتمان نمیتواند خالی باشد.");
+            return DomainResult<Department>.Failure("نام بخش نمیتواند خالی باشد.");
 
         if (name.Length < 2 || name.Length > 100)
-            return DomainResult<Department>.Failure("نام دپارتمان باید بین 2 تا 100 حرف باشد.");
+            return DomainResult<Department>.Failure("نام بخش باید بین 2 تا 100 حرف باشد.");
 
         return DomainResult<Department>.Success(new Department
         {
@@ -37,10 +37,10 @@ public class Department
     public DomainResult Update(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
-            return DomainResult.Failure("نام دپارتمان نمیتواند خالی باشد.");
+            return DomainResult.Failure("نام بخش نمیتواند خالی باشد.");
 
         if (name.Length < 2 || name.Length > 100)
-            return DomainResult.Failure("نام دپارتمان باید بین 2 تا 100 حرف باشد.");
+            return DomainResult.Failure("نام بخش باید بین 2 تا 100 حرف باشد.");
 
         Name = name;
 

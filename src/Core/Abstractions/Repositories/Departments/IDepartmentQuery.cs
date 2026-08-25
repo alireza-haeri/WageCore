@@ -11,6 +11,6 @@ public interface IDepartmentQuery
     Task<UserDepartmentByIdResult?> GetUserDepartmentByIdAsync(Guid userId, Guid departmentId,
         CancellationToken cancellationToken = default);
 
-    Task<bool> IsExistDepartmentName(Guid userId, string departmentName, Guid? excludeDepartmentId = null,
+    Task<bool> IsExistDepartmentName(Guid workshopId, string departmentName, Guid? excludeDepartmentId = null,
         CancellationToken cancellationToken = default);
 }

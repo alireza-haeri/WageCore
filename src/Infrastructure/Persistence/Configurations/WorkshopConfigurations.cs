@@ -65,7 +65,6 @@ public class WorkshopConfigurations : IEntityTypeConfiguration<Workshop>
                 .IsUnicode()
                 .HasMaxLength(100);
 
-            departmentBuilder.HasIndex(x => new { x.WorkshopId, x.Id });
             departmentBuilder.HasIndex(x => x.WorkshopId);
         });
 

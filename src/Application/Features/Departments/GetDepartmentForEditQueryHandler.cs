@@ -10,7 +10,7 @@ public class GetDepartmentForEditQueryHandler(IDepartmentQuery departmentQuery)
     {
         var department = await departmentQuery.GetUserDepartmentByIdAsync(request.UserId, request.DepartmentId, cancellationToken);
         if (department is null)
-            return Result<GetDepartmentForEditQueryResponse>.NotfoundFailure("دپارتمان مورد نظر یافت نشد.");
+            return Result<GetDepartmentForEditQueryResponse>.NotfoundFailure("بخش مورد نظر یافت نشد.");
 
         return Result<GetDepartmentForEditQueryResponse>.Success(
             new GetDepartmentForEditQueryResponse(
