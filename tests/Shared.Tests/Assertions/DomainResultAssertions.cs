@@ -14,7 +14,26 @@ public static class DomainResultAssertions
         return response!;
     }
 
+    public static void ShouldBeSuccess(this DomainResult result)
+    {
+        result.IsSuccess.Should().BeTrue();
+        result.ErrorMessage.Should().BeNull();
+    }
+
     public static string ShouldBeFailure<T>(this DomainResult<T> result, string? expectedMessagePart = null)
+    {
+        result.IsSuccess.Should().BeFalse();
+
+        var errorMessage = result.ErrorMessage;
+        errorMessage.Should().NotBeNullOrWhiteSpace();
+
+        if (expectedMessagePart is not null)
+            errorMessage.Should().Contain(expectedMessagePart);
+
+        return errorMessage!;
+    }
+
+    public static string ShouldBeFailure(this DomainResult result, string? expectedMessagePart = null)
     {
         result.IsSuccess.Should().BeFalse();
 

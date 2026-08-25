@@ -1,3 +1,4 @@
+/* ─────────── توکن‌های طراحی ─────────── */
 :root{
     --bg:#f2eee1; --bg2:#f8f5ea; --card:#fffdf7;
     --ink:#222c25; --muted:#6e7a70; --faint:#9ba59a;
@@ -31,9 +32,9 @@ svg.ic{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.7;str
 .kbd{display:inline-block;font:600 10.5px var(--ff);border:1px solid var(--line);border-bottom-width:2.5px;background:var(--bg2);color:var(--muted);border-radius:5px;padding:0 7px;line-height:18px}
 .ltr{direction:ltr;unicode-bidi:embed;display:inline-block;font-family:var(--fm);font-size:.93em}
 .num{font-variant-numeric:tabular-nums}
-
+/* نوار پیشروی بالای صفحه هنگام جابه‌جایی视图 */
 #pbar{position:fixed;top:0;right:0;height:3px;width:0;background:var(--red);z-index:2000}
-
+/* ─────────── دکمه‌ها ─────────── */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid transparent;border-radius:10px;
     font:700 13.5px/1.1 var(--ff);padding:11px 20px;cursor:pointer;transition:all .18s;white-space:nowrap;text-decoration:none}
 .btn svg.ic{width:15px;height:15px;stroke-width:2.1}
@@ -57,7 +58,7 @@ svg.ic{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.7;str
 .icobtn svg.ic{width:15.5px;height:15.5px}
 .icobtn:hover{background:var(--grn-s);color:var(--grn);border-color:var(--grn-l)}
 .icobtn.danger:hover{background:var(--red-s);color:var(--red);border-color:var(--red-l)}
-
+/* ─────────── چیپ و نشان ─────────── */
 .chip{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:3px 11px;border-radius:99px;border:1px solid;white-space:nowrap;line-height:1.7}
 .chip svg.ic{width:11px;height:11px;stroke-width:2.4}
 .c-grn{background:var(--grn-s);color:var(--grn);border-color:var(--grn-l)}
@@ -68,14 +69,14 @@ svg.ic{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.7;str
 .c-dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex:0 0 auto}
 .c-gold .c-dot{animation:pulse 2.2s infinite}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(169,118,9,.4)}50%{box-shadow:0 0 0 5px rgba(169,118,9,0)}}
-
+/* ─────────── پنل ─────────── */
 .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--sh)}
 .panel-h{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:15px 20px;border-bottom:1px solid var(--line2)}
 .panel-h .bar{width:4px;height:20px;background:var(--gold);border-radius:4px}
 .panel-h h2{font-size:15px;font-weight:800}
 .panel-b{padding:20px}
 .panel-f{padding:11px 20px;border-top:1px solid var(--line2);display:flex;align-items:center;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:12px}
-
+/* ─────────── سرصفحهٔ صفحه ─────────── */
 .page-head{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:22px}
 .page-head .ph-t{flex:1;min-width:220px}
 .crumb{font-size:11.5px;color:var(--faint);display:flex;gap:6px;align-items:center;margin-bottom:2px}
@@ -83,14 +84,14 @@ svg.ic{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.7;str
 .page-head h1{font-family:var(--fd);font-weight:400;font-size:27px;line-height:1.5}
 .page-head p{margin:2px 0 0;color:var(--muted);font-size:12.5px}
 .page-head .ph-actions{display:flex;gap:9px;flex-wrap:wrap}
-
+/* ─────────── نوار ابزار لیست‌ها ─────────── */
 .toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid var(--line2)}
-.srch{position:relative;flex:1;min-width:210px;max-width:340px}
+.srch{position:relative;flex:1;min-width:210px;}
 .srch svg.ic{position:absolute;inset-inline-start:12px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--faint);pointer-events:none}
 .srch input{width:100%;height:39px;border:1.5px solid var(--line);border-radius:99px;background:var(--bg2);padding:0 36px 0 14px;font:500 12.5px var(--ff);transition:.15s}
 .srch input:focus{outline:none;border-color:var(--grn);background:#fff;box-shadow:0 0 0 3px rgba(23,83,73,.12)}
 .tb-sel{height:39px;min-width:130px}
-
+/* ─────────── فرم‌ها و اینپوت‌ها ─────────── */
 .field{margin-bottom:15px}
 .f-label{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:var(--muted);margin-bottom:7px}
 .f-label .req-s{color:var(--red);font-weight:800}
@@ -124,13 +125,15 @@ select.in{appearance:none;cursor:pointer;background-image:url("data:image/svg+xm
 .pw-eye{position:absolute;left:11px;top:50%;transform:translateY(-50%);border:none;background:none;color:var(--faint);cursor:pointer;padding:3px;display:flex}
 .pw-eye:hover{color:var(--grn)}
 .pw-eye svg.ic{width:17px;height:17px}
+/* کلید ترکیبی با پیشوند/پسوند داخل فیلد */
 .igroup{display:flex}
 .igroup .in{border-radius:0 10px 10px 0}
 .igroup .pre{display:flex;align-items:center;padding:0 13px;background:var(--bg2);border:1.5px solid var(--line);border-inline-end:none;border-radius:10px 0 0 10px;font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap}
-
+/* رادیو و چک‌باکس */
 .rch{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;cursor:pointer;user-select:none}
 .rch input{width:17px;height:17px;accent-color:var(--grn);cursor:pointer;margin:0}
 .rbox{display:flex;gap:10px;flex-wrap:wrap;padding:9px 0 0}
+/* سوییچ */
 .sw{position:relative;display:inline-block;width:42px;height:24px;flex:0 0 auto}
 .sw input{opacity:0;width:0;height:0;position:absolute}
 .sw i{position:absolute;inset:0;background:#d9d2ba;border-radius:99px;transition:.2s;cursor:pointer}
@@ -142,13 +145,13 @@ select.in{appearance:none;cursor:pointer;background-image:url("data:image/svg+xm
 .sw-card:has(input:checked){border-color:var(--grn-l);background:var(--grn-s)}
 .sw-card .swt{flex:1;font-size:12.5px;font-weight:700}
 .sw-card .swd{display:block;font-size:10.5px;color:var(--muted);font-weight:400}
-
+/* عنوان بخش داخل فرم */
 .sec{display:flex;align-items:center;gap:10px;margin:28px 0 18px;font-family:var(--fd);font-weight:400;font-size:17.5px;color:var(--grn)}
 .sec:first-child{margin-top:4px}
 .sec svg.ic{width:19px;height:19px;color:var(--gold);stroke-width:1.9}
 .sec::after{content:"";flex:1;border-top:2px dotted var(--line)}
 .sec small{font-family:var(--ff);font-size:11px;color:var(--faint);font-weight:600}
-
+/* تب‌های گام‌دار */
 .steps{display:flex;gap:8px;flex-wrap:wrap;border-bottom:1.5px dashed var(--line);padding-bottom:16px;margin-bottom:22px}
 .step{display:inline-flex;gap:9px;align-items:center;padding:8px 17px;border-radius:99px;border:1.5px solid var(--line);background:var(--bg2);
     font:700 12.5px var(--ff);color:var(--muted);cursor:pointer;transition:.18s}
@@ -158,9 +161,9 @@ select.in{appearance:none;cursor:pointer;background-image:url("data:image/svg+xm
 .step.active .s-n{background:rgba(240,200,106,.24);color:var(--gold-b)}
 .tabpane{display:none}
 .tabpane.show{display:block;animation:rise .35s ease both}
-
+/* پاورقی فرم */
 .form-foot{display:flex;gap:10px;flex-wrap:wrap;align-items:center;border-top:1.5px dashed var(--line);margin-top:26px;padding-top:20px}
-
+/* ─────────── جدول‌ها ─────────── */
 .tblwrap{overflow-x:auto}
 .tbl{width:100%;border-collapse:separate;border-spacing:0;font-size:13px;min-width:740px}
 .tbl th{background:var(--bg2);color:var(--muted);font-size:11.5px;font-weight:800;text-align:right;padding:11px 14px;border-bottom:1.5px solid var(--line);white-space:nowrap}
@@ -176,15 +179,55 @@ select.in{appearance:none;cursor:pointer;background-image:url("data:image/svg+xm
 .rowact{display:flex;gap:3px;justify-content:flex-end}
 .rowact .icobtn{width:30px;height:30px}
 .tbl-empty{text-align:center;padding:56px 20px!important}
+/* صفحه‌بندی */
 .pgn{display:inline-flex;gap:5px;margin-inline-start:auto}
 .pgn button{min-width:31px;height:31px;padding:0 8px;border-radius:8px;border:1px solid var(--line);background:var(--card);font:700 12px var(--ff);color:var(--muted);cursor:pointer;transition:.14s}
 .pgn button:hover{border-color:var(--grn-l);color:var(--grn)}
 .pgn button.on{background:var(--grn);border-color:var(--grn);color:#fff}
-
+/* ─────────── پوسته: سایدبار ─────────── */
 .app-shell{display:flex;min-height:100vh}
-.sidebar{width:260px;flex:0 0 auto;background:var(--grn-d);color:#d6e3dc;position:sticky;top:0;height:100vh;overflow-y:auto;z-index:1040;
-    display:flex;flex-direction:column;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Cpath d='M28 4l5 19h19l-15 11 6 18-15 11 6-18L4 23h19z' fill='none' stroke='%23f2eee1' stroke-opacity='.06'/%3E%3C/svg%3E")}
+.sidebar {
+    width: 260px;
+    flex: 0 0 auto;
+    background: var(--grn-d); /* رنگ پایه */
+    position: relative;
+    overflow: hidden; /* برای اینکه افکت‌ها از کادر خارج نشن */
+    color: #d6e3dc;
+    /* ویژگی‌های قبلی رو حفظ کن (sticky, height, flex, z-index) */
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 1040;
+    display: flex;
+    flex-direction: column;
+    /* حتماً این خط رو حذف کن: background-image: url(...) */
+}
+.sidebar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        /* ۱. هاله‌ی طلایی در سمت چپ-بالا */
+            radial-gradient(circle at 0% 15%, rgba(240, 200, 106, 0.12) 0%, transparent 45%),
+                /* ۲. هاله‌ی طلایی ملایم‌تر در پایین-راست */
+            radial-gradient(circle at 90% 85%, rgba(240, 200, 106, 0.08) 0%, transparent 40%),
+                /* ۳. نقطه‌نور سفید برای عمق */
+            radial-gradient(circle at 40% 50%, rgba(255, 255, 255, 0.04) 0%, transparent 35%),
+                /* ۴. خطوط مورب نازک و شفاف (جایگزین ستاره‌های زمخت) */
+            repeating-linear-gradient(45deg,
+            transparent,
+            transparent 28px,
+            rgba(255, 255, 255, 0.02) 28px,
+            rgba(255, 255, 255, 0.02) 29px
+            );
+    background-size: 100% 100%, 100% 100%, 100% 100%, 58px 58px;
+    animation: floatGlow 14s ease-in-out infinite alternate;
+    pointer-events: none; /* کلید مهم: باعث میشه از پشت، کلیک‌ها رو رد کنه */
+    z-index: 0;
+}
+/*display:flex;flex-direction:column;*/
+/*background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Cpath d='M28 4l5 19h19l-15 11 6 18-15-11-15 11 6-18L4 23h19z' fill='none' stroke='%23f2eee1' stroke-opacity='.06'/%3E%3C/svg%3E")}*/
 .sidebar::-webkit-scrollbar-thumb{background:#2c5a50;border-color:var(--grn-d)}
 .sb-brand{display:flex;gap:12px;align-items:center;padding:20px 18px 17px;border-bottom:1px solid rgba(242,238,225,.14)}
 .sb-brand .lg{width:44px;height:44px;flex:0 0 auto}
@@ -208,7 +251,7 @@ select.in{appearance:none;cursor:pointer;background-image:url("data:image/svg+xm
 .sb-user .icobtn{margin-inline-start:auto;color:#e8937f}
 .sb-user .icobtn:hover{background:rgba(178,58,40,.25);border-color:transparent;color:#ffb3a1}
 .sb-backdrop{display:none;position:fixed;inset:0;background:rgba(14,56,48,.5);backdrop-filter:blur(2px);z-index:1035}
-
+/* ─────────── پوسته: تاپ‌بار و محتوا ─────────── */
 .main-col{flex:1;min-width:0;display:flex;flex-direction:column}
 .topbar{position:sticky;top:0;z-index:1030;display:flex;align-items:center;gap:13px;padding:11px 22px;
     background:rgba(242,238,225,.9);backdrop-filter:blur(9px);border-bottom:1px solid var(--line)}
@@ -222,10 +265,10 @@ select.in{appearance:none;cursor:pointer;background-image:url("data:image/svg+xm
 .main-content{width:100%;max-width:1240px;margin-inline:auto;padding:24px 22px 56px;flex:1}
 .app-foot{border-top:1.5px dashed var(--line);padding:14px 22px;text-align:center;color:var(--faint);font-size:11.5px;background:rgba(255,253,247,.65)}
 .app-foot b{color:var(--gold);font-weight:800}
-
+/* ─────────── مودال ─────────── */
 .mback{position:fixed;inset:0;background:rgba(14,56,48,.55);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:1100;padding:18px}
 .mback.open{display:flex}
-.modalx{background:var(--card);border:1px solid var(--line);border-radius:16px;max-width:540px;width:100%;max-height:90vh;overflow:auto;box-shadow:var(--sh-lg);animation:pop .26s cubic-bezier(.2,.9,.3,1)}
+.modalx{background:var(--card);border:1px solid var(--line);border-radius:16px;max-width:540px;width:100%;max-height:90vh;overflow:auto;box-shadow:var(--sh-lg);animation:pop .26s cubic-bezier(.2,.9,.3,1.18)}
 .modalx.wide{max-width:820px}
 .mh{background:var(--grn-d);color:#fff;padding:15px 22px;display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:3px double var(--gold-b);position:sticky;top:0;z-index:2}
 .mh h3{font-family:var(--fd);font-weight:400;font-size:19px;color:#fff;display:flex;align-items:center;gap:10px}
@@ -235,7 +278,7 @@ select.in{appearance:none;cursor:pointer;background-image:url("data:image/svg+xm
 .mh .icobtn:hover{background:rgba(255,255,255,.14);border-color:transparent;color:#fff}
 .mbody{padding:22px}
 .mfoot{padding:14px 22px 20px;display:flex;gap:10px;justify-content:flex-start;flex-wrap:wrap}
-
+/* ─────────── توست ─────────── */
 .toast-zone{position:fixed;bottom:18px;inset-inline-start:18px;z-index:2100;display:flex;flex-direction:column;gap:10px;max-width:360px}
 .app-toast{display:flex;gap:11px;align-items:flex-start;background:var(--grn-d);color:var(--bg2);border-radius:13px;padding:13px 17px;font-size:13px;line-height:1.8;
     box-shadow:var(--sh-lg);border-inline-start:4px solid var(--gold-b);animation:tin .32s cubic-bezier(.2,.9,.3,1.2)}
@@ -243,7 +286,7 @@ select.in{appearance:none;cursor:pointer;background-image:url("data:image/svg+xm
 .app-toast.out{animation:tout .3s forwards}
 @keyframes tin{from{transform:translateY(16px);opacity:0}to{transform:none;opacity:1}}
 @keyframes tout{to{transform:translateY(12px);opacity:0}}
-
+/* ─────────── یادداشت‌ها ─────────── */
 .note{border-radius:11px;padding:11px 16px;font-size:12.5px;line-height:1.9;border:1px solid var(--line);background:var(--bg2);display:flex;gap:9px;align-items:flex-start}
 .note svg.ic{width:15px;height:15px;margin-top:5px;flex:0 0 auto}
 .n-gold{background:var(--gold-s);border-color:var(--gold-l);color:#7a5306}
@@ -254,19 +297,51 @@ select.in{appearance:none;cursor:pointer;background-image:url("data:image/svg+xm
 .n-blu svg.ic{color:var(--blu)}
 .n-red{background:var(--red-s);border-color:var(--red-l);color:#8c2c1d}
 .n-red svg.ic{color:var(--red)}
-
+/* ─────────── انیمیشن‌های عمومی ─────────── */
 .view{animation:none}
 .view.anim{animation:rise .4s ease both}
 @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 @keyframes pop{from{transform:translateY(20px) scale(.97);opacity:0}to{transform:none;opacity:1}}
 .rv{opacity:0;transform:translateY(18px);transition:opacity .55s ease,transform .55s ease}
-.rv.in{opacity:1;transform:none}
+@keyframes floatGlow {
+    0% {
+        background-position: 0% 0%, 0% 0%, 0% 0%, 0px 0px;
+        opacity: 0.7;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        background-position: 10% 8%, 8% 15%, 5% 5%, 29px 29px;
+        opacity: 0.85;
+    }
+}
 
+/* کلید طلایی: همه‌ی المان‌های داخل سایدبار رو بیار بالا (جلوی افکت) */
+.sidebar > * {
+    position: relative;
+    z-index: 1;
+}
+
+.rv.in{opacity:1;transform:none}
+/* ─────────── واکنش‌گرایی ─────────── */
 @media (max-width:991.98px){
-    .sidebar{position:fixed;inset-block:0;inset-inline-end:0;transform:translateX(105%);transition:transform .28s ease;box-shadow:-20px 0 46px rgba(14,56,48,.35)}
-    .sidebar.open{transform:none!important}
-    .tb-burger{display:inline-flex}
-    .main-content{padding:18px 14px 48px}
+    .sidebar {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        right: 0;                 /* به جای inset-inline-end */
+        width: 260px;
+        transform: translateX(105%);
+        transition: transform .28s ease;
+        box-shadow: -20px 0 46px rgba(14,56,48,.35);
+        z-index: 1040;
+    }
+    .sidebar.open {
+        transform: none !important;  /* یا translateX(0) */
+    }
+    .tb-burger { display: inline-flex; }
+    .main-content { padding: 18px 14px 48px; }
 }
 @media (max-width:575.98px){
     .tb-date{display:none}
@@ -277,3 +352,8 @@ select.in{appearance:none;cursor:pointer;background-image:url("data:image/svg+xm
     .rv{opacity:1;transform:none}
     html{scroll-behavior:auto}
 }
+
+
+
+#sbBack { display: none; position: fixed; inset: 0; background: rgba(14,56,48,.5); backdrop-filter: blur(2px); z-index: 1035; }
+#sbBack.show { display: block; }   /* ← این خط جدید */

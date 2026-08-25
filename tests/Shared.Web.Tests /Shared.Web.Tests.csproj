@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" />
+        <PackageReference Include="xunit.runner.visualstudio"/>
+        <PackageReference Include="coverlet.collector"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\Shareds\Shared.Web\Shared.Web.csproj" />
+        <ProjectReference Include="..\Shared.Tests\Shared.Tests.csproj" />
+    </ItemGroup>
+
+
+
+</Project>

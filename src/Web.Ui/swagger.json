@@ -47,6 +47,324 @@
         }
       }
     },
+    "/api/v1/departments": {
+      "post": {
+        "tags": [
+          "Department"
+        ],
+        "summary": "CreateDepartment",
+        "operationId": "CreateDepartment",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateDepartmentRequest"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateDepartmentRequest"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateDepartmentRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateDepartmentCommandResponseResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateDepartmentCommandResponseResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateDepartmentCommandResponseResult"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Department"
+        ],
+        "summary": "GetUserDepartments",
+        "operationId": "GetUserDepartments",
+        "parameters": [
+          {
+            "name": "Pagination.PageNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Pagination.PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Pagination.Offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "SearchName",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "WorkshopId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUserDepartmentsQueryResponsePagedResultResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUserDepartmentsQueryResponsePagedResultResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUserDepartmentsQueryResponsePagedResultResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/departments/{departmentId}": {
+      "put": {
+        "tags": [
+          "Department"
+        ],
+        "summary": "UpdateDepartment",
+        "operationId": "UpdateDepartment",
+        "parameters": [
+          {
+            "name": "departmentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdateDepartmentRequest"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdateDepartmentRequest"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdateDepartmentRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Department"
+        ],
+        "summary": "DeleteDepartment",
+        "operationId": "DeleteDepartment",
+        "parameters": [
+          {
+            "name": "departmentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/departments/names": {
+      "get": {
+        "tags": [
+          "Department"
+        ],
+        "summary": "GetUserDepartmentsName",
+        "operationId": "GetUserDepartmentsName",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUserDepartmentsNameQueryResponseResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUserDepartmentsNameQueryResponseResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUserDepartmentsNameQueryResponseResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/departments/{departmentId}/edit": {
+      "get": {
+        "tags": [
+          "Department"
+        ],
+        "summary": "GetDepartmentForEdit",
+        "operationId": "GetDepartmentForEdit",
+        "parameters": [
+          {
+            "name": "departmentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDepartmentForEditQueryResponseResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDepartmentForEditQueryResponseResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDepartmentForEditQueryResponseResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/users/register": {
       "post": {
         "tags": [
@@ -170,10 +488,375 @@
           }
         }
       }
+    },
+    "/api/v1/workshops": {
+      "post": {
+        "tags": [
+          "Workshop"
+        ],
+        "summary": "CreateWorkshop",
+        "operationId": "CreateWorkshop",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateWorkshopRequest"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateWorkshopRequest"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateWorkshopRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateWorkshopCommandResponseResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateWorkshopCommandResponseResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateWorkshopCommandResponseResult"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Workshop"
+        ],
+        "summary": "GetUserWorkshops",
+        "operationId": "GetUserWorkshops",
+        "parameters": [
+          {
+            "name": "Pagination.PageNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Pagination.PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Pagination.Offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "SearchName",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Region",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "x-enumNames": [
+                "Normal",
+                "LessDeveloped"
+              ],
+              "enum": [
+                0,
+                1
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUserWorkshopsResponsePagedResultResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUserWorkshopsResponsePagedResultResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUserWorkshopsResponsePagedResultResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workshops/{workshopId}": {
+      "put": {
+        "tags": [
+          "Workshop"
+        ],
+        "summary": "UpdateWorkshop",
+        "operationId": "UpdateWorkshop",
+        "parameters": [
+          {
+            "name": "workshopId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdateWorkshopRequest"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdateWorkshopRequest"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdateWorkshopRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Workshop"
+        ],
+        "summary": "DeleteWorkshop",
+        "operationId": "DeleteWorkshop",
+        "parameters": [
+          {
+            "name": "workshopId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workshops/names": {
+      "get": {
+        "tags": [
+          "Workshop"
+        ],
+        "summary": "GetUserWorkshopsName",
+        "operationId": "GetUserWorkshopsName",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUserWorkshopsNameQueryResponseResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUserWorkshopsNameQueryResponseResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUserWorkshopsNameQueryResponseResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workshops/{workshopId}/edit": {
+      "get": {
+        "tags": [
+          "Workshop"
+        ],
+        "summary": "GetWorkshopForEdit",
+        "operationId": "GetWorkshopForEdit",
+        "parameters": [
+          {
+            "name": "workshopId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetWorkshopForEditResponseResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetWorkshopForEditResponseResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetWorkshopForEditResponseResult"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "BooleanResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "type": "boolean"
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
       "ClientLogEntry": {
         "type": "object",
         "additionalProperties": false,
@@ -197,6 +880,667 @@
           "timestamp": {
             "type": "string",
             "format": "date-time"
+          }
+        }
+      },
+      "CreateDepartmentCommandResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "departmentId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "CreateDepartmentCommandResponseResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreateDepartmentCommandResponse"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "CreateDepartmentRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "workshopId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "CreateWorkshopCommandResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "workshopId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "CreateWorkshopCommandResponseResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreateWorkshopCommandResponse"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "CreateWorkshopRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "region": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "Normal",
+              "LessDeveloped"
+            ],
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "registrationDate": {
+            "type": "string"
+          },
+          "nationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "GetDepartmentForEditQueryResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "workshopId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "GetDepartmentForEditQueryResponseResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GetDepartmentForEditQueryResponse"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "GetUserDepartmentsNameQueryResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "departmentNames": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/GetUserDepartmentsNameQueryResponseDepartmentName"
+            }
+          }
+        }
+      },
+      "GetUserDepartmentsNameQueryResponseDepartmentName": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "departmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "displayName": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "GetUserDepartmentsNameQueryResponseResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GetUserDepartmentsNameQueryResponse"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "GetUserDepartmentsQueryResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "workshopId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "workshopName": {
+            "type": "string",
+            "nullable": true
+          },
+          "employeesCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "GetUserDepartmentsQueryResponsePagedResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/GetUserDepartmentsQueryResponse"
+            }
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "readOnly": true,
+            "format": "int32"
+          }
+        }
+      },
+      "GetUserDepartmentsQueryResponsePagedResultResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GetUserDepartmentsQueryResponsePagedResult"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "GetUserWorkshopsNameQueryResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "workshopNames": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/GetUserWorkshopsNameQueryResponseWorkshopName"
+            }
+          }
+        }
+      },
+      "GetUserWorkshopsNameQueryResponseResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GetUserWorkshopsNameQueryResponse"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "GetUserWorkshopsNameQueryResponseWorkshopName": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "workshopId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "displayName": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "GetUserWorkshopsResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "nationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "region": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "Normal",
+              "LessDeveloped"
+            ],
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "displayRegistrationDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "employeesCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "departmentsCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "GetUserWorkshopsResponsePagedResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/GetUserWorkshopsResponse"
+            }
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "readOnly": true,
+            "format": "int32"
+          }
+        }
+      },
+      "GetUserWorkshopsResponsePagedResultResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GetUserWorkshopsResponsePagedResult"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "GetWorkshopForEditResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "region": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "Normal",
+              "LessDeveloped"
+            ],
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "registrationDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "nationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "GetWorkshopForEditResponseResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GetWorkshopForEditResponse"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         }
       },
@@ -355,6 +1699,53 @@
             "nullable": true
           }
         }
+      },
+      "UpdateDepartmentRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "UpdateWorkshopRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "region": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "Normal",
+              "LessDeveloped"
+            ],
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "registrationDate": {
+            "type": "string"
+          },
+          "nationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "string",
+            "nullable": true
+          }
+        }
       }
     },
     "securitySchemes": {
@@ -376,7 +1767,13 @@
       "name": "ClientLogs"
     },
     {
+      "name": "Department"
+    },
+    {
       "name": "Identity"
+    },
+    {
+      "name": "Workshop"
     }
   ]
 }

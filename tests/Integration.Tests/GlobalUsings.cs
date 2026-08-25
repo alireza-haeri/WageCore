@@ -11,3 +11,7 @@ global using MediatR;
 global using Shared.Kernel.Common;
 global using Shared.Tests.Assertions;
 global using System.Net.Http.Json;
+global using Microsoft.AspNetCore.Mvc;
+global using Shared.Web.DateTimeHandling.CustomTypes;
+global using System.Net;
+global using Integration.Tests.Controllers;

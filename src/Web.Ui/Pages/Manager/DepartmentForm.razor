@@ -1,0 +1,199 @@
+@page "/department-form/{id:guid}"
+@page "/department-form"
+@layout ManagerLayout
+
+<div class="page-head">
+    <div class="ph-t">
+        <div class="crumb">
+            پنل
+            <svg class="ic"><use href="assets/img/icons.svg#i-chl"/></svg>
+            <a href="/departments">بخش‌ها</a>
+            <svg class="ic"><use href="assets/img/icons.svg#i-chl"/></svg>
+            <span>@(IsEdit ? "ویرایش بخش" : "بخش جدید")</span>
+        </div>
+        <h1>@(IsEdit ? "ویرایش بخش" : "ثبت بخش جدید")</h1>
+        <p>در محدودهٔ یک کارگاه، نام بخش تکراری نباشد.</p>
+    </div>
+    <div class="ph-actions">
+        <a class="btn btn-g" href="/departments">
+            <svg class="ic"><use href="assets/img/icons.svg#i-x"/></svg>
+            انصراف
+        </a>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="panel-b">
+        <EditForm EditContext="@_formHelper.EditContext" OnValidSubmit="@HandleSubmit">
+            <ValidationMessage TValue="string" For="() => _formHelper.Model.General" class="f-help text-danger"/>
+
+            <div class="sec">
+                <svg class="ic"><use href="assets/img/icons.svg#i-dept"/></svg>
+                مشخصات بخش
+            </div>
+
+           @if (!IsEdit)
+            {
+                <div class="field">
+                    <label class="f-label" for="d-ws"><span class="req-s">*</span>زیرمجموعهٔ کارگاه</label>
+                    <InputSelect @bind-Value="_formHelper.Model.WorkshopId" class="in" id="d-ws" data-autofocus>
+                        <option value="">انتخاب کنید...</option>
+                        @if (_userWorkshops is not null)
+                        {
+                            foreach (var workshop in _userWorkshops)
+                            {
+                                <option value="@workshop.WorkshopId">@workshop.DisplayName</option>
+                            }
+                        }
+                    </InputSelect>
+                    <ValidationMessage TValue="Guid?" For="() => _formHelper.Model.WorkshopId"
+                                       class="f-help text-danger"/>
+                </div>
+            }
+
+            <div class="field">
+                <label class="f-label" for="d-name"><span class="req-s">*</span>نام بخش</label>
+                <InputText @bind-Value="_formHelper.Model.Name" class="in" id="d-name"
+                           placeholder="مثلاً: کنترل کیفیت"/>
+                <ValidationMessage TValue="string" For="() => _formHelper.Model.Name"
+                                   class="f-help text-danger"/>
+                <div class="f-help">۲ تا ۱۰۰ نویسه.</div>
+            </div>
+
+            <div class="form-foot">
+                <button type="submit" class="btn btn-p" disabled="@_isLoading">
+                    @if (_isLoading)
+                    {
+                        <span>در حال پردازش...</span>
+                    }
+                    else
+                    {
+                        <svg class="ic"><use href="assets/img/icons.svg#i-check"/></svg>
+                        <span>@(IsEdit ? "ویرایش بخش" : "ثبت بخش")</span>
+                    }
+                </button>
+                <a class="btn btn-g" href="/departments">انصراف</a>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [Parameter] public Guid? Id { get; set; }
+
+    private FormHelper<DepartmentFormModel> _formHelper = new();
+    private List<GetUserWorkshopsNameQueryResponseWorkshopName>? _userWorkshops;
+    private bool _isLoading;
+    private bool IsEdit => Id.HasValue && Id.Value != Guid.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadWorkshopsAsync();
+
+        if (IsEdit)
+        {
+            _isLoading = true;
+            try
+            {
+                var result = await ApiService.SendAsync(
+                    apiCall: () => ApiClient.GetDepartmentForEditAsync(Id!.Value)
+                );
+
+                if (result is { IsSuccess: true })
+                {
+                    var department = result.Response;
+                    _formHelper.Model = new DepartmentFormModel
+                    {
+                        Name = department.Name,
+                        WorkshopId = department.WorkshopId
+                    };
+
+                    _formHelper.RebuildEditContext();
+                }
+                else
+                {
+                    ToastService.ShowToastError("بخش مورد نظر یافت نشد.");
+                    NavigationManager.NavigateTo("/departments");
+                }
+            }
+            finally
+            {
+                _isLoading = false;
+            }
+        }
+    }
+
+    private async Task LoadWorkshopsAsync()
+    {
+        var result = await ApiService.SendAsync(() => ApiClient.GetUserWorkshopsNameAsync());
+        if (result?.IsSuccess is true)
+        {
+            _userWorkshops = result.Response.WorkshopNames.ToList();
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (_isLoading) return;
+        _isLoading = true;
+
+        _formHelper.ClearErrors();
+
+        var model = _formHelper.Model;
+        if (IsEdit)
+        {
+            var result = await ApiService.SendAsync(
+                apiCall: () => ApiClient.UpdateDepartmentAsync(Id!.Value, new UpdateDepartmentRequest(
+                    model.Name
+                )),
+                successMessage: "بخش با موفقیت ویرایش شد.",
+                showErrorToastValidation: false
+            );
+
+            if (result is { IsSuccess: true })
+            {
+                NavigationManager.NavigateTo("/departments");
+            }
+            else if (result != null)
+            {
+                _formHelper.SetServerErrors(result.Errors);
+                ToastService.ShowToastWarning("لطفاً خطاها را بررسی کنید.");
+            }
+        }
+        else
+        {
+            var result = await ApiService.SendAsync(
+                apiCall: () => ApiClient.CreateDepartmentAsync(new CreateDepartmentRequest(
+                    workshopId: model.WorkshopId ?? Guid.Empty,
+                    name: model.Name
+                )),
+                successMessage: "بخش با موفقیت ثبت شد.",
+                showErrorToastValidation: false
+            );
+
+            if (result is { IsSuccess: true })
+            {
+                NavigationManager.NavigateTo("/departments");
+            }
+            else if (result != null)
+            {
+                _formHelper.SetServerErrors(result.Errors);
+                ToastService.ShowToastWarning("لطفاً خطاها را بررسی کنید.");
+            }
+        }
+
+        _isLoading = false;
+    }
+
+    public class DepartmentFormModel : BaseModel
+    {
+        [Required(ErrorMessage = "انتخاب کارگاه اجباری است.")]
+        [Display(Name = "کارگاه")]
+        public Guid? WorkshopId { get; set; }
+
+        [Required(ErrorMessage = "نام بخش اجباری است.")]
+        [StringLength(100, MinimumLength = 2, ErrorMessage = "نام بخش باید بین ۲ تا ۱۰۰ نویسه باشد.")]
+        [Display(Name = "نام بخش")]
+        public string Name { get; set; } = string.Empty;
+    }
+}

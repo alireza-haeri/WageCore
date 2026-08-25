@@ -38,6 +38,14 @@ public class Result<TModel>
                 { { "General", ["شما دسترسی لازم را ندارید. لطفاً وارد شوید."] } },
             BadResultType =  Common.BadResultType.Unauthorized
         };
+    
+    public Result<TResult> Map<TResult>(Func<TModel, TResult> selector) => new()
+    {
+        IsSuccess = IsSuccess,
+        BadResultType = BadResultType,
+        Errors = Errors,
+        Response = IsSuccess && Response is not null ? selector(Response) : default
+    };
 }
 
 public enum BadResultType

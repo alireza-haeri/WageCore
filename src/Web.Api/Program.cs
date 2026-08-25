@@ -19,7 +19,15 @@ builder
     .ConfigureCore()
     .ConfigureInfrastructure();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new PersianDateJsonConverter());
+        options.JsonSerializerOptions.Converters.Add(new PersianTimeJsonConverter());
+        options.JsonSerializerOptions.Converters.Add(new PersianDateTimeJsonConverter());
+        
+        options.JsonSerializerOptions.Converters.Add(new NormalizedStringJsonConverter());
+    });
 
 //Add Authentication
 builder.AddAuthentication();
@@ -39,6 +47,7 @@ builder.ConfigureSwagger(applicationSettings.ApplicationName, applicationSetting
 var app = builder.Build();
 
 app.UseExceptionHandler();
+app.ConfigureSerilog();
 
 app.UseSwagger(applicationSettings.ApplicationName);
 

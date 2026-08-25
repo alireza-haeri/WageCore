@@ -4,6 +4,7 @@ public class WageCoreDbContext(DbContextOptions<WageCoreDbContext> options)
     : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>(options)
 {
     public override DbSet<ApplicationUser> Users { get; set; }
+    public DbSet<Workshop> Workshops { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

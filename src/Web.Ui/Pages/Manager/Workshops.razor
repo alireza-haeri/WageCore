@@ -1,0 +1,342 @@
+@page "/workshops"
+@layout ManagerLayout
+@implements IDisposable
+
+<div class="page-head">
+    <div class="ph-t">
+        <div class="crumb">پنل
+            <svg class="ic"><use href="assets/img/icons.svg#i-chl"/></svg>
+            کارگاه‌ها
+        </div>
+        <h1>کارگاه‌ها</h1>
+        <p>هر کارگاه یک مدیر دارد و چترِ همهٔ بخش‌ها و کارکنان است.</p>
+    </div>
+    <div class="ph-actions">
+        <button class="btn btn-g" data-demo="خروجی اکسل در پیاده‌سازی اصلی تولید می‌شود.">
+            <svg class="ic"><use href="assets/img/icons.svg#i-dl"/></svg>
+            خروجی اکسل
+        </button>
+        <a class="btn btn-p" href="/workshop-form">
+            <svg class="ic"><use href="assets/img/icons.svg#i-plus"/></svg>
+            کارگاه جدید
+        </a>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="toolbar">
+        <div class="srch">
+            <svg class="ic"><use href="assets/img/icons.svg#i-search"/></svg>
+            <input placeholder="جست‌وجو در نام کارگاه…"
+                   value="@_searchName"
+                   @oninput="OnSearchInput"/>
+        </div>
+        <select class="in tb-sel" @bind="_selectedRegion" @bind:after="OnRegionChanged">
+            <option value="">همهٔ مناطق</option>
+            <option value="@Region.Normal">عادی</option>
+            <option value="@Region.LessDeveloped">کمتر توسعه‌یافته</option>
+        </select>
+        <span class="chip c-grn ms-auto">
+            <span class="c-dot"></span>@((_userWorkshops?.TotalCount ?? 0).ToPersianNumber()) کارگاه
+        </span>
+    </div>
+
+    <div class="panel-b">
+        @if (_isLoading)
+        {
+            <div class="text-center p-4">
+                <span>در حال بارگذاری...</span>
+            </div>
+        }
+        else if (_userWorkshops is null || _userWorkshops.Items.Count == 0)
+        {
+            <div class="text-center p-4" style="color:var(--muted)">
+                <svg class="ic" style="width:32px;height:32px;opacity:.5">
+                    <use href="assets/img/icons.svg#i-factory"/>
+                </svg>
+                <p class="mt-2">کارگاهی یافت نشد.</p>
+            </div>
+        }
+        else
+        {
+            <div class="row g-3">
+                @foreach (var workshop in _userWorkshops.Items)
+                {
+                    <div class="col-md-6 col-xl-4">
+                        <div class="panel h-100" style="box-shadow:none">
+                            <div class="panel-b pb-2">
+                                <div class="d-flex gap-3 align-items-start">
+                                    <div class="ti fi-y"
+                                         style="width:44px;height:44px;border-radius:12px;display:grid;place-items:center">
+                                        <svg class="ic"><use href="assets/img/icons.svg#i-factory"/></svg>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <b style="font-size:14.5px">@workshop.Name</b>
+                                        <div style="font-size:11.5px;color:var(--muted)">
+                                            @workshop.Address
+                                        </div>
+                                    </div>
+                                    <span class="chip @GetRegionChipClass((Region)workshop.Region)">
+                                        @GetRegionDisplayName((Region)workshop.Region)
+                                    </span>
+                                </div>
+                                <div class="d-flex gap-3 flex-wrap mt-3"
+                                     style="font-size:11.5px;color:var(--muted)">
+                                    <span>شناسه ملی: @workshop.NationalId.ToPersianNumber()</span>
+                                    <span>ثبت: @workshop.DisplayRegistrationDate</span>
+                                </div>
+                            </div>
+                            <div class="panel-f">
+                                <span>@workshop.DepartmentsCount.ToPersianNumber() بخش </span>·
+                                <span>@workshop.EmployeesCount.ToPersianNumber() کارمند </span>
+                                <span class="rowact ms-auto">
+                                    <a class="icobtn" href="/workshop-form/@workshop.Id" title="ویرایش">
+                                        <svg class="ic"><use href="assets/img/icons.svg#i-pen"/></svg>
+                                    </a>
+                                    <button class="icobtn danger" title="حذف"
+                                            @onclick="() => ConfirmDelete(workshop)"
+                                            disabled="@_isDeleting">
+                                        <svg class="ic"><use href="assets/img/icons.svg#i-trash"/></svg>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            @* Pagination *@
+            @if (_totalPages > 1)
+            {
+                <div class="d-flex justify-content-center align-items-center gap-2 mt-4">
+                    <button class="btn btn-g" disabled="@(_pageNumber <= 1)"
+                            @onclick="() => GoToPage(_pageNumber - 1)">
+                        قبلی
+                    </button>
+
+                    @foreach (var pageNum in GetPageNumbers())
+                    {
+                        if (pageNum == -1)
+                        {
+                            <span style="padding:0 8px">...</span>
+                        }
+                        else
+                        {
+                            <button class="btn @(pageNum == _pageNumber ? "btn-p" : "btn-g")"
+                                    @onclick="() => GoToPage(pageNum)">
+                                @pageNum
+                            </button>
+                        }
+                    }
+
+                    <button class="btn btn-g" disabled="@(_pageNumber >= _totalPages)"
+                            @onclick="() => GoToPage(_pageNumber + 1)">
+                        بعدی
+                    </button>
+                </div>
+            }
+        }
+    </div>
+
+    <div class="panel-f">
+        <svg class="ic" style="width:14px;height:14px">
+            <use href="assets/img/icons.svg#i-info"/>
+        </svg>
+        کارگاه فقط «نوع» منطقه را نگه می‌دارد؛ مبالغ حداقل حقوق هر منطقه در بخشنامه‌هاست و سالانه
+        یک‌جا به‌روز می‌شود.
+    </div>
+</div>
+
+@* Delete Confirmation Modal *@
+@if (_workshopToDelete is not null)
+{
+    <div class="modal-backdrop show" style="z-index:1040"></div>
+    <div class="modal show d-block" tabindex="-1" style="z-index:1050">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">تأیید حذف</h5>
+                    <button type="button" class="btn-close" @onclick="CancelDelete" disabled="@_isDeleting"></button>
+                </div>
+                <div class="modal-body">
+                    <p>آیا از حذف کارگاه <b>«@_workshopToDelete.Name»</b> اطمینان دارید؟</p>
+                    <p class="text-danger" style="font-size:12px">این عملیات قابل بازگشت نیست.</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-g" @onclick="CancelDelete" disabled="@_isDeleting">انصراف</button>
+                    <button class="btn btn-danger" @onclick="DeleteWorkshop" disabled="@_isDeleting">
+                        @if (_isDeleting)
+                        {
+                            <span>در حال حذف...</span>
+                        }
+                        else
+                        {
+                            <span>حذف</span>
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private GetUserWorkshopsResponsePagedResult? _userWorkshops;
+    private bool _isLoading;
+    private bool _isDeleting;
+
+    // Filters
+    private string? _searchName;
+    private string _selectedRegion = string.Empty;
+
+    // Pagination
+    private int _pageNumber = 1;
+    private const int PageSize = 10;
+    private int _totalPages => _userWorkshops is null
+        ? 0
+        : (int)Math.Ceiling(_userWorkshops.TotalCount / (double)PageSize);
+
+    // Debounce
+    private Timer? _debounceTimer;
+
+    // Delete
+    private GetUserWorkshopsResponse? _workshopToDelete;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadWorkshopsAsync();
+    }
+
+    private async Task LoadWorkshopsAsync()
+    {
+        _isLoading = true;
+        StateHasChanged();
+
+        Region? region = string.IsNullOrEmpty(_selectedRegion)
+            ? null
+            : Enum.Parse<Region>(_selectedRegion);
+
+        var searchTerm = string.IsNullOrWhiteSpace(_searchName) ? null : _searchName.Trim();
+
+        var result = await ApiService.SendAsync(() => ApiClient.GetUserWorkshopsAsync(
+            _pageNumber, PageSize, null, searchTerm, region));
+
+        if (result?.IsSuccess is true)
+        {
+            _userWorkshops = result.Response;
+        }
+
+        _isLoading = false;
+        StateHasChanged();
+    }
+
+    private void OnSearchInput(ChangeEventArgs e)
+    {
+        _searchName = e.Value?.ToString();
+        _debounceTimer?.Dispose();
+        _debounceTimer = new Timer(async _ =>
+        {
+            await InvokeAsync(async () =>
+            {
+                _pageNumber = 1;
+                await LoadWorkshopsAsync();
+            });
+        }, null, 500, Timeout.Infinite);
+    }
+
+    private async Task OnRegionChanged()
+    {
+        _pageNumber = 1;
+        await LoadWorkshopsAsync();
+    }
+
+    private async Task GoToPage(int page)
+    {
+        if (page < 1 || page > _totalPages || page == _pageNumber) return;
+        _pageNumber = page;
+        await LoadWorkshopsAsync();
+    }
+
+    private IEnumerable<int> GetPageNumbers()
+    {
+        const int visible = 5;
+        if (_totalPages <= visible + 2)
+        {
+            for (var i = 1; i <= _totalPages; i++) yield return i;
+            yield break;
+        }
+
+        yield return 1;
+
+        var start = Math.Max(2, _pageNumber - visible / 2);
+        var end = Math.Min(_totalPages - 1, start + visible - 1);
+        start = Math.Max(2, end - visible + 1);
+
+        if (start > 2) yield return -1; // ...
+        for (var i = start; i <= end; i++) yield return i;
+        if (end < _totalPages - 1) yield return -1; // ...
+
+        yield return _totalPages;
+    }
+
+    // ==================== Delete ====================
+
+    private void ConfirmDelete(GetUserWorkshopsResponse workshop)
+    {
+        _workshopToDelete = workshop;
+    }
+
+    private void CancelDelete()
+    {
+        if (_isDeleting) return;
+        _workshopToDelete = null;
+    }
+
+    private async Task DeleteWorkshop()
+    {
+        if (_workshopToDelete is null || _isDeleting) return;
+
+        _isDeleting = true;
+
+        var result = await ApiService.SendAsync(
+            apiCall: () => ApiClient.DeleteWorkshopAsync(_workshopToDelete.Id),
+            successMessage: "کارگاه با موفقیت حذف شد."
+        );
+
+        _isDeleting = false;
+
+        if (result?.IsSuccess is true)
+        {
+            _workshopToDelete = null;
+
+            // اگر آخرین آیتم صفحه بود، به صفحه قبل برو
+            if (_userWorkshops?.Items.Count == 1 && _pageNumber > 1)
+            {
+                _pageNumber--;
+            }
+
+            await LoadWorkshopsAsync();
+        }
+    }
+
+    // ==================== Helpers ====================
+
+    private string GetRegionDisplayName(Region region) => region switch
+    {
+        Region.Normal => "عادی",
+        Region.LessDeveloped => "کمتر توسعه‌یافته",
+        _ => region.ToString()
+    };
+
+    private string GetRegionChipClass(Region region) => region switch
+    {
+        Region.Normal => "c-blu",
+        Region.LessDeveloped => "c-gold",
+        _ => "c-blu"
+    };
+
+    public void Dispose()
+    {
+        _debounceTimer?.Dispose();
+    }
+}

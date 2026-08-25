@@ -1,50 +1,43 @@
 <Project>
-    <ItemGroup>
-        <!-- Serilog -->
-        <PackageVersion Include="Serilog.AspNetCore" Version="10.0.0"/>
-        <PackageVersion Include="Serilog.Settings.Configuration" Version="10.0.1"/>
-        <PackageVersion Include="Serilog.Sinks.File" Version="7.0.0"/>
-
-        <!-- Scalar/Swagger -->
-        <PackageVersion Include="Scalar.AspNetCore" Version="2.16.6"/>
-        <PackageVersion Include="Swashbuckle.AspNetCore.Annotations" Version="10.2.1"/>
-
-        <!-- Jwt -->
-        <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.11"/>
-        
-        <!-- EF Core -->
-        <PackageVersion Include="Microsoft.EntityFrameworkCore.Abstractions" Version="8.0.8"/>
-        <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.8"/>
-        <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageVersion>
-        <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.28">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageVersion>
-
-        <!-- Identity -->
-        <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.8" />
-
-        <!-- Fluent Validation -->
-        <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1"/>
-        
-        <!-- MediatR -->
-        <PackageVersion Include="MediatR" Version="12.0.0" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <!-- Testing -->
-        <PackageVersion Include="FluentAssertions" Version="6.12.0" />
-    </ItemGroup>
-    
-    <!-- Blazor -->
-    <ItemGroup>
-        <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.9" />
-        <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="8.0.9" />
-        <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.9" PrivateAssets="all" />
-        <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
-        <PackageVersion Include="Microsoft.Extensions.Http" Version="8.0.9" />
-    </ItemGroup>
+  <ItemGroup>
+    <!-- Serilog -->
+    <PackageVersion Include="Dapper" Version="2.1.79" />
+    <PackageVersion Include="Serilog.AspNetCore" Version="10.0.0" />
+    <PackageVersion Include="Serilog.Settings.Configuration" Version="10.0.1" />
+    <PackageVersion Include="Serilog.Sinks.File" Version="7.0.0" />
+    <!-- Scalar/Swagger -->
+    <PackageVersion Include="Scalar.AspNetCore" Version="2.16.6" />
+    <PackageVersion Include="Swashbuckle.AspNetCore.Annotations" Version="10.2.1" />
+    <!-- Jwt -->
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.11" />
+    <!-- EF Core -->
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Abstractions" Version="8.0.8" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.8" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageVersion>
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.28">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageVersion>
+    <!-- Identity -->
+    <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.8" />
+    <!-- Fluent Validation -->
+    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+    <!-- MediatR -->
+    <PackageVersion Include="MediatR" Version="12.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Testing -->
+    <PackageVersion Include="FluentAssertions" Version="6.12.0" />
+  </ItemGroup>
+  <!-- Blazor -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.9" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="8.0.9" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.9" PrivateAssets="all" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="8.0.9" />
+  </ItemGroup>
 </Project>

@@ -1,3 +1,5 @@
+using Infrastructure.Persistence.Dapper;
+
 namespace Infrastructure;
 
 public static class DependencyInjection
@@ -25,8 +27,15 @@ public static class DependencyInjection
             })
             .AddEntityFrameworkStores<WageCoreDbContext>();
 
+        DapperTypeHandlers.Register();
+        builder.Services.AddScoped<IDbConnectionFactory, SqlConnectionFactory>();
+        
         builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
         builder.Services.AddScoped<IUserRepository, UserRepository>();
+        
+        builder.Services.AddScoped<IWorkShopRepository, WorkshopRepository>();
+        builder.Services.AddScoped<IWorkshopQuery, WorkshopQuery>();
+        builder.Services.AddScoped<IDepartmentQuery, DepartmentQuery>();
 
         return builder;
     }

@@ -31,6 +31,8 @@ public static class SwaggerConfigurationExtension
 
             options.SchemaFilter<EnumSchemaFilter>();
             options.OperationFilter<SummaryFromOperationIdFilter>();
+            
+            options.AddPersianDateTimeMappings();
         });
         
         return builder;

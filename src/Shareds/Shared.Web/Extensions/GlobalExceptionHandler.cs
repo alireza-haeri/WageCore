@@ -29,6 +29,9 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logge
     private static (int StatusCode, string Title) MapException(Exception exception) =>
         exception switch
         {
+            InvalidPersianDateException => (400,exception.Message),
+            InvalidPersianTimeException => (400,exception.Message),
+            InvalidPersianDateTimeException => (400,exception.Message),
             _ => (StatusCodes.Status500InternalServerError, "An unexpected error occurred")
         };
 }

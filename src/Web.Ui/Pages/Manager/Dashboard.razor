@@ -1,0 +1,268 @@
+@page "/dashboard"
+@layout ManagerLayout
+@attribute [Authorize]
+
+<!-- محتوای داشبورد -->
+@if (_managerFullName is not null)
+{
+    <div class="dash-hero">
+        <h2> وقت بخیر، @_managerFullName</h2>
+        <div class="dh-stamp">حقوق<br>و دستمزد</div>
+    </div>
+}
+<div class="row g-3 mt-1">
+    <div class="col-sm-6 col-xl-3">
+        <div class="tile">
+            <div class="ti fi-g">
+                <svg class="ic">
+                    <use href="assets/img/icons.svg#i-users"/>
+                </svg>
+            </div>
+            <div>
+                <div class="tv">۵ نفر</div>
+                <div class="tl">کارکنان شاغل</div>
+                <div class="ts">
+                    <svg class="ic">
+                        <use href="assets/img/icons.svg#i-plus"/>
+                    </svg>
+                    ۱ نفر نسبت به ماه قبل
+                </div>
+            </div>
+            <svg class="spark" viewBox="0 0 74 26">
+                <polyline points="0,20 14,17 28,18 42,12 56,10 74,5"/>
+            </svg>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="tile">
+            <div class="ti fi-b">
+                <svg class="ic">
+                    <use href="assets/img/icons.svg#i-factory"/>
+                </svg>
+            </div>
+            <div>
+                <div class="tv">۳ کارگاه</div>
+                <div class="tl">ساختار فعال</div>
+                <div class="ts">۷ بخش · ۶ کارمند</div>
+            </div>
+            <svg class="spark g-blu" viewBox="0 0 74 26">
+                <polyline points="0,16 14,16 28,12 42,13 56,8 74,7"/>
+            </svg>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="tile">
+            <div class="ti fi-y">
+                <svg class="ic">
+                    <use href="assets/img/icons.svg#i-receipt"/>
+                </svg>
+            </div>
+            <div>
+                <div class="tv">۵ فیش</div>
+                <div class="tl">فیش‌های مرداد ۱۴۰۵</div>
+                <div class="ts">
+                    <svg class="ic">
+                        <use href="assets/img/icons.svg#i-clock"/>
+                    </svg>
+                    ۱ فیش پیش‌نویس مانده
+                </div>
+            </div>
+            <svg class="spark g-gold" viewBox="0 0 74 26">
+                <polyline points="0,22 14,18 28,19 42,14 56,9 74,6"/>
+            </svg>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="tile">
+            <div class="ti fi-r">
+                <svg class="ic">
+                    <use href="assets/img/icons.svg#i-coins"/>
+                </svg>
+            </div>
+            <div>
+                <div class="tv num">۹٫۲ میلیارد</div>
+                <div class="tl">خالص پرداختی مرداد (ریال)</div>
+                <div class="ts">
+                    <svg class="ic">
+                        <use href="assets/img/icons.svg#i-plus"/>
+                    </svg>
+                    ۲٫۲٪ نسبت به تیر
+                </div>
+            </div>
+            <svg class="spark g-red" viewBox="0 0 74 26">
+                <polyline points="0,21 14,19 28,16 42,15 56,10 74,4"/>
+            </svg>
+        </div>
+    </div>
+</div>
+<div class="row g-3 mt-1">
+    <div class="col-lg-7">
+        <div class="panel h-100">
+            <div class="panel-h"><span class="bar"></span>
+                <h2>روند خالص پرداختی — ۶ ماه اخیر</h2><span class="chip c-gray ms-auto">به میلیارد
+                                    ریال</span>
+            </div>
+            <div class="panel-b">
+                <div class="bars">
+                    <div class="bcol">
+                        <div class="barx" data-v="۷٫۹ میلیارد" style="height:62%"></div>
+                        <span
+                            class="blbl">اسفند ۱۴۰۴</span>
+                    </div>
+                    <div class="bcol">
+                        <div class="barx" data-v="۸٫۲ میلیارد" style="height:66%"></div>
+                        <span
+                            class="blbl">فروردین</span>
+                    </div>
+                    <div class="bcol">
+                        <div class="barx" data-v="۸٫۴ میلیارد" style="height:70%"></div>
+                        <span
+                            class="blbl">اردیبهشت</span>
+                    </div>
+                    <div class="bcol">
+                        <div class="barx" data-v="۸٫۷ میلیارد" style="height:75%"></div>
+                        <span
+                            class="blbl">خرداد</span>
+                    </div>
+                    <div class="bcol">
+                        <div class="barx" data-v="۹٫۰ میلیارد" style="height:81%"></div>
+                        <span
+                            class="blbl">تیر</span>
+                    </div>
+                    <div class="bcol">
+                        <div class="barx now" data-v="۹٫۲ میلیارد" style="height:88%"></div>
+                        <span
+                            class="blbl">مرداد</span>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-f">
+                <svg class="ic" style="width:14px;height:14px">
+                    <use href="assets/img/icons.svg#i-info"/>
+                </svg>
+                ستون طلایی، جمع خالص فیش‌های صادرشدهٔ ماه جاری است.
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="panel h-100">
+            <div class="panel-h"><span class="bar"></span>
+                <h2>اقدام‌های پیش رو</h2>
+            </div>
+            <div class="panel-b py-2">
+                <ul class="todo">
+                    <li><input type="checkbox" id="td1"><label class="txt" for="td1">تأیید و نهایی‌کردن
+                            فیش پیش‌نویس حسین عباسی</label><a class="tgo"
+                                                              href="payslips.html">فیش‌ها
+                            <svg class="ic">
+                                <use href="assets/img/icons.svg#i-chl"/>
+                            </svg>
+                        </a></li>
+                    <li><input type="checkbox" id="td2"><label class="txt" for="td2">بارگذاری ارقام
+                            بخشنامهٔ سال جدید</label><a class="tgo" href="profiles.html">احکام
+                            <svg
+                                class="ic">
+                                <use href="assets/img/icons.svg#i-chl"/>
+                            </svg>
+                        </a></li>
+                    <li><input type="checkbox" id="td3"><label class="txt" for="td3">دریافت مبلغ مالیات
+                            از سامانهٔ مالیاتی و نشاندن در فیش‌ها</label></li>
+                    <li><input type="checkbox" id="td4" checked><label class="txt" for="td4">صدور حکم
+                            جدید مریم صادقی از ابتدای سال</label></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row g-3 mt-1">
+    <div class="col-lg-7">
+        <div class="panel h-100">
+            <div class="panel-h"><span class="bar"></span>
+                <h2>آخرین فیش‌های صادرشده</h2><a class="ms-auto" style="font-size:12px;font-weight:700"
+                                                 href="payslips.html">همهٔ فیش‌ها</a>
+            </div>
+            <div class="tblwrap">
+                <table class="tbl">
+                    <thead>
+                    <tr>
+                        <th>کارمند</th>
+                        <th>دوره</th>
+                        <th>خالص (ریال)</th>
+                        <th>وضعیت</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td class="pname">رضا محمدی<span class="sub">P-1001 · تولید</span></td>
+                        <td>مرداد ۱۴۰۵</td>
+                        <td class="mnum pos">۱٬۹۸۴٬۹۰۰٬۹۲۸</td>
+                        <td><span class="chip c-grn"><span class="c-dot"></span>پرداخت‌شده</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="pname">زهرا کریمی<span class="sub">P-1002 · حسابداری</span></td>
+                        <td>مرداد ۱۴۰۵</td>
+                        <td class="mnum pos">۱٬۸۵۳٬۵۳۵٬۴۰۰</td>
+                        <td><span class="chip c-blu"><span class="c-dot"></span>نهایی</span></td>
+                    </tr>
+                    <tr>
+                        <td class="pname">فاطمه نادری<span class="sub">P-1004 · تولید</span></td>
+                        <td>مرداد ۱۴۰۵</td>
+                        <td class="mnum pos">۲٬۰۶۰٬۰۲۸٬۷۰۰</td>
+                        <td><span class="chip c-blu"><span class="c-dot"></span>نهایی</span></td>
+                    </tr>
+                    <tr>
+                        <td class="pname">حسین عباسی<span class="sub">P-1003 · انبار</span></td>
+                        <td>مرداد ۱۴۰۵</td>
+                        <td class="mnum pos">۱٬۴۴۱٬۵۰۰٬۰۰۰</td>
+                        <td><span class="chip c-gold"><span class="c-dot"></span>پیش‌نویس</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="panel h-100">
+            <div class="panel-h"><span class="bar"></span>
+                <h2>پوشش فیش مرداد به تفکیک کارگاه</h2>
+            </div>
+            <div class="panel-b">
+                <div class="wprog">
+                    <div class="wp-t"><span>کارخانهٔ نساجی پارس</span><small>۳ از ۳ کارمند</small></div>
+                    <div class="pbarx"><span style="width:100%"></span></div>
+                </div>
+                <div class="wprog">
+                    <div class="wp-t"><span>شرکت پخش آریا</span><small>۱ از ۲ کارمند</small></div>
+                    <div class="pbarx"><span style="width:50%"></span></div>
+                </div>
+                <div class="wprog">
+                    <div class="wp-t"><span>کارگاه بسته‌بندی سپید</span><small>هنوز کارمندی ثبت
+                        نشده</small></div>
+                    <div class="pbarx"><span style="width:0%"></span></div>
+                </div>
+                <div class="note n-gold mt-3">
+                    <svg class="ic">
+                        <use href="assets/img/icons.svg#i-info"/>
+                    </svg>
+                    <div>کارگاه سپید تازه ثبت شده است؛ با ثبت کارکنان، فیش‌هایش اینجا دیده می‌شوند.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code
+{
+    private string? _managerFullName;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthProvider.GetAuthenticationStateAsync();
+        _managerFullName = authState.User.Identity?.Name;
+        
+        await base.OnInitializedAsync();
+    }
+}
