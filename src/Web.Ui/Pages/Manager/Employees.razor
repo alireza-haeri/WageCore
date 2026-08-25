@@ -1,0 +1,187 @@
+@page "/employees"
+@layout ManagerLayout
+
+<div class="page-head">
+    <div class="ph-t">
+        <div class="crumb">پنل
+            <svg class="ic">
+                <use href="assets/img/icons.svg#i-chl"/>
+            </svg>
+            کارکنان
+        </div>
+        <h1>کارکنان</h1>
+        <p>پرمحتواترین پروندهٔ سیستم؛ مبنای صدور حکم و فیش.</p>
+    </div>
+    <div class="ph-actions">
+        <button class="btn btn-g" data-demo="خروجی اکسل در پیاده‌سازی اصلی تولید می‌شود.">
+            <svg
+                class="ic">
+                <use href="assets/img/icons.svg#i-dl"/>
+            </svg>
+            خروجی اکسل
+        </button>
+        <a class="btn btn-p" href="/employee-form">
+            <svg class="ic">
+                <use href="assets/img/icons.svg#i-plus"/>
+            </svg>
+            کارمند جدید</a>
+    </div>
+</div>
+<div class="panel">
+    <div class="toolbar">
+        <div class="srch">
+            <svg class="ic">
+                <use href="assets/img/icons.svg#i-search"/>
+            </svg>
+            <input placeholder="جست‌وجو با نام، کد پرسنلی یا کد ملی…"></div>
+        <select class="in tb-sel">
+            <option>همهٔ کارگاه‌ها</option>
+            <option>کارخانهٔ نساجی پارس</option>
+            <option>شرکت پخش آریا</option>
+        </select>
+        <select class="in tb-sel">
+            <option>همهٔ بخش‌ها</option>
+            <option>تولید</option>
+            <option>انبار</option>
+            <option>حسابداری</option>
+            <option>فروش</option>
+        </select>
+        <select class="in tb-sel">
+            <option>همهٔ وضعیت‌ها</option>
+            <option>شاغل</option>
+            <option>ترک کار</option>
+        </select>
+        <span class="chip c-grn ms-auto"><span class="c-dot"></span>۵ شاغل · ۱ ترک کار</span>
+    </div>
+    <div class="tblwrap">
+        <table class="tbl">
+            <thead>
+            <tr>
+                <th>کد پرسنلی</th>
+                <th>نام و نام‌خانوادگی</th>
+                <th>بخش / کارگاه</th>
+                <th>کد ملی</th>
+                <th>استخدام</th>
+                <th>فرزندان</th>
+                <th>سمت بیمه‌ای</th>
+                <th>وضعیت</th>
+                <th style="text-align:left">عملیات</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><span class="ltr">P-1001</span></td>
+                <td class="pname">رضا محمدی<span class="sub">اپراتور · متأهل</span></td>
+                <td>تولید<span class="sub">کارخانهٔ نساجی پارس</span></td>
+                <td class="ltr">0084575948</td>
+                <td class="num">۱۴۰۰/۰۲/۱۱</td>
+                <td class="num">۲</td>
+                <td>اپراتور</td>
+                <td><span class="chip c-grn"><span class="c-dot"></span>شاغل</span></td>
+                <td><span class="rowact"><a class="icobtn" href="employee-form.html"
+                                            title="ویرایش"><svg class="ic">
+                                                    <use href="assets/img/icons.svg#i-pen"/>
+                                                </svg></a><button class="icobtn danger" title="حذف"
+                                                                  data-confirm="حذف پروندهٔ «رضا محمدی»"><svg
+                                class="ic">
+                                                    <use href="assets/img/icons.svg#i-trash"/>
+                                                </svg></button></span></td>
+            </tr>
+            <tr>
+                <td><span class="ltr">P-1002</span></td>
+                <td class="pname">زهرا کریمی<span class="sub">حسابدار · متأهل</span></td>
+                <td>حسابداری<span class="sub">کارخانهٔ نساجی پارس</span></td>
+                <td class="ltr">1280045728</td>
+                <td class="num">۱۳۹۸/۰۷/۰۳</td>
+                <td class="num">۱</td>
+                <td>حسابدار</td>
+                <td><span class="chip c-grn"><span class="c-dot"></span>شاغل</span></td>
+                <td><span class="rowact"><a class="icobtn" href="employee-form.html"
+                                            title="ویرایش"><svg class="ic">
+                                                    <use href="assets/img/icons.svg#i-pen"/>
+                                                </svg></a><button class="icobtn danger" title="حذف"
+                                                                  data-confirm="حذف پروندهٔ «زهرا کریمی»"><svg
+                                class="ic">
+                                                    <use href="assets/img/icons.svg#i-trash"/>
+                                                </svg></button></span></td>
+            </tr>
+            <tr>
+                <td><span class="ltr">P-1003</span></td>
+                <td class="pname">حسین عباسی<span class="sub">انباردار · مجرد</span></td>
+                <td>انبار<span class="sub">کارخانهٔ نساجی پارس</span></td>
+                <td class="ltr">2051994862</td>
+                <td class="num">۱۴۰۱/۱۱/۲۰</td>
+                <td class="num">۰</td>
+                <td>انباردار</td>
+                <td><span class="chip c-grn"><span class="c-dot"></span>شاغل</span></td>
+                <td><span class="rowact"><a class="icobtn" href="employee-form.html"
+                                            title="ویرایش"><svg class="ic">
+                                                    <use href="assets/img/icons.svg#i-pen"/>
+                                                </svg></a><button class="icobtn danger" title="حذف"
+                                                                  data-confirm="حذف پروندهٔ «حسین عباسی»"><svg
+                                class="ic">
+                                                    <use href="assets/img/icons.svg#i-trash"/>
+                                                </svg></button></span></td>
+            </tr>
+            <tr>
+                <td><span class="ltr">P-1004</span></td>
+                <td class="pname">فاطمه نادری<span class="sub">کارگر ساده · متأهل</span></td>
+                <td>تولید<span class="sub">کارخانهٔ نساجی پارس</span></td>
+                <td class="ltr">3344556673</td>
+                <td class="num">۱۳۹۹/۰۴/۱۸</td>
+                <td class="num">۳</td>
+                <td>کارگر ساده</td>
+                <td><span class="chip c-grn"><span class="c-dot"></span>شاغل</span></td>
+                <td><span class="rowact"><a class="icobtn" href="employee-form.html"
+                                            title="ویرایش"><svg class="ic">
+                                                    <use href="assets/img/icons.svg#i-pen"/>
+                                                </svg></a><button class="icobtn danger" title="حذف"
+                                                                  data-confirm="حذف پروندهٔ «فاطمه نادری»"><svg
+                                class="ic">
+                                                    <use href="assets/img/icons.svg#i-trash"/>
+                                                </svg></button></span></td>
+            </tr>
+            <tr>
+                <td><span class="ltr">P-1005</span></td>
+                <td class="pname">مریم صادقی<span class="sub">کارشناس فروش · متأهل</span></td>
+                <td>فروش<span class="sub">شرکت پخش آریا</span></td>
+                <td class="ltr">4102589635</td>
+                <td class="num">۱۳۹۷/۰۹/۰۸</td>
+                <td class="num">۲</td>
+                <td>کارشناس</td>
+                <td><span class="chip c-grn"><span class="c-dot"></span>شاغل</span></td>
+                <td><span class="rowact"><a class="icobtn" href="employee-form.html"
+                                            title="ویرایش"><svg class="ic">
+                                                    <use href="assets/img/icons.svg#i-pen"/>
+                                                </svg></a><button class="icobtn danger" title="حذف"
+                                                                  data-confirm="حذف پروندهٔ «مریم صادقی»"><svg
+                                class="ic">
+                                                    <use href="assets/img/icons.svg#i-trash"/>
+                                                </svg></button></span></td>
+            </tr>
+            <tr style="opacity:.62">
+                <td><span class="ltr">P-1006</span></td>
+                <td class="pname">امیر تهرانی<span class="sub">راننده · متأهل</span></td>
+                <td>فروش<span class="sub">شرکت پخش آریا</span></td>
+                <td class="ltr">0499370899</td>
+                <td class="num">۱۴۰۰/۱۲/۰۲</td>
+                <td class="num">۱</td>
+                <td>راننده</td>
+                <td><span class="chip c-gray"><span class="c-dot"></span>ترک کار</span></td>
+                <td><span class="rowact"><a class="icobtn" href="employee-form.html"
+                                            title="مشاهدهٔ پرونده"><svg class="ic">
+                                                    <use href="assets/img/icons.svg#i-eye"/>
+                                                </svg></a></span></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="panel-f">نمایش ۶ کارمند از ۶
+        <div class="pgn">
+            <button class="on">۱</button>
+            <button
+                data-demo="صفحهٔ بعدی (نمایشی)">۲
+            </button>
+        </div>
+    </div>
+</div>

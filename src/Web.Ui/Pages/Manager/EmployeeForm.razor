@@ -1,0 +1,294 @@
+@page "/employee-form"
+@layout ManagerLayout
+
+<div class="page-head">
+    <div class="ph-t">
+        <div class="crumb">پنل
+            <svg class="ic">
+                <use href="assets/img/icons.svg#i-chl"/>
+            </svg>
+            <a href="/employees">کارکنان</a>
+            <svg class="ic">
+                <use href="assets/img/icons.svg#i-chl"/>
+            </svg>
+            کارمند جدید
+        </div>
+        <h1>ثبت کارمند جدید</h1>
+        <p>سه گام دارد — با <span class="kbd">Enter</span> بین فیلدها حرکت کنید.</p>
+    </div>
+    <div class="ph-actions">
+        <a class="btn btn-g" href="/employees">
+            <svg class="ic">
+                <use href="assets/img/icons.svg#i-x"/>
+            </svg>
+            انصراف</a>
+        <button class="btn btn-p" data-demo="پروندهٔ کارمند به‌صورت نمایشی ثبت شد.">
+            <svg class="ic">
+                <use href="assets/img/icons.svg#i-check"/>
+            </svg>
+            ثبت نهایی پرونده
+        </button>
+    </div>
+</div>
+<div class="panel">
+    <div class="panel-b">
+        <form>
+            <input type="hidden" name="Id">
+            <div class="steps" data-tabgroup="emp">
+                <button type="button" class="step active" data-tab="emp-1"><span
+                        class="s-n">۱</span>هویت و اطلاعات پایه
+                </button>
+                <button type="button" class="step" data-tab="emp-2"><span
+                        class="s-n">۲</span>بیمه
+                </button>
+                <button type="button" class="step" data-tab="emp-3"><span class="s-n">۳</span>بانکی و
+                    مالیات
+                </button>
+            </div>
+            <!-- گام ۱ -->
+            <div class="tabpane show" id="tp-emp-1">
+                <div class="sec">
+                    <svg class="ic">
+                        <use href="assets/img/icons.svg#i-user"/>
+                    </svg>
+                    هویت<small>بخش ۴·۱ سند دامنه</small></div>
+                <div class="row g-3">
+                    <div class="col-md-4 field">
+                        <label class="f-label" for="e-name"><span class="req-s">*</span>نام و
+                            نام‌خانوادگی <span class="f-badge fb-grn">FullName</span></label>
+                        <input class="in" id="e-name" placeholder="مطابق شناسنامه/کارت ملی"
+                               data-autofocus>
+                    </div>
+                    <div class="col-md-4 field">
+                        <label class="f-label" for="e-pcode"><span class="req-s">*</span>کد پرسنلی <span
+                                class="f-badge fb-grn">یکتا در کارگاه</span></label>
+                        <div class="igroup"><span class="pre">P-</span><input class="in" id="e-pcode"
+                                                                              placeholder="1007" maxlength="20"></div>
+                        <div class="f-help">پیشنهاد سیستم: <span class="ltr">P-1007</span> — در
+                            پیاده‌سازی اصلی خودکار تولید می‌شود.
+                        </div>
+                    </div>
+                    <div class="col-md-4 field">
+                        <label class="f-label" for="e-dept"><span class="req-s">*</span>بخش محل کار
+                            <span class="f-badge fb-grn">DepartmentId</span></label>
+                        <select class="in" id="e-dept">
+                            <optgroup label="کارخانهٔ نساجی پارس">
+                                <option>تولید</option>
+                                <option>انبار</option>
+                                <option>حسابداری</option>
+                                <option>اداری</option>
+                            </optgroup>
+                            <optgroup label="شرکت پخش آریا">
+                                <option>فروش</option>
+                                <option>اداری</option>
+                            </optgroup>
+                            <optgroup label="کارگاه بسته‌بندی سپید">
+                                <option>کنترل کیفیت</option>
+                            </optgroup>
+                        </select>
+                        <div class="f-help">جابجایی بین بخش‌ها بعداً مجاز است.</div>
+                    </div>
+                    <div class="col-md-4 field">
+                        <label class="f-label" for="e-ncode"><span class="req-s">*</span>کد ملی <span
+                                class="f-badge fb-grn">یکتا</span></label>
+                        <input class="in in-ltr" id="e-ncode" inputmode="numeric" maxlength="10"
+                               placeholder="10 رقم">
+                        <div class="f-help">کدهای تمام‌یکسان نامعتبرند؛ چک‌سام هنگام ثبت کنترل می‌شود.
+                        </div>
+                    </div>
+                    <div class="col-md-4 field">
+                        <label class="f-label" for="e-bcert"><span class="req-s">*</span>شماره شناسنامه
+                            <span class="f-badge fb-grn">BirthCertificateNumber</span></label>
+                        <input class="in in-ltr" id="e-bcert" maxlength="20"
+                               placeholder="متنی ذخیره می‌شود">
+                        <div class="f-help">تا صفر پیشرو حفظ شود.</div>
+                    </div>
+                    <div class="col-md-4 field">
+                        <label class="f-label" for="e-father"><span class="req-s">*</span>نام
+                            پدر</label>
+                        <input class="in" id="e-father" maxlength="50">
+                    </div>
+                    <div class="col-md-3 field">
+                        <label class="f-label"><span class="req-s">*</span>جنسیت <span
+                                class="f-badge fb-blu">Gender</span></label>
+                        <div class="rbox">
+                            <label class="rch"><input type="radio" name="e-gender" checked>مرد</label>
+                            <label class="rch"><input type="radio" name="e-gender">زن</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3 field">
+                        <label class="f-label" for="e-marital"><span class="req-s">*</span>وضعیت
+                            تأهل</label>
+                        <select class="in" id="e-marital">
+                            <option>مجرد</option>
+                            <option selected>متأهل</option>
+                            <option>مطلقه</option>
+                            <option>همسر فوت‌شده</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 field">
+                        <label class="f-label" for="e-kids"><span class="req-s">*</span>تعداد فرزندان
+                            <span class="f-badge fb-grn">ChildrenCount</span></label>
+                        <input type="number" class="in num" id="e-kids" value="0" min="0" max="20">
+                        <div class="f-help">مبنای محاسبهٔ حق اولاد در حکم.</div>
+                    </div>
+                    <div class="col-md-3 field">
+                        <label class="f-label" for="e-hire"><span class="req-s">*</span>تاریخ
+                            استخدام</label>
+                        <input class="in num" id="e-hire" value="۱۴۰۵/۰۵/۱۷" inputmode="numeric">
+                        <div class="f-help">مبنای سنوات و عیدی.</div>
+                    </div>
+                    <div class="col-md-4 field">
+                        <label class="f-label" for="e-term">تاریخ ترک کار <span
+                                class="f-badge fb-gold">اختیاری</span></label>
+                        <input class="in num" id="e-term" placeholder="خالی = شاغل" inputmode="numeric">
+                        <div class="f-help">با پر شدن، صدور فیش برای ماه‌های بعد بسته می‌شود.</div>
+                    </div>
+                    <div class="col-md-4 field">
+                        <label class="f-label" for="e-mobile">موبایل کارمند <span
+                                class="f-badge fb-gold">اختیاری</span></label>
+                        <input class="in in-ltr" id="e-mobile" inputmode="numeric" maxlength="11"
+                               placeholder="09xxxxxxxxx">
+                        <div class="f-help">برای اطلاع‌رسانی فیش.</div>
+                    </div>
+                    <div class="col-md-4 field">
+                        <label class="f-label" for="e-job">عنوان شغلی داخلی <span
+                                class="f-badge fb-gold">اختیاری</span></label>
+                        <input class="in" id="e-job" placeholder="جدا از «سمت در لیست بیمه»">
+                    </div>
+                </div>
+            </div>
+            <!-- گام ۲ -->
+            <div class="tabpane" id="tp-emp-2">
+                <div class="sec">
+                    <svg class="ic">
+                        <use href="assets/img/icons.svg#i-shield"/>
+                    </svg>
+                    اطلاعات بیمه<small>بخش ۴·۲ سند دامنه</small></div>
+                <div class="row g-3">
+                    <div class="col-md-4 field">
+                        <label class="f-label" for="e-insno"><span class="req-s">*</span>شماره بیمه
+                            <span class="f-badge fb-grn">InsuranceNumber</span></label>
+                        <input class="in in-ltr" id="e-insno" maxlength="20"
+                               placeholder="از دفترچه/استعلام تأمین اجتماعی">
+                    </div>
+                    <div class="col-md-4 field">
+                        <label class="f-label" for="e-insrow">ردیف پیمان بیمه <span
+                                class="f-badge fb-gold">اختیاری</span></label>
+                        <input class="in in-ltr" id="e-insrow" maxlength="20"
+                               placeholder="فقط کارگاه‌های چندپیمان">
+                    </div>
+                    <div class="col-md-4 field">
+                        <label class="f-label" for="e-inspos"><span class="req-s">*</span>سمت در لیست
+                            بیمه <span class="f-badge fb-grn">PositionInInsuranceList</span></label>
+                        <select class="in" id="e-inspos">
+                            <option value="">انتخاب کنید…</option>
+                            <option>کارگر ساده</option>
+                            <option>کارگر ماهر/فنی</option>
+                            <option>استادکار</option>
+                            <option>تکنسین</option>
+                            <option>مهندس</option>
+                            <option>کارشناس</option>
+                            <option>حسابدار</option>
+                            <option>منشی/کارپرداز</option>
+                            <option>راننده</option>
+                            <option>نگهبان</option>
+                            <option>نیروی خدماتی</option>
+                            <option>انباردار</option>
+                            <option>آشپز</option>
+                            <option>باغبان</option>
+                            <option selected>اپراتور</option>
+                            <option>سرپرست</option>
+                            <option>رئیس بخش</option>
+                            <option>مدیر</option>
+                        </select>
+                        <div class="f-help">باید با عنوان مندرج در قرارداد هم‌خوان باشد.</div>
+                    </div>
+                </div>
+                <div class="row g-3 mt-1">
+                    <div class="col-md-4">
+                        <div class="sw-card"><span class="sw"><input type="checkbox"
+                                                                     checked><i></i></span><span class="swt">مشمول بیمهٔ ۷٪<span
+                                    class="swd">سهم کارگر — نرخ ثابت قانونی</span></span></div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="sw-card"><span class="sw"><input type="checkbox"
+                                                                     checked><i></i></span><span class="swt">مشمول بیمهٔ ۲۰٪<span
+                                    class="swd">سهم کارفرما — نرخ ثابت قانونی</span></span></div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="sw-card"><span class="sw"><input type="checkbox"
+                                                                     checked><i></i></span><span class="swt">مشمول بیمهٔ ۳٪<span
+                                    class="swd">بیمه بیکاری — مجموع سه سهم = ۳۰٪</span></span></div>
+                    </div>
+                    <div class="col-md-6 field">
+                        <label class="f-label" for="e-insprof"><span class="req-s">*</span>مشخصهٔ
+                            محاسبهٔ حق بیمه <span
+                                class="f-badge fb-grn">InsuranceCalculationProfile</span></label>
+                        <select class="in" id="e-insprof">
+                            <option>کامل و قانونی</option>
+                            <option>حداقل قانون کار</option>
+                        </select>
+                        <div class="f-help">«کامل و قانونی» = کل دریافتی مشمول با سقف ۷ برابر حداقل
+                            حقوق.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- گام ۳ -->
+            <div class="tabpane" id="tp-emp-3">
+                <div class="sec">
+                    <svg class="ic">
+                        <use href="assets/img/icons.svg#i-card"/>
+                    </svg>
+                    بانکی و مالیات<small>بخش‌های ۴·۳ و ۴·۴ سند دامنه</small></div>
+                <div class="row g-3">
+                    <div class="col-md-7 field">
+                        <label class="f-label" for="e-iban"><span class="req-s">*</span>شماره شبا (IRAN)
+                            <span class="f-badge fb-grn">IBAN</span></label>
+                        <input class="in in-ltr" id="e-iban" maxlength="26" placeholder="IR + 24 رقم"
+                               value="IR820540102680020817909002">
+                        <div class="f-help">حسابی که حقوق به آن واریز می‌شود؛ چک‌سام ISO 13616 هنگام ثبت
+                            کنترل می‌شود.
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="sw-card"><span class="sw"><input type="checkbox"
+                                                                     checked><i></i></span><span class="swt">مشمول مالیات حقوق است؟ <span
+                                    class="f-badge fb-grn">IsTaxSubject</span><span class="swd">اگر
+                                                    «خیر» باشد، مالیات فیش همیشه صفر ثبت می‌شود.</span></span></div>
+                    </div>
+                </div>
+                <div class="note n-blu">
+                    <svg class="ic">
+                        <use href="assets/img/icons.svg#i-info"/>
+                    </svg>
+                    <div>مبلغ مالیات در پروندهٔ کارمند ذخیره نمی‌شود؛ هر ماه از سامانهٔ مالیاتی می‌آید و
+                        مستقیم در فیش همان ماه می‌نشیند.
+                    </div>
+                </div>
+            </div>
+            <div class="form-foot">
+                <button type="button" class="btn btn-g" data-stepnav="-1">
+                    <svg class="ic">
+                        <use href="assets/img/icons.svg#i-chr"/>
+                    </svg>
+                    گام قبل
+                </button>
+                <button type="button" class="btn btn-s" data-stepnav="1">گام بعد
+                    <svg class="ic">
+                        <use href="assets/img/icons.svg#i-chl"/>
+                    </svg>
+                </button>
+                <span class="ms-auto d-flex gap-2">
+                                    <button type="button" class="btn btn-g"
+                                            data-demo="پرونده به‌عنوان پیش‌نویس ذخیره شد (نمایشی).">ذخیره پیش‌نویس</button>
+                                    <button type="button" class="btn btn-p"
+                                            data-demo="پروندهٔ کارمند به‌صورت نمایشی ثبت شد."><svg class="ic">
+                                            <use href="assets/img/icons.svg#i-check"/>
+                                        </svg>ثبت نهایی پرونده</button>
+                                </span>
+            </div>
+        </form>
+    </div>
+</div>
