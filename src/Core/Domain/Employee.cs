@@ -198,6 +198,9 @@ public class Employee
         if (bankAccounts is null)
             return DomainResult.Failure("اطلاعات حساب‌های بانکی نمیتواند خالی باشد.");
 
+        if (bankAccounts.Count == 0)
+            return DomainResult.Failure("کارمند باید حداقل یک حساب بانکی داشته باشد.");
+
         var normalizedBankAccounts = new List<BankAccount>();
 
         foreach (var bankAccount in bankAccounts)

@@ -340,6 +340,28 @@ public class UpdateEmployeeCommandHandlerTests
     }
 
     [Fact]
+    public async Task Handle_WithEmptyBankAccounts_ShouldReturnGeneralFailureAndKeepExistingBankAccounts()
+    {
+        var command = CreateValidCommand(bankAccounts: []);
+        var employee = CreateValidEmployee(createBankAccounts: true);
+        var workshop = CreateValidWorkshop();
+
+        _employeeRepository.GetByIdAsync(ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
+            .Returns(employee);
+        _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        _workshopRepository.GetByDepartmentIdAsync(ValidUserId, UpdatedDepartmentId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        SetupNoDuplicates();
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.ShouldBeFailure("کارمند باید حداقل یک حساب بانکی داشته باشد.", BadResultType.General);
+        employee.BankAccounts.Should().HaveCount(2);
+        await _employeeRepository.DidNotReceive().UpdateAsync(Arg.Any<Employee>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
     public async Task Handle_WhenDomainUpdateFails_ShouldReturnGeneralFailure()
     {
         var command = CreateValidCommand();

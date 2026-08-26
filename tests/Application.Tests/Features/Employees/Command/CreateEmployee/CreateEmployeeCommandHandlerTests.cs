@@ -275,6 +275,24 @@ public class CreateEmployeeCommandHandlerTests
     }
 
     [Fact]
+    public async Task Handle_WithEmptyBankAccounts_ShouldReturnGeneralFailure()
+    {
+        var command = CreateValidCommand(bankAccounts: []);
+        var workshop = CreateValidWorkshop();
+
+        _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        _workshopRepository.GetByDepartmentIdAsync(ValidUserId, ValidDepartmentId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        SetupNoDuplicates();
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.ShouldBeFailure("کارمند باید حداقل یک حساب بانکی داشته باشد.", BadResultType.General);
+        await _employeeRepository.DidNotReceive().CreateAsync(Arg.Any<Employee>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
     public async Task Handle_WhenRepositoryCreateFails_ShouldReturnGeneralFailure()
     {
         var command = CreateValidCommand();
