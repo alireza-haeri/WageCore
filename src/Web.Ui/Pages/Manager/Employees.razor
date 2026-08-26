@@ -99,7 +99,7 @@
                                 @employee.DepartmentName
                                 <span class="sub">@employee.WorkshopName</span>
                             </td>
-                            <td class="ltr">@employee.NationalCode.ToPersianNumber()</td>
+                            <td class="">@employee.NationalCode.ToPersianNumber()</td>
                             <td class="num">@employee.DisplayHireDate</td>
                             <td>@(string.IsNullOrWhiteSpace(employee.JobTitle) ? "—" : employee.JobTitle)</td>
                             <td>
@@ -109,6 +109,9 @@
                             </td>
                             <td>
                                 <span class="rowact">
+                                    <a class="icobtn" href="/employee-form/@employee.Id" title="ویرایش">
+                                        <svg class="ic"><use href="assets/img/icons.svg#i-pen"/></svg>
+                                    </a>
                                     <button class="icobtn danger" title="حذف"
                                             @onclick="() => ConfirmDelete(employee)"
                                             disabled="@_isDeleting">
@@ -259,15 +262,15 @@
         _isLoading = true;
         StateHasChanged();
 
-        var workshopId = string.IsNullOrEmpty(_selectedWorkshopId)
+        Guid? workshopId = string.IsNullOrEmpty(_selectedWorkshopId)
             ? null
             : Guid.Parse(_selectedWorkshopId);
 
-        var departmentId = string.IsNullOrEmpty(_selectedDepartmentId)
+        Guid? departmentId = string.IsNullOrEmpty(_selectedDepartmentId)
             ? null
             : Guid.Parse(_selectedDepartmentId);
 
-        var status = string.IsNullOrEmpty(_selectedStatus)
+        Status? status = string.IsNullOrEmpty(_selectedStatus)
             ? null
             : Enum.Parse<Status>(_selectedStatus);
 

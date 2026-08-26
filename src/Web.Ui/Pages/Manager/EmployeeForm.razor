@@ -24,7 +24,7 @@
 
 <div class="panel">
     <div class="panel-b">
-        <EditForm EditContext="@_formHelper.EditContext" OnValidSubmit="@HandleSubmit">
+        <EditForm EditContext="@_formHelper.EditContext" OnSubmit="@HandleSubmit">
             <ValidationMessage TValue="string" For="() => _formHelper.Model.General" class="f-help text-danger"/>
 
             <div class="sec">
@@ -225,7 +225,7 @@
 @code {
     [Parameter] public Guid? Id { get; set; }
 
-    private FormHelper<EmployeeFormModel> _formHelper = new(fieldMapping: CreateFieldMapping());
+    private FormHelper<EmployeeFormModel> _formHelper = new();
     private List<GetUserWorkshopsNameQueryResponseWorkshopName>? _userWorkshops;
     private List<GetUserDepartmentsQueryResponse>? _userDepartments;
     private bool _isLoading;
@@ -278,9 +278,13 @@
     private async Task HandleSubmit()
     {
         if (_isLoading) return;
-        _isLoading = true;
-
+        
         _formHelper.ClearErrors();
+        
+        if(!_formHelper.Validate())
+            return;
+        
+        _isLoading = true;
 
         var model = _formHelper.Model;
         var result = await ApiService.SendAsync(
@@ -326,42 +330,6 @@
         _isLoading = false;
     }
 
-    private static Dictionary<string, string> CreateFieldMapping() => new()
-    {
-        ["WorkshopId"] = nameof(EmployeeFormModel.WorkshopId),
-        ["DepartmentId"] = nameof(EmployeeFormModel.DepartmentId),
-        ["Employee.DepartmentId"] = nameof(EmployeeFormModel.DepartmentId),
-        ["PersonalCode"] = nameof(EmployeeFormModel.PersonalCode),
-        ["Employee.PersonalCode"] = nameof(EmployeeFormModel.PersonalCode),
-        ["FullName"] = nameof(EmployeeFormModel.FullName),
-        ["Employee.FullName"] = nameof(EmployeeFormModel.FullName),
-        ["NationalCode"] = nameof(EmployeeFormModel.NationalCode),
-        ["Employee.NationalCode"] = nameof(EmployeeFormModel.NationalCode),
-        ["BirthCertificateNumber"] = nameof(EmployeeFormModel.BirthCertificateNumber),
-        ["Employee.BirthCertificateNumber"] = nameof(EmployeeFormModel.BirthCertificateNumber),
-        ["FatherName"] = nameof(EmployeeFormModel.FatherName),
-        ["Employee.FatherName"] = nameof(EmployeeFormModel.FatherName),
-        ["Gender"] = nameof(EmployeeFormModel.Gender),
-        ["Employee.Gender"] = nameof(EmployeeFormModel.Gender),
-        ["MaritalStatus"] = nameof(EmployeeFormModel.MaritalStatus),
-        ["Employee.MaritalStatus"] = nameof(EmployeeFormModel.MaritalStatus),
-        ["ChildrenCount"] = nameof(EmployeeFormModel.ChildrenCount),
-        ["Employee.ChildrenCount"] = nameof(EmployeeFormModel.ChildrenCount),
-        ["HireDate"] = nameof(EmployeeFormModel.HireDate),
-        ["Employee.HireDate"] = nameof(EmployeeFormModel.HireDate),
-        ["PhoneNumber"] = nameof(EmployeeFormModel.PhoneNumber),
-        ["Employee.PhoneNumber"] = nameof(EmployeeFormModel.PhoneNumber),
-        ["JobTitle"] = nameof(EmployeeFormModel.JobTitle),
-        ["Employee.JobTitle"] = nameof(EmployeeFormModel.JobTitle),
-        ["InsuranceNumber"] = nameof(EmployeeFormModel.InsuranceNumber),
-        ["Insurance.InsuranceNumber"] = nameof(EmployeeFormModel.InsuranceNumber),
-        ["SocialSecurityContractRow"] = nameof(EmployeeFormModel.SocialSecurityContractRow),
-        ["Insurance.SocialSecurityContractRow"] = nameof(EmployeeFormModel.SocialSecurityContractRow),
-        ["PositionInInsuranceList"] = nameof(EmployeeFormModel.PositionInInsuranceList),
-        ["Insurance.PositionInInsuranceList"] = nameof(EmployeeFormModel.PositionInInsuranceList),
-        ["InsuranceCalculationProfile"] = nameof(EmployeeFormModel.InsuranceCalculationProfile),
-        ["Insurance.InsuranceCalculationProfile"] = nameof(EmployeeFormModel.InsuranceCalculationProfile)
-    };
 
     public class EmployeeFormModel : BaseModel
     {
