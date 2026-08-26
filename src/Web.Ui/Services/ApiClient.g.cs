@@ -2135,11 +2135,12 @@ namespace Web.Ui.Services
     public partial record CreateEmployeeRequest
     {
         [Newtonsoft.Json.JsonConstructor]
-        public CreateEmployeeRequest(EmployeeInformationRequest @employee, EmployeeInsuranceRequest @insurance, System.Guid @workshopId)
+        public CreateEmployeeRequest(System.Collections.Generic.ICollection<EmployeeBankAccountRequest> @bankAccounts, EmployeeInformationRequest @employee, EmployeeInsuranceRequest @insurance, System.Guid @workshopId)
         {
             this.WorkshopId = @workshopId;
             this.Employee = @employee;
             this.Insurance = @insurance;
+            this.BankAccounts = @bankAccounts;
         }
 
         [Newtonsoft.Json.JsonProperty("workshopId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -2150,6 +2151,9 @@ namespace Web.Ui.Services
 
         [Newtonsoft.Json.JsonProperty("insurance", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public EmployeeInsuranceRequest Insurance { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("bankAccounts", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<EmployeeBankAccountRequest> BankAccounts { get; init; }
 
     }
 
@@ -2224,6 +2228,50 @@ namespace Web.Ui.Services
 
         [Newtonsoft.Json.JsonProperty("postalCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string PostalCode { get; init; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record EmployeeBankAccountRequest
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public EmployeeBankAccountRequest(System.Guid? @id, string @iban, string @title)
+        {
+            this.Title = @title;
+            this.Iban = @iban;
+            this.Id = @id;
+        }
+
+        [Newtonsoft.Json.JsonProperty("title", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Title { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("iban", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Iban { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid? Id { get; init; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record EmployeeBankAccountResponse
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public EmployeeBankAccountResponse(System.Guid? @id, string @iban, string @title)
+        {
+            this.Title = @title;
+            this.Iban = @iban;
+            this.Id = @id;
+        }
+
+        [Newtonsoft.Json.JsonProperty("title", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Title { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("iban", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Iban { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid? Id { get; init; }
 
     }
 
@@ -2375,7 +2423,7 @@ namespace Web.Ui.Services
     public partial record GetEmployeeForEditResponse
     {
         [Newtonsoft.Json.JsonConstructor]
-        public GetEmployeeForEditResponse(string @birthCertificateNumber, int @childrenCount, System.Guid @departmentId, string @fatherName, string @fullName, GetEmployeeForEditResponseGender @gender, string @hireDate, GetEmployeeForEditResponseInsuranceCalculationProfile @insuranceCalculationProfile, string @insuranceNumber, bool @isSubjectTo20PercentInsurance, bool @isSubjectTo3PercentInsurance, bool @isSubjectTo7PercentInsurance, bool @isTaxSubject, string @jobTitle, GetEmployeeForEditResponseMaritalStatus @maritalStatus, string @nationalCode, string @personalCode, string @phoneNumber, string @positionInInsuranceList, string @socialSecurityContractRow, System.Guid @workshopId)
+        public GetEmployeeForEditResponse(System.Collections.Generic.ICollection<EmployeeBankAccountResponse> @bankAccounts, string @birthCertificateNumber, int @childrenCount, System.Guid @departmentId, string @fatherName, string @fullName, GetEmployeeForEditResponseGender @gender, string @hireDate, GetEmployeeForEditResponseInsuranceCalculationProfile @insuranceCalculationProfile, string @insuranceNumber, bool @isSubjectTo20PercentInsurance, bool @isSubjectTo3PercentInsurance, bool @isSubjectTo7PercentInsurance, bool @isTaxSubject, string @jobTitle, GetEmployeeForEditResponseMaritalStatus @maritalStatus, string @nationalCode, string @personalCode, string @phoneNumber, string @positionInInsuranceList, string @socialSecurityContractRow, System.Guid @workshopId)
         {
             this.WorkshopId = @workshopId;
             this.DepartmentId = @departmentId;
@@ -2398,6 +2446,7 @@ namespace Web.Ui.Services
             this.IsSubjectTo20PercentInsurance = @isSubjectTo20PercentInsurance;
             this.IsSubjectTo3PercentInsurance = @isSubjectTo3PercentInsurance;
             this.InsuranceCalculationProfile = @insuranceCalculationProfile;
+            this.BankAccounts = @bankAccounts;
         }
 
         [Newtonsoft.Json.JsonProperty("workshopId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -2462,6 +2511,9 @@ namespace Web.Ui.Services
 
         [Newtonsoft.Json.JsonProperty("insuranceCalculationProfile", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public GetEmployeeForEditResponseInsuranceCalculationProfile InsuranceCalculationProfile { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("bankAccounts", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<EmployeeBankAccountResponse> BankAccounts { get; init; }
 
     }
 
@@ -3107,13 +3159,21 @@ namespace Web.Ui.Services
     public partial record UpdateEmployeeRequest
     {
         [Newtonsoft.Json.JsonConstructor]
-        public UpdateEmployeeRequest(EmployeeInformationRequest @employee)
+        public UpdateEmployeeRequest(System.Collections.Generic.ICollection<EmployeeBankAccountRequest> @bankAccounts, EmployeeInformationRequest @employee, EmployeeInsuranceRequest @insurance)
         {
             this.Employee = @employee;
+            this.Insurance = @insurance;
+            this.BankAccounts = @bankAccounts;
         }
 
         [Newtonsoft.Json.JsonProperty("employee", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public EmployeeInformationRequest Employee { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("insurance", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public EmployeeInsuranceRequest Insurance { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("bankAccounts", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<EmployeeBankAccountRequest> BankAccounts { get; init; }
 
     }
 

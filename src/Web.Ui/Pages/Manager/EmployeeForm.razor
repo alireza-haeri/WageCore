@@ -12,7 +12,7 @@
             <span>@(IsEdit ? "ویرایش کارمند" : "کارمند جدید")</span>
         </div>
         <h1>@(IsEdit ? "ویرایش کارمند" : "ثبت کارمند جدید")</h1>
-        <p>اطلاعات پایه و بیمهٔ کارمند را از همین فرم ثبت کنید.</p>
+        <p>اطلاعات پایه، بیمه و حساب‌های بانکی کارمند را از همین فرم ثبت کنید.</p>
     </div>
     <div class="ph-actions">
         <a class="btn btn-g" href="/employees">
@@ -152,36 +152,28 @@
                 بیمه و مالیات
             </div>
 
-            @if (IsEdit)
-            {
-                <div class="note n-blu mb-3">
-                    <svg class="ic"><use href="assets/img/icons.svg#i-info"/></svg>
-                    <div>در این بخش فعلاً فقط وضعیت مالیات قابل ویرایش است و اطلاعات بیمه برای نمایش بارگذاری می‌شود.</div>
-                </div>
-            }
-
             <div class="row g-3">
                 <div class="col-md-4 field">
                     <label class="f-label" for="e-insuranceNumber"><span class="req-s">*</span>شماره بیمه</label>
-                    <InputText @bind-Value="_formHelper.Model.InsuranceNumber" class="in in-ltr" id="e-insuranceNumber" maxlength="20" disabled="@IsEdit"/>
+                    <InputText @bind-Value="_formHelper.Model.InsuranceNumber" class="in in-ltr" id="e-insuranceNumber" maxlength="20"/>
                     <ValidationMessage TValue="string" For="() => _formHelper.Model.InsuranceNumber" class="f-help text-danger"/>
                 </div>
 
                 <div class="col-md-4 field">
                     <label class="f-label" for="e-socialSecurityContractRow">ردیف پیمان بیمه <span class="f-badge fb-gold">اختیاری</span></label>
-                    <InputText @bind-Value="_formHelper.Model.SocialSecurityContractRow" class="in in-ltr" id="e-socialSecurityContractRow" maxlength="20" disabled="@IsEdit"/>
+                    <InputText @bind-Value="_formHelper.Model.SocialSecurityContractRow" class="in in-ltr" id="e-socialSecurityContractRow" maxlength="20"/>
                     <ValidationMessage TValue="string" For="() => _formHelper.Model.SocialSecurityContractRow" class="f-help text-danger"/>
                 </div>
 
                 <div class="col-md-4 field">
                     <label class="f-label" for="e-positionInInsuranceList"><span class="req-s">*</span>سمت در لیست بیمه</label>
-                    <InputText @bind-Value="_formHelper.Model.PositionInInsuranceList" class="in" id="e-positionInInsuranceList" maxlength="100" disabled="@IsEdit"/>
+                    <InputText @bind-Value="_formHelper.Model.PositionInInsuranceList" class="in" id="e-positionInInsuranceList" maxlength="100"/>
                     <ValidationMessage TValue="string" For="() => _formHelper.Model.PositionInInsuranceList" class="f-help text-danger"/>
                 </div>
 
                 <div class="col-md-4 field">
                     <label class="f-label" for="e-insuranceCalculationProfile"><span class="req-s">*</span>پروفایل محاسبه بیمه</label>
-                    <InputSelect @bind-Value="_formHelper.Model.InsuranceCalculationProfile" class="in" id="e-insuranceCalculationProfile" disabled="@IsEdit">
+                    <InputSelect @bind-Value="_formHelper.Model.InsuranceCalculationProfile" class="in" id="e-insuranceCalculationProfile">
                         <option value="">انتخاب کنید...</option>
                         <option value="@EmployeeInsuranceRequestInsuranceCalculationProfile.FullLegal">کامل و قانونی</option>
                         <option value="@EmployeeInsuranceRequestInsuranceCalculationProfile.MinimumLaborLaw">حداقل قانون کار</option>
@@ -198,25 +190,86 @@
 
                 <label class="col-md-4">
                     <div class="sw-card">
-                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo7PercentInsurance" disabled="@IsEdit"/><i></i></span>
+                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo7PercentInsurance"/><i></i></span>
                         <span class="swt">مشمول بیمهٔ ۷٪</span>
                     </div>
                 </label>
 
                 <label class="col-md-4">
                     <div class="sw-card">
-                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo20PercentInsurance" disabled="@IsEdit"/><i></i></span>
+                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo20PercentInsurance"/><i></i></span>
                         <span class="swt">مشمول بیمهٔ ۲۰٪</span>
                     </div>
                 </label>
 
                 <label class="col-md-4">
                     <div class="sw-card">
-                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo3PercentInsurance" disabled="@IsEdit"/><i></i></span>
+                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo3PercentInsurance"/><i></i></span>
                         <span class="swt">مشمول بیمهٔ ۳٪</span>
                     </div>
                 </label>
             </div>
+
+            <div class="sec mt-4 d-flex align-items-center justify-content-between">
+                <span>
+                    <svg class="ic"><use href="assets/img/icons.svg#i-card"/></svg>
+                    حساب‌های بانکی
+                </span>
+                <button type="button" class="btn btn-g" @onclick="AddBankAccount">
+                    <svg class="ic"><use href="assets/img/icons.svg#i-plus"/></svg>
+                    افزودن حساب
+                </button>
+            </div>
+
+            @if (_formHelper.Model.BankAccounts.Count == 0)
+            {
+                <div class="note n-blu mt-2">
+                    <svg class="ic"><use href="assets/img/icons.svg#i-info"/></svg>
+                    <div>هنوز حساب بانکی ثبت نشده است. برای افزودن حساب، روی دکمهٔ «افزودن حساب» بزنید.</div>
+                </div>
+            }
+            else
+            {
+                <div class="row g-3">
+                    @for (var i = 0; i < _formHelper.Model.BankAccounts.Count; i++)
+                    {
+                        var bankAccount = _formHelper.Model.BankAccounts[i];
+                        <div class="col-12" @key="bankAccount">
+                            <div class="panel" style="box-shadow:none;margin:0">
+                                <div class="panel-b">
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <b>حساب @( (i + 1).ToPersianNumber() )</b>
+                                        <button type="button" class="icobtn danger" title="حذف حساب"
+                                                @onclick="() => RemoveBankAccount(bankAccount)">
+                                            <svg class="ic"><use href="assets/img/icons.svg#i-trash"/></svg>
+                                        </button>
+                                    </div>
+                                    <div class="row g-3">
+                                        <div class="col-md-4 field">
+                                            <label class="f-label" for="@($"e-bank-title-{i}")">عنوان حساب <span class="f-badge fb-gold">اختیاری</span></label>
+                                            <InputText @bind-Value="bankAccount.Title" class="in" id="@($"e-bank-title-{i}")" maxlength="100"/>
+                                            @foreach (var error in GetBankAccountErrors(i, nameof(EmployeeBankAccountFormModel.Title)))
+                                            {
+                                                <div class="f-help text-danger">@error</div>
+                                            }
+                                        </div>
+
+                                        <div class="col-md-8 field">
+                                            <label class="f-label" for="@($"e-bank-iban-{i}")"><span class="req-s">*</span>شماره شبا</label>
+                                            <InputText @bind-Value="bankAccount.Iban" class="in in-ltr" id="@($"e-bank-iban-{i}")" maxlength="26" placeholder="IR + 24 رقم"/>
+                                            @foreach (var error in GetBankAccountErrors(i, nameof(EmployeeBankAccountFormModel.Iban)))
+                                            {
+                                                <div class="f-help text-danger">@error</div>
+                                            }
+                                            <div class="f-help">شماره شبا باید با IR شروع شود و بعد از آن ۲۴ رقم انگلیسی وارد شود.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
 
             <div class="form-foot">
                 <button type="submit" class="btn btn-p" disabled="@_isLoading">
@@ -240,6 +293,7 @@
     [Parameter] public Guid? Id { get; set; }
 
     private FormHelper<EmployeeFormModel> _formHelper = new(fieldMapping: CreateFieldMapping());
+    private readonly Dictionary<string, List<string>> _bankAccountErrors = [];
     private List<GetUserWorkshopsNameQueryResponseWorkshopName>? _userWorkshops;
     private List<GetUserDepartmentsQueryResponse>? _userDepartments;
     private bool _isLoading;
@@ -283,8 +337,19 @@
                         IsSubjectTo7PercentInsurance = employee.IsSubjectTo7PercentInsurance,
                         IsSubjectTo20PercentInsurance = employee.IsSubjectTo20PercentInsurance,
                         IsSubjectTo3PercentInsurance = employee.IsSubjectTo3PercentInsurance,
-                        InsuranceCalculationProfile = (EmployeeInsuranceRequestInsuranceCalculationProfile)employee.InsuranceCalculationProfile
+                        InsuranceCalculationProfile = (EmployeeInsuranceRequestInsuranceCalculationProfile)employee.InsuranceCalculationProfile,
+                        BankAccounts = employee.BankAccounts?
+                            .Select(x => new EmployeeBankAccountFormModel
+                            {
+                                Id = x.Id,
+                                Title = x.Title,
+                                Iban = x.Iban
+                            })
+                            .ToList() ?? []
                     };
+
+                    if (_formHelper.Model.BankAccounts.Count == 0)
+                        _formHelper.Model.BankAccounts = [];
 
                     await LoadDepartmentsAsync(employee.WorkshopId);
                     OnMaritalStatusChanged();
@@ -300,16 +365,19 @@
             {
                 _isLoading = false;
             }
+
+            return;
         }
+
+        if (_formHelper.Model.BankAccounts.Count == 0)
+            _formHelper.Model.BankAccounts.Add(new EmployeeBankAccountFormModel());
     }
 
     private async Task LoadWorkshopsAsync()
     {
         var result = await ApiService.SendAsync(() => ApiClient.GetUserWorkshopsNameAsync());
         if (result?.IsSuccess is true)
-        {
             _userWorkshops = result.Response.WorkshopNames.ToList();
-        }
     }
 
     private async Task LoadDepartmentsAsync(Guid workshopId)
@@ -322,9 +390,7 @@
             workshopId: workshopId));
 
         if (result?.IsSuccess is true)
-        {
             _userDepartments = result.Response.Items.ToList();
-        }
     }
 
     private async Task OnWorkshopChanged()
@@ -333,9 +399,7 @@
         _userDepartments = [];
 
         if (!_formHelper.Model.WorkshopId.HasValue)
-        {
             return;
-        }
 
         await LoadDepartmentsAsync(_formHelper.Model.WorkshopId.Value);
     }
@@ -343,9 +407,18 @@
     private void OnMaritalStatusChanged()
     {
         if (_formHelper.Model.MaritalStatus == EmployeeInformationRequestMaritalStatus.Single)
-        {
             _formHelper.Model.ChildrenCount = 0;
-        }
+    }
+
+    private void AddBankAccount()
+    {
+        _formHelper.Model.BankAccounts.Add(new EmployeeBankAccountFormModel());
+    }
+
+    private void RemoveBankAccount(EmployeeBankAccountFormModel bankAccount)
+    {
+        _formHelper.Model.BankAccounts.Remove(bankAccount);
+        ClearBankAccountErrors();
     }
 
     private async Task HandleSubmit()
@@ -353,8 +426,11 @@
         if (_isLoading) return;
 
         _formHelper.ClearErrors();
+        ClearBankAccountErrors();
 
-        if (!_formHelper.Validate())
+        var isFormValid = _formHelper.Validate();
+        var isBankAccountsValid = ValidateBankAccounts();
+        if (!isFormValid || !isBankAccountsValid)
             return;
 
         _isLoading = true;
@@ -379,10 +455,30 @@
             personalCode: model.PersonalCode,
             phoneNumber: model.PhoneNumber);
 
+        var insuranceRequest = new EmployeeInsuranceRequest(
+            insuranceCalculationProfile: model.InsuranceCalculationProfile ?? EmployeeInsuranceRequestInsuranceCalculationProfile.FullLegal,
+            insuranceNumber: model.InsuranceNumber,
+            isSubjectTo20PercentInsurance: model.IsSubjectTo20PercentInsurance,
+            isSubjectTo3PercentInsurance: model.IsSubjectTo3PercentInsurance,
+            isSubjectTo7PercentInsurance: model.IsSubjectTo7PercentInsurance,
+            positionInInsuranceList: model.PositionInInsuranceList,
+            socialSecurityContractRow: model.SocialSecurityContractRow);
+
+        var bankAccountsRequest = model.BankAccounts
+            .Select(x => new EmployeeBankAccountRequest(
+                id: x.Id,
+                iban: x.Iban,
+                title: x.Title))
+            .ToList();
+
         if (IsEdit)
         {
             var result = await ApiService.SendAsync(
-                apiCall: () => ApiClient.UpdateEmployeeAsync(Id!.Value, new UpdateEmployeeRequest(employeeRequest)),
+                apiCall: () => ApiClient.UpdateEmployeeAsync(Id!.Value, new UpdateEmployeeRequest(
+                    bankAccounts: bankAccountsRequest,
+                    employee: employeeRequest,
+                    insurance: insuranceRequest
+                )),
                 successMessage: "کارمند با موفقیت ویرایش شد.",
                 showErrorToastValidation: false
             );
@@ -394,22 +490,15 @@
             else if (result != null)
             {
                 _formHelper.SetServerErrors(result.Errors);
+                SetServerBankAccountErrors(result.Errors);
                 ToastService.ShowToastWarning("لطفاً خطاها را بررسی کنید.");
             }
         }
         else
         {
-            var insuranceRequest = new EmployeeInsuranceRequest(
-                insuranceCalculationProfile: model.InsuranceCalculationProfile ?? EmployeeInsuranceRequestInsuranceCalculationProfile.FullLegal,
-                insuranceNumber: model.InsuranceNumber,
-                isSubjectTo20PercentInsurance: model.IsSubjectTo20PercentInsurance,
-                isSubjectTo3PercentInsurance: model.IsSubjectTo3PercentInsurance,
-                isSubjectTo7PercentInsurance: model.IsSubjectTo7PercentInsurance,
-                positionInInsuranceList: model.PositionInInsuranceList,
-                socialSecurityContractRow: model.SocialSecurityContractRow);
-
             var result = await ApiService.SendAsync(
                 apiCall: () => ApiClient.CreateEmployeeAsync(new CreateEmployeeRequest(
+                    bankAccounts: bankAccountsRequest,
                     employee: employeeRequest,
                     insurance: insuranceRequest,
                     workshopId: model.WorkshopId ?? Guid.Empty
@@ -425,11 +514,116 @@
             else if (result != null)
             {
                 _formHelper.SetServerErrors(result.Errors);
+                SetServerBankAccountErrors(result.Errors);
                 ToastService.ShowToastWarning("لطفاً خطاها را بررسی کنید.");
             }
         }
 
         _isLoading = false;
+    }
+
+    private bool ValidateBankAccounts()
+    {
+        var isValid = true;
+        var bankAccounts = _formHelper.Model.BankAccounts.Select((bankAccount, index) => new { bankAccount, index }).ToList();
+
+        foreach (var item in bankAccounts)
+        {
+            if (item.bankAccount.Id == Guid.Empty)
+            {
+                AddBankAccountError(item.index, nameof(EmployeeBankAccountFormModel.Id), "شناسه حساب بانکی نمیتواند خالی باشد.");
+                isValid = false;
+            }
+
+            if (!string.IsNullOrWhiteSpace(item.bankAccount.Title) && item.bankAccount.Title.Length > 100)
+            {
+                AddBankAccountError(item.index, nameof(EmployeeBankAccountFormModel.Title), "عنوان حساب بانکی نمیتواند بیشتر از 100 کاراکتر باشد.");
+                isValid = false;
+            }
+
+            if (string.IsNullOrWhiteSpace(item.bankAccount.Iban))
+            {
+                AddBankAccountError(item.index, nameof(EmployeeBankAccountFormModel.Iban), "شماره شبا اجباری است.");
+                isValid = false;
+                continue;
+            }
+
+            if (!System.Text.RegularExpressions.Regex.IsMatch(item.bankAccount.Iban, "^IR[0-9]{24}$"))
+            {
+                AddBankAccountError(item.index, nameof(EmployeeBankAccountFormModel.Iban), "شماره شبا باید با IR شروع شود و پس از آن 24 رقم انگلیسی داشته باشد.");
+                isValid = false;
+            }
+        }
+
+        var duplicateIdGroups = bankAccounts
+            .Where(x => x.bankAccount.Id.HasValue)
+            .GroupBy(x => x.bankAccount.Id!.Value)
+            .Where(x => x.Count() > 1);
+
+        foreach (var duplicateIdGroup in duplicateIdGroups)
+        {
+            foreach (var item in duplicateIdGroup)
+                AddBankAccountError(item.index, nameof(EmployeeBankAccountFormModel.Id), "شناسه حساب بانکی در لیست حساب‌های بانکی تکراری است.");
+
+            isValid = false;
+        }
+
+        var duplicateIbanGroups = bankAccounts
+            .Where(x => !string.IsNullOrWhiteSpace(x.bankAccount.Iban) && System.Text.RegularExpressions.Regex.IsMatch(x.bankAccount.Iban, "^IR[0-9]{24}$"))
+            .GroupBy(x => x.bankAccount.Iban.Trim().ToUpperInvariant())
+            .Where(x => x.Count() > 1);
+
+        foreach (var duplicateIbanGroup in duplicateIbanGroups)
+        {
+            foreach (var item in duplicateIbanGroup)
+                AddBankAccountError(item.index, nameof(EmployeeBankAccountFormModel.Iban), "شماره شبا در لیست حساب‌های بانکی تکراری است.");
+
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    private void SetServerBankAccountErrors(IDictionary<string, ICollection<string>> errors)
+    {
+        foreach (var errorGroup in errors)
+        {
+            var match = System.Text.RegularExpressions.Regex.Match(errorGroup.Key, @"^BankAccounts\[(\d+)\]\.(.+)$");
+            if (!match.Success)
+                continue;
+
+            var index = int.Parse(match.Groups[1].Value);
+            var fieldName = match.Groups[2].Value;
+
+            foreach (var error in errorGroup.Value)
+                AddBankAccountError(index, fieldName, error);
+        }
+    }
+
+    private void AddBankAccountError(int index, string fieldName, string error)
+    {
+        var key = $"{index}:{fieldName}";
+        if (!_bankAccountErrors.TryGetValue(key, out var errors))
+        {
+            errors = [];
+            _bankAccountErrors[key] = errors;
+        }
+
+        if (!errors.Contains(error))
+            errors.Add(error);
+    }
+
+    private IEnumerable<string> GetBankAccountErrors(int index, string fieldName)
+    {
+        var key = $"{index}:{fieldName}";
+        return _bankAccountErrors.TryGetValue(key, out var errors)
+            ? errors
+            : [];
+    }
+
+    private void ClearBankAccountErrors()
+    {
+        _bankAccountErrors.Clear();
     }
 
     private static Dictionary<string, string> CreateFieldMapping() => new()
@@ -539,5 +733,14 @@
 
         [Required(ErrorMessage = "پروفایل محاسبه بیمه اجباری است.")]
         public EmployeeInsuranceRequestInsuranceCalculationProfile? InsuranceCalculationProfile { get; set; }
+
+        public List<EmployeeBankAccountFormModel> BankAccounts { get; set; } = [new()];
+    }
+
+    public class EmployeeBankAccountFormModel
+    {
+        public Guid? Id { get; set; }
+        public string? Title { get; set; }
+        public string Iban { get; set; } = string.Empty;
     }
 }
