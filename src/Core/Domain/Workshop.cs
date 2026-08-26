@@ -160,9 +160,3 @@ public class Workshop
         return DomainResult.Success();
     }
 }
-
-public enum WorkshopRegion
-{
-    Normal = 0,
-    LessDeveloped = 1,
-}

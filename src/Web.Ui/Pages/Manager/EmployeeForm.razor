@@ -112,7 +112,7 @@
 
                 <div class="col-md-4 field">
                     <label class="f-label" for="e-maritalStatus"><span class="req-s">*</span>وضعیت تأهل</label>
-                    <InputSelect @bind-Value="_formHelper.Model.MaritalStatus" class="in" id="e-maritalStatus">
+                    <InputSelect @bind-Value="_formHelper.Model.MaritalStatus" @bind-Value:after="OnMaritalStatusChanged" class="in" id="e-maritalStatus">
                         <option value="">انتخاب کنید...</option>
                         <option value="@EmployeeInformationRequestMaritalStatus.Single">مجرد</option>
                         <option value="@EmployeeInformationRequestMaritalStatus.Married">متأهل</option>
@@ -122,11 +122,14 @@
                     <ValidationMessage TValue="EmployeeInformationRequestMaritalStatus?" For="() => _formHelper.Model.MaritalStatus" class="f-help text-danger"/>
                 </div>
 
-                <div class="col-md-4 field">
-                    <label class="f-label" for="e-childrenCount"><span class="req-s">*</span>تعداد فرزندان</label>
-                    <InputNumber @bind-Value="_formHelper.Model.ChildrenCount" class="in num" id="e-childrenCount" min="0" max="20"/>
-                    <ValidationMessage TValue="int?" For="() => _formHelper.Model.ChildrenCount" class="f-help text-danger"/>
-                </div>
+                @if (_formHelper.Model.MaritalStatus != EmployeeInformationRequestMaritalStatus.Single)
+                {
+                    <div class="col-md-4 field">
+                        <label class="f-label" for="e-childrenCount"><span class="req-s">*</span>تعداد فرزندان</label>
+                        <InputNumber @bind-Value="_formHelper.Model.ChildrenCount" class="in num" id="e-childrenCount" min="0" max="20"/>
+                        <ValidationMessage TValue="int?" For="() => _formHelper.Model.ChildrenCount" class="f-help text-danger"/>
+                    </div>
+                }
 
                 <div class="col-md-4 field">
                     <label class="f-label" for="e-phoneNumber"><span class="req-s">*</span>شماره تلفن</label>
@@ -275,6 +278,14 @@
         }
     }
 
+    private void OnMaritalStatusChanged()
+    {
+        if (_formHelper.Model.MaritalStatus == EmployeeInformationRequestMaritalStatus.Single)
+        {
+            _formHelper.Model.ChildrenCount = 0;
+        }
+    }
+
     private async Task HandleSubmit()
     {
         if (_isLoading) return;
@@ -287,11 +298,15 @@
         _isLoading = true;
 
         var model = _formHelper.Model;
+        var childrenCount = model.MaritalStatus == EmployeeInformationRequestMaritalStatus.Single
+            ? 0
+            : model.ChildrenCount ?? 0;
+
         var result = await ApiService.SendAsync(
             apiCall: () => ApiClient.CreateEmployeeAsync(new CreateEmployeeRequest(
                 employee: new EmployeeInformationRequest(
                     birthCertificateNumber: model.BirthCertificateNumber,
-                    childrenCount: model.ChildrenCount ?? 0,
+                    childrenCount: childrenCount,
                     departmentId: model.DepartmentId ?? Guid.Empty,
                     fatherName: model.FatherName,
                     fullName: model.FullName,

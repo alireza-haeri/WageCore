@@ -244,6 +244,20 @@ public class EmployeeInformationValidatorTests
     }
 
     [Fact]
+    public void Validate_WithSingleMaritalStatusAndChildrenCountMoreThanZero_ShouldHaveValidationError()
+    {
+        var dto = _employeeBuilder.BuildEmployeeDto() with
+        {
+            MaritalStatus = EmployeeMaritalStatus.Single,
+            ChildrenCount = 1
+        };
+
+        var result = _validator.TestValidate(dto);
+
+        result.ShouldHaveValidationErrorFor(x => x.ChildrenCount);
+    }
+
+    [Fact]
     public void Validate_WithNullHireDate_ShouldHaveValidationError()
     {
         var dto = _employeeBuilder.BuildEmployeeDto() with { HireDate = null };

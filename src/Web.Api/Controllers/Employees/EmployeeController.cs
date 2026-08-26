@@ -118,4 +118,42 @@ public class EmployeeController(IMediator mediator) : BaseController
 
         return Result(response);
     }
+
+    [HttpGet("{employeeId:guid}/edit")]
+    [SwaggerOperation(OperationId = "GetEmployeeForEdit")]
+    public async Task<ActionResult<Result<GetEmployeeForEditResponse>>> GetEmployeeForEdit(
+        Guid employeeId,
+        CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(new GetUserEmployeeForEditQuery(
+            UserId: UserId,
+            EmployeeId: employeeId
+        ), cancellationToken);
+
+        var response = result.Map(e => new GetEmployeeForEditResponse(
+            e.WorkshopId,
+            e.DepartmentId,
+            e.PersonalCode,
+            e.FullName,
+            e.NationalCode,
+            e.BirthCertificateNumber,
+            e.FatherName,
+            e.Gender,
+            e.MaritalStatus,
+            e.ChildrenCount,
+            PersianDate.ToRawValue(e.HireDate),
+            e.PhoneNumber,
+            e.JobTitle,
+            e.IsTaxSubject,
+            e.InsuranceNumber,
+            e.SocialSecurityContractRow,
+            e.PositionInInsuranceList,
+            e.IsSubjectTo7PercentInsurance,
+            e.IsSubjectTo20PercentInsurance,
+            e.IsSubjectTo3PercentInsurance,
+            e.InsuranceCalculationProfile
+        ));
+
+        return Result(response);
+    }
 }

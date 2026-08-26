@@ -233,6 +233,142 @@ public class EmployeeQueryTests(WageCoreDbContextFixture fixture)
 
     #endregion
 
+    #region GetUserEmployeeByIdAsync
+
+    [Fact]
+    public async Task GetUserEmployeeByIdAsync_WhenEmployeeExists_ShouldReturnEmployeeDetails()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<EmployeeRepository>();
+        var query = scope.ServiceProvider.GetRequiredService<IEmployeeQuery>();
+        var userId = await CreateUserAsync(scope);
+
+        var departmentId = Guid.NewGuid();
+        var workshop = await CreateWorkshopWithDepartmentAsync(scope, userId, departmentId,
+            "کارگاه نمونه", "بخش تولید", "1111111111");
+
+        var employee = _employeeBuilder
+            .WithId(Guid.NewGuid())
+            .WithWorkshopId(workshop.Id)
+            .WithDepartmentId(departmentId)
+            .WithPersonalCode("EMP001")
+            .WithFullName("علی رضایی")
+            .WithNationalCode("1234567890")
+            .WithBirthCertificateNumber("54321")
+            .WithFatherName("محمد")
+            .WithGender(EmployeeGender.Man)
+            .WithMaritalStatus(EmployeeMaritalStatus.Married)
+            .WithChildrenCount(2)
+            .WithHireDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-10)))
+            .WithPhoneNumber("09123456789")
+            .WithJobTitle("حسابدار")
+            .WithIsTaxSubject(true)
+            .WithInsuranceNumber("INS-001")
+            .WithSocialSecurityContractRow("CTR-10")
+            .WithPositionInInsuranceList("اپراتور")
+            .WithIsSubjectTo7PercentInsurance(true)
+            .WithIsSubjectTo20PercentInsurance(true)
+            .WithIsSubjectTo3PercentInsurance(false)
+            .WithInsuranceCalculationProfile(InsuranceCalculationProfile.FullLegal)
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        var createResult = await repository.CreateAsync(employee);
+        createResult.Should().Be(employee.Id);
+
+        var result = await query.GetUserEmployeeByIdAsync(userId, employee.Id);
+
+        result.Should().NotBeNull();
+        result!.WorkshopId.Should().Be(workshop.Id);
+        result.DepartmentId.Should().Be(departmentId);
+        result.PersonalCode.Should().Be("EMP001");
+        result.FullName.Should().Be("علی رضایی");
+        result.NationalCode.Should().Be("1234567890");
+        result.BirthCertificateNumber.Should().Be("54321");
+        result.FatherName.Should().Be("محمد");
+        result.Gender.Should().Be(EmployeeGender.Man);
+        result.MaritalStatus.Should().Be(EmployeeMaritalStatus.Married);
+        result.ChildrenCount.Should().Be(2);
+        result.HireDate.Should().Be(employee.HireDate);
+        result.PhoneNumber.Should().Be("09123456789");
+        result.JobTitle.Should().Be("حسابدار");
+        result.IsTaxSubject.Should().BeTrue();
+        result.InsuranceNumber.Should().Be("INS-001");
+        result.SocialSecurityContractRow.Should().Be("CTR-10");
+        result.PositionInInsuranceList.Should().Be("اپراتور");
+        result.IsSubjectTo7PercentInsurance.Should().BeTrue();
+        result.IsSubjectTo20PercentInsurance.Should().BeTrue();
+        result.IsSubjectTo3PercentInsurance.Should().BeFalse();
+        result.InsuranceCalculationProfile.Should().Be(InsuranceCalculationProfile.FullLegal);
+    }
+
+    [Fact]
+    public async Task GetUserEmployeeByIdAsync_WithWrongUserId_ShouldReturnNull()
+    {
+        await using var scope = fixture.CreateScope();
+        var query = scope.ServiceProvider.GetRequiredService<IEmployeeQuery>();
+        var userId = await CreateUserAsync(scope);
+
+        var departmentId = Guid.NewGuid();
+        var workshop = await CreateWorkshopWithDepartmentAsync(scope, userId, departmentId,
+            "کارگاه نمونه", "بخش تولید", "1111111111");
+
+        var employee = await CreateEmployeeAsync(scope, workshop.Id, departmentId, "EMP001", "علی رضایی", "1234567890");
+
+        var result = await query.GetUserEmployeeByIdAsync(Guid.NewGuid(), employee.Id);
+
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task GetUserEmployeeByIdAsync_WithWrongEmployeeId_ShouldReturnNull()
+    {
+        await using var scope = fixture.CreateScope();
+        var query = scope.ServiceProvider.GetRequiredService<IEmployeeQuery>();
+        var userId = await CreateUserAsync(scope);
+
+        var result = await query.GetUserEmployeeByIdAsync(userId, Guid.NewGuid());
+
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task GetUserEmployeeByIdAsync_WithNullOptionalFields_ShouldReturnNullOptionalFields()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<EmployeeRepository>();
+        var query = scope.ServiceProvider.GetRequiredService<IEmployeeQuery>();
+        var userId = await CreateUserAsync(scope);
+
+        var departmentId = Guid.NewGuid();
+        var workshop = await CreateWorkshopWithDepartmentAsync(scope, userId, departmentId,
+            "کارگاه نمونه", "بخش تولید", "1111111111");
+
+        var employee = _employeeBuilder
+            .WithId(Guid.NewGuid())
+            .WithWorkshopId(workshop.Id)
+            .WithDepartmentId(departmentId)
+            .WithJobTitle(null)
+            .WithSocialSecurityContractRow(null)
+            .WithMaritalStatus(EmployeeMaritalStatus.Single)
+            .WithChildrenCount(0)
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        var createResult = await repository.CreateAsync(employee);
+        createResult.Should().Be(employee.Id);
+
+        var result = await query.GetUserEmployeeByIdAsync(userId, employee.Id);
+
+        result.Should().NotBeNull();
+        result!.JobTitle.Should().BeNull();
+        result.SocialSecurityContractRow.Should().BeNull();
+        result.MaritalStatus.Should().Be(EmployeeMaritalStatus.Single);
+        result.ChildrenCount.Should().Be(0);
+    }
+
+    #endregion
+
     #region IsExistEmployeePersonalCode
 
     [Fact]

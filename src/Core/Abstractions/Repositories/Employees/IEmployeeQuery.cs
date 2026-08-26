@@ -11,6 +11,9 @@ public interface IEmployeeQuery
         EmployeeStatus? status = null,
         CancellationToken cancellationToken = default);
 
+    Task<UserEmployeeByIdResult?> GetUserEmployeeByIdAsync(Guid userId, Guid employeeId,
+        CancellationToken cancellationToken = default);
+
     Task<bool> IsExistEmployeePersonalCode(Guid userId, string personalCode, Guid? excludeEmployeeId = null,
         CancellationToken cancellationToken = default);
 

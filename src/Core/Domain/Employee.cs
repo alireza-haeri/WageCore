@@ -321,6 +321,9 @@ public class Employee
         if (employee.ChildrenCount < 0 || employee.ChildrenCount > 20)
             return DomainResult.Failure("تعداد فرزندان باید بین 0 تا 20 باشد.");
 
+        if (employee.MaritalStatus == EmployeeMaritalStatus.Single && employee.ChildrenCount > 0)
+            return DomainResult.Failure("برای کارمند مجرد، تعداد فرزندان باید صفر باشد.");
+
         if (workshopRegistrationDate is null)
             return DomainResult.Failure("تاریخ ثبت کارگاه نمیتواند خالی باشد.");
 

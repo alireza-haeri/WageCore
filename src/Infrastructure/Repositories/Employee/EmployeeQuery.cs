@@ -82,6 +82,46 @@ public class EmployeeQuery(IDbConnectionFactory dbConnectionFactory) : IEmployee
         return new PagedResult<UserEmployeeResult>(employees, totalCount, pagination.PageNumber, pagination.PageSize);
     }
 
+    public async Task<UserEmployeeByIdResult?> GetUserEmployeeByIdAsync(Guid userId, Guid employeeId,
+        CancellationToken cancellationToken = default)
+    {
+        string sql = $"""
+                      SELECT
+                          e.WorkshopId AS WorkshopId,
+                          e.DepartmentId AS DepartmentId,
+                          e.PersonalCode AS PersonalCode,
+                          e.FullName AS FullName,
+                          e.NationalCode AS NationalCode,
+                          e.BirthCertificateNumber AS BirthCertificateNumber,
+                          e.FatherName AS FatherName,
+                          e.Gender AS Gender,
+                          e.MaritalStatus AS MaritalStatus,
+                          e.ChildrenCount AS ChildrenCount,
+                          e.HireDate AS HireDate,
+                          e.PhoneNumber AS PhoneNumber,
+                          e.JobTitle AS JobTitle,
+                          e.IsTaxSubject AS IsTaxSubject,
+                          e.InsuranceNumber AS InsuranceNumber,
+                          e.SocialSecurityContractRow AS SocialSecurityContractRow,
+                          e.PositionInInsuranceList AS PositionInInsuranceList,
+                          e.IsSubjectTo7PercentInsurance AS IsSubjectTo7PercentInsurance,
+                          e.IsSubjectTo20PercentInsurance AS IsSubjectTo20PercentInsurance,
+                          e.IsSubjectTo3PercentInsurance AS IsSubjectTo3PercentInsurance,
+                          e.InsuranceCalculationProfile AS InsuranceCalculationProfile
+                      FROM {Core.Domain.Employee.TableName} e
+                      INNER JOIN {Core.Domain.Workshop.TableName} w ON w.Id = e.WorkshopId
+                      WHERE w.UserId = @UserId AND e.Id = @EmployeeId;
+                      """;
+
+        var command = new CommandDefinition(sql, new { UserId = userId, EmployeeId = employeeId },
+            cancellationToken: cancellationToken);
+
+        using var connection = dbConnectionFactory.CreateConnection();
+        var employee = await connection.QueryFirstOrDefaultAsync<UserEmployeeByIdResult>(command);
+
+        return employee;
+    }
+
     public async Task<bool> IsExistEmployeePersonalCode(Guid userId, string personalCode, Guid? excludeEmployeeId = null,
         CancellationToken cancellationToken = default)
     {
