@@ -3,6 +3,8 @@ namespace Infrastructure.Tests.Repositories.Employees;
 public class EmployeeRepositoryTests(WageCoreDbContextFixture fixture)
     : IClassFixture<WageCoreDbContextFixture>, IAsyncLifetime
 {
+    private static readonly DateOnly ValidWorkshopRegistrationDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-30));
+
     private readonly WorkshopBuilder _workshopBuilder = new();
     private readonly EmployeeBuilder _employeeBuilder = new();
 
@@ -26,6 +28,7 @@ public class EmployeeRepositoryTests(WageCoreDbContextFixture fixture)
         var workshop = _workshopBuilder
             .WithId(Guid.NewGuid())
             .WithUserId(userId)
+            .WithRegistrationDate(ValidWorkshopRegistrationDate)
             .CreateResult()
             .ShouldBeSuccess();
 
@@ -45,6 +48,7 @@ public class EmployeeRepositoryTests(WageCoreDbContextFixture fixture)
             .WithId(Guid.NewGuid())
             .WithWorkshopId(workshopId)
             .WithDepartmentId(departmentId)
+            .WithWorkshopRegistrationDate(ValidWorkshopRegistrationDate)
             .WithPersonalCode(personalCode)
             .WithFullName(fullName)
             .WithNationalCode(nationalCode)

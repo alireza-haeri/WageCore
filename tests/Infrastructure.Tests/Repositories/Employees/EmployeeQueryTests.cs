@@ -3,6 +3,8 @@ namespace Infrastructure.Tests.Repositories.Employees;
 public class EmployeeQueryTests(WageCoreDbContextFixture fixture)
     : IClassFixture<WageCoreDbContextFixture>, IAsyncLifetime
 {
+    private static readonly DateOnly ValidWorkshopRegistrationDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-30));
+
     private readonly WorkshopBuilder _workshopBuilder = new();
     private readonly EmployeeBuilder _employeeBuilder = new();
 
@@ -27,6 +29,7 @@ public class EmployeeQueryTests(WageCoreDbContextFixture fixture)
             .WithId(Guid.NewGuid())
             .WithUserId(userId)
             .WithName(workshopName)
+            .WithRegistrationDate(ValidWorkshopRegistrationDate)
             .WithNationalId(nationalId)
             .CreateResult()
             .ShouldBeSuccess();
@@ -47,6 +50,7 @@ public class EmployeeQueryTests(WageCoreDbContextFixture fixture)
             .WithId(Guid.NewGuid())
             .WithWorkshopId(workshopId)
             .WithDepartmentId(departmentId)
+            .WithWorkshopRegistrationDate(ValidWorkshopRegistrationDate)
             .WithPersonalCode(personalCode)
             .WithFullName(fullName)
             .WithNationalCode(nationalCode)
@@ -259,6 +263,7 @@ public class EmployeeQueryTests(WageCoreDbContextFixture fixture)
             .WithGender(EmployeeGender.Man)
             .WithMaritalStatus(EmployeeMaritalStatus.Married)
             .WithChildrenCount(2)
+            .WithWorkshopRegistrationDate(ValidWorkshopRegistrationDate)
             .WithHireDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-10)))
             .WithPhoneNumber("09123456789")
             .WithJobTitle("حسابدار")
@@ -272,6 +277,11 @@ public class EmployeeQueryTests(WageCoreDbContextFixture fixture)
             .WithInsuranceCalculationProfile(InsuranceCalculationProfile.FullLegal)
             .CreateResult()
             .ShouldBeSuccess();
+
+        employee.ReplaceBankAccounts([
+            new EmployeeBankAccountDto("حساب حقوق", "IR123456789012345678901234", Guid.NewGuid()),
+            new EmployeeBankAccountDto("حساب پس انداز", "IR999999999999999999999999", Guid.NewGuid())
+        ]).ShouldBeSuccess();
 
         var createResult = await repository.CreateAsync(employee);
         createResult.Should().Be(employee.Id);
@@ -300,6 +310,9 @@ public class EmployeeQueryTests(WageCoreDbContextFixture fixture)
         result.IsSubjectTo20PercentInsurance.Should().BeTrue();
         result.IsSubjectTo3PercentInsurance.Should().BeFalse();
         result.InsuranceCalculationProfile.Should().Be(InsuranceCalculationProfile.FullLegal);
+        result.BankAccounts.Should().HaveCount(2);
+        result.BankAccounts.Should().Contain(x => x.Title == "حساب حقوق" && x.Iban == "123456789012345678901234" && x.Id.HasValue);
+        result.BankAccounts.Should().Contain(x => x.Title == "حساب پس انداز" && x.Iban == "999999999999999999999999" && x.Id.HasValue);
     }
 
     [Fact]
@@ -348,6 +361,7 @@ public class EmployeeQueryTests(WageCoreDbContextFixture fixture)
             .WithId(Guid.NewGuid())
             .WithWorkshopId(workshop.Id)
             .WithDepartmentId(departmentId)
+            .WithWorkshopRegistrationDate(ValidWorkshopRegistrationDate)
             .WithJobTitle(null)
             .WithSocialSecurityContractRow(null)
             .WithMaritalStatus(EmployeeMaritalStatus.Single)
@@ -365,6 +379,7 @@ public class EmployeeQueryTests(WageCoreDbContextFixture fixture)
         result.SocialSecurityContractRow.Should().BeNull();
         result.MaritalStatus.Should().Be(EmployeeMaritalStatus.Single);
         result.ChildrenCount.Should().Be(0);
+        result.BankAccounts.Should().BeEmpty();
     }
 
     #endregion
