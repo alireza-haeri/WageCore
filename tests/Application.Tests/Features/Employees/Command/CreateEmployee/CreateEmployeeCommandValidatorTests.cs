@@ -9,16 +9,18 @@ public class CreateEmployeeCommandValidatorTests
     private static readonly Guid ValidWorkshopId = Guid.NewGuid();
 
     private CreateEmployeeCommand CreateValidCommand(EmployeeDto? employee = null, EmployeeInsuranceDto? insurance = null,
-        Guid? userId = null, Guid? workshopId = null)
+        List<EmployeeBankAccountDto>? bankAccounts = null, Guid? userId = null, Guid? workshopId = null)
     {
         var employeeDto = employee ?? _employeeBuilder.BuildEmployeeDto();
         var insuranceDto = insurance ?? _employeeBuilder.BuildInsuranceDto();
+        var bankAccountDtos = bankAccounts ?? [_employeeBuilder.BuildBankAccountDto()];
 
         return new CreateEmployeeCommand(
             userId ?? ValidUserId,
             workshopId ?? ValidWorkshopId,
             employeeDto,
-            insuranceDto);
+            insuranceDto,
+            bankAccountDtos);
     }
 
     [Fact]
@@ -54,7 +56,8 @@ public class CreateEmployeeCommandValidatorTests
     [Fact]
     public void Validate_WithNullEmployee_ShouldHaveValidationError()
     {
-        var command = new CreateEmployeeCommand(ValidUserId, ValidWorkshopId, null!, _employeeBuilder.BuildInsuranceDto());
+        var command = new CreateEmployeeCommand(ValidUserId, ValidWorkshopId, null!, _employeeBuilder.BuildInsuranceDto(),
+            [_employeeBuilder.BuildBankAccountDto()]);
 
         var result = _validator.TestValidate(command);
 
@@ -64,11 +67,37 @@ public class CreateEmployeeCommandValidatorTests
     [Fact]
     public void Validate_WithNullInsurance_ShouldHaveValidationError()
     {
-        var command = new CreateEmployeeCommand(ValidUserId, ValidWorkshopId, _employeeBuilder.BuildEmployeeDto(), null!);
+        var command = new CreateEmployeeCommand(ValidUserId, ValidWorkshopId, _employeeBuilder.BuildEmployeeDto(), null!,
+            [_employeeBuilder.BuildBankAccountDto()]);
 
         var result = _validator.TestValidate(command);
 
         result.ShouldHaveValidationErrorFor(x => x.Insurance);
+    }
+
+    [Fact]
+    public void Validate_WithNullBankAccounts_ShouldHaveValidationError()
+    {
+        var command = new CreateEmployeeCommand(ValidUserId, ValidWorkshopId, _employeeBuilder.BuildEmployeeDto(),
+            _employeeBuilder.BuildInsuranceDto(), null);
+
+        var result = _validator.TestValidate(command);
+
+        result.ShouldHaveValidationErrorFor(x => x.BankAccounts);
+    }
+
+    [Fact]
+    public void Validate_WithInvalidBankAccountIban_ShouldHaveValidationError()
+    {
+        var bankAccounts = new List<EmployeeBankAccountDto>
+        {
+            _employeeBuilder.BuildBankAccountDto() with { Iban = "123" }
+        };
+        var command = CreateValidCommand(bankAccounts: bankAccounts);
+
+        var result = _validator.TestValidate(command);
+
+        result.ShouldHaveValidationErrorFor("BankAccounts[0].Iban");
     }
 
     [Fact]

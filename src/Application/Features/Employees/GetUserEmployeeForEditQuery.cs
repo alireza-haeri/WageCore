@@ -1,3 +1,5 @@
+using Core.Contracts.Employees;
+
 namespace Application.Features.Employees;
 
 public record GetUserEmployeeForEditQuery(Guid UserId, Guid EmployeeId)
@@ -24,4 +26,8 @@ public record GetUserEmployeeForEditQueryResponse(
     bool IsSubjectTo7PercentInsurance,
     bool IsSubjectTo20PercentInsurance,
     bool IsSubjectTo3PercentInsurance,
-    InsuranceCalculationProfile InsuranceCalculationProfile);
+    InsuranceCalculationProfile InsuranceCalculationProfile,
+    List<EmployeeBankAccountDto> BankAccounts,
+    Guid? BankAccountId = null,
+    string? BankAccountTitle = null,
+    string? BankAccountIban = null);

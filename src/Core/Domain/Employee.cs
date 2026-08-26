@@ -189,6 +189,39 @@ public class Employee
         return Insurance.Update(insurance);
     }
 
+    public DomainResult ReplaceBankAccounts(List<EmployeeBankAccountDto>? bankAccounts)
+    {
+        var canModifyResult = EnsureCanModify();
+        if (!canModifyResult.IsSuccess)
+            return canModifyResult;
+
+        if (bankAccounts is null)
+            return DomainResult.Failure("اطلاعات حساب‌های بانکی نمیتواند خالی باشد.");
+
+        var normalizedBankAccounts = new List<BankAccount>();
+
+        foreach (var bankAccount in bankAccounts)
+        {
+            var bankAccountId = bankAccount.Id ?? Guid.NewGuid();
+            if (normalizedBankAccounts.Any(x => x.Id == bankAccountId))
+                return DomainResult.Failure("شناسه حساب بانکی در لیست حساب‌های بانکی تکراری است.");
+
+            var bankAccountResult = BankAccount.Create(bankAccountId, bankAccount);
+            if (!bankAccountResult.IsSuccess)
+                return DomainResult.Failure(bankAccountResult.ErrorMessage!);
+
+            if (normalizedBankAccounts.Any(x => x.Iban == bankAccountResult.Response.Iban))
+                return DomainResult.Failure("شماره شبا در لیست حساب‌های بانکی تکراری است.");
+
+            normalizedBankAccounts.Add(bankAccountResult.Response);
+        }
+
+        _bankAccounts.Clear();
+        _bankAccounts.AddRange(normalizedBankAccounts);
+
+        return DomainResult.Success();
+    }
+
     public DomainResult<BankAccount> CreateBankAccount(Guid bankAccountId, EmployeeBankAccountDto? bankAccount)
     {
         var canModifyResult = EnsureCanModify();

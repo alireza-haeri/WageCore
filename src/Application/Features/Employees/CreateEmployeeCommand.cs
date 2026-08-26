@@ -6,7 +6,8 @@ public record CreateEmployeeCommand(
     Guid UserId,
     Guid WorkshopId,
     EmployeeDto Employee,
-    EmployeeInsuranceDto Insurance)
+    EmployeeInsuranceDto Insurance,
+    List<EmployeeBankAccountDto>? BankAccounts = null)
     : IRequest<Result<CreateEmployeeCommandResponse>>;
 
 public record CreateEmployeeCommandResponse(Guid EmployeeId);

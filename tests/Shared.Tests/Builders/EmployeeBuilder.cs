@@ -25,6 +25,8 @@ public class EmployeeBuilder
     private bool _isSubjectTo20PercentInsurance = true;
     private bool _isSubjectTo3PercentInsurance = false;
     private InsuranceCalculationProfile? _insuranceCalculationProfile = InsuranceCalculationProfile.FullLegal;
+    private string? _bankAccountTitle = "حساب حقوق";
+    private string _iban = "IR123456789012345678901234";
     private bool _isPersonalCodeUniqueForUser = true;
     private bool _isNationalCodeUniqueForUser = true;
 
@@ -166,6 +168,18 @@ public class EmployeeBuilder
         return this;
     }
 
+    public EmployeeBuilder WithBankAccountTitle(string? bankAccountTitle)
+    {
+        _bankAccountTitle = bankAccountTitle;
+        return this;
+    }
+
+    public EmployeeBuilder WithIban(string iban)
+    {
+        _iban = iban;
+        return this;
+    }
+
     public EmployeeBuilder WithPersonalCodeUniqueForUser(bool isPersonalCodeUniqueForUser)
     {
         _isPersonalCodeUniqueForUser = isPersonalCodeUniqueForUser;
@@ -203,6 +217,9 @@ public class EmployeeBuilder
             _isSubjectTo20PercentInsurance,
             _isSubjectTo3PercentInsurance,
             _insuranceCalculationProfile);
+
+    public EmployeeBankAccountDto BuildBankAccountDto() =>
+        new(_bankAccountTitle, _iban);
 
     public DomainResult<Employee> CreateResult()
     {

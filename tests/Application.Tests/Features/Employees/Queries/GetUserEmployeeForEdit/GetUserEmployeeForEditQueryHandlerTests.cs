@@ -9,6 +9,7 @@ public class GetUserEmployeeForEditQueryHandlerTests
     private static readonly Guid ValidEmployeeId = Guid.NewGuid();
     private static readonly Guid ValidWorkshopId = Guid.NewGuid();
     private static readonly Guid ValidDepartmentId = Guid.NewGuid();
+    private static readonly Guid ValidBankAccountId = Guid.NewGuid();
 
     public GetUserEmployeeForEditQueryHandlerTests()
     {
@@ -42,7 +43,11 @@ public class GetUserEmployeeForEditQueryHandlerTests
             true,
             true,
             false,
-            InsuranceCalculationProfile.FullLegal);
+            InsuranceCalculationProfile.FullLegal,
+            [
+                new EmployeeBankAccountDto("حساب حقوق", "123456789012345678901234", ValidBankAccountId),
+                new EmployeeBankAccountDto("حساب دوم", "999999999999999999999999", Guid.NewGuid())
+            ]);
 
         _employeeQuery.GetUserEmployeeByIdAsync(ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
             .Returns(employee);
@@ -71,6 +76,52 @@ public class GetUserEmployeeForEditQueryHandlerTests
         response.IsSubjectTo20PercentInsurance.Should().BeTrue();
         response.IsSubjectTo3PercentInsurance.Should().BeFalse();
         response.InsuranceCalculationProfile.Should().Be(InsuranceCalculationProfile.FullLegal);
+        response.BankAccounts.Should().HaveCount(2);
+        response.BankAccounts.Should().Contain(x => x.Id == ValidBankAccountId && x.Title == "حساب حقوق" && x.Iban == "123456789012345678901234");
+        response.BankAccountId.Should().Be(ValidBankAccountId);
+        response.BankAccountTitle.Should().Be("حساب حقوق");
+        response.BankAccountIban.Should().Be("123456789012345678901234");
+    }
+
+    [Fact]
+    public async Task Handle_WhenEmployeeHasNoBankAccount_ShouldReturnEmptyBankAccounts()
+    {
+        var query = new GetUserEmployeeForEditQuery(ValidUserId, ValidEmployeeId);
+
+        var employee = new UserEmployeeByIdResult(
+            ValidWorkshopId,
+            ValidDepartmentId,
+            "EMP001",
+            "علی رضایی",
+            "1234567890",
+            "12345",
+            "محمد",
+            EmployeeGender.Man,
+            EmployeeMaritalStatus.Single,
+            0,
+            DateOnly.FromDateTime(DateTime.Today),
+            "09123456789",
+            "حسابدار",
+            true,
+            "INS-001",
+            null,
+            "اپراتور",
+            true,
+            true,
+            false,
+            InsuranceCalculationProfile.FullLegal,
+            []);
+
+        _employeeQuery.GetUserEmployeeByIdAsync(ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
+            .Returns(employee);
+
+        var result = await _handler.Handle(query, CancellationToken.None);
+
+        var response = result.ShouldBeSuccess();
+        response.BankAccounts.Should().BeEmpty();
+        response.BankAccountId.Should().BeNull();
+        response.BankAccountTitle.Should().BeNull();
+        response.BankAccountIban.Should().BeNull();
     }
 
     [Fact]

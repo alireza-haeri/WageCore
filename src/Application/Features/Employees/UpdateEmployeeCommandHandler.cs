@@ -55,6 +55,14 @@ public class UpdateEmployeeCommandHandler(
         if (!domainResult.IsSuccess)
             return Result<bool>.GeneralFailure(domainResult.ErrorMessage!);
 
+        var insuranceResult = employee.UpdateInsurance(request.Insurance);
+        if (!insuranceResult.IsSuccess)
+            return Result<bool>.GeneralFailure(insuranceResult.ErrorMessage!);
+
+        var bankAccountsResult = employee.ReplaceBankAccounts(request.BankAccounts);
+        if (!bankAccountsResult.IsSuccess)
+            return Result<bool>.GeneralFailure(bankAccountsResult.ErrorMessage!);
+
         var updateResult = await employeeRepository.UpdateAsync(employee, cancellationToken);
         if (!updateResult)
             return Result<bool>.GeneralFailure("خطایی در بروزرسانی کارمند رخ داد.");

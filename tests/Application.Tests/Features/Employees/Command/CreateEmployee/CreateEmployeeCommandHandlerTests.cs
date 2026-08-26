@@ -34,7 +34,8 @@ public class CreateEmployeeCommandHandlerTests
             .ShouldBeSuccess();
     }
 
-    private CreateEmployeeCommand CreateValidCommand(EmployeeDto? employee = null, EmployeeInsuranceDto? insurance = null)
+    private CreateEmployeeCommand CreateValidCommand(EmployeeDto? employee = null, EmployeeInsuranceDto? insurance = null,
+        List<EmployeeBankAccountDto>? bankAccounts = null)
     {
         var employeeDto = employee ?? _employeeBuilder
             .WithWorkshopId(ValidWorkshopId)
@@ -42,8 +43,13 @@ public class CreateEmployeeCommandHandlerTests
             .BuildEmployeeDto();
 
         var insuranceDto = insurance ?? _employeeBuilder.BuildInsuranceDto();
+        var bankAccountDtos = bankAccounts ??
+            [
+                _employeeBuilder.BuildBankAccountDto(),
+                new EmployeeBankAccountDto("حساب دوم", "IR999999999999999999999999")
+            ];
 
-        return new CreateEmployeeCommand(ValidUserId, ValidWorkshopId, employeeDto, insuranceDto);
+        return new CreateEmployeeCommand(ValidUserId, ValidWorkshopId, employeeDto, insuranceDto, bankAccountDtos);
     }
 
     private void SetupNoDuplicates()
@@ -59,6 +65,7 @@ public class CreateEmployeeCommandHandlerTests
     {
         var command = CreateValidCommand();
         var workshop = CreateValidWorkshop();
+        var createdEmployeeId = Guid.NewGuid();
 
         _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
             .Returns(workshop);
@@ -67,18 +74,22 @@ public class CreateEmployeeCommandHandlerTests
         SetupNoDuplicates();
 
         _employeeRepository.CreateAsync(Arg.Any<Employee>(), Arg.Any<CancellationToken>())
-            .Returns(Guid.NewGuid());
+            .Returns(createdEmployeeId);
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
         var response = result.ShouldBeSuccess();
-        response.EmployeeId.Should().NotBeEmpty();
+        response.EmployeeId.Should().Be(createdEmployeeId);
         await _employeeRepository.Received(1).CreateAsync(
             Arg.Is<Employee>(x =>
                 x.WorkshopId == ValidWorkshopId &&
                 x.DepartmentId == ValidDepartmentId &&
                 x.PersonalCode == command.Employee.PersonalCode &&
-                x.NationalCode == command.Employee.NationalCode),
+                x.NationalCode == command.Employee.NationalCode &&
+                x.Insurance.InsuranceNumber == command.Insurance.InsuranceNumber &&
+                x.BankAccounts.Count == 2 &&
+                x.BankAccounts.Any(b => b.Title == command.BankAccounts![0].Title && b.Iban == command.BankAccounts[0].Iban[2..]) &&
+                x.BankAccounts.Any(b => b.Title == command.BankAccounts[1].Title && b.Iban == command.BankAccounts[1].Iban[2..])),
             Arg.Any<CancellationToken>());
     }
 
@@ -233,6 +244,27 @@ public class CreateEmployeeCommandHandlerTests
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.ShouldBeFailure(null, BadResultType.General);
+    }
+
+    [Fact]
+    public async Task Handle_WhenBankAccountsReplaceFails_ShouldReturnGeneralFailure()
+    {
+        var command = CreateValidCommand(bankAccounts:
+        [
+            _employeeBuilder.BuildBankAccountDto(),
+            new EmployeeBankAccountDto("حساب دوم", "IR123456789012345678901234")
+        ]);
+        var workshop = CreateValidWorkshop();
+
+        _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        _workshopRepository.GetByDepartmentIdAsync(ValidUserId, ValidDepartmentId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        SetupNoDuplicates();
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.ShouldBeFailure("شماره شبا در لیست حساب‌های بانکی تکراری است.", BadResultType.General);
     }
 
     [Fact]

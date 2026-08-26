@@ -57,7 +57,11 @@ public class CreateEmployeeCommandHandler(
         if (!employee.IsSuccess)
             return Result<CreateEmployeeCommandResponse>.GeneralFailure(employee.ErrorMessage!);
 
-        var createResult = await employeeRepository.CreateAsync(employee.Response!, cancellationToken);
+        var bankAccountsResult = employee.Response!.ReplaceBankAccounts(request.BankAccounts);
+        if (!bankAccountsResult.IsSuccess)
+            return Result<CreateEmployeeCommandResponse>.GeneralFailure(bankAccountsResult.ErrorMessage!);
+
+        var createResult = await employeeRepository.CreateAsync(employee.Response, cancellationToken);
         if (createResult is null)
             return Result<CreateEmployeeCommandResponse>.GeneralFailure("خطا در ایجاد کارمند");
 
