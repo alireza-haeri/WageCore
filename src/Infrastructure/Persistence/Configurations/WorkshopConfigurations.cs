@@ -47,27 +47,6 @@ public class WorkshopConfigurations : IEntityTypeConfiguration<Workshop>
             .HasForeignKey(x => x.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.OwnsMany(x => x.Departments, departmentBuilder =>
-        {
-            departmentBuilder.ToTable(Department.TableName);
-
-            departmentBuilder.WithOwner()
-                .HasForeignKey(x => x.WorkshopId);
-
-            departmentBuilder.HasKey(x => x.Id);
-            departmentBuilder.Property(x => x.Id).ValueGeneratedNever();
-
-            departmentBuilder.Property(x => x.WorkshopId)
-                .IsRequired();
-
-            departmentBuilder.Property(x => x.Name)
-                .IsRequired()
-                .IsUnicode()
-                .HasMaxLength(100);
-
-            departmentBuilder.HasIndex(x => x.WorkshopId);
-        });
-
         builder.Navigation(x => x.Departments)
             .HasField("_departments")
             .UsePropertyAccessMode(PropertyAccessMode.Field);
