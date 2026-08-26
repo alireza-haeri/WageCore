@@ -80,6 +80,13 @@ public class CreateEmployeeCommandHandlerTests
 
         var response = result.ShouldBeSuccess();
         response.EmployeeId.Should().Be(createdEmployeeId);
+        var accounts = command.BankAccounts!;
+
+        var firstTitle = accounts[0].Title;
+        var firstIban = accounts[0].Iban[2..];
+        var secondTitle = accounts[1].Title;
+        var secondIban = accounts[1].Iban[2..];
+
         await _employeeRepository.Received(1).CreateAsync(
             Arg.Is<Employee>(x =>
                 x.WorkshopId == ValidWorkshopId &&
@@ -88,8 +95,8 @@ public class CreateEmployeeCommandHandlerTests
                 x.NationalCode == command.Employee.NationalCode &&
                 x.Insurance.InsuranceNumber == command.Insurance.InsuranceNumber &&
                 x.BankAccounts.Count == 2 &&
-                x.BankAccounts.Any(b => b.Title == command.BankAccounts![0].Title && b.Iban == command.BankAccounts[0].Iban[2..]) &&
-                x.BankAccounts.Any(b => b.Title == command.BankAccounts[1].Title && b.Iban == command.BankAccounts[1].Iban[2..])),
+                x.BankAccounts.Any(b => b.Title == firstTitle && b.Iban == firstIban) &&
+                x.BankAccounts.Any(b => b.Title == secondTitle && b.Iban == secondIban)),
             Arg.Any<CancellationToken>());
     }
 

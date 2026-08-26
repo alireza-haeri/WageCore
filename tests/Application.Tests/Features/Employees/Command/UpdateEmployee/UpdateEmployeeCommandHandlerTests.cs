@@ -162,8 +162,15 @@ public class UpdateEmployeeCommandHandlerTests
 
         result.ShouldBeSuccess().Should().BeTrue();
         employee.BankAccounts.Should().HaveCount(2);
-        employee.BankAccounts.Should().Contain(x => x.Title == command.BankAccounts![0].Title && x.Iban == command.BankAccounts[0].Iban[2..]);
-        employee.BankAccounts.Should().Contain(x => x.Title == command.BankAccounts[1].Title && x.Iban == command.BankAccounts[1].Iban[2..]);
+        var accounts = command.BankAccounts!;
+
+        var firstTitle = accounts[0].Title;
+        var firstIban = accounts[0].Iban[2..];
+        var secondTitle = accounts[1].Title;
+        var secondIban = accounts[1].Iban[2..];
+
+        employee.BankAccounts.Should().Contain(x => x.Title == firstTitle && x.Iban == firstIban);
+        employee.BankAccounts.Should().Contain(x => x.Title == secondTitle && x.Iban == secondIban);
     }
 
     [Fact]
