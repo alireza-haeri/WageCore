@@ -33,24 +33,23 @@
             </div>
 
             <div class="row g-3">
-                <div class="col-md-4 field">
-                    <label class="f-label" for="e-workshop"><span class="req-s">*</span>کارگاه</label>
-                    <InputSelect @bind-Value="_formHelper.Model.WorkshopId" @bind-Value:after="OnWorkshopChanged" class="in" id="e-workshop" data-autofocus disabled="@IsEdit">
-                        <option value="">انتخاب کنید...</option>
-                        @if (_userWorkshops is not null)
-                        {
-                            foreach (var workshop in _userWorkshops)
+                @if (!IsEdit)
+                {
+                    <div class="col-md-4 field">
+                        <label class="f-label" for="e-workshop"><span class="req-s">*</span>کارگاه</label>
+                        <InputSelect @bind-Value="_formHelper.Model.WorkshopId" @bind-Value:after="OnWorkshopChanged" class="in" id="e-workshop" data-autofocus>
+                            <option value="">انتخاب کنید...</option>
+                            @if (_userWorkshops is not null)
                             {
-                                <option value="@workshop.WorkshopId">@workshop.DisplayName</option>
+                                foreach (var workshop in _userWorkshops)
+                                {
+                                    <option value="@workshop.WorkshopId">@workshop.DisplayName</option>
+                                }
                             }
-                        }
-                    </InputSelect>
-                    <ValidationMessage TValue="Guid?" For="() => _formHelper.Model.WorkshopId" class="f-help text-danger"/>
-                    @if (IsEdit)
-                    {
-                        <div class="f-help">در ویرایش، کارگاه قابل تغییر نیست.</div>
-                    }
-                </div>
+                        </InputSelect>
+                        <ValidationMessage TValue="Guid?" For="() => _formHelper.Model.WorkshopId" class="f-help text-danger"/>
+                    </div>
+                }
 
                 <div class="col-md-4 field">
                     <label class="f-label" for="e-department"><span class="req-s">*</span>بخش</label>
