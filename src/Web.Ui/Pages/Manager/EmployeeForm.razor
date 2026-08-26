@@ -1,294 +1,437 @@
+@page "/employee-form/{id:guid}"
 @page "/employee-form"
 @layout ManagerLayout
 
 <div class="page-head">
     <div class="ph-t">
-        <div class="crumb">پنل
-            <svg class="ic">
-                <use href="assets/img/icons.svg#i-chl"/>
-            </svg>
+        <div class="crumb">
+            پنل
+            <svg class="ic"><use href="assets/img/icons.svg#i-chl"/></svg>
             <a href="/employees">کارکنان</a>
-            <svg class="ic">
-                <use href="assets/img/icons.svg#i-chl"/>
-            </svg>
-            کارمند جدید
+            <svg class="ic"><use href="assets/img/icons.svg#i-chl"/></svg>
+            <span>@(IsEdit ? "ویرایش کارمند" : "کارمند جدید")</span>
         </div>
-        <h1>ثبت کارمند جدید</h1>
-        <p>سه گام دارد — با <span class="kbd">Enter</span> بین فیلدها حرکت کنید.</p>
+        <h1>@(IsEdit ? "ویرایش کارمند" : "ثبت کارمند جدید")</h1>
+        <p>اطلاعات پایه و بیمهٔ کارمند را از همین فرم ثبت کنید.</p>
     </div>
     <div class="ph-actions">
         <a class="btn btn-g" href="/employees">
-            <svg class="ic">
-                <use href="assets/img/icons.svg#i-x"/>
-            </svg>
-            انصراف</a>
-        <button class="btn btn-p" data-demo="پروندهٔ کارمند به‌صورت نمایشی ثبت شد.">
-            <svg class="ic">
-                <use href="assets/img/icons.svg#i-check"/>
-            </svg>
-            ثبت نهایی پرونده
-        </button>
+            <svg class="ic"><use href="assets/img/icons.svg#i-x"/></svg>
+            انصراف
+        </a>
     </div>
 </div>
+
 <div class="panel">
     <div class="panel-b">
-        <form>
-            <input type="hidden" name="Id">
-            <div class="steps" data-tabgroup="emp">
-                <button type="button" class="step active" data-tab="emp-1"><span
-                        class="s-n">۱</span>هویت و اطلاعات پایه
-                </button>
-                <button type="button" class="step" data-tab="emp-2"><span
-                        class="s-n">۲</span>بیمه
-                </button>
-                <button type="button" class="step" data-tab="emp-3"><span class="s-n">۳</span>بانکی و
-                    مالیات
-                </button>
+        <EditForm EditContext="@_formHelper.EditContext" OnValidSubmit="@HandleSubmit">
+            <ValidationMessage TValue="string" For="() => _formHelper.Model.General" class="f-help text-danger"/>
+
+            <div class="sec">
+                <svg class="ic"><use href="assets/img/icons.svg#i-user"/></svg>
+                اطلاعات پایه
             </div>
-            <!-- گام ۱ -->
-            <div class="tabpane show" id="tp-emp-1">
-                <div class="sec">
-                    <svg class="ic">
-                        <use href="assets/img/icons.svg#i-user"/>
-                    </svg>
-                    هویت<small>بخش ۴·۱ سند دامنه</small></div>
-                <div class="row g-3">
-                    <div class="col-md-4 field">
-                        <label class="f-label" for="e-name"><span class="req-s">*</span>نام و
-                            نام‌خانوادگی <span class="f-badge fb-grn">FullName</span></label>
-                        <input class="in" id="e-name" placeholder="مطابق شناسنامه/کارت ملی"
-                               data-autofocus>
-                    </div>
-                    <div class="col-md-4 field">
-                        <label class="f-label" for="e-pcode"><span class="req-s">*</span>کد پرسنلی <span
-                                class="f-badge fb-grn">یکتا در کارگاه</span></label>
-                        <div class="igroup"><span class="pre">P-</span><input class="in" id="e-pcode"
-                                                                              placeholder="1007" maxlength="20"></div>
-                        <div class="f-help">پیشنهاد سیستم: <span class="ltr">P-1007</span> — در
-                            پیاده‌سازی اصلی خودکار تولید می‌شود.
-                        </div>
-                    </div>
-                    <div class="col-md-4 field">
-                        <label class="f-label" for="e-dept"><span class="req-s">*</span>بخش محل کار
-                            <span class="f-badge fb-grn">DepartmentId</span></label>
-                        <select class="in" id="e-dept">
-                            <optgroup label="کارخانهٔ نساجی پارس">
-                                <option>تولید</option>
-                                <option>انبار</option>
-                                <option>حسابداری</option>
-                                <option>اداری</option>
-                            </optgroup>
-                            <optgroup label="شرکت پخش آریا">
-                                <option>فروش</option>
-                                <option>اداری</option>
-                            </optgroup>
-                            <optgroup label="کارگاه بسته‌بندی سپید">
-                                <option>کنترل کیفیت</option>
-                            </optgroup>
-                        </select>
-                        <div class="f-help">جابجایی بین بخش‌ها بعداً مجاز است.</div>
-                    </div>
-                    <div class="col-md-4 field">
-                        <label class="f-label" for="e-ncode"><span class="req-s">*</span>کد ملی <span
-                                class="f-badge fb-grn">یکتا</span></label>
-                        <input class="in in-ltr" id="e-ncode" inputmode="numeric" maxlength="10"
-                               placeholder="10 رقم">
-                        <div class="f-help">کدهای تمام‌یکسان نامعتبرند؛ چک‌سام هنگام ثبت کنترل می‌شود.
-                        </div>
-                    </div>
-                    <div class="col-md-4 field">
-                        <label class="f-label" for="e-bcert"><span class="req-s">*</span>شماره شناسنامه
-                            <span class="f-badge fb-grn">BirthCertificateNumber</span></label>
-                        <input class="in in-ltr" id="e-bcert" maxlength="20"
-                               placeholder="متنی ذخیره می‌شود">
-                        <div class="f-help">تا صفر پیشرو حفظ شود.</div>
-                    </div>
-                    <div class="col-md-4 field">
-                        <label class="f-label" for="e-father"><span class="req-s">*</span>نام
-                            پدر</label>
-                        <input class="in" id="e-father" maxlength="50">
-                    </div>
-                    <div class="col-md-3 field">
-                        <label class="f-label"><span class="req-s">*</span>جنسیت <span
-                                class="f-badge fb-blu">Gender</span></label>
-                        <div class="rbox">
-                            <label class="rch"><input type="radio" name="e-gender" checked>مرد</label>
-                            <label class="rch"><input type="radio" name="e-gender">زن</label>
-                        </div>
-                    </div>
-                    <div class="col-md-3 field">
-                        <label class="f-label" for="e-marital"><span class="req-s">*</span>وضعیت
-                            تأهل</label>
-                        <select class="in" id="e-marital">
-                            <option>مجرد</option>
-                            <option selected>متأهل</option>
-                            <option>مطلقه</option>
-                            <option>همسر فوت‌شده</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3 field">
-                        <label class="f-label" for="e-kids"><span class="req-s">*</span>تعداد فرزندان
-                            <span class="f-badge fb-grn">ChildrenCount</span></label>
-                        <input type="number" class="in num" id="e-kids" value="0" min="0" max="20">
-                        <div class="f-help">مبنای محاسبهٔ حق اولاد در حکم.</div>
-                    </div>
-                    <div class="col-md-3 field">
-                        <label class="f-label" for="e-hire"><span class="req-s">*</span>تاریخ
-                            استخدام</label>
-                        <input class="in num" id="e-hire" value="۱۴۰۵/۰۵/۱۷" inputmode="numeric">
-                        <div class="f-help">مبنای سنوات و عیدی.</div>
-                    </div>
-                    <div class="col-md-4 field">
-                        <label class="f-label" for="e-term">تاریخ ترک کار <span
-                                class="f-badge fb-gold">اختیاری</span></label>
-                        <input class="in num" id="e-term" placeholder="خالی = شاغل" inputmode="numeric">
-                        <div class="f-help">با پر شدن، صدور فیش برای ماه‌های بعد بسته می‌شود.</div>
-                    </div>
-                    <div class="col-md-4 field">
-                        <label class="f-label" for="e-mobile">موبایل کارمند <span
-                                class="f-badge fb-gold">اختیاری</span></label>
-                        <input class="in in-ltr" id="e-mobile" inputmode="numeric" maxlength="11"
-                               placeholder="09xxxxxxxxx">
-                        <div class="f-help">برای اطلاع‌رسانی فیش.</div>
-                    </div>
-                    <div class="col-md-4 field">
-                        <label class="f-label" for="e-job">عنوان شغلی داخلی <span
-                                class="f-badge fb-gold">اختیاری</span></label>
-                        <input class="in" id="e-job" placeholder="جدا از «سمت در لیست بیمه»">
-                    </div>
+
+            <div class="row g-3">
+                <div class="col-md-4 field">
+                    <label class="f-label" for="e-workshop"><span class="req-s">*</span>کارگاه</label>
+                    <InputSelect @bind-Value="_formHelper.Model.WorkshopId" @bind-Value:after="OnWorkshopChanged" class="in" id="e-workshop" data-autofocus>
+                        <option value="">انتخاب کنید...</option>
+                        @if (_userWorkshops is not null)
+                        {
+                            foreach (var workshop in _userWorkshops)
+                            {
+                                <option value="@workshop.WorkshopId">@workshop.DisplayName</option>
+                            }
+                        }
+                    </InputSelect>
+                    <ValidationMessage TValue="Guid?" For="() => _formHelper.Model.WorkshopId" class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-4 field">
+                    <label class="f-label" for="e-department"><span class="req-s">*</span>بخش</label>
+                    <InputSelect @bind-Value="_formHelper.Model.DepartmentId" class="in" id="e-department" disabled="@(!_formHelper.Model.WorkshopId.HasValue || _userDepartments is null || _userDepartments.Count == 0)">
+                        <option value="">انتخاب کنید...</option>
+                        @if (_userDepartments is not null)
+                        {
+                            foreach (var department in _userDepartments)
+                            {
+                                <option value="@department.Id">@department.Name</option>
+                            }
+                        }
+                    </InputSelect>
+                    <ValidationMessage TValue="Guid?" For="() => _formHelper.Model.DepartmentId" class="f-help text-danger"/>
+                    <div class="f-help">بعد از انتخاب کارگاه، بخش‌های همان کارگاه نمایش داده می‌شوند.</div>
+                </div>
+
+                <div class="col-md-4 field">
+                    <label class="f-label" for="e-hireDate"><span class="req-s">*</span>تاریخ استخدام</label>
+                    <InputText @bind-Value="_formHelper.Model.HireDate" class="in num" id="e-hireDate" inputmode="numeric" placeholder="۱۴۰۵/۰۵/۱۷"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.HireDate" class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-4 field">
+                    <label class="f-label" for="e-fullName"><span class="req-s">*</span>نام و نام‌خانوادگی</label>
+                    <InputText @bind-Value="_formHelper.Model.FullName" class="in" id="e-fullName" placeholder="مطابق شناسنامه"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.FullName" class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-4 field">
+                    <label class="f-label" for="e-personalCode"><span class="req-s">*</span>کد پرسنلی</label>
+                    <InputText @bind-Value="_formHelper.Model.PersonalCode" class="in in-ltr" id="e-personalCode" maxlength="20" placeholder="EMP001"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.PersonalCode" class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-4 field">
+                    <label class="f-label" for="e-nationalCode"><span class="req-s">*</span>کد ملی</label>
+                    <InputText @bind-Value="_formHelper.Model.NationalCode" class="in in-ltr" id="e-nationalCode" inputmode="numeric" maxlength="10" placeholder="10 رقم"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.NationalCode" class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-4 field">
+                    <label class="f-label" for="e-birthCertificateNumber"><span class="req-s">*</span>شماره شناسنامه</label>
+                    <InputText @bind-Value="_formHelper.Model.BirthCertificateNumber" class="in in-ltr" id="e-birthCertificateNumber" inputmode="numeric" maxlength="20"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.BirthCertificateNumber" class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-4 field">
+                    <label class="f-label" for="e-fatherName"><span class="req-s">*</span>نام پدر</label>
+                    <InputText @bind-Value="_formHelper.Model.FatherName" class="in" id="e-fatherName" maxlength="50"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.FatherName" class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-4 field">
+                    <label class="f-label" for="e-gender"><span class="req-s">*</span>جنسیت</label>
+                    <InputSelect @bind-Value="_formHelper.Model.Gender" class="in" id="e-gender">
+                        <option value="">انتخاب کنید...</option>
+                        <option value="@EmployeeInformationRequestGender.Man">مرد</option>
+                        <option value="@EmployeeInformationRequestGender.Woman">زن</option>
+                    </InputSelect>
+                    <ValidationMessage TValue="EmployeeInformationRequestGender?" For="() => _formHelper.Model.Gender" class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-4 field">
+                    <label class="f-label" for="e-maritalStatus"><span class="req-s">*</span>وضعیت تأهل</label>
+                    <InputSelect @bind-Value="_formHelper.Model.MaritalStatus" class="in" id="e-maritalStatus">
+                        <option value="">انتخاب کنید...</option>
+                        <option value="@EmployeeInformationRequestMaritalStatus.Single">مجرد</option>
+                        <option value="@EmployeeInformationRequestMaritalStatus.Married">متأهل</option>
+                        <option value="@EmployeeInformationRequestMaritalStatus.Divorced">مطلقه</option>
+                        <option value="@EmployeeInformationRequestMaritalStatus.Widowed">همسر فوت‌شده</option>
+                    </InputSelect>
+                    <ValidationMessage TValue="EmployeeInformationRequestMaritalStatus?" For="() => _formHelper.Model.MaritalStatus" class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-4 field">
+                    <label class="f-label" for="e-childrenCount"><span class="req-s">*</span>تعداد فرزندان</label>
+                    <InputNumber @bind-Value="_formHelper.Model.ChildrenCount" class="in num" id="e-childrenCount" min="0" max="20"/>
+                    <ValidationMessage TValue="int?" For="() => _formHelper.Model.ChildrenCount" class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-4 field">
+                    <label class="f-label" for="e-phoneNumber"><span class="req-s">*</span>شماره تلفن</label>
+                    <InputText @bind-Value="_formHelper.Model.PhoneNumber" class="in in-ltr" id="e-phoneNumber" inputmode="numeric" maxlength="11" placeholder="09xxxxxxxxx"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.PhoneNumber" class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-4 field">
+                    <label class="f-label" for="e-jobTitle">عنوان شغلی <span class="f-badge fb-gold">اختیاری</span></label>
+                    <InputText @bind-Value="_formHelper.Model.JobTitle" class="in" id="e-jobTitle" maxlength="100"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.JobTitle" class="f-help text-danger"/>
                 </div>
             </div>
-            <!-- گام ۲ -->
-            <div class="tabpane" id="tp-emp-2">
-                <div class="sec">
-                    <svg class="ic">
-                        <use href="assets/img/icons.svg#i-shield"/>
-                    </svg>
-                    اطلاعات بیمه<small>بخش ۴·۲ سند دامنه</small></div>
-                <div class="row g-3">
-                    <div class="col-md-4 field">
-                        <label class="f-label" for="e-insno"><span class="req-s">*</span>شماره بیمه
-                            <span class="f-badge fb-grn">InsuranceNumber</span></label>
-                        <input class="in in-ltr" id="e-insno" maxlength="20"
-                               placeholder="از دفترچه/استعلام تأمین اجتماعی">
-                    </div>
-                    <div class="col-md-4 field">
-                        <label class="f-label" for="e-insrow">ردیف پیمان بیمه <span
-                                class="f-badge fb-gold">اختیاری</span></label>
-                        <input class="in in-ltr" id="e-insrow" maxlength="20"
-                               placeholder="فقط کارگاه‌های چندپیمان">
-                    </div>
-                    <div class="col-md-4 field">
-                        <label class="f-label" for="e-inspos"><span class="req-s">*</span>سمت در لیست
-                            بیمه <span class="f-badge fb-grn">PositionInInsuranceList</span></label>
-                        <select class="in" id="e-inspos">
-                            <option value="">انتخاب کنید…</option>
-                            <option>کارگر ساده</option>
-                            <option>کارگر ماهر/فنی</option>
-                            <option>استادکار</option>
-                            <option>تکنسین</option>
-                            <option>مهندس</option>
-                            <option>کارشناس</option>
-                            <option>حسابدار</option>
-                            <option>منشی/کارپرداز</option>
-                            <option>راننده</option>
-                            <option>نگهبان</option>
-                            <option>نیروی خدماتی</option>
-                            <option>انباردار</option>
-                            <option>آشپز</option>
-                            <option>باغبان</option>
-                            <option selected>اپراتور</option>
-                            <option>سرپرست</option>
-                            <option>رئیس بخش</option>
-                            <option>مدیر</option>
-                        </select>
-                        <div class="f-help">باید با عنوان مندرج در قرارداد هم‌خوان باشد.</div>
+
+            <div class="sec mt-4">
+                <svg class="ic"><use href="assets/img/icons.svg#i-shield"/></svg>
+                بیمه و مالیات
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-4 field">
+                    <label class="f-label" for="e-insuranceNumber"><span class="req-s">*</span>شماره بیمه</label>
+                    <InputText @bind-Value="_formHelper.Model.InsuranceNumber" class="in in-ltr" id="e-insuranceNumber" maxlength="20"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.InsuranceNumber" class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-4 field">
+                    <label class="f-label" for="e-socialSecurityContractRow">ردیف پیمان بیمه <span class="f-badge fb-gold">اختیاری</span></label>
+                    <InputText @bind-Value="_formHelper.Model.SocialSecurityContractRow" class="in in-ltr" id="e-socialSecurityContractRow" maxlength="20"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.SocialSecurityContractRow" class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-4 field">
+                    <label class="f-label" for="e-positionInInsuranceList"><span class="req-s">*</span>سمت در لیست بیمه</label>
+                    <InputText @bind-Value="_formHelper.Model.PositionInInsuranceList" class="in" id="e-positionInInsuranceList" maxlength="100"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.PositionInInsuranceList" class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-4 field">
+                    <label class="f-label" for="e-insuranceCalculationProfile"><span class="req-s">*</span>پروفایل محاسبه بیمه</label>
+                    <InputSelect @bind-Value="_formHelper.Model.InsuranceCalculationProfile" class="in" id="e-insuranceCalculationProfile">
+                        <option value="">انتخاب کنید...</option>
+                        <option value="@EmployeeInsuranceRequestInsuranceCalculationProfile.FullLegal">کامل و قانونی</option>
+                        <option value="@EmployeeInsuranceRequestInsuranceCalculationProfile.MinimumLaborLaw">حداقل قانون کار</option>
+                    </InputSelect>
+                    <ValidationMessage TValue="EmployeeInsuranceRequestInsuranceCalculationProfile?" For="() => _formHelper.Model.InsuranceCalculationProfile" class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="sw-card">
+                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsTaxSubject"/><i></i></span>
+                        <span class="swt">مشمول مالیات حقوق است؟<span class="swd">اگر خیر باشد، مالیات فیش صفر ثبت می‌شود.</span></span>
                     </div>
                 </div>
-                <div class="row g-3 mt-1">
-                    <div class="col-md-4">
-                        <div class="sw-card"><span class="sw"><input type="checkbox"
-                                                                     checked><i></i></span><span class="swt">مشمول بیمهٔ ۷٪<span
-                                    class="swd">سهم کارگر — نرخ ثابت قانونی</span></span></div>
+
+                <div class="col-md-4">
+                    <div class="sw-card">
+                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo7PercentInsurance"/><i></i></span>
+                        <span class="swt">مشمول بیمهٔ ۷٪</span>
                     </div>
-                    <div class="col-md-4">
-                        <div class="sw-card"><span class="sw"><input type="checkbox"
-                                                                     checked><i></i></span><span class="swt">مشمول بیمهٔ ۲۰٪<span
-                                    class="swd">سهم کارفرما — نرخ ثابت قانونی</span></span></div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="sw-card">
+                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo20PercentInsurance"/><i></i></span>
+                        <span class="swt">مشمول بیمهٔ ۲۰٪</span>
                     </div>
-                    <div class="col-md-4">
-                        <div class="sw-card"><span class="sw"><input type="checkbox"
-                                                                     checked><i></i></span><span class="swt">مشمول بیمهٔ ۳٪<span
-                                    class="swd">بیمه بیکاری — مجموع سه سهم = ۳۰٪</span></span></div>
-                    </div>
-                    <div class="col-md-6 field">
-                        <label class="f-label" for="e-insprof"><span class="req-s">*</span>مشخصهٔ
-                            محاسبهٔ حق بیمه <span
-                                class="f-badge fb-grn">InsuranceCalculationProfile</span></label>
-                        <select class="in" id="e-insprof">
-                            <option>کامل و قانونی</option>
-                            <option>حداقل قانون کار</option>
-                        </select>
-                        <div class="f-help">«کامل و قانونی» = کل دریافتی مشمول با سقف ۷ برابر حداقل
-                            حقوق.
-                        </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="sw-card">
+                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo3PercentInsurance"/><i></i></span>
+                        <span class="swt">مشمول بیمهٔ ۳٪</span>
                     </div>
                 </div>
             </div>
-            <!-- گام ۳ -->
-            <div class="tabpane" id="tp-emp-3">
-                <div class="sec">
-                    <svg class="ic">
-                        <use href="assets/img/icons.svg#i-card"/>
-                    </svg>
-                    بانکی و مالیات<small>بخش‌های ۴·۳ و ۴·۴ سند دامنه</small></div>
-                <div class="row g-3">
-                    <div class="col-md-7 field">
-                        <label class="f-label" for="e-iban"><span class="req-s">*</span>شماره شبا (IRAN)
-                            <span class="f-badge fb-grn">IBAN</span></label>
-                        <input class="in in-ltr" id="e-iban" maxlength="26" placeholder="IR + 24 رقم"
-                               value="IR820540102680020817909002">
-                        <div class="f-help">حسابی که حقوق به آن واریز می‌شود؛ چک‌سام ISO 13616 هنگام ثبت
-                            کنترل می‌شود.
-                        </div>
-                    </div>
-                    <div class="col-md-5">
-                        <div class="sw-card"><span class="sw"><input type="checkbox"
-                                                                     checked><i></i></span><span class="swt">مشمول مالیات حقوق است؟ <span
-                                    class="f-badge fb-grn">IsTaxSubject</span><span class="swd">اگر
-                                                    «خیر» باشد، مالیات فیش همیشه صفر ثبت می‌شود.</span></span></div>
-                    </div>
-                </div>
-                <div class="note n-blu">
-                    <svg class="ic">
-                        <use href="assets/img/icons.svg#i-info"/>
-                    </svg>
-                    <div>مبلغ مالیات در پروندهٔ کارمند ذخیره نمی‌شود؛ هر ماه از سامانهٔ مالیاتی می‌آید و
-                        مستقیم در فیش همان ماه می‌نشیند.
-                    </div>
-                </div>
-            </div>
+
             <div class="form-foot">
-                <button type="button" class="btn btn-g" data-stepnav="-1">
-                    <svg class="ic">
-                        <use href="assets/img/icons.svg#i-chr"/>
-                    </svg>
-                    گام قبل
+                <button type="submit" class="btn btn-p" disabled="@_isLoading">
+                    @if (_isLoading)
+                    {
+                        <span>در حال پردازش...</span>
+                    }
+                    else
+                    {
+                        <svg class="ic"><use href="assets/img/icons.svg#i-check"/></svg>
+                        <span>ثبت کارمند</span>
+                    }
                 </button>
-                <button type="button" class="btn btn-s" data-stepnav="1">گام بعد
-                    <svg class="ic">
-                        <use href="assets/img/icons.svg#i-chl"/>
-                    </svg>
-                </button>
-                <span class="ms-auto d-flex gap-2">
-                                    <button type="button" class="btn btn-g"
-                                            data-demo="پرونده به‌عنوان پیش‌نویس ذخیره شد (نمایشی).">ذخیره پیش‌نویس</button>
-                                    <button type="button" class="btn btn-p"
-                                            data-demo="پروندهٔ کارمند به‌صورت نمایشی ثبت شد."><svg class="ic">
-                                            <use href="assets/img/icons.svg#i-check"/>
-                                        </svg>ثبت نهایی پرونده</button>
-                                </span>
+                <a class="btn btn-g" href="/employees">انصراف</a>
             </div>
-        </form>
+        </EditForm>
     </div>
 </div>
+
+@code {
+    [Parameter] public Guid? Id { get; set; }
+
+    private FormHelper<EmployeeFormModel> _formHelper = new(fieldMapping: CreateFieldMapping());
+    private List<GetUserWorkshopsNameQueryResponseWorkshopName>? _userWorkshops;
+    private List<GetUserDepartmentsQueryResponse>? _userDepartments;
+    private bool _isLoading;
+    private bool IsEdit => Id.HasValue && Id.Value != Guid.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (IsEdit)
+        {
+            ToastService.ShowToastInfo("امکان ویرایش کارمند هنوز برای این صفحه آماده نشده است.");
+            NavigationManager.NavigateTo("/employees");
+            return;
+        }
+
+        await LoadWorkshopsAsync();
+    }
+
+    private async Task LoadWorkshopsAsync()
+    {
+        var result = await ApiService.SendAsync(() => ApiClient.GetUserWorkshopsNameAsync());
+        if (result?.IsSuccess is true)
+        {
+            _userWorkshops = result.Response.WorkshopNames.ToList();
+        }
+    }
+
+    private async Task OnWorkshopChanged()
+    {
+        _formHelper.Model.DepartmentId = null;
+        _userDepartments = [];
+
+        if (!_formHelper.Model.WorkshopId.HasValue)
+        {
+            return;
+        }
+
+        var result = await ApiService.SendAsync(() => ApiClient.GetUserDepartmentsAsync(
+            pagination_PageNumber: 1,
+            pagination_PageSize: 100,
+            pagination_Offset: null,
+            searchName: null,
+            workshopId: _formHelper.Model.WorkshopId));
+
+        if (result?.IsSuccess is true)
+        {
+            _userDepartments = result.Response.Items.ToList();
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (_isLoading) return;
+        _isLoading = true;
+
+        _formHelper.ClearErrors();
+
+        var model = _formHelper.Model;
+        var result = await ApiService.SendAsync(
+            apiCall: () => ApiClient.CreateEmployeeAsync(new CreateEmployeeRequest(
+                employee: new EmployeeInformationRequest(
+                    birthCertificateNumber: model.BirthCertificateNumber,
+                    childrenCount: model.ChildrenCount ?? 0,
+                    departmentId: model.DepartmentId ?? Guid.Empty,
+                    fatherName: model.FatherName,
+                    fullName: model.FullName,
+                    gender: model.Gender ?? EmployeeInformationRequestGender.Man,
+                    hireDate: model.HireDate,
+                    isTaxSubject: model.IsTaxSubject,
+                    jobTitle: model.JobTitle,
+                    maritalStatus: model.MaritalStatus ?? EmployeeInformationRequestMaritalStatus.Single,
+                    nationalCode: model.NationalCode,
+                    personalCode: model.PersonalCode,
+                    phoneNumber: model.PhoneNumber),
+                insurance: new EmployeeInsuranceRequest(
+                    insuranceCalculationProfile: model.InsuranceCalculationProfile ?? EmployeeInsuranceRequestInsuranceCalculationProfile.FullLegal,
+                    insuranceNumber: model.InsuranceNumber,
+                    isSubjectTo20PercentInsurance: model.IsSubjectTo20PercentInsurance,
+                    isSubjectTo3PercentInsurance: model.IsSubjectTo3PercentInsurance,
+                    isSubjectTo7PercentInsurance: model.IsSubjectTo7PercentInsurance,
+                    positionInInsuranceList: model.PositionInInsuranceList,
+                    socialSecurityContractRow: model.SocialSecurityContractRow),
+                workshopId: model.WorkshopId ?? Guid.Empty
+            )),
+            successMessage: "کارمند با موفقیت ثبت شد.",
+            showErrorToastValidation: false
+        );
+
+        if (result is { IsSuccess: true })
+        {
+            NavigationManager.NavigateTo("/employees");
+        }
+        else if (result != null)
+        {
+            _formHelper.SetServerErrors(result.Errors);
+            ToastService.ShowToastWarning("لطفاً خطاها را بررسی کنید.");
+        }
+
+        _isLoading = false;
+    }
+
+    private static Dictionary<string, string> CreateFieldMapping() => new()
+    {
+        ["WorkshopId"] = nameof(EmployeeFormModel.WorkshopId),
+        ["DepartmentId"] = nameof(EmployeeFormModel.DepartmentId),
+        ["Employee.DepartmentId"] = nameof(EmployeeFormModel.DepartmentId),
+        ["PersonalCode"] = nameof(EmployeeFormModel.PersonalCode),
+        ["Employee.PersonalCode"] = nameof(EmployeeFormModel.PersonalCode),
+        ["FullName"] = nameof(EmployeeFormModel.FullName),
+        ["Employee.FullName"] = nameof(EmployeeFormModel.FullName),
+        ["NationalCode"] = nameof(EmployeeFormModel.NationalCode),
+        ["Employee.NationalCode"] = nameof(EmployeeFormModel.NationalCode),
+        ["BirthCertificateNumber"] = nameof(EmployeeFormModel.BirthCertificateNumber),
+        ["Employee.BirthCertificateNumber"] = nameof(EmployeeFormModel.BirthCertificateNumber),
+        ["FatherName"] = nameof(EmployeeFormModel.FatherName),
+        ["Employee.FatherName"] = nameof(EmployeeFormModel.FatherName),
+        ["Gender"] = nameof(EmployeeFormModel.Gender),
+        ["Employee.Gender"] = nameof(EmployeeFormModel.Gender),
+        ["MaritalStatus"] = nameof(EmployeeFormModel.MaritalStatus),
+        ["Employee.MaritalStatus"] = nameof(EmployeeFormModel.MaritalStatus),
+        ["ChildrenCount"] = nameof(EmployeeFormModel.ChildrenCount),
+        ["Employee.ChildrenCount"] = nameof(EmployeeFormModel.ChildrenCount),
+        ["HireDate"] = nameof(EmployeeFormModel.HireDate),
+        ["Employee.HireDate"] = nameof(EmployeeFormModel.HireDate),
+        ["PhoneNumber"] = nameof(EmployeeFormModel.PhoneNumber),
+        ["Employee.PhoneNumber"] = nameof(EmployeeFormModel.PhoneNumber),
+        ["JobTitle"] = nameof(EmployeeFormModel.JobTitle),
+        ["Employee.JobTitle"] = nameof(EmployeeFormModel.JobTitle),
+        ["InsuranceNumber"] = nameof(EmployeeFormModel.InsuranceNumber),
+        ["Insurance.InsuranceNumber"] = nameof(EmployeeFormModel.InsuranceNumber),
+        ["SocialSecurityContractRow"] = nameof(EmployeeFormModel.SocialSecurityContractRow),
+        ["Insurance.SocialSecurityContractRow"] = nameof(EmployeeFormModel.SocialSecurityContractRow),
+        ["PositionInInsuranceList"] = nameof(EmployeeFormModel.PositionInInsuranceList),
+        ["Insurance.PositionInInsuranceList"] = nameof(EmployeeFormModel.PositionInInsuranceList),
+        ["InsuranceCalculationProfile"] = nameof(EmployeeFormModel.InsuranceCalculationProfile),
+        ["Insurance.InsuranceCalculationProfile"] = nameof(EmployeeFormModel.InsuranceCalculationProfile)
+    };
+
+    public class EmployeeFormModel : BaseModel
+    {
+        [Required(ErrorMessage = "انتخاب کارگاه اجباری است.")]
+        [Display(Name = "کارگاه")]
+        public Guid? WorkshopId { get; set; }
+
+        [Required(ErrorMessage = "انتخاب بخش اجباری است.")]
+        [Display(Name = "بخش")]
+        public Guid? DepartmentId { get; set; }
+
+        [Required(ErrorMessage = "کد پرسنلی اجباری است.")]
+        [RegularExpression(@"^[A-Za-z0-9]{1,20}$", ErrorMessage = "کد پرسنلی باید بین ۱ تا ۲۰ کاراکتر و فقط شامل حروف و اعداد انگلیسی باشد.")]
+        public string PersonalCode { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "نام و نام خانوادگی اجباری است.")]
+        [StringLength(100, MinimumLength = 3, ErrorMessage = "نام و نام خانوادگی باید بین ۳ تا ۱۰۰ نویسه باشد.")]
+        public string FullName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "کد ملی اجباری است.")]
+        [RegularExpression(@"^\d{10}$", ErrorMessage = "کد ملی باید ۱۰ رقم باشد.")]
+        public string NationalCode { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "شماره شناسنامه اجباری است.")]
+        [RegularExpression(@"^\d{1,20}$", ErrorMessage = "شماره شناسنامه باید بین ۱ تا ۲۰ رقم باشد.")]
+        public string BirthCertificateNumber { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "نام پدر اجباری است.")]
+        [StringLength(50, MinimumLength = 3, ErrorMessage = "نام پدر باید بین ۳ تا ۵۰ نویسه باشد.")]
+        public string FatherName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "جنسیت اجباری است.")]
+        public EmployeeInformationRequestGender? Gender { get; set; }
+
+        [Required(ErrorMessage = "وضعیت تأهل اجباری است.")]
+        public EmployeeInformationRequestMaritalStatus? MaritalStatus { get; set; }
+
+        [Required(ErrorMessage = "تعداد فرزندان اجباری است.")]
+        [Range(0, 20, ErrorMessage = "تعداد فرزندان باید بین ۰ تا ۲۰ باشد.")]
+        public int? ChildrenCount { get; set; } = 0;
+
+        [Required(ErrorMessage = "تاریخ استخدام اجباری است.")]
+        [RegularExpression(@"^\d{4}/\d{2}/\d{2}$", ErrorMessage = "تاریخ را به فرمت ۱۴۰۵/۰۵/۱۷ وارد کنید.")]
+        public string HireDate { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "شماره تلفن اجباری است.")]
+        [RegularExpression(@"^09\d{9}$", ErrorMessage = "شماره تلفن باید با 09 شروع شود و ۱۱ رقم باشد.")]
+        public string PhoneNumber { get; set; } = string.Empty;
+
+        [StringLength(100, ErrorMessage = "عنوان شغلی نمی‌تواند بیش از ۱۰۰ نویسه باشد.")]
+        public string? JobTitle { get; set; }
+
+        public bool IsTaxSubject { get; set; } = true;
+
+        [Required(ErrorMessage = "شماره بیمه اجباری است.")]
+        [StringLength(20, ErrorMessage = "شماره بیمه نمی‌تواند بیش از ۲۰ نویسه باشد.")]
+        public string InsuranceNumber { get; set; } = string.Empty;
+
+        [StringLength(20, ErrorMessage = "ردیف پیمان بیمه نمی‌تواند بیش از ۲۰ نویسه باشد.")]
+        public string? SocialSecurityContractRow { get; set; }
+
+        [Required(ErrorMessage = "سمت در لیست بیمه اجباری است.")]
+        [StringLength(100, ErrorMessage = "سمت در لیست بیمه نمی‌تواند بیش از ۱۰۰ نویسه باشد.")]
+        public string PositionInInsuranceList { get; set; } = string.Empty;
+
+        public bool IsSubjectTo7PercentInsurance { get; set; } = true;
+        public bool IsSubjectTo20PercentInsurance { get; set; } = true;
+        public bool IsSubjectTo3PercentInsurance { get; set; }
+
+        [Required(ErrorMessage = "پروفایل محاسبه بیمه اجباری است.")]
+        public EmployeeInsuranceRequestInsuranceCalculationProfile? InsuranceCalculationProfile { get; set; }
+    }
+}
