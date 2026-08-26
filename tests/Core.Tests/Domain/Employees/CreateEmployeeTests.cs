@@ -230,6 +230,17 @@ public class CreateEmployeeTests
     }
 
     [Fact]
+    public void Create_WithSingleMaritalStatusAndChildrenCountMoreThanZero_ShouldFail()
+    {
+        var result = _builder
+            .WithMaritalStatus(EmployeeMaritalStatus.Single)
+            .WithChildrenCount(1)
+            .CreateResult();
+
+        result.ShouldBeFailure("برای کارمند مجرد، تعداد فرزندان باید صفر باشد.");
+    }
+
+    [Fact]
     public void Create_WithHireDateInFuture_ShouldFail()
     {
         var result = _builder.WithHireDate(DateOnly.FromDateTime(DateTime.Now.AddDays(1))).CreateResult();

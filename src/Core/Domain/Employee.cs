@@ -189,67 +189,36 @@ public class Employee
         return Insurance.Update(insurance);
     }
 
-    public DomainResult<BankAccount> CreateBankAccount(Guid bankAccountId, EmployeeBankAccountDto? bankAccount)
-    {
-        var canModifyResult = EnsureCanModify();
-        if (!canModifyResult.IsSuccess)
-            return DomainResult<BankAccount>.Failure(canModifyResult.ErrorMessage!);
-
-        if (bankAccount is null)
-            return DomainResult<BankAccount>.Failure("اطلاعات حساب بانکی نمیتواند خالی باشد.");
-
-        var ibanResult = BankAccount.NormalizeIban(bankAccount.Iban);
-        if (!ibanResult.IsSuccess)
-            return DomainResult<BankAccount>.Failure(ibanResult.ErrorMessage!);
-
-        if (_bankAccounts.Any(x => x.Iban == ibanResult.Response))
-            return DomainResult<BankAccount>.Failure("شماره شبا برای این کارمند تکراری است.");
-
-        var bankAccountResult = BankAccount.Create(bankAccountId, bankAccount);
-        if (!bankAccountResult.IsSuccess)
-            return DomainResult<BankAccount>.Failure(bankAccountResult.ErrorMessage!);
-
-        _bankAccounts.Add(bankAccountResult.Response);
-        return bankAccountResult;
-    }
-
-    public DomainResult<BankAccount> CreateBankAccount(EmployeeBankAccountDto? bankAccount) =>
-        CreateBankAccount(Guid.NewGuid(), bankAccount);
-
-    public DomainResult UpdateBankAccount(Guid bankAccountId, EmployeeBankAccountDto? bankAccount)
+    public DomainResult ReplaceBankAccounts(List<EmployeeBankAccountDto>? bankAccounts)
     {
         var canModifyResult = EnsureCanModify();
         if (!canModifyResult.IsSuccess)
             return canModifyResult;
 
-        var bankAccountEntity = _bankAccounts.FirstOrDefault(x => x.Id == bankAccountId);
-        if (bankAccountEntity is null)
-            return DomainResult.Failure("حساب بانکی مورد نظر یافت نشد.");
+        if (bankAccounts is null)
+            return DomainResult.Failure("اطلاعات حساب‌های بانکی نمیتواند خالی باشد.");
 
-        if (bankAccount is null)
-            return DomainResult.Failure("اطلاعات حساب بانکی نمیتواند خالی باشد.");
+        var normalizedBankAccounts = new List<BankAccount>();
 
-        var ibanResult = BankAccount.NormalizeIban(bankAccount.Iban);
-        if (!ibanResult.IsSuccess)
-            return DomainResult.Failure(ibanResult.ErrorMessage!);
+        foreach (var bankAccount in bankAccounts)
+        {
+            var bankAccountId = bankAccount.Id ?? Guid.NewGuid();
+            if (normalizedBankAccounts.Any(x => x.Id == bankAccountId))
+                return DomainResult.Failure("شناسه حساب بانکی در لیست حساب‌های بانکی تکراری است.");
 
-        if (_bankAccounts.Any(x => x.Id != bankAccountId && x.Iban == ibanResult.Response))
-            return DomainResult.Failure("شماره شبا برای این کارمند تکراری است.");
+            var bankAccountResult = BankAccount.Create(bankAccountId, bankAccount);
+            if (!bankAccountResult.IsSuccess)
+                return DomainResult.Failure(bankAccountResult.ErrorMessage!);
 
-        return bankAccountEntity.Update(bankAccount);
-    }
+            if (normalizedBankAccounts.Any(x => x.Iban == bankAccountResult.Response.Iban))
+                return DomainResult.Failure("شماره شبا در لیست حساب‌های بانکی تکراری است.");
 
-    public DomainResult DeleteBankAccount(Guid bankAccountId)
-    {
-        var canModifyResult = EnsureCanModify();
-        if (!canModifyResult.IsSuccess)
-            return canModifyResult;
+            normalizedBankAccounts.Add(bankAccountResult.Response);
+        }
 
-        var bankAccount = _bankAccounts.FirstOrDefault(x => x.Id == bankAccountId);
-        if (bankAccount is null)
-            return DomainResult.Failure("حساب بانکی مورد نظر یافت نشد.");
+        _bankAccounts.Clear();
+        _bankAccounts.AddRange(normalizedBankAccounts);
 
-        _bankAccounts.Remove(bankAccount);
         return DomainResult.Success();
     }
 
@@ -320,6 +289,9 @@ public class Employee
 
         if (employee.ChildrenCount < 0 || employee.ChildrenCount > 20)
             return DomainResult.Failure("تعداد فرزندان باید بین 0 تا 20 باشد.");
+
+        if (employee.MaritalStatus == EmployeeMaritalStatus.Single && employee.ChildrenCount > 0)
+            return DomainResult.Failure("برای کارمند مجرد، تعداد فرزندان باید صفر باشد.");
 
         if (workshopRegistrationDate is null)
             return DomainResult.Failure("تاریخ ثبت کارگاه نمیتواند خالی باشد.");

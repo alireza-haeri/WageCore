@@ -1,0 +1,755 @@
+@page "/employee-form/{id:guid}"
+@page "/employee-form"
+@layout ManagerLayout
+
+<div class="page-head">
+    <div class="ph-t">
+        <div class="crumb">
+            پنل
+            <svg class="ic"><use href="assets/img/icons.svg#i-chl"/></svg>
+            <a href="/employees">کارکنان</a>
+            <svg class="ic"><use href="assets/img/icons.svg#i-chl"/></svg>
+            <span>@(IsEdit ? "ویرایش کارمند" : "کارمند جدید")</span>
+        </div>
+        <h1>@(IsEdit ? "ویرایش کارمند" : "ثبت کارمند جدید")</h1>
+        <p>اطلاعات پایه، بیمه و حساب‌های بانکی کارمند را از همین فرم ثبت کنید.</p>
+    </div>
+    <div class="ph-actions">
+        <a class="btn btn-g" href="/employees">
+            <svg class="ic"><use href="assets/img/icons.svg#i-x"/></svg>
+            انصراف
+        </a>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="panel-b">
+        <EditForm EditContext="@_formHelper.EditContext" OnSubmit="@HandleSubmit">
+            <ValidationMessage TValue="string" For="() => _formHelper.Model.General" class="f-help text-danger"/>
+
+            <div class="sec">
+                <svg class="ic"><use href="assets/img/icons.svg#i-user"/></svg>
+                اطلاعات پایه
+            </div>
+
+            <div class="row g-3">
+                @if (!IsEdit)
+                {
+                    <div class="col-md-4 field">
+                        <label class="f-label" for="e-workshop"><span class="req-s">*</span>کارگاه</label>
+                        <InputSelect @bind-Value="_formHelper.Model.WorkshopId" @bind-Value:after="OnWorkshopChanged" class="in" id="e-workshop" data-autofocus>
+                            <option value="">انتخاب کنید...</option>
+                            @if (_userWorkshops is not null)
+                            {
+                                foreach (var workshop in _userWorkshops)
+                                {
+                                    <option value="@workshop.WorkshopId">@workshop.DisplayName</option>
+                                }
+                            }
+                        </InputSelect>
+                        <ValidationMessage TValue="Guid?" For="() => _formHelper.Model.WorkshopId" class="f-help text-danger"/>
+                    </div>
+                }
+
+                <div class="col-md-4 field">
+                    <label class="f-label" for="e-department"><span class="req-s">*</span>بخش</label>
+                    <InputSelect @bind-Value="_formHelper.Model.DepartmentId" class="in" id="e-department" disabled="@(!_formHelper.Model.WorkshopId.HasValue || _userDepartments is null || _userDepartments.Count == 0)">
+                        <option value="">انتخاب کنید...</option>
+                        @if (_userDepartments is not null)
+                        {
+                            foreach (var department in _userDepartments)
+                            {
+                                <option value="@department.Id">@department.Name</option>
+                            }
+                        }
+                    </InputSelect>
+                    <ValidationMessage TValue="Guid?" For="() => _formHelper.Model.DepartmentId" class="f-help text-danger"/>
+                    <div class="f-help">بعد از انتخاب کارگاه، بخش‌های همان کارگاه نمایش داده می‌شوند.</div>
+                </div>
+
+                <div class="col-md-4 field">
+                    <label class="f-label" for="e-hireDate"><span class="req-s">*</span>تاریخ استخدام</label>
+                    <InputText @bind-Value="_formHelper.Model.HireDate" class="in num" id="e-hireDate" inputmode="numeric" placeholder="۱۴۰۵/۰۵/۱۷"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.HireDate" class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-4 field">
+                    <label class="f-label" for="e-fullName"><span class="req-s">*</span>نام و نام‌خانوادگی</label>
+                    <InputText @bind-Value="_formHelper.Model.FullName" class="in" id="e-fullName" placeholder="مطابق شناسنامه"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.FullName" class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-4 field">
+                    <label class="f-label" for="e-personalCode"><span class="req-s">*</span>کد پرسنلی</label>
+                    <InputText @bind-Value="_formHelper.Model.PersonalCode" class="in in-ltr" id="e-personalCode" maxlength="20" placeholder="EMP001"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.PersonalCode" class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-4 field">
+                    <label class="f-label" for="e-nationalCode"><span class="req-s">*</span>کد ملی</label>
+                    <InputText @bind-Value="_formHelper.Model.NationalCode" class="in in-ltr" id="e-nationalCode" inputmode="numeric" maxlength="10" placeholder="10 رقم"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.NationalCode" class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-4 field">
+                    <label class="f-label" for="e-birthCertificateNumber"><span class="req-s">*</span>شماره شناسنامه</label>
+                    <InputText @bind-Value="_formHelper.Model.BirthCertificateNumber" class="in in-ltr" id="e-birthCertificateNumber" inputmode="numeric" maxlength="20"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.BirthCertificateNumber" class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-4 field">
+                    <label class="f-label" for="e-fatherName"><span class="req-s">*</span>نام پدر</label>
+                    <InputText @bind-Value="_formHelper.Model.FatherName" class="in" id="e-fatherName" maxlength="50"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.FatherName" class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-4 field">
+                    <label class="f-label" for="e-gender"><span class="req-s">*</span>جنسیت</label>
+                    <InputSelect @bind-Value="_formHelper.Model.Gender" class="in" id="e-gender">
+                        <option value="">انتخاب کنید...</option>
+                        <option value="@EmployeeInformationRequestGender.Man">مرد</option>
+                        <option value="@EmployeeInformationRequestGender.Woman">زن</option>
+                    </InputSelect>
+                    <ValidationMessage TValue="EmployeeInformationRequestGender?" For="() => _formHelper.Model.Gender" class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-4 field">
+                    <label class="f-label" for="e-maritalStatus"><span class="req-s">*</span>وضعیت تأهل</label>
+                    <InputSelect @bind-Value="_formHelper.Model.MaritalStatus" @bind-Value:after="OnMaritalStatusChanged" class="in" id="e-maritalStatus">
+                        <option value="">انتخاب کنید...</option>
+                        <option value="@EmployeeInformationRequestMaritalStatus.Single">مجرد</option>
+                        <option value="@EmployeeInformationRequestMaritalStatus.Married">متأهل</option>
+                        <option value="@EmployeeInformationRequestMaritalStatus.Divorced">مطلقه</option>
+                        <option value="@EmployeeInformationRequestMaritalStatus.Widowed">همسر فوت‌شده</option>
+                    </InputSelect>
+                    <ValidationMessage TValue="EmployeeInformationRequestMaritalStatus?" For="() => _formHelper.Model.MaritalStatus" class="f-help text-danger"/>
+                </div>
+
+                @if (_formHelper.Model.MaritalStatus != EmployeeInformationRequestMaritalStatus.Single)
+                {
+                    <div class="col-md-4 field">
+                        <label class="f-label" for="e-childrenCount"><span class="req-s">*</span>تعداد فرزندان</label>
+                        <InputNumber @bind-Value="_formHelper.Model.ChildrenCount" class="in num" id="e-childrenCount" min="0" max="20"/>
+                        <ValidationMessage TValue="int?" For="() => _formHelper.Model.ChildrenCount" class="f-help text-danger"/>
+                    </div>
+                }
+
+                <div class="col-md-4 field">
+                    <label class="f-label" for="e-phoneNumber"><span class="req-s">*</span>شماره تلفن</label>
+                    <InputText @bind-Value="_formHelper.Model.PhoneNumber" class="in in-ltr" id="e-phoneNumber" inputmode="numeric" maxlength="11" placeholder="09xxxxxxxxx"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.PhoneNumber" class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-4 field">
+                    <label class="f-label" for="e-jobTitle">عنوان شغلی <span class="f-badge fb-gold">اختیاری</span></label>
+                    <InputText @bind-Value="_formHelper.Model.JobTitle" class="in" id="e-jobTitle" maxlength="100"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.JobTitle" class="f-help text-danger"/>
+                </div>
+            </div>
+
+            <div class="sec mt-4">
+                <svg class="ic"><use href="assets/img/icons.svg#i-shield"/></svg>
+                بیمه و مالیات
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-3 field">
+                    <label class="f-label" for="e-insuranceNumber"><span class="req-s">*</span>شماره بیمه</label>
+                    <InputText @bind-Value="_formHelper.Model.InsuranceNumber" class="in in-ltr" id="e-insuranceNumber" maxlength="20"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.InsuranceNumber" class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-3 field">
+                    <label class="f-label" for="e-socialSecurityContractRow">ردیف پیمان بیمه <span class="f-badge fb-gold">اختیاری</span></label>
+                    <InputText @bind-Value="_formHelper.Model.SocialSecurityContractRow" class="in in-ltr" id="e-socialSecurityContractRow" maxlength="20"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.SocialSecurityContractRow" class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-3 field">
+                    <label class="f-label" for="e-positionInInsuranceList"><span class="req-s">*</span>سمت در لیست بیمه</label>
+                    <InputText @bind-Value="_formHelper.Model.PositionInInsuranceList" class="in" id="e-positionInInsuranceList" maxlength="100"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.PositionInInsuranceList" class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-3 field">
+                    <label class="f-label" for="e-insuranceCalculationProfile"><span class="req-s">*</span>پروفایل محاسبه بیمه</label>
+                    <InputSelect @bind-Value="_formHelper.Model.InsuranceCalculationProfile" class="in" id="e-insuranceCalculationProfile">
+                        <option value="">انتخاب کنید...</option>
+                        <option value="@EmployeeInsuranceRequestInsuranceCalculationProfile.FullLegal">کامل و قانونی</option>
+                        <option value="@EmployeeInsuranceRequestInsuranceCalculationProfile.MinimumLaborLaw">حداقل قانون کار</option>
+                    </InputSelect>
+                    <ValidationMessage TValue="EmployeeInsuranceRequestInsuranceCalculationProfile?" For="() => _formHelper.Model.InsuranceCalculationProfile" class="f-help text-danger"/>
+                </div>
+
+               
+                <label class="col-md-4">
+                    <div class="sw-card">
+                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo7PercentInsurance"/><i></i></span>
+                        <span class="swt">مشمول بیمهٔ ۷٪</span>
+                    </div>
+                </label>
+
+                <label class="col-md-4">
+                    <div class="sw-card">
+                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo20PercentInsurance"/><i></i></span>
+                        <span class="swt">مشمول بیمهٔ ۲۰٪</span>
+                    </div>
+                </label>
+
+                <label class="col-md-4">
+                    <div class="sw-card">
+                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo3PercentInsurance"/><i></i></span>
+                        <span class="swt">مشمول بیمهٔ ۳٪</span>
+                    </div>
+                </label>
+                
+                <label class="col-md-12">
+                    <div class="sw-card">
+                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsTaxSubject"/><i></i></span>
+                        <span class="swt">مشمول مالیات حقوق است؟<span class="swd">اگر خیر باشد، مالیات فیش صفر ثبت می‌شود.</span></span>
+                    </div>
+                </label>
+
+            </div>
+
+            <div class="sec mt-4 d-flex align-items-center justify-content-between">
+                <span>
+                    <svg class="ic"><use href="assets/img/icons.svg#i-card"/></svg>
+                    حساب‌های بانکی
+                </span>
+                <button type="button" class="btn btn-g" @onclick="AddBankAccount">
+                    <svg class="ic"><use href="assets/img/icons.svg#i-plus"/></svg>
+                    افزودن حساب
+                </button>
+            </div>
+
+            @if (_formHelper.Model.BankAccounts.Count == 0)
+            {
+                <div class="note n-blu mt-2">
+                    <svg class="ic"><use href="assets/img/icons.svg#i-info"/></svg>
+                    <div>هنوز حساب بانکی ثبت نشده است. برای افزودن حساب، روی دکمهٔ «افزودن حساب» بزنید.</div>
+                </div>
+            }
+            else
+            {
+                <div class="row g-3">
+                    @for (var i = 0; i < _formHelper.Model.BankAccounts.Count; i++)
+                    {
+                        var bankAccount = _formHelper.Model.BankAccounts[i];
+                        <div class="col-12" @key="bankAccount">
+                            <div class="panel" style="box-shadow:none;margin:0">
+                                <div class="panel-b">
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <b>حساب @( (i + 1).ToPersianNumber() )</b>
+                                        <button type="button" class="icobtn danger" title="حذف حساب"
+                                                @onclick="() => RemoveBankAccount(bankAccount)">
+                                            <svg class="ic"><use href="assets/img/icons.svg#i-trash"/></svg>
+                                        </button>
+                                    </div>
+                                    <div class="row g-3">
+                                        <div class="col-md-4 field">
+                                            <label class="f-label" for="@($"e-bank-title-{i}")">عنوان حساب <span class="f-badge fb-gold">اختیاری</span></label>
+                                            <InputText @bind-Value="bankAccount.Title" class="in" id="@($"e-bank-title-{i}")" maxlength="100"/>
+                                            @foreach (var error in GetBankAccountErrors(i, nameof(EmployeeBankAccountFormModel.Title)))
+                                            {
+                                                <div class="f-help text-danger">@error</div>
+                                            }
+                                        </div>
+
+                                        <div class="col-md-8 field">
+                                            <label class="f-label" for="@($"e-bank-iban-{i}")"><span class="req-s">*</span>شماره شبا</label>
+                                            <InputText @bind-Value="bankAccount.Iban" class="in in-ltr" id="@($"e-bank-iban-{i}")" maxlength="26" placeholder="IR + 24 رقم"/>
+                                            @foreach (var error in GetBankAccountErrors(i, nameof(EmployeeBankAccountFormModel.Iban)))
+                                            {
+                                                <div class="f-help text-danger">@error</div>
+                                            }
+                                            <div class="f-help">شماره شبا باید با IR شروع شود و بعد از آن ۲۴ رقم انگلیسی وارد شود.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+
+            <div class="form-foot">
+                <button type="submit" class="btn btn-p" disabled="@_isLoading">
+                    @if (_isLoading)
+                    {
+                        <span>در حال پردازش...</span>
+                    }
+                    else
+                    {
+                        <svg class="ic"><use href="assets/img/icons.svg#i-check"/></svg>
+                        <span>@(IsEdit ? "ویرایش کارمند" : "ثبت کارمند")</span>
+                    }
+                </button>
+                <a class="btn btn-g" href="/employees">انصراف</a>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [Parameter] public Guid? Id { get; set; }
+
+    private FormHelper<EmployeeFormModel> _formHelper = new(fieldMapping: CreateFieldMapping());
+    private readonly Dictionary<string, List<string>> _bankAccountErrors = [];
+    private List<GetUserWorkshopsNameQueryResponseWorkshopName>? _userWorkshops;
+    private List<GetUserDepartmentsQueryResponse>? _userDepartments;
+    private bool _isLoading;
+    private bool IsEdit => Id.HasValue && Id.Value != Guid.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadWorkshopsAsync();
+
+        if (IsEdit)
+        {
+            _isLoading = true;
+            try
+            {
+                var result = await ApiService.SendAsync(
+                    apiCall: () => ApiClient.GetEmployeeForEditAsync(Id!.Value)
+                );
+
+                if (result is { IsSuccess: true })
+                {
+                    var employee = result.Response;
+                    _formHelper.Model = new EmployeeFormModel
+                    {
+                        WorkshopId = employee.WorkshopId,
+                        DepartmentId = employee.DepartmentId,
+                        PersonalCode = employee.PersonalCode,
+                        FullName = employee.FullName,
+                        NationalCode = employee.NationalCode,
+                        BirthCertificateNumber = employee.BirthCertificateNumber,
+                        FatherName = employee.FatherName,
+                        Gender = (EmployeeInformationRequestGender)employee.Gender,
+                        MaritalStatus = (EmployeeInformationRequestMaritalStatus)employee.MaritalStatus,
+                        ChildrenCount = employee.ChildrenCount,
+                        HireDate = employee.HireDate,
+                        PhoneNumber = employee.PhoneNumber,
+                        JobTitle = employee.JobTitle,
+                        IsTaxSubject = employee.IsTaxSubject,
+                        InsuranceNumber = employee.InsuranceNumber,
+                        SocialSecurityContractRow = employee.SocialSecurityContractRow,
+                        PositionInInsuranceList = employee.PositionInInsuranceList,
+                        IsSubjectTo7PercentInsurance = employee.IsSubjectTo7PercentInsurance,
+                        IsSubjectTo20PercentInsurance = employee.IsSubjectTo20PercentInsurance,
+                        IsSubjectTo3PercentInsurance = employee.IsSubjectTo3PercentInsurance,
+                        InsuranceCalculationProfile = (EmployeeInsuranceRequestInsuranceCalculationProfile)employee.InsuranceCalculationProfile,
+                        BankAccounts = employee.BankAccounts?
+                            .Select(x => new EmployeeBankAccountFormModel
+                            {
+                                Id = x.Id,
+                                Title = x.Title,
+                                Iban = x.Iban
+                            })
+                            .ToList() ?? []
+                    };
+
+                    if (_formHelper.Model.BankAccounts.Count == 0)
+                        _formHelper.Model.BankAccounts = [];
+
+                    await LoadDepartmentsAsync(employee.WorkshopId);
+                    OnMaritalStatusChanged();
+                    _formHelper.RebuildEditContext();
+                }
+                else
+                {
+                    ToastService.ShowToastError("کارمند مورد نظر یافت نشد.");
+                    NavigationManager.NavigateTo("/employees");
+                }
+            }
+            finally
+            {
+                _isLoading = false;
+            }
+
+            return;
+        }
+
+        if (_formHelper.Model.BankAccounts.Count == 0)
+            _formHelper.Model.BankAccounts.Add(new EmployeeBankAccountFormModel());
+    }
+
+    private async Task LoadWorkshopsAsync()
+    {
+        var result = await ApiService.SendAsync(() => ApiClient.GetUserWorkshopsNameAsync());
+        if (result?.IsSuccess is true)
+            _userWorkshops = result.Response.WorkshopNames.ToList();
+    }
+
+    private async Task LoadDepartmentsAsync(Guid workshopId)
+    {
+        var result = await ApiService.SendAsync(() => ApiClient.GetUserDepartmentsAsync(
+            pagination_PageNumber: 1,
+            pagination_PageSize: 100,
+            pagination_Offset: null,
+            searchName: null,
+            workshopId: workshopId));
+
+        if (result?.IsSuccess is true)
+            _userDepartments = result.Response.Items.ToList();
+    }
+
+    private async Task OnWorkshopChanged()
+    {
+        _formHelper.Model.DepartmentId = null;
+        _userDepartments = [];
+
+        if (!_formHelper.Model.WorkshopId.HasValue)
+            return;
+
+        await LoadDepartmentsAsync(_formHelper.Model.WorkshopId.Value);
+    }
+
+    private void OnMaritalStatusChanged()
+    {
+        if (_formHelper.Model.MaritalStatus == EmployeeInformationRequestMaritalStatus.Single)
+            _formHelper.Model.ChildrenCount = 0;
+    }
+
+    private void AddBankAccount()
+    {
+        _formHelper.Model.BankAccounts.Add(new EmployeeBankAccountFormModel());
+    }
+
+    private void RemoveBankAccount(EmployeeBankAccountFormModel bankAccount)
+    {
+        _formHelper.Model.BankAccounts.Remove(bankAccount);
+        ClearBankAccountErrors();
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (_isLoading) return;
+
+        _formHelper.ClearErrors();
+        ClearBankAccountErrors();
+
+        var isFormValid = _formHelper.Validate();
+        var isBankAccountsValid = ValidateBankAccounts();
+        if (!isFormValid || !isBankAccountsValid)
+            return;
+
+        _isLoading = true;
+
+        var model = _formHelper.Model;
+        var childrenCount = model.MaritalStatus == EmployeeInformationRequestMaritalStatus.Single
+            ? 0
+            : model.ChildrenCount ?? 0;
+
+        var employeeRequest = new EmployeeInformationRequest(
+            birthCertificateNumber: model.BirthCertificateNumber,
+            childrenCount: childrenCount,
+            departmentId: model.DepartmentId ?? Guid.Empty,
+            fatherName: model.FatherName,
+            fullName: model.FullName,
+            gender: model.Gender ?? EmployeeInformationRequestGender.Man,
+            hireDate: model.HireDate,
+            isTaxSubject: model.IsTaxSubject,
+            jobTitle: model.JobTitle,
+            maritalStatus: model.MaritalStatus ?? EmployeeInformationRequestMaritalStatus.Single,
+            nationalCode: model.NationalCode,
+            personalCode: model.PersonalCode,
+            phoneNumber: model.PhoneNumber);
+
+        var insuranceRequest = new EmployeeInsuranceRequest(
+            insuranceCalculationProfile: model.InsuranceCalculationProfile ?? EmployeeInsuranceRequestInsuranceCalculationProfile.FullLegal,
+            insuranceNumber: model.InsuranceNumber,
+            isSubjectTo20PercentInsurance: model.IsSubjectTo20PercentInsurance,
+            isSubjectTo3PercentInsurance: model.IsSubjectTo3PercentInsurance,
+            isSubjectTo7PercentInsurance: model.IsSubjectTo7PercentInsurance,
+            positionInInsuranceList: model.PositionInInsuranceList,
+            socialSecurityContractRow: model.SocialSecurityContractRow);
+
+        var bankAccountsRequest = model.BankAccounts
+            .Select(x => new EmployeeBankAccountRequest(
+                id: x.Id,
+                iban: x.Iban,
+                title: x.Title))
+            .ToList();
+
+        if (IsEdit)
+        {
+            var result = await ApiService.SendAsync(
+                apiCall: () => ApiClient.UpdateEmployeeAsync(Id!.Value, new UpdateEmployeeRequest(
+                    bankAccounts: bankAccountsRequest,
+                    employee: employeeRequest,
+                    insurance: insuranceRequest
+                )),
+                successMessage: "کارمند با موفقیت ویرایش شد.",
+                showErrorToastValidation: false
+            );
+
+            if (result is { IsSuccess: true })
+            {
+                NavigationManager.NavigateTo("/employees");
+            }
+            else if (result != null)
+            {
+                _formHelper.SetServerErrors(GetNonNestedBankAccountErrors(result.Errors));
+                SetServerBankAccountErrors(result.Errors);
+                ToastService.ShowToastWarning("لطفاً خطاها را بررسی کنید.");
+            }
+        }
+        else
+        {
+            var result = await ApiService.SendAsync(
+                apiCall: () => ApiClient.CreateEmployeeAsync(new CreateEmployeeRequest(
+                    bankAccounts: bankAccountsRequest,
+                    employee: employeeRequest,
+                    insurance: insuranceRequest,
+                    workshopId: model.WorkshopId ?? Guid.Empty
+                )),
+                successMessage: "کارمند با موفقیت ثبت شد.",
+                showErrorToastValidation: false
+            );
+
+            if (result is { IsSuccess: true })
+            {
+                NavigationManager.NavigateTo("/employees");
+            }
+            else if (result != null)
+            {
+                _formHelper.SetServerErrors(GetNonNestedBankAccountErrors(result.Errors));
+                SetServerBankAccountErrors(result.Errors);
+                ToastService.ShowToastWarning("لطفاً خطاها را بررسی کنید.");
+            }
+        }
+
+        _isLoading = false;
+    }
+
+    private bool ValidateBankAccounts()
+    {
+        var isValid = true;
+        var bankAccounts = _formHelper.Model.BankAccounts.Select((bankAccount, index) => new { bankAccount, index }).ToList();
+
+        foreach (var item in bankAccounts)
+        {
+            if (item.bankAccount.Id == Guid.Empty)
+            {
+                AddBankAccountError(item.index, nameof(EmployeeBankAccountFormModel.Id), "شناسه حساب بانکی نمیتواند خالی باشد.");
+                isValid = false;
+            }
+
+            if (!string.IsNullOrWhiteSpace(item.bankAccount.Title) && item.bankAccount.Title.Length > 100)
+            {
+                AddBankAccountError(item.index, nameof(EmployeeBankAccountFormModel.Title), "عنوان حساب بانکی نمیتواند بیشتر از 100 کاراکتر باشد.");
+                isValid = false;
+            }
+
+            if (string.IsNullOrWhiteSpace(item.bankAccount.Iban))
+            {
+                AddBankAccountError(item.index, nameof(EmployeeBankAccountFormModel.Iban), "شماره شبا اجباری است.");
+                isValid = false;
+                continue;
+            }
+
+            if (!System.Text.RegularExpressions.Regex.IsMatch(item.bankAccount.Iban, "^IR[0-9]{24}$"))
+            {
+                AddBankAccountError(item.index, nameof(EmployeeBankAccountFormModel.Iban), "شماره شبا باید با IR شروع شود و پس از آن 24 رقم انگلیسی داشته باشد.");
+                isValid = false;
+            }
+        }
+
+        var duplicateIdGroups = bankAccounts
+            .Where(x => x.bankAccount.Id.HasValue)
+            .GroupBy(x => x.bankAccount.Id!.Value)
+            .Where(x => x.Count() > 1);
+
+        foreach (var duplicateIdGroup in duplicateIdGroups)
+        {
+            foreach (var item in duplicateIdGroup)
+                AddBankAccountError(item.index, nameof(EmployeeBankAccountFormModel.Id), "شناسه حساب بانکی در لیست حساب‌های بانکی تکراری است.");
+
+            isValid = false;
+        }
+
+        var duplicateIbanGroups = bankAccounts
+            .Where(x => !string.IsNullOrWhiteSpace(x.bankAccount.Iban) && System.Text.RegularExpressions.Regex.IsMatch(x.bankAccount.Iban, "^IR[0-9]{24}$"))
+            .GroupBy(x => x.bankAccount.Iban.Trim().ToUpperInvariant())
+            .Where(x => x.Count() > 1);
+
+        foreach (var duplicateIbanGroup in duplicateIbanGroups)
+        {
+            foreach (var item in duplicateIbanGroup)
+                AddBankAccountError(item.index, nameof(EmployeeBankAccountFormModel.Iban), "شماره شبا در لیست حساب‌های بانکی تکراری است.");
+
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    private Dictionary<string, ICollection<string>> GetNonNestedBankAccountErrors(IDictionary<string, ICollection<string>> errors)
+    {
+        return errors
+            .Where(x => !System.Text.RegularExpressions.Regex.IsMatch(x.Key, @"^BankAccounts\[(\d+)\]\.(.+)$"))
+            .ToDictionary(x => x.Key, x => x.Value);
+    }
+
+    private void SetServerBankAccountErrors(IDictionary<string, ICollection<string>> errors)
+    {
+        foreach (var errorGroup in errors)
+        {
+            var match = System.Text.RegularExpressions.Regex.Match(errorGroup.Key, @"^BankAccounts\[(\d+)\]\.(.+)$");
+            if (!match.Success)
+                continue;
+
+            var index = int.Parse(match.Groups[1].Value);
+            var fieldName = match.Groups[2].Value;
+
+            foreach (var error in errorGroup.Value)
+                AddBankAccountError(index, fieldName, error);
+        }
+    }
+
+    private void AddBankAccountError(int index, string fieldName, string error)
+    {
+        var key = $"{index}:{fieldName}";
+        if (!_bankAccountErrors.TryGetValue(key, out var errors))
+        {
+            errors = [];
+            _bankAccountErrors[key] = errors;
+        }
+
+        if (!errors.Contains(error))
+            errors.Add(error);
+    }
+
+    private IEnumerable<string> GetBankAccountErrors(int index, string fieldName)
+    {
+        var key = $"{index}:{fieldName}";
+        return _bankAccountErrors.TryGetValue(key, out var errors)
+            ? errors
+            : [];
+    }
+
+    private void ClearBankAccountErrors()
+    {
+        _bankAccountErrors.Clear();
+    }
+
+    private static Dictionary<string, string> CreateFieldMapping() => new()
+    {
+        ["WorkshopId"] = nameof(EmployeeFormModel.WorkshopId),
+        ["DepartmentId"] = nameof(EmployeeFormModel.DepartmentId),
+        ["Employee.DepartmentId"] = nameof(EmployeeFormModel.DepartmentId),
+        ["PersonalCode"] = nameof(EmployeeFormModel.PersonalCode),
+        ["Employee.PersonalCode"] = nameof(EmployeeFormModel.PersonalCode),
+        ["FullName"] = nameof(EmployeeFormModel.FullName),
+        ["Employee.FullName"] = nameof(EmployeeFormModel.FullName),
+        ["NationalCode"] = nameof(EmployeeFormModel.NationalCode),
+        ["Employee.NationalCode"] = nameof(EmployeeFormModel.NationalCode),
+        ["BirthCertificateNumber"] = nameof(EmployeeFormModel.BirthCertificateNumber),
+        ["Employee.BirthCertificateNumber"] = nameof(EmployeeFormModel.BirthCertificateNumber),
+        ["FatherName"] = nameof(EmployeeFormModel.FatherName),
+        ["Employee.FatherName"] = nameof(EmployeeFormModel.FatherName),
+        ["Gender"] = nameof(EmployeeFormModel.Gender),
+        ["Employee.Gender"] = nameof(EmployeeFormModel.Gender),
+        ["MaritalStatus"] = nameof(EmployeeFormModel.MaritalStatus),
+        ["Employee.MaritalStatus"] = nameof(EmployeeFormModel.MaritalStatus),
+        ["ChildrenCount"] = nameof(EmployeeFormModel.ChildrenCount),
+        ["Employee.ChildrenCount"] = nameof(EmployeeFormModel.ChildrenCount),
+        ["HireDate"] = nameof(EmployeeFormModel.HireDate),
+        ["Employee.HireDate"] = nameof(EmployeeFormModel.HireDate),
+        ["PhoneNumber"] = nameof(EmployeeFormModel.PhoneNumber),
+        ["Employee.PhoneNumber"] = nameof(EmployeeFormModel.PhoneNumber),
+        ["JobTitle"] = nameof(EmployeeFormModel.JobTitle),
+        ["Employee.JobTitle"] = nameof(EmployeeFormModel.JobTitle),
+        ["InsuranceNumber"] = nameof(EmployeeFormModel.InsuranceNumber),
+        ["Insurance.InsuranceNumber"] = nameof(EmployeeFormModel.InsuranceNumber),
+        ["SocialSecurityContractRow"] = nameof(EmployeeFormModel.SocialSecurityContractRow),
+        ["Insurance.SocialSecurityContractRow"] = nameof(EmployeeFormModel.SocialSecurityContractRow),
+        ["PositionInInsuranceList"] = nameof(EmployeeFormModel.PositionInInsuranceList),
+        ["Insurance.PositionInInsuranceList"] = nameof(EmployeeFormModel.PositionInInsuranceList),
+        ["InsuranceCalculationProfile"] = nameof(EmployeeFormModel.InsuranceCalculationProfile),
+        ["Insurance.InsuranceCalculationProfile"] = nameof(EmployeeFormModel.InsuranceCalculationProfile)
+    };
+
+    public class EmployeeFormModel : BaseModel
+    {
+        [Required(ErrorMessage = "انتخاب کارگاه اجباری است.")]
+        [Display(Name = "کارگاه")]
+        public Guid? WorkshopId { get; set; }
+
+        [Required(ErrorMessage = "انتخاب بخش اجباری است.")]
+        [Display(Name = "بخش")]
+        public Guid? DepartmentId { get; set; }
+
+        [Required(ErrorMessage = "کد پرسنلی اجباری است.")]
+        [RegularExpression(@"^[A-Za-z0-9]{1,20}$", ErrorMessage = "کد پرسنلی باید بین ۱ تا ۲۰ کاراکتر و فقط شامل حروف و اعداد انگلیسی باشد.")]
+        public string PersonalCode { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "نام و نام خانوادگی اجباری است.")]
+        [StringLength(100, MinimumLength = 3, ErrorMessage = "نام و نام خانوادگی باید بین ۳ تا ۱۰۰ نویسه باشد.")]
+        public string FullName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "کد ملی اجباری است.")]
+        [RegularExpression(@"^\d{10}$", ErrorMessage = "کد ملی باید ۱۰ رقم باشد.")]
+        public string NationalCode { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "شماره شناسنامه اجباری است.")]
+        [RegularExpression(@"^\d{1,20}$", ErrorMessage = "شماره شناسنامه باید بین ۱ تا ۲۰ رقم باشد.")]
+        public string BirthCertificateNumber { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "نام پدر اجباری است.")]
+        [StringLength(50, MinimumLength = 3, ErrorMessage = "نام پدر باید بین ۳ تا ۵۰ نویسه باشد.")]
+        public string FatherName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "جنسیت اجباری است.")]
+        public EmployeeInformationRequestGender? Gender { get; set; }
+
+        [Required(ErrorMessage = "وضعیت تأهل اجباری است.")]
+        public EmployeeInformationRequestMaritalStatus? MaritalStatus { get; set; }
+
+        [Required(ErrorMessage = "تعداد فرزندان اجباری است.")]
+        [Range(0, 20, ErrorMessage = "تعداد فرزندان باید بین ۰ تا ۲۰ باشد.")]
+        public int? ChildrenCount { get; set; } = 0;
+
+        [Required(ErrorMessage = "تاریخ استخدام اجباری است.")]
+        [RegularExpression(@"^\d{4}/\d{2}/\d{2}$", ErrorMessage = "تاریخ را به فرمت ۱۴۰۵/۰۵/۱۷ وارد کنید.")]
+        public string HireDate { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "شماره تلفن اجباری است.")]
+        [RegularExpression(@"^09\d{9}$", ErrorMessage = "شماره تلفن باید با 09 شروع شود و ۱۱ رقم باشد.")]
+        public string PhoneNumber { get; set; } = string.Empty;
+
+        [StringLength(100, ErrorMessage = "عنوان شغلی نمی‌تواند بیش از ۱۰۰ نویسه باشد.")]
+        public string? JobTitle { get; set; }
+
+        public bool IsTaxSubject { get; set; } = true;
+
+        [Required(ErrorMessage = "شماره بیمه اجباری است.")]
+        [StringLength(20, ErrorMessage = "شماره بیمه نمی‌تواند بیش از ۲۰ نویسه باشد.")]
+        public string InsuranceNumber { get; set; } = string.Empty;
+
+        [StringLength(20, ErrorMessage = "ردیف پیمان بیمه نمی‌تواند بیش از ۲۰ نویسه باشد.")]
+        public string? SocialSecurityContractRow { get; set; }
+
+        [Required(ErrorMessage = "سمت در لیست بیمه اجباری است.")]
+        [StringLength(100, ErrorMessage = "سمت در لیست بیمه نمی‌تواند بیش از ۱۰۰ نویسه باشد.")]
+        public string PositionInInsuranceList { get; set; } = string.Empty;
+
+        public bool IsSubjectTo7PercentInsurance { get; set; } = true;
+        public bool IsSubjectTo20PercentInsurance { get; set; } = true;
+        public bool IsSubjectTo3PercentInsurance { get; set; }
+
+        [Required(ErrorMessage = "پروفایل محاسبه بیمه اجباری است.")]
+        public EmployeeInsuranceRequestInsuranceCalculationProfile? InsuranceCalculationProfile { get; set; }
+
+        public List<EmployeeBankAccountFormModel> BankAccounts { get; set; } = [new()];
+    }
+
+    public class EmployeeBankAccountFormModel
+    {
+        public Guid? Id { get; set; }
+        public string? Title { get; set; }
+        public string Iban { get; set; } = string.Empty;
+    }
+}

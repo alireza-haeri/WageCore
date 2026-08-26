@@ -8,29 +8,36 @@ public class WorkshopQuery(IDbConnectionFactory dbConnectionFactory) : IWorkshop
         string? searchName = null,
         WorkshopRegion? region = null, CancellationToken cancellationToken = default)
     {
-        //todo get Employees count and Departments count
         string sql = $"""
                              SELECT 
-                                 Id AS WorkshopId, 
-                                 Name, 
-                                 Address, 
-                                 NationalId,
-                                 Region, 
-                                 RegistrationDate,
-                                 0 AS EmployeesCount,
-                                 0 AS DepartmentsCount
-                             FROM {Core.Domain.Workshop.TableName}
-                             WHERE UserId = @UserId
-                             AND (@SearchName IS NULL OR Name LIKE '%' + @SearchName + '%')
-                             AND (@Region IS NULL OR Region = @Region)
-                             ORDER BY RegistrationDate DESC, Id DESC
+                                 w.Id AS WorkshopId, 
+                                 w.Name, 
+                                 w.Address, 
+                                 w.NationalId,
+                                 w.Region, 
+                                 w.RegistrationDate,
+                                 (
+                                     SELECT COUNT(*)
+                                     FROM {Core.Domain.Employee.TableName} e
+                                     WHERE e.WorkshopId = w.Id
+                                 ) AS EmployeesCount,
+                                 (
+                                     SELECT COUNT(*)
+                                     FROM {Core.Domain.Department.TableName} d
+                                     WHERE d.WorkshopId = w.Id
+                                 ) AS DepartmentsCount
+                             FROM {Core.Domain.Workshop.TableName} w
+                             WHERE w.UserId = @UserId
+                             AND (@SearchName IS NULL OR w.Name LIKE '%' + @SearchName + '%')
+                             AND (@Region IS NULL OR w.Region = @Region)
+                             ORDER BY w.RegistrationDate DESC, w.Id DESC
                              OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
 
                              SELECT COUNT(*)
-                             FROM {Core.Domain.Workshop.TableName}
-                             WHERE UserId = @UserId
-                             AND (@SearchName IS NULL OR Name LIKE '%' + @SearchName + '%')
-                             AND (@Region IS NULL OR Region = @Region);
+                             FROM {Core.Domain.Workshop.TableName} w
+                             WHERE w.UserId = @UserId
+                             AND (@SearchName IS NULL OR w.Name LIKE '%' + @SearchName + '%')
+                             AND (@Region IS NULL OR w.Region = @Region);
                              """;
 
         var command = new CommandDefinition(sql, new

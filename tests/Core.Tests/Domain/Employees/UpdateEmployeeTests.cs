@@ -122,6 +122,30 @@ public class UpdateEmployeeTests
     }
 
     [Fact]
+    public void Update_WithSingleMaritalStatusAndChildrenCountMoreThanZero_ShouldFail()
+    {
+        var employee = _builder.CreateResult().ShouldBeSuccess();
+        var employeeDto = new EmployeeDto(
+            employee.DepartmentId,
+            employee.PersonalCode,
+            employee.FullName,
+            employee.NationalCode,
+            employee.BirthCertificateNumber,
+            employee.FatherName,
+            employee.Gender,
+            EmployeeMaritalStatus.Single,
+            1,
+            employee.HireDate,
+            employee.PhoneNumber,
+            employee.JobTitle,
+            employee.IsTaxSubject);
+
+        var result = employee.Update(employeeDto, DateOnly.FromDateTime(DateTime.Now.AddDays(-30)));
+
+        result.ShouldBeFailure("برای کارمند مجرد، تعداد فرزندان باید صفر باشد.");
+    }
+
+    [Fact]
     public void Update_WithTerminationDate_ShouldFail()
     {
         var employee = _builder.CreateResult().ShouldBeSuccess();

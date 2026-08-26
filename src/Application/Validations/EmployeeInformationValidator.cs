@@ -54,6 +54,11 @@ public class EmployeeInformationValidator : AbstractValidator<EmployeeDto>
             .Must(x => x.HasValue && x.Value >= 0 && x.Value <= 20)
             .WithMessage("تعداد فرزندان باید بین 0 تا 20 باشد.");
 
+        RuleFor(x => x.ChildrenCount)
+            .Equal(0)
+            .WithMessage("برای کارمند مجرد، تعداد فرزندان باید صفر باشد.")
+            .When(x => x.MaritalStatus == EmployeeMaritalStatus.Single && x.ChildrenCount.HasValue);
+
         RuleFor(x => x.HireDate)
             .Cascade(CascadeMode.Stop)
             .NotEmpty().WithMessage("تاریخ استخدام اجباری است.")

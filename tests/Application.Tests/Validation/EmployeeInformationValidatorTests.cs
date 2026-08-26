@@ -236,11 +236,25 @@ public class EmployeeInformationValidatorTests
     [InlineData(20)]
     public void Validate_WithChildrenCountBoundary_ShouldNotHaveAnyErrors(int childrenCount)
     {
-        var dto = _employeeBuilder.BuildEmployeeDto() with { ChildrenCount = childrenCount };
+        var dto = _employeeBuilder.WithMaritalStatus(EmployeeMaritalStatus.Married).BuildEmployeeDto() with { ChildrenCount = childrenCount };
 
         var result = _validator.TestValidate(dto);
 
         result.ShouldNotHaveValidationErrorFor(x => x.ChildrenCount);
+    }
+
+    [Fact]
+    public void Validate_WithSingleMaritalStatusAndChildrenCountMoreThanZero_ShouldHaveValidationError()
+    {
+        var dto = _employeeBuilder.BuildEmployeeDto() with
+        {
+            MaritalStatus = EmployeeMaritalStatus.Single,
+            ChildrenCount = 1
+        };
+
+        var result = _validator.TestValidate(dto);
+
+        result.ShouldHaveValidationErrorFor(x => x.ChildrenCount);
     }
 
     [Fact]

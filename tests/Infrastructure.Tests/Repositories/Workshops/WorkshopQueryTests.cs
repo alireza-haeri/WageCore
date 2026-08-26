@@ -4,6 +4,7 @@ public class WorkshopQueryTests(WageCoreDbContextFixture fixture)
     : IClassFixture<WageCoreDbContextFixture>, IAsyncLifetime
 {
     private readonly WorkshopBuilder _workshopBuilder = new();
+    private readonly EmployeeBuilder _employeeBuilder = new();
 
     public async Task InitializeAsync() => await fixture.ResetDatabaseAsync();
     public Task DisposeAsync() => Task.CompletedTask;
@@ -15,6 +16,24 @@ public class WorkshopQueryTests(WageCoreDbContextFixture fixture)
         var result = await userRepository.CreateAsync(user, "Pass123456");
         result.Succeeded.Should().BeTrue();
         return user.Id;
+    }
+
+    private async Task CreateEmployeeAsync(AsyncServiceScope scope, Guid workshopId, Guid departmentId,
+        string personalCode, string nationalCode)
+    {
+        var employeeRepository = scope.ServiceProvider.GetRequiredService<EmployeeRepository>();
+
+        var employee = _employeeBuilder
+            .WithId(Guid.NewGuid())
+            .WithWorkshopId(workshopId)
+            .WithDepartmentId(departmentId)
+            .WithPersonalCode(personalCode)
+            .WithNationalCode(nationalCode)
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        var result = await employeeRepository.CreateAsync(employee);
+        result.Should().Be(employee.Id);
     }
 
      #region GetUserWorkshopsAsync
@@ -288,6 +307,42 @@ public class WorkshopQueryTests(WageCoreDbContextFixture fixture)
         result.Items.First().NationalId.Should().Be("1234567890");
         result.Items.First().EmployeesCount.Should().Be(0);
         result.Items.First().DepartmentsCount.Should().Be(0);
+    }
+
+    [Fact]
+    public async Task GetUserWorkshopsAsync_ShouldReturnEmployeesAndDepartmentsCount()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
+        var query = scope.ServiceProvider.GetRequiredService<IWorkshopQuery>();
+        var userId = await CreateUserAsync(scope);
+
+        var workshop = _workshopBuilder
+            .WithId(Guid.NewGuid())
+            .WithUserId(userId)
+            .WithNationalId("1234567890")
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        await repository.CreateAsync(workshop);
+
+        var departmentId1 = Guid.NewGuid();
+        var departmentId2 = Guid.NewGuid();
+        workshop.CreateDepartment(departmentId1, "بخش تولید").ShouldBeSuccess();
+        workshop.CreateDepartment(departmentId2, "بخش اداری").ShouldBeSuccess();
+        await repository.UpdateAsync(workshop);
+
+        await CreateEmployeeAsync(scope, workshop.Id, departmentId1, "EMP001", "1234567890");
+        await CreateEmployeeAsync(scope, workshop.Id, departmentId2, "EMP002", "0987654321");
+        await CreateEmployeeAsync(scope, workshop.Id, departmentId2, "EMP003", "2234567890");
+
+        var pagination = new PaginationDto(1, 10);
+        var result = await query.GetUserWorkshopsAsync(userId, pagination);
+
+        result.Items.Should().ContainSingle();
+        result.Items.First().NationalId.Should().Be("1234567890");
+        result.Items.First().EmployeesCount.Should().Be(3);
+        result.Items.First().DepartmentsCount.Should().Be(2);
     }
 
     #endregion

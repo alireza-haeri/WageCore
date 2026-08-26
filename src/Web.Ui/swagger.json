@@ -365,6 +365,317 @@
         }
       }
     },
+    "/api/v1/employees": {
+      "post": {
+        "tags": [
+          "Employee"
+        ],
+        "summary": "CreateEmployee",
+        "operationId": "CreateEmployee",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateEmployeeRequest"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateEmployeeRequest"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateEmployeeRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateEmployeeCommandResponseResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateEmployeeCommandResponseResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateEmployeeCommandResponseResult"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Employee"
+        ],
+        "summary": "GetUserEmployees",
+        "operationId": "GetUserEmployees",
+        "parameters": [
+          {
+            "name": "Pagination.PageNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Pagination.PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Pagination.Offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "WorkshopId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "DepartmentId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Status",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "x-enumNames": [
+                "Employed",
+                "Unemployed"
+              ],
+              "enum": [
+                0,
+                1
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUserEmployeesResponsePagedResultResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUserEmployeesResponsePagedResultResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUserEmployeesResponsePagedResultResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/employees/{employeeId}": {
+      "put": {
+        "tags": [
+          "Employee"
+        ],
+        "summary": "UpdateEmployee",
+        "operationId": "UpdateEmployee",
+        "parameters": [
+          {
+            "name": "employeeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdateEmployeeRequest"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdateEmployeeRequest"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdateEmployeeRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Employee"
+        ],
+        "summary": "DeleteEmployee",
+        "operationId": "DeleteEmployee",
+        "parameters": [
+          {
+            "name": "employeeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/employees/{employeeId}/edit": {
+      "get": {
+        "tags": [
+          "Employee"
+        ],
+        "summary": "GetEmployeeForEdit",
+        "operationId": "GetEmployeeForEdit",
+        "parameters": [
+          {
+            "name": "employeeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetEmployeeForEditResponseResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetEmployeeForEditResponseResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetEmployeeForEditResponseResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/users/register": {
       "post": {
         "tags": [
@@ -951,6 +1262,86 @@
           }
         }
       },
+      "CreateEmployeeCommandResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "employeeId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "CreateEmployeeCommandResponseResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreateEmployeeCommandResponse"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "CreateEmployeeRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "workshopId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employee": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EmployeeInformationRequest"
+              }
+            ]
+          },
+          "insurance": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EmployeeInsuranceRequest"
+              }
+            ]
+          }
+        }
+      },
       "CreateWorkshopCommandResponse": {
         "type": "object",
         "additionalProperties": false,
@@ -1042,6 +1433,121 @@
           }
         }
       },
+      "EmployeeInformationRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "departmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "personalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "nationalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "birthCertificateNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "fatherName": {
+            "type": "string",
+            "nullable": true
+          },
+          "gender": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "Man",
+              "Woman"
+            ],
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "maritalStatus": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "Single",
+              "Married",
+              "Divorced",
+              "Widowed"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "childrenCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hireDate": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "jobTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "isTaxSubject": {
+            "type": "boolean"
+          }
+        }
+      },
+      "EmployeeInsuranceRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "insuranceNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "socialSecurityContractRow": {
+            "type": "string",
+            "nullable": true
+          },
+          "positionInInsuranceList": {
+            "type": "string",
+            "nullable": true
+          },
+          "isSubjectTo7PercentInsurance": {
+            "type": "boolean"
+          },
+          "isSubjectTo20PercentInsurance": {
+            "type": "boolean"
+          },
+          "isSubjectTo3PercentInsurance": {
+            "type": "boolean"
+          },
+          "insuranceCalculationProfile": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "FullLegal",
+              "MinimumLaborLaw"
+            ],
+            "enum": [
+              0,
+              1
+            ]
+          }
+        }
+      },
       "GetDepartmentForEditQueryResponse": {
         "type": "object",
         "additionalProperties": false,
@@ -1085,6 +1591,164 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/GetDepartmentForEditQueryResponse"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "GetEmployeeForEditResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "workshopId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "departmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "personalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "nationalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "birthCertificateNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "fatherName": {
+            "type": "string",
+            "nullable": true
+          },
+          "gender": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "Man",
+              "Woman"
+            ],
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "maritalStatus": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "Single",
+              "Married",
+              "Divorced",
+              "Widowed"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "childrenCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hireDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "jobTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "isTaxSubject": {
+            "type": "boolean"
+          },
+          "insuranceNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "socialSecurityContractRow": {
+            "type": "string",
+            "nullable": true
+          },
+          "positionInInsuranceList": {
+            "type": "string",
+            "nullable": true
+          },
+          "isSubjectTo7PercentInsurance": {
+            "type": "boolean"
+          },
+          "isSubjectTo20PercentInsurance": {
+            "type": "boolean"
+          },
+          "isSubjectTo3PercentInsurance": {
+            "type": "boolean"
+          },
+          "insuranceCalculationProfile": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "FullLegal",
+              "MinimumLaborLaw"
+            ],
+            "enum": [
+              0,
+              1
+            ]
+          }
+        }
+      },
+      "GetEmployeeForEditResponseResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GetEmployeeForEditResponse"
               }
             ]
           },
@@ -1256,6 +1920,130 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/GetUserDepartmentsQueryResponsePagedResult"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "GetUserEmployeesResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "personalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "workshopName": {
+            "type": "string",
+            "nullable": true
+          },
+          "departmentName": {
+            "type": "string",
+            "nullable": true
+          },
+          "nationalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayHireDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "jobTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "Employed",
+              "Unemployed"
+            ],
+            "enum": [
+              0,
+              1
+            ]
+          }
+        }
+      },
+      "GetUserEmployeesResponsePagedResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/GetUserEmployeesResponse"
+            }
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "readOnly": true,
+            "format": "int32"
+          }
+        }
+      },
+      "GetUserEmployeesResponsePagedResultResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GetUserEmployeesResponsePagedResult"
               }
             ]
           },
@@ -1710,6 +2498,20 @@
           }
         }
       },
+      "UpdateEmployeeRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "employee": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EmployeeInformationRequest"
+              }
+            ]
+          }
+        }
+      },
       "UpdateWorkshopRequest": {
         "type": "object",
         "additionalProperties": false,
@@ -1768,6 +2570,9 @@
     },
     {
       "name": "Department"
+    },
+    {
+      "name": "Employee"
     },
     {
       "name": "Identity"

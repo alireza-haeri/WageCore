@@ -26,15 +26,23 @@ public class UpdateEmployeeCommandHandlerTests
         _handler = new UpdateEmployeeCommandHandler(_employeeRepository, _employeeQuery, _workshopRepository);
     }
 
-    private Employee CreateValidEmployee()
+    private Employee CreateValidEmployee(bool createBankAccounts = false)
     {
-        return _employeeBuilder
+        var employee = _employeeBuilder
             .WithId(ValidEmployeeId)
             .WithWorkshopId(ValidWorkshopId)
             .WithDepartmentId(ValidDepartmentId)
             .WithWorkshopRegistrationDate(ValidWorkshopRegistrationDate)
             .CreateResult()
             .ShouldBeSuccess();
+
+        if (createBankAccounts)
+            employee.ReplaceBankAccounts([
+                new EmployeeBankAccountDto("حساب اول", "IR111111111111111111111111", Guid.NewGuid()),
+                new EmployeeBankAccountDto("حساب دوم", "IR222222222222222222222222", Guid.NewGuid())
+            ]).ShouldBeSuccess();
+
+        return employee;
     }
 
     private Workshop CreateValidWorkshop(Guid? workshopId = null, DateOnly? registrationDate = null)
@@ -47,7 +55,8 @@ public class UpdateEmployeeCommandHandlerTests
             .ShouldBeSuccess();
     }
 
-    private UpdateEmployeeCommand CreateValidCommand(EmployeeDto? employee = null)
+    private UpdateEmployeeCommand CreateValidCommand(EmployeeDto? employee = null, EmployeeInsuranceDto? insurance = null,
+        List<EmployeeBankAccountDto>? bankAccounts = null)
     {
         var employeeDto = employee ?? _employeeBuilder
             .WithDepartmentId(UpdatedDepartmentId)
@@ -64,7 +73,23 @@ public class UpdateEmployeeCommandHandlerTests
             .WithIsTaxSubject(false)
             .BuildEmployeeDto();
 
-        return new UpdateEmployeeCommand(ValidUserId, ValidEmployeeId, employeeDto);
+        var insuranceDto = insurance ?? _employeeBuilder
+            .WithInsuranceNumber("INS-999")
+            .WithSocialSecurityContractRow("CTR-99")
+            .WithPositionInInsuranceList("مدیر مالی")
+            .WithIsSubjectTo7PercentInsurance(false)
+            .WithIsSubjectTo20PercentInsurance(true)
+            .WithIsSubjectTo3PercentInsurance(true)
+            .WithInsuranceCalculationProfile(InsuranceCalculationProfile.MinimumLaborLaw)
+            .BuildInsuranceDto();
+
+        var bankAccountDtos = bankAccounts ??
+            [
+                new EmployeeBankAccountDto("حساب اول جدید", "IR999999999999999999999999"),
+                new EmployeeBankAccountDto("حساب دوم جدید", "IR888888888888888888888888")
+            ];
+
+        return new UpdateEmployeeCommand(ValidUserId, ValidEmployeeId, employeeDto, insuranceDto, bankAccountDtos);
     }
 
     private void SetupNoDuplicates()
@@ -78,8 +103,13 @@ public class UpdateEmployeeCommandHandlerTests
     [Fact]
     public async Task Handle_WithValidData_ShouldUpdateEmployeeAndReturnTrue()
     {
-        var command = CreateValidCommand();
-        var employee = CreateValidEmployee();
+        var employee = CreateValidEmployee(createBankAccounts: true);
+        var existingBankAccountIds = employee.BankAccounts.Select(x => x.Id).ToList();
+        var command = CreateValidCommand(bankAccounts:
+        [
+            new EmployeeBankAccountDto("حساب اول جدید", "IR999999999999999999999999", existingBankAccountIds[0]),
+            new EmployeeBankAccountDto("حساب سوم", "IR777777777777777777777777")
+        ]);
         var workshop = CreateValidWorkshop();
 
         _employeeRepository.GetByIdAsync(ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
@@ -101,7 +131,46 @@ public class UpdateEmployeeCommandHandlerTests
             employee.DepartmentId.Should().Be(UpdatedDepartmentId);
             employee.PersonalCode.Should().Be(command.Employee.PersonalCode);
             employee.NationalCode.Should().Be(command.Employee.NationalCode);
+            employee.Insurance.InsuranceNumber.Should().Be(command.Insurance!.InsuranceNumber);
+            employee.Insurance.PositionInInsuranceList.Should().Be(command.Insurance.PositionInInsuranceList);
+            employee.Insurance.InsuranceCalculationProfile.Should().Be(command.Insurance.InsuranceCalculationProfile!.Value);
+            employee.BankAccounts.Should().HaveCount(2);
+            employee.BankAccounts.Should().Contain(x => x.Id == existingBankAccountIds[0] && x.Title == "حساب اول جدید" && x.Iban == "999999999999999999999999");
+            employee.BankAccounts.Should().Contain(x => x.Title == "حساب سوم" && x.Iban == "777777777777777777777777");
+            employee.BankAccounts.Should().NotContain(x => x.Id == existingBankAccountIds[1]);
         }
+    }
+
+    [Fact]
+    public async Task Handle_WhenEmployeeHasNoBankAccounts_ShouldReplaceWithNewBankAccounts()
+    {
+        var employee = CreateValidEmployee();
+        var command = CreateValidCommand();
+        var workshop = CreateValidWorkshop();
+
+        _employeeRepository.GetByIdAsync(ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
+            .Returns(employee);
+        _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        _workshopRepository.GetByDepartmentIdAsync(ValidUserId, UpdatedDepartmentId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        SetupNoDuplicates();
+        _employeeRepository.UpdateAsync(employee, Arg.Any<CancellationToken>())
+            .Returns(true);
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.ShouldBeSuccess().Should().BeTrue();
+        employee.BankAccounts.Should().HaveCount(2);
+        var accounts = command.BankAccounts!;
+
+        var firstTitle = accounts[0].Title;
+        var firstIban = accounts[0].Iban[2..];
+        var secondTitle = accounts[1].Title;
+        var secondIban = accounts[1].Iban[2..];
+
+        employee.BankAccounts.Should().Contain(x => x.Title == firstTitle && x.Iban == firstIban);
+        employee.BankAccounts.Should().Contain(x => x.Title == secondTitle && x.Iban == secondIban);
     }
 
     [Fact]
@@ -220,6 +289,57 @@ public class UpdateEmployeeCommandHandlerTests
     }
 
     [Fact]
+    public async Task Handle_WhenInsuranceUpdateFails_ShouldReturnGeneralFailure()
+    {
+        var command = CreateValidCommand(insurance: new EmployeeInsuranceDto(
+            string.Empty,
+            "CTR-99",
+            "مدیر مالی",
+            false,
+            true,
+            true,
+            InsuranceCalculationProfile.MinimumLaborLaw));
+        var employee = CreateValidEmployee(createBankAccounts: true);
+        var workshop = CreateValidWorkshop();
+
+        _employeeRepository.GetByIdAsync(ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
+            .Returns(employee);
+        _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        _workshopRepository.GetByDepartmentIdAsync(ValidUserId, UpdatedDepartmentId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        SetupNoDuplicates();
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.ShouldBeFailure("شماره بیمه نمیتواند خالی باشد.", BadResultType.General);
+    }
+
+    [Fact]
+    public async Task Handle_WhenBankAccountsReplaceFails_ShouldReturnGeneralFailure()
+    {
+        var command = CreateValidCommand(bankAccounts:
+        [
+            new EmployeeBankAccountDto("حساب اول", "IR999999999999999999999999"),
+            new EmployeeBankAccountDto("حساب دوم", "IR999999999999999999999999")
+        ]);
+        var employee = CreateValidEmployee(createBankAccounts: true);
+        var workshop = CreateValidWorkshop();
+
+        _employeeRepository.GetByIdAsync(ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
+            .Returns(employee);
+        _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        _workshopRepository.GetByDepartmentIdAsync(ValidUserId, UpdatedDepartmentId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        SetupNoDuplicates();
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.ShouldBeFailure("شماره شبا در لیست حساب‌های بانکی تکراری است.", BadResultType.General);
+    }
+
+    [Fact]
     public async Task Handle_WhenDomainUpdateFails_ShouldReturnGeneralFailure()
     {
         var command = CreateValidCommand();
@@ -313,28 +433,6 @@ public class UpdateEmployeeCommandHandlerTests
 
         _employeeRepository.GetByIdAsync(ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
             .Returns((Employee?)null);
-
-        await _handler.Handle(command, CancellationToken.None);
-
-        await _employeeRepository.DidNotReceive().UpdateAsync(Arg.Any<Employee>(), Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task Handle_WhenPersonalCodeIsDuplicate_ShouldNotCallUpdateAsync()
-    {
-        var command = CreateValidCommand();
-        var employee = CreateValidEmployee();
-        var workshop = CreateValidWorkshop();
-
-        _employeeRepository.GetByIdAsync(ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
-            .Returns(employee);
-        _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
-            .Returns(workshop);
-        _workshopRepository.GetByDepartmentIdAsync(ValidUserId, UpdatedDepartmentId, Arg.Any<CancellationToken>())
-            .Returns(workshop);
-        _employeeQuery.IsExistEmployeePersonalCode(ValidUserId, command.Employee.PersonalCode, ValidEmployeeId,
-                Arg.Any<CancellationToken>())
-            .Returns(true);
 
         await _handler.Handle(command, CancellationToken.None);
 

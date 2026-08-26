@@ -1,0 +1,25 @@
+namespace Web.Api.Controllers.Employees.Contracts;
+
+public record GetEmployeeForEditResponse(
+    Guid WorkshopId,
+    Guid DepartmentId,
+    string PersonalCode,
+    string FullName,
+    string NationalCode,
+    string BirthCertificateNumber,
+    string FatherName,
+    EmployeeGender Gender,
+    EmployeeMaritalStatus MaritalStatus,
+    int ChildrenCount,
+    string HireDate,
+    string PhoneNumber,
+    string? JobTitle,
+    bool IsTaxSubject,
+    string InsuranceNumber,
+    string? SocialSecurityContractRow,
+    string PositionInInsuranceList,
+    bool IsSubjectTo7PercentInsurance,
+    bool IsSubjectTo20PercentInsurance,
+    bool IsSubjectTo3PercentInsurance,
+    InsuranceCalculationProfile InsuranceCalculationProfile,
+    List<EmployeeBankAccountResponse> BankAccounts);

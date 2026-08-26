@@ -5,6 +5,7 @@ public class WageCoreDbContext(DbContextOptions<WageCoreDbContext> options)
 {
     public override DbSet<ApplicationUser> Users { get; set; }
     public DbSet<Workshop> Workshops { get; set; }
+    public DbSet<Employee> Employees { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
