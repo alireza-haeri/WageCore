@@ -7,14 +7,17 @@ public class DepartmentQuery(IDbConnectionFactory dbConnectionFactory) : IDepart
     public async Task<PagedResult<UserDepartmentResult>> GetUserDepartmentsAsync(Guid userId, PaginationDto pagination,
         string? searchName = null, Guid? workshopId = null, CancellationToken cancellationToken = default)
     {
-        //todo get Employees count
         string sql = $"""
                              SELECT 
                                  d.Id AS DepartmentId, 
                                  d.Name, 
                                  d.WorkshopId,
                                  w.Name AS WorkshopName,
-                                 0 AS EmployeesCount
+                                 (
+                                     SELECT COUNT(*)
+                                     FROM {Core.Domain.Employee.TableName} e
+                                     WHERE e.DepartmentId = d.Id
+                                 ) AS EmployeesCount
                              FROM {Core.Domain.Department.TableName} d
                              INNER JOIN {Core.Domain.Workshop.TableName} w ON w.Id = d.WorkshopId
                              WHERE w.UserId = @UserId
