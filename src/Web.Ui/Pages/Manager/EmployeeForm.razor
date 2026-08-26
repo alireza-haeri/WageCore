@@ -153,25 +153,25 @@
             </div>
 
             <div class="row g-3">
-                <div class="col-md-4 field">
+                <div class="col-md-3 field">
                     <label class="f-label" for="e-insuranceNumber"><span class="req-s">*</span>شماره بیمه</label>
                     <InputText @bind-Value="_formHelper.Model.InsuranceNumber" class="in in-ltr" id="e-insuranceNumber" maxlength="20"/>
                     <ValidationMessage TValue="string" For="() => _formHelper.Model.InsuranceNumber" class="f-help text-danger"/>
                 </div>
 
-                <div class="col-md-4 field">
+                <div class="col-md-3 field">
                     <label class="f-label" for="e-socialSecurityContractRow">ردیف پیمان بیمه <span class="f-badge fb-gold">اختیاری</span></label>
                     <InputText @bind-Value="_formHelper.Model.SocialSecurityContractRow" class="in in-ltr" id="e-socialSecurityContractRow" maxlength="20"/>
                     <ValidationMessage TValue="string" For="() => _formHelper.Model.SocialSecurityContractRow" class="f-help text-danger"/>
                 </div>
 
-                <div class="col-md-4 field">
+                <div class="col-md-3 field">
                     <label class="f-label" for="e-positionInInsuranceList"><span class="req-s">*</span>سمت در لیست بیمه</label>
                     <InputText @bind-Value="_formHelper.Model.PositionInInsuranceList" class="in" id="e-positionInInsuranceList" maxlength="100"/>
                     <ValidationMessage TValue="string" For="() => _formHelper.Model.PositionInInsuranceList" class="f-help text-danger"/>
                 </div>
 
-                <div class="col-md-4 field">
+                <div class="col-md-3 field">
                     <label class="f-label" for="e-insuranceCalculationProfile"><span class="req-s">*</span>پروفایل محاسبه بیمه</label>
                     <InputSelect @bind-Value="_formHelper.Model.InsuranceCalculationProfile" class="in" id="e-insuranceCalculationProfile">
                         <option value="">انتخاب کنید...</option>
@@ -181,13 +181,7 @@
                     <ValidationMessage TValue="EmployeeInsuranceRequestInsuranceCalculationProfile?" For="() => _formHelper.Model.InsuranceCalculationProfile" class="f-help text-danger"/>
                 </div>
 
-                <label class="col-md-4">
-                    <div class="sw-card">
-                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsTaxSubject"/><i></i></span>
-                        <span class="swt">مشمول مالیات حقوق است؟<span class="swd">اگر خیر باشد، مالیات فیش صفر ثبت می‌شود.</span></span>
-                    </div>
-                </label>
-
+               
                 <label class="col-md-4">
                     <div class="sw-card">
                         <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo7PercentInsurance"/><i></i></span>
@@ -208,6 +202,14 @@
                         <span class="swt">مشمول بیمهٔ ۳٪</span>
                     </div>
                 </label>
+                
+                <label class="col-md-12">
+                    <div class="sw-card">
+                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsTaxSubject"/><i></i></span>
+                        <span class="swt">مشمول مالیات حقوق است؟<span class="swd">اگر خیر باشد، مالیات فیش صفر ثبت می‌شود.</span></span>
+                    </div>
+                </label>
+
             </div>
 
             <div class="sec mt-4 d-flex align-items-center justify-content-between">
