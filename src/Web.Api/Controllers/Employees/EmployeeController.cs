@@ -100,6 +100,39 @@ public class EmployeeController(IMediator mediator) : BaseController
         return Result(result);
     }
 
+    [HttpPost("{employeeId:guid}/terminate")]
+    [SwaggerOperation(OperationId = "TerminateEmployee")]
+    public async Task<ActionResult<Result<bool>>> TerminateEmployee(
+        [FromBody] TerminateEmployeeRequest request,
+        Guid employeeId,
+        CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(new TerminateEmployeeCommand(
+            UserId: UserId,
+            EmployeeId: employeeId,
+            TerminationDate: request.TerminationDate.ToDateOnly()
+        ), cancellationToken);
+
+        return Result(result);
+    }
+
+    [HttpPost("{employeeId:guid}/rehire")]
+    [SwaggerOperation(OperationId = "RehireEmployee")]
+    public async Task<ActionResult<Result<bool>>> RehireEmployee(
+        [FromBody] RehireEmployeeRequest request,
+        Guid employeeId,
+        CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(new RehireEmployeeCommand(
+            UserId: UserId,
+            EmployeeId: employeeId,
+            DepartmentId: request.DepartmentId,
+            HireDate: request.HireDate.ToDateOnly()
+        ), cancellationToken);
+
+        return Result(result);
+    }
+
     [HttpGet]
     [SwaggerOperation(OperationId = "GetUserEmployees")]
     public async Task<ActionResult<Result<PagedResult<GetUserEmployeesResponse>>>> GetUserEmployees(
