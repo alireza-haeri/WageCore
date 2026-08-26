@@ -112,6 +112,22 @@
                                     <a class="icobtn" href="/employee-form/@employee.Id" title="ویرایش">
                                         <svg class="ic"><use href="assets/img/icons.svg#i-pen"/></svg>
                                     </a>
+                                    @if (employee.Status == GetUserEmployeesResponseStatus.Employed)
+                                    {
+                                        <button class="icobtn" title="ثبت ترک کار"
+                                                @onclick="() => ConfirmTerminate(employee)"
+                                                disabled="@_isProcessing">
+                                            <svg class="ic"><use href="assets/img/icons.svg#i-logout"/></svg>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button class="icobtn" title="استخدام مجدد"
+                                                @onclick="() => ConfirmRehire(employee)"
+                                                disabled="@_isProcessing">
+                                            <svg class="ic"><use href="assets/img/icons.svg#i-check"/></svg>
+                                        </button>
+                                    }
                                     <button class="icobtn danger" title="حذف"
                                             @onclick="() => ConfirmDelete(employee)"
                                             disabled="@_isDeleting">
@@ -197,6 +213,127 @@
     </div>
 }
 
+@if (_employeeToTerminate is not null)
+{
+    <div class="modal-backdrop show" style="z-index:1040"></div>
+    <div class="modal show d-block" tabindex="-1" style="z-index:1050">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">ثبت ترک کار</h5>
+                    <button type="button" class="btn-close" @onclick="CancelTerminate" disabled="@_isProcessing"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        ثبت ترک کار برای کارمند <b>«@_employeeToTerminate.FullName»</b>
+                        با کد پرسنلی <span class="ltr">@_employeeToTerminate.PersonalCode</span>.
+                    </p>
+                    <div class="field">
+                        <label class="f-label" for="t-terminationDate"><span class="req-s">*</span>تاریخ ترک کار</label>
+                        <input class="in num" id="t-terminationDate" inputmode="numeric" placeholder="۱۴۰۵/۰۵/۱۷"
+                               value="@_terminationDate"
+                               @oninput="e => _terminationDate = e.Value?.ToString() ?? string.Empty"
+                               disabled="@_isProcessing"/>
+                        @if (!string.IsNullOrEmpty(_modalError))
+                        {
+                            <div class="f-help text-danger">@_modalError</div>
+                        }
+                        else
+                        {
+                            <div class="f-help">تاریخ ترک کار نباید برای آینده یا قبل از تاریخ استخدام (@_employeeToTerminate.DisplayHireDate) باشد.</div>
+                        }
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-g" @onclick="CancelTerminate" disabled="@_isProcessing">انصراف</button>
+                    <button class="btn btn-p" @onclick="TerminateEmployee" disabled="@_isProcessing">
+                        @if (_isProcessing)
+                        {
+                            <span>در حال ثبت...</span>
+                        }
+                        else
+                        {
+                            <span>ثبت ترک کار</span>
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (_employeeToRehire is not null)
+{
+    <div class="modal-backdrop show" style="z-index:1040"></div>
+    <div class="modal show d-block" tabindex="-1" style="z-index:1050">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">استخدام مجدد</h5>
+                    <button type="button" class="btn-close" @onclick="CancelRehire" disabled="@_isProcessing"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        استخدام مجدد کارمند <b>«@_employeeToRehire.FullName»</b>
+                        با کد پرسنلی <span class="ltr">@_employeeToRehire.PersonalCode</span>.
+                    </p>
+                    <div class="field">
+                        <label class="f-label" for="r-department"><span class="req-s">*</span>بخش</label>
+                        <select class="in" id="r-department" @bind="_rehireDepartmentId" disabled="@(_isProcessing || _isLoadingRehireDepartments)">
+                            <option value="">انتخاب کنید...</option>
+                            @if (_rehireDepartments is not null)
+                            {
+                                foreach (var department in _rehireDepartments)
+                                {
+                                    <option value="@department.Id">@department.Name</option>
+                                }
+                            }
+                        </select>
+                        <div class="f-help">
+                            @if (_isLoadingRehireDepartments)
+                            {
+                                <span>در حال بارگذاری بخش‌ها...</span>
+                            }
+                            else
+                            {
+                                <span>بخش‌های کارگاه «@_employeeToRehire.WorkshopName» نمایش داده می‌شوند.</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="field mt-3">
+                        <label class="f-label" for="r-hireDate"><span class="req-s">*</span>تاریخ استخدام مجدد</label>
+                        <input class="in num" id="r-hireDate" inputmode="numeric" placeholder="۱۴۰۵/۰۵/۱۷"
+                               value="@_rehireDate"
+                               @oninput="e => _rehireDate = e.Value?.ToString() ?? string.Empty"
+                               disabled="@_isProcessing"/>
+                        @if (!string.IsNullOrEmpty(_modalError))
+                        {
+                            <div class="f-help text-danger">@_modalError</div>
+                        }
+                        else
+                        {
+                            <div class="f-help">تاریخ استخدام مجدد باید بعد از تاریخ ترک کار و نباید برای آینده باشد.</div>
+                        }
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-g" @onclick="CancelRehire" disabled="@_isProcessing">انصراف</button>
+                    <button class="btn btn-p" @onclick="RehireEmployee" disabled="@_isProcessing">
+                        @if (_isProcessing)
+                        {
+                            <span>در حال ثبت...</span>
+                        }
+                        else
+                        {
+                            <span>استخدام مجدد</span>
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
     private GetUserEmployeesResponsePagedResult? _userEmployees;
     private List<GetUserWorkshopsNameQueryResponseWorkshopName>? _userWorkshops;
@@ -217,6 +354,20 @@
 
     private Timer? _debounceTimer;
     private GetUserEmployeesResponse? _employeeToDelete;
+
+    private bool _isProcessing;
+    private string? _modalError;
+
+    private GetUserEmployeesResponse? _employeeToTerminate;
+    private string _terminationDate = string.Empty;
+
+    private GetUserEmployeesResponse? _employeeToRehire;
+    private string _rehireDate = string.Empty;
+    private string _rehireDepartmentId = string.Empty;
+    private List<GetUserDepartmentsQueryResponse>? _rehireDepartments;
+    private bool _isLoadingRehireDepartments;
+
+    private const string PersianDatePattern = @"^\d{4}/\d{2}/\d{2}$";
 
     protected override async Task OnInitializedAsync()
     {
@@ -393,6 +544,132 @@
             await LoadEmployeesAsync();
         }
     }
+
+    private void ConfirmTerminate(GetUserEmployeesResponse employee)
+    {
+        _modalError = null;
+        _terminationDate = string.Empty;
+        _employeeToTerminate = employee;
+    }
+
+    private void CancelTerminate()
+    {
+        if (_isProcessing) return;
+        _employeeToTerminate = null;
+        _modalError = null;
+    }
+
+    private async Task TerminateEmployee()
+    {
+        if (_employeeToTerminate is null || _isProcessing) return;
+
+        if (!IsValidPersianDate(_terminationDate))
+        {
+            _modalError = "تاریخ ترک کار را به فرمت ۱۴۰۵/۰۵/۱۷ وارد کنید.";
+            return;
+        }
+
+        _modalError = null;
+        _isProcessing = true;
+
+        var employeeId = _employeeToTerminate.Id;
+        var result = await ApiService.SendAsync(
+            apiCall: () => ApiClient.TerminateEmployeeAsync(employeeId,
+                new TerminateEmployeeRequest(_terminationDate.Trim())),
+            successMessage: "ترک کار کارمند با موفقیت ثبت شد."
+        );
+
+        _isProcessing = false;
+
+        if (result?.IsSuccess is true)
+        {
+            _employeeToTerminate = null;
+            await LoadEmployeesAsync();
+        }
+    }
+
+    private async Task ConfirmRehire(GetUserEmployeesResponse employee)
+    {
+        _modalError = null;
+        _rehireDate = string.Empty;
+        _rehireDepartmentId = string.Empty;
+        _rehireDepartments = null;
+        _employeeToRehire = employee;
+
+        await LoadRehireDepartmentsAsync(employee.Id);
+    }
+
+    private async Task LoadRehireDepartmentsAsync(Guid employeeId)
+    {
+        _isLoadingRehireDepartments = true;
+        StateHasChanged();
+
+        var employeeResult = await ApiService.SendAsync(() => ApiClient.GetEmployeeForEditAsync(employeeId));
+
+        if (employeeResult?.IsSuccess is true)
+        {
+            var workshopId = employeeResult.Response.WorkshopId;
+
+            var departmentsResult = await ApiService.SendAsync(
+                () => ApiClient.GetUserDepartmentsAsync(1, 100, null, null, workshopId));
+
+            if (departmentsResult?.IsSuccess is true)
+            {
+                _rehireDepartments = departmentsResult.Response.Items.ToList();
+                _rehireDepartmentId = employeeResult.Response.DepartmentId.ToString();
+            }
+        }
+
+        _isLoadingRehireDepartments = false;
+        StateHasChanged();
+    }
+
+    private void CancelRehire()
+    {
+        if (_isProcessing) return;
+        _employeeToRehire = null;
+        _modalError = null;
+    }
+
+    private async Task RehireEmployee()
+    {
+        if (_employeeToRehire is null || _isProcessing) return;
+
+        if (string.IsNullOrEmpty(_rehireDepartmentId))
+        {
+            _modalError = "انتخاب بخش اجباری است.";
+            return;
+        }
+
+        if (!IsValidPersianDate(_rehireDate))
+        {
+            _modalError = "تاریخ استخدام مجدد را به فرمت ۱۴۰۵/۰۵/۱۷ وارد کنید.";
+            return;
+        }
+
+        _modalError = null;
+        _isProcessing = true;
+
+        var employeeId = _employeeToRehire.Id;
+        var departmentId = Guid.Parse(_rehireDepartmentId);
+        var result = await ApiService.SendAsync(
+            apiCall: () => ApiClient.RehireEmployeeAsync(employeeId,
+                new RehireEmployeeRequest(departmentId, _rehireDate.Trim())),
+            successMessage: "کارمند با موفقیت دوباره استخدام شد."
+        );
+
+        _isProcessing = false;
+
+        if (result?.IsSuccess is true)
+        {
+            _employeeToRehire = null;
+            await LoadEmployeesAsync();
+        }
+    }
+
+    private static bool IsValidPersianDate(string? value) =>
+        !string.IsNullOrWhiteSpace(value) &&
+        System.Text.RegularExpressions.Regex.IsMatch(value.Trim(), PersianDatePattern);
 
     private static string GetStatusDisplayName(int status) => status switch
     {
