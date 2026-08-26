@@ -489,7 +489,7 @@
             }
             else if (result != null)
             {
-                _formHelper.SetServerErrors(result.Errors);
+                _formHelper.SetServerErrors(GetNonNestedBankAccountErrors(result.Errors));
                 SetServerBankAccountErrors(result.Errors);
                 ToastService.ShowToastWarning("لطفاً خطاها را بررسی کنید.");
             }
@@ -513,7 +513,7 @@
             }
             else if (result != null)
             {
-                _formHelper.SetServerErrors(result.Errors);
+                _formHelper.SetServerErrors(GetNonNestedBankAccountErrors(result.Errors));
                 SetServerBankAccountErrors(result.Errors);
                 ToastService.ShowToastWarning("لطفاً خطاها را بررسی کنید.");
             }
@@ -582,6 +582,13 @@
         }
 
         return isValid;
+    }
+
+    private Dictionary<string, ICollection<string>> GetNonNestedBankAccountErrors(IDictionary<string, ICollection<string>> errors)
+    {
+        return errors
+            .Where(x => !System.Text.RegularExpressions.Regex.IsMatch(x.Key, @"^BankAccounts\[(\d+)\]\.(.+)$"))
+            .ToDictionary(x => x.Key, x => x.Value);
     }
 
     private void SetServerBankAccountErrors(IDictionary<string, ICollection<string>> errors)
