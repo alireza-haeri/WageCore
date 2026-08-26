@@ -634,6 +634,48 @@
         }
       }
     },
+    "/api/v1/employees/{employeeId}/edit": {
+      "get": {
+        "tags": [
+          "Employee"
+        ],
+        "summary": "GetEmployeeForEdit",
+        "operationId": "GetEmployeeForEdit",
+        "parameters": [
+          {
+            "name": "employeeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetEmployeeForEditResponseResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetEmployeeForEditResponseResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetEmployeeForEditResponseResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/users/register": {
       "post": {
         "tags": [
@@ -1549,6 +1591,164 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/GetDepartmentForEditQueryResponse"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "GetEmployeeForEditResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "workshopId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "departmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "personalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "nationalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "birthCertificateNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "fatherName": {
+            "type": "string",
+            "nullable": true
+          },
+          "gender": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "Man",
+              "Woman"
+            ],
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "maritalStatus": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "Single",
+              "Married",
+              "Divorced",
+              "Widowed"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "childrenCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hireDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "jobTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "isTaxSubject": {
+            "type": "boolean"
+          },
+          "insuranceNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "socialSecurityContractRow": {
+            "type": "string",
+            "nullable": true
+          },
+          "positionInInsuranceList": {
+            "type": "string",
+            "nullable": true
+          },
+          "isSubjectTo7PercentInsurance": {
+            "type": "boolean"
+          },
+          "isSubjectTo20PercentInsurance": {
+            "type": "boolean"
+          },
+          "isSubjectTo3PercentInsurance": {
+            "type": "boolean"
+          },
+          "insuranceCalculationProfile": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "FullLegal",
+              "MinimumLaborLaw"
+            ],
+            "enum": [
+              0,
+              1
+            ]
+          }
+        }
+      },
+      "GetEmployeeForEditResponseResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GetEmployeeForEditResponse"
               }
             ]
           },

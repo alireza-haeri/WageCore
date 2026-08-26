@@ -118,6 +118,14 @@ namespace Web.Ui.Services
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// GetEmployeeForEdit
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<GetEmployeeForEditResponseResult> GetEmployeeForEditAsync(System.Guid employeeId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// RegisterUser
         /// </summary>
         /// <returns>OK</returns>
@@ -1089,6 +1097,85 @@ namespace Web.Ui.Services
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<BooleanResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// GetEmployeeForEdit
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<GetEmployeeForEditResponseResult> GetEmployeeForEditAsync(System.Guid employeeId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (employeeId == null)
+                throw new System.ArgumentNullException("employeeId");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/v1/employees/{employeeId}/edit"
+                    urlBuilder_.Append("api/v1/employees/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(employeeId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/edit");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<GetEmployeeForEditResponseResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -2285,6 +2372,126 @@ namespace Web.Ui.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record GetEmployeeForEditResponse
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public GetEmployeeForEditResponse(string @birthCertificateNumber, int @childrenCount, System.Guid @departmentId, string @fatherName, string @fullName, GetEmployeeForEditResponseGender @gender, string @hireDate, GetEmployeeForEditResponseInsuranceCalculationProfile @insuranceCalculationProfile, string @insuranceNumber, bool @isSubjectTo20PercentInsurance, bool @isSubjectTo3PercentInsurance, bool @isSubjectTo7PercentInsurance, bool @isTaxSubject, string @jobTitle, GetEmployeeForEditResponseMaritalStatus @maritalStatus, string @nationalCode, string @personalCode, string @phoneNumber, string @positionInInsuranceList, string @socialSecurityContractRow, System.Guid @workshopId)
+        {
+            this.WorkshopId = @workshopId;
+            this.DepartmentId = @departmentId;
+            this.PersonalCode = @personalCode;
+            this.FullName = @fullName;
+            this.NationalCode = @nationalCode;
+            this.BirthCertificateNumber = @birthCertificateNumber;
+            this.FatherName = @fatherName;
+            this.Gender = @gender;
+            this.MaritalStatus = @maritalStatus;
+            this.ChildrenCount = @childrenCount;
+            this.HireDate = @hireDate;
+            this.PhoneNumber = @phoneNumber;
+            this.JobTitle = @jobTitle;
+            this.IsTaxSubject = @isTaxSubject;
+            this.InsuranceNumber = @insuranceNumber;
+            this.SocialSecurityContractRow = @socialSecurityContractRow;
+            this.PositionInInsuranceList = @positionInInsuranceList;
+            this.IsSubjectTo7PercentInsurance = @isSubjectTo7PercentInsurance;
+            this.IsSubjectTo20PercentInsurance = @isSubjectTo20PercentInsurance;
+            this.IsSubjectTo3PercentInsurance = @isSubjectTo3PercentInsurance;
+            this.InsuranceCalculationProfile = @insuranceCalculationProfile;
+        }
+
+        [Newtonsoft.Json.JsonProperty("workshopId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid WorkshopId { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("departmentId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid DepartmentId { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("personalCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string PersonalCode { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("fullName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string FullName { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("nationalCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string NationalCode { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("birthCertificateNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string BirthCertificateNumber { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("fatherName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string FatherName { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("gender", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public GetEmployeeForEditResponseGender Gender { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("maritalStatus", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public GetEmployeeForEditResponseMaritalStatus MaritalStatus { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("childrenCount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int ChildrenCount { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("hireDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string HireDate { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("phoneNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string PhoneNumber { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("jobTitle", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string JobTitle { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("isTaxSubject", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsTaxSubject { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("insuranceNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string InsuranceNumber { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("socialSecurityContractRow", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string SocialSecurityContractRow { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("positionInInsuranceList", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string PositionInInsuranceList { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("isSubjectTo7PercentInsurance", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsSubjectTo7PercentInsurance { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("isSubjectTo20PercentInsurance", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsSubjectTo20PercentInsurance { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("isSubjectTo3PercentInsurance", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsSubjectTo3PercentInsurance { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("insuranceCalculationProfile", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public GetEmployeeForEditResponseInsuranceCalculationProfile InsuranceCalculationProfile { get; init; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record GetEmployeeForEditResponseResult
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public GetEmployeeForEditResponseResult(GetEmployeeForEditResponseResultBadResultType? @badResultType, System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<string>> @errors, bool @isSuccess, GetEmployeeForEditResponse @response)
+        {
+            this.IsSuccess = @isSuccess;
+            this.BadResultType = @badResultType;
+            this.Response = @response;
+            this.Errors = @errors;
+        }
+
+        [Newtonsoft.Json.JsonProperty("isSuccess", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsSuccess { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("badResultType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public GetEmployeeForEditResponseResultBadResultType? BadResultType { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("response", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public GetEmployeeForEditResponse Response { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("errors", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<string>> Errors { get; init; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial record GetUserDepartmentsNameQueryResponse
     {
         [Newtonsoft.Json.JsonConstructor]
@@ -3066,6 +3273,54 @@ namespace Web.Ui.Services
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum GetDepartmentForEditQueryResponseResultBadResultType
+    {
+
+        NotFound = 0,
+
+        Validation = 1,
+
+        General = 2,
+
+        Unauthorized = 3,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum GetEmployeeForEditResponseGender
+    {
+
+        Man = 0,
+
+        Woman = 1,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum GetEmployeeForEditResponseInsuranceCalculationProfile
+    {
+
+        FullLegal = 0,
+
+        MinimumLaborLaw = 1,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum GetEmployeeForEditResponseMaritalStatus
+    {
+
+        Single = 0,
+
+        Married = 1,
+
+        Divorced = 2,
+
+        Widowed = 3,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum GetEmployeeForEditResponseResultBadResultType
     {
 
         NotFound = 0,
