@@ -5,50 +5,56 @@ public class ControlBankAccountTests
     private readonly EmployeeBuilder _builder = new();
 
     [Fact]
-    public void CreateBankAccount_WithValidData_ShouldReturnSuccess()
+    public void ReplaceBankAccounts_WithSingleBankAccount_ShouldReturnSuccess()
     {
         var employee = _builder.CreateResult().ShouldBeSuccess();
-        var bankAccountDto = new EmployeeBankAccountDto("حساب حقوق", "IR123456789012345678901234");
 
-        var result = employee.CreateBankAccount(bankAccountDto);
+        var result = employee.ReplaceBankAccounts([
+            new EmployeeBankAccountDto("حساب حقوق", "IR123456789012345678901234")
+        ]);
 
-        var response = result.ShouldBeSuccess();
+        result.ShouldBeSuccess();
         using (new AssertionScope())
         {
-            response.Id.Should().NotBeEmpty();
-            response.Title.Should().Be("حساب حقوق");
-            response.Iban.Should().Be("123456789012345678901234");
-            employee.BankAccounts.Should().Contain(response);
+            employee.BankAccounts.Should().ContainSingle();
+            employee.BankAccounts.First().Title.Should().Be("حساب حقوق");
+            employee.BankAccounts.First().Iban.Should().Be("123456789012345678901234");
         }
     }
 
     [Fact]
-    public void CreateBankAccount_WithDuplicateIban_ShouldFail()
+    public void ReplaceBankAccounts_WithMultipleBankAccounts_ShouldReturnSuccess()
     {
         var employee = _builder.CreateResult().ShouldBeSuccess();
-        employee.CreateBankAccount(new EmployeeBankAccountDto("اول", "IR123456789012345678901234")).ShouldBeSuccess();
-
-        var result = employee.CreateBankAccount(new EmployeeBankAccountDto("دوم", "IR123456789012345678901234"));
-
-        result.ShouldBeFailure("شماره شبا برای این کارمند تکراری است.");
-    }
-
-    [Fact]
-    public void ReplaceBankAccounts_WithValidData_ShouldReturnSuccess()
-    {
-        var employee = _builder.CreateResult().ShouldBeSuccess();
-        employee.CreateBankAccount(Guid.NewGuid(), new EmployeeBankAccountDto("اول", "IR123456789012345678901234"))
-            .ShouldBeSuccess();
 
         var result = employee.ReplaceBankAccounts([
-            new EmployeeBankAccountDto("حساب حقوق", "IR999999999999999999999999", Guid.NewGuid()),
-            new EmployeeBankAccountDto("حساب پس‌انداز", "IR888888888888888888888888")
+            new EmployeeBankAccountDto("حساب حقوق", "IR123456789012345678901234", Guid.NewGuid()),
+            new EmployeeBankAccountDto("حساب پس‌انداز", "IR999999999999999999999999")
         ]);
 
         result.ShouldBeSuccess();
         employee.BankAccounts.Should().HaveCount(2);
-        employee.BankAccounts.Should().Contain(x => x.Title == "حساب حقوق" && x.Iban == "999999999999999999999999");
-        employee.BankAccounts.Should().Contain(x => x.Title == "حساب پس‌انداز" && x.Iban == "888888888888888888888888");
+        employee.BankAccounts.Should().Contain(x => x.Title == "حساب حقوق" && x.Iban == "123456789012345678901234");
+        employee.BankAccounts.Should().Contain(x => x.Title == "حساب پس‌انداز" && x.Iban == "999999999999999999999999");
+    }
+
+    [Fact]
+    public void ReplaceBankAccounts_ShouldReplacePreviousBankAccounts()
+    {
+        var employee = _builder.CreateResult().ShouldBeSuccess();
+        employee.ReplaceBankAccounts([
+            new EmployeeBankAccountDto("اول", "IR123456789012345678901234", Guid.NewGuid()),
+            new EmployeeBankAccountDto("دوم", "IR222222222222222222222222", Guid.NewGuid())
+        ]).ShouldBeSuccess();
+
+        var result = employee.ReplaceBankAccounts([
+            new EmployeeBankAccountDto("سوم", "IR333333333333333333333333", Guid.NewGuid())
+        ]);
+
+        result.ShouldBeSuccess();
+        employee.BankAccounts.Should().ContainSingle();
+        employee.BankAccounts.First().Title.Should().Be("سوم");
+        employee.BankAccounts.First().Iban.Should().Be("333333333333333333333333");
     }
 
     [Fact]
@@ -79,42 +85,15 @@ public class ControlBankAccountTests
     }
 
     [Fact]
-    public void UpdateBankAccount_WithValidData_ShouldReturnSuccess()
+    public void ReplaceBankAccounts_WithInvalidIban_ShouldFail()
     {
         var employee = _builder.CreateResult().ShouldBeSuccess();
-        var bankAccount = employee.CreateBankAccount(new EmployeeBankAccountDto("حساب اول", "IR123456789012345678901234")).ShouldBeSuccess();
 
-        var result = employee.UpdateBankAccount(bankAccount.Id, new EmployeeBankAccountDto("حساب دوم", "IR999999999999999999999999"));
+        var result = employee.ReplaceBankAccounts([
+            new EmployeeBankAccountDto("اول", "123")
+        ]);
 
-        result.ShouldBeSuccess();
-        using (new AssertionScope())
-        {
-            bankAccount.Title.Should().Be("حساب دوم");
-            bankAccount.Iban.Should().Be("999999999999999999999999");
-        }
-    }
-
-    [Fact]
-    public void DeleteBankAccount_WithValidData_ShouldReturnSuccess()
-    {
-        var employee = _builder.CreateResult().ShouldBeSuccess();
-        var bankAccount = employee.CreateBankAccount(new EmployeeBankAccountDto("حساب اول", "IR123456789012345678901234")).ShouldBeSuccess();
-
-        var result = employee.DeleteBankAccount(bankAccount.Id);
-
-        result.ShouldBeSuccess();
-        employee.BankAccounts.Should().NotContain(bankAccount);
-    }
-
-    [Fact]
-    public void CreateBankAccount_WhenEmployeeIsTerminated_ShouldFail()
-    {
-        var employee = _builder.CreateResult().ShouldBeSuccess();
-        employee.Terminate(DateOnly.FromDateTime(DateTime.Now)).ShouldBeSuccess();
-
-        var result = employee.CreateBankAccount(new EmployeeBankAccountDto("حساب حقوق", "IR123456789012345678901234"));
-
-        result.ShouldBeFailure("کارمند ترک کار شده است");
+        result.ShouldBeFailure("شماره شبا باید با IR شروع شود و پس از آن 24 رقم انگلیسی داشته باشد.");
     }
 
     [Fact]

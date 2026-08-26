@@ -6,6 +6,6 @@ public record UpdateEmployeeCommand(
     Guid UserId,
     Guid EmployeeId,
     EmployeeDto Employee,
-    EmployeeInsuranceDto? Insurance = null,
-    List<EmployeeBankAccountDto>? BankAccounts = null)
+    EmployeeInsuranceDto Insurance,
+    List<EmployeeBankAccountDto> BankAccounts)
     : IRequest<Result<bool>>;

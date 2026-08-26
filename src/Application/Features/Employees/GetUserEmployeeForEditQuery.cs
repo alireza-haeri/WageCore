@@ -27,7 +27,4 @@ public record GetUserEmployeeForEditQueryResponse(
     bool IsSubjectTo20PercentInsurance,
     bool IsSubjectTo3PercentInsurance,
     InsuranceCalculationProfile InsuranceCalculationProfile,
-    List<EmployeeBankAccountDto> BankAccounts,
-    Guid? BankAccountId = null,
-    string? BankAccountTitle = null,
-    string? BankAccountIban = null);
+    List<EmployeeBankAccountDto> BankAccounts);

@@ -78,9 +78,6 @@ public class GetUserEmployeeForEditQueryHandlerTests
         response.InsuranceCalculationProfile.Should().Be(InsuranceCalculationProfile.FullLegal);
         response.BankAccounts.Should().HaveCount(2);
         response.BankAccounts.Should().Contain(x => x.Id == ValidBankAccountId && x.Title == "حساب حقوق" && x.Iban == "123456789012345678901234");
-        response.BankAccountId.Should().Be(ValidBankAccountId);
-        response.BankAccountTitle.Should().Be("حساب حقوق");
-        response.BankAccountIban.Should().Be("123456789012345678901234");
     }
 
     [Fact]
@@ -119,9 +116,6 @@ public class GetUserEmployeeForEditQueryHandlerTests
 
         var response = result.ShouldBeSuccess();
         response.BankAccounts.Should().BeEmpty();
-        response.BankAccountId.Should().BeNull();
-        response.BankAccountTitle.Should().BeNull();
-        response.BankAccountIban.Should().BeNull();
     }
 
     [Fact]

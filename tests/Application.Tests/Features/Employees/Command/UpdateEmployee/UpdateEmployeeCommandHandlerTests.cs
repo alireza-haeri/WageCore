@@ -37,12 +37,10 @@ public class UpdateEmployeeCommandHandlerTests
             .ShouldBeSuccess();
 
         if (createBankAccounts)
-        {
-            employee.CreateBankAccount(Guid.NewGuid(), new EmployeeBankAccountDto("حساب اول", "IR111111111111111111111111"))
-                .ShouldBeSuccess();
-            employee.CreateBankAccount(Guid.NewGuid(), new EmployeeBankAccountDto("حساب دوم", "IR222222222222222222222222"))
-                .ShouldBeSuccess();
-        }
+            employee.ReplaceBankAccounts([
+                new EmployeeBankAccountDto("حساب اول", "IR111111111111111111111111", Guid.NewGuid()),
+                new EmployeeBankAccountDto("حساب دوم", "IR222222222222222222222222", Guid.NewGuid())
+            ]).ShouldBeSuccess();
 
         return employee;
     }

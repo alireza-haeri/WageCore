@@ -12,8 +12,6 @@ public class GetUserEmployeeForEditQueryHandler(IEmployeeQuery employeeQuery)
         if (employee is null)
             return Result<GetUserEmployeeForEditQueryResponse>.NotfoundFailure("کارمند مورد نظر یافت نشد.");
 
-        var firstBankAccount = employee.BankAccounts.FirstOrDefault();
-
         return Result<GetUserEmployeeForEditQueryResponse>.Success(
             new GetUserEmployeeForEditQueryResponse(
                 employee.WorkshopId,
@@ -37,10 +35,7 @@ public class GetUserEmployeeForEditQueryHandler(IEmployeeQuery employeeQuery)
                 employee.IsSubjectTo20PercentInsurance,
                 employee.IsSubjectTo3PercentInsurance,
                 employee.InsuranceCalculationProfile,
-                employee.BankAccounts,
-                firstBankAccount?.Id,
-                firstBankAccount?.Title,
-                firstBankAccount?.Iban
+                employee.BankAccounts
             )
         );
     }

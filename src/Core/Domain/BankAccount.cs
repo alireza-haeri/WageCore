@@ -29,25 +29,6 @@ public class BankAccount
         });
     }
 
-    public static DomainResult<BankAccount> Create(EmployeeBankAccountDto? bankAccount) =>
-        Create(Guid.NewGuid(), bankAccount);
-
-    public DomainResult Update(EmployeeBankAccountDto? bankAccount)
-    {
-        var validationResult = Validate(bankAccount);
-        if (!validationResult.IsSuccess)
-            return validationResult;
-
-        var ibanResult = NormalizeIban(bankAccount!.Iban);
-        if (!ibanResult.IsSuccess)
-            return DomainResult.Failure(ibanResult.ErrorMessage!);
-
-        Title = NormalizeTitle(bankAccount.Title);
-        Iban = ibanResult.Response;
-
-        return DomainResult.Success();
-    }
-
     internal static DomainResult<string> NormalizeIban(string iban)
     {
         if (string.IsNullOrWhiteSpace(iban))

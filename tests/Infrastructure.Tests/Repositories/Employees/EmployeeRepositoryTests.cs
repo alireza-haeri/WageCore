@@ -100,8 +100,9 @@ public class EmployeeRepositoryTests(WageCoreDbContextFixture fixture)
 
         var employee = await CreateEmployeeAsync(scope, workshop.Id, departmentId);
 
-        employee.CreateBankAccount(new EmployeeBankAccountDto("حقوق", "IR123456789012345678901234"))
-            .ShouldBeSuccess();
+        employee.ReplaceBankAccounts([
+            new EmployeeBankAccountDto("حقوق", "IR123456789012345678901234")
+        ]).ShouldBeSuccess();
         await repository.UpdateAsync(employee);
 
         var result = await repository.GetByIdAsync(userId, employee.Id);
