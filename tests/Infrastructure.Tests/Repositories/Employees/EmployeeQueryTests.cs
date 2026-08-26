@@ -507,4 +507,38 @@ public class EmployeeQueryTests(WageCoreDbContextFixture fixture)
     }
 
     #endregion
+
+    [Fact]
+    public async Task GetUserEmployeesAsync_WhenEmployeeIsRehired_ShouldReturnEmployedStatus()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<EmployeeRepository>();
+        var query = scope.ServiceProvider.GetRequiredService<IEmployeeQuery>();
+        var userId = await CreateUserAsync(scope);
+
+        var departmentId = Guid.NewGuid();
+        var workshop = await CreateWorkshopWithDepartmentAsync(scope, userId, departmentId,
+            "کارگاه نمونه", "بخش تولید", "1111111111");
+
+        var employee = await CreateEmployeeAsync(scope, workshop.Id, departmentId, "EMP001", "علی رضایی", "1234567890");
+        var rehireDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-1));
+
+        employee.Terminate(DateOnly.FromDateTime(DateTime.Now.AddDays(-3))).ShouldBeSuccess();
+        await repository.UpdateAsync(employee);
+
+        employee.Rehire(new EmployeeRehireDto(
+            departmentId,
+            workshop.RegistrationDate,
+            rehireDate)).ShouldBeSuccess();
+        await repository.UpdateAsync(employee);
+
+        var pagination = new PaginationDto(1, 10);
+        var result = await query.GetUserEmployeesAsync(userId, pagination, status: EmployeeStatus.Employed);
+
+        result.TotalCount.Should().Be(1);
+        result.Items.Should().ContainSingle();
+        result.Items.First().PersonalCode.Should().Be("EMP001");
+        result.Items.First().Status.Should().Be(EmployeeStatus.Employed);
+        result.Items.First().HireDate.Should().Be(rehireDate);
+    }
 }

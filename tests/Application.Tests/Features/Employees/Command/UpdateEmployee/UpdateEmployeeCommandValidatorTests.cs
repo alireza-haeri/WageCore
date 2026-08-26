@@ -83,6 +83,17 @@ public class UpdateEmployeeCommandValidatorTests
     }
 
     [Fact]
+    public void Validate_WithEmptyBankAccounts_ShouldHaveValidationError()
+    {
+        var command = CreateValidCommand(bankAccounts: []);
+
+        var result = _validator.TestValidate(command);
+
+        result.ShouldHaveValidationErrorFor(x => x.BankAccounts)
+            .WithErrorMessage("کارمند باید حداقل یک حساب بانکی داشته باشد.");
+    }
+
+    [Fact]
     public void Validate_WithInvalidBankAccountIban_ShouldHaveValidationError()
     {
         var bankAccounts = new List<EmployeeBankAccountDto>

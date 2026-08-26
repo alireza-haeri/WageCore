@@ -21,7 +21,8 @@ public class CreateEmployeeCommandValidator : AbstractValidator<CreateEmployeeCo
             .SetValidator(new EmployeeInsuranceValidator());
 
         RuleFor(x => x.BankAccounts)
-            .NotNull().WithMessage("اطلاعات حساب‌های بانکی اجباری است.");
+            .NotNull().WithMessage("اطلاعات حساب‌های بانکی اجباری است.")
+            .NotEmpty().WithMessage("کارمند باید حداقل یک حساب بانکی داشته باشد.");
 
         RuleForEach(x => x.BankAccounts)
             .SetValidator(new EmployeeBankAccountValidator());

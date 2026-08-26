@@ -82,6 +82,11 @@ public class EmployeeConfigurations : IEntityTypeConfiguration<Employee>
         builder.HasOne<Workshop>()
             .WithMany()
             .HasForeignKey(x => x.WorkshopId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne<Department>()
+            .WithMany()
+            .HasForeignKey(x => x.DepartmentId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.OwnsOne(x => x.Insurance, insuranceBuilder =>

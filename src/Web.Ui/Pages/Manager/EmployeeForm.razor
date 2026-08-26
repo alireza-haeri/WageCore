@@ -229,6 +229,11 @@
                     <svg class="ic"><use href="assets/img/icons.svg#i-info"/></svg>
                     <div>هنوز حساب بانکی ثبت نشده است. برای افزودن حساب، روی دکمهٔ «افزودن حساب» بزنید.</div>
                 </div>
+
+                @if (!string.IsNullOrEmpty(_bankAccountsError))
+                {
+                    <div class="f-help text-danger mt-2">@_bankAccountsError</div>
+                }
             }
             else
             {
@@ -241,7 +246,9 @@
                                 <div class="panel-b">
                                     <div class="d-flex align-items-center justify-content-between mb-3">
                                         <b>حساب @( (i + 1).ToPersianNumber() )</b>
-                                        <button type="button" class="icobtn danger" title="حذف حساب"
+                                        <button type="button" class="icobtn danger"
+                                                title="@(_formHelper.Model.BankAccounts.Count <= 1 ? "کارمند باید حداقل یک حساب بانکی داشته باشد." : "حذف حساب")"
+                                                disabled="@(_formHelper.Model.BankAccounts.Count <= 1)"
                                                 @onclick="() => RemoveBankAccount(bankAccount)">
                                             <svg class="ic"><use href="assets/img/icons.svg#i-trash"/></svg>
                                         </button>
@@ -296,6 +303,7 @@
 
     private FormHelper<EmployeeFormModel> _formHelper = new(fieldMapping: CreateFieldMapping());
     private readonly Dictionary<string, List<string>> _bankAccountErrors = [];
+    private string? _bankAccountsError;
     private List<GetUserWorkshopsNameQueryResponseWorkshopName>? _userWorkshops;
     private List<GetUserDepartmentsQueryResponse>? _userDepartments;
     private bool _isLoading;
@@ -351,7 +359,7 @@
                     };
 
                     if (_formHelper.Model.BankAccounts.Count == 0)
-                        _formHelper.Model.BankAccounts = [];
+                        _formHelper.Model.BankAccounts.Add(new EmployeeBankAccountFormModel());
 
                     await LoadDepartmentsAsync(employee.WorkshopId);
                     OnMaritalStatusChanged();
@@ -529,6 +537,14 @@
         var isValid = true;
         var bankAccounts = _formHelper.Model.BankAccounts.Select((bankAccount, index) => new { bankAccount, index }).ToList();
 
+        if (bankAccounts.Count == 0)
+        {
+            _bankAccountsError = "کارمند باید حداقل یک حساب بانکی داشته باشد.";
+            return false;
+        }
+
+        _bankAccountsError = null;
+
         foreach (var item in bankAccounts)
         {
             if (item.bankAccount.Id == Guid.Empty)
@@ -633,6 +649,7 @@
     private void ClearBankAccountErrors()
     {
         _bankAccountErrors.Clear();
+        _bankAccountsError = null;
     }
 
     private static Dictionary<string, string> CreateFieldMapping() => new()

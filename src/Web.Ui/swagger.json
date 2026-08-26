@@ -634,6 +634,152 @@
         }
       }
     },
+    "/api/v1/employees/{employeeId}/terminate": {
+      "post": {
+        "tags": [
+          "Employee"
+        ],
+        "summary": "TerminateEmployee",
+        "operationId": "TerminateEmployee",
+        "parameters": [
+          {
+            "name": "employeeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TerminateEmployeeRequest"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TerminateEmployeeRequest"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TerminateEmployeeRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/employees/{employeeId}/rehire": {
+      "post": {
+        "tags": [
+          "Employee"
+        ],
+        "summary": "RehireEmployee",
+        "operationId": "RehireEmployee",
+        "parameters": [
+          {
+            "name": "employeeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/RehireEmployeeRequest"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/RehireEmployeeRequest"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/RehireEmployeeRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/employees/{employeeId}/edit": {
       "get": {
         "tags": [
@@ -1339,6 +1485,13 @@
                 "$ref": "#/components/schemas/EmployeeInsuranceRequest"
               }
             ]
+          },
+          "bankAccounts": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/EmployeeBankAccountRequest"
+            }
           }
         }
       },
@@ -1429,6 +1582,44 @@
           },
           "postalCode": {
             "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "EmployeeBankAccountRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "iban": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        }
+      },
+      "EmployeeBankAccountResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "iban": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
             "nullable": true
           }
         }
@@ -1717,6 +1908,13 @@
               0,
               1
             ]
+          },
+          "bankAccounts": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/EmployeeBankAccountResponse"
+            }
           }
         }
       },
@@ -2488,6 +2686,28 @@
           }
         }
       },
+      "RehireEmployeeRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "departmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "hireDate": {
+            "type": "string"
+          }
+        }
+      },
+      "TerminateEmployeeRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "terminationDate": {
+            "type": "string"
+          }
+        }
+      },
       "UpdateDepartmentRequest": {
         "type": "object",
         "additionalProperties": false,
@@ -2509,6 +2729,21 @@
                 "$ref": "#/components/schemas/EmployeeInformationRequest"
               }
             ]
+          },
+          "insurance": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EmployeeInsuranceRequest"
+              }
+            ]
+          },
+          "bankAccounts": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/EmployeeBankAccountRequest"
+            }
           }
         }
       },

@@ -3,10 +3,34 @@ namespace Infrastructure.Tests.Repositories.Departments;
 public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
     : IClassFixture<WageCoreDbContextFixture>, IAsyncLifetime
 {
+    private static readonly DateOnly ValidWorkshopRegistrationDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-30));
+
     private readonly WorkshopBuilder _workshopBuilder = new();
+    private readonly EmployeeBuilder _employeeBuilder = new();
 
     public async Task InitializeAsync() => await fixture.ResetDatabaseAsync();
     public Task DisposeAsync() => Task.CompletedTask;
+
+    private async Task<Core.Domain.Employee> CreateEmployeeAsync(AsyncServiceScope scope, Guid workshopId,
+        Guid departmentId, string personalCode, string nationalCode)
+    {
+        var repository = scope.ServiceProvider.GetRequiredService<EmployeeRepository>();
+
+        var employee = _employeeBuilder
+            .WithId(Guid.NewGuid())
+            .WithWorkshopId(workshopId)
+            .WithDepartmentId(departmentId)
+            .WithWorkshopRegistrationDate(ValidWorkshopRegistrationDate)
+            .WithPersonalCode(personalCode)
+            .WithNationalCode(nationalCode)
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        var result = await repository.CreateAsync(employee);
+        result.Should().Be(employee.Id);
+
+        return employee;
+    }
 
     private async Task<Guid> CreateUserAsync(AsyncServiceScope scope, string? phoneNumber = "09123456789")
     {
@@ -212,7 +236,7 @@ public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
     }
 
     [Fact]
-    public async Task GetUserDepartmentsAsync_ShouldReturnZeroForEmployeesCount()
+    public async Task GetUserDepartmentsAsync_WhenDepartmentHasNoEmployees_ShouldReturnZeroForEmployeesCount()
     {
         await using var scope = fixture.CreateScope();
         var query = scope.ServiceProvider.GetRequiredService<IDepartmentQuery>();
@@ -226,6 +250,78 @@ public class DepartmentQueryTests(WageCoreDbContextFixture fixture)
 
         result.Items.Should().ContainSingle();
         result.Items.First().EmployeesCount.Should().Be(0);
+    }
+
+    [Fact]
+    public async Task GetUserDepartmentsAsync_WhenDepartmentHasEmployees_ShouldReturnEmployeesCount()
+    {
+        await using var scope = fixture.CreateScope();
+        var query = scope.ServiceProvider.GetRequiredService<IDepartmentQuery>();
+        var userId = await CreateUserAsync(scope);
+
+        var departmentId = Guid.NewGuid();
+        var workshop = await CreateWorkshopWithDepartmentsAsync(scope, userId,
+            (departmentId, "بخش تولید"));
+
+        await CreateEmployeeAsync(scope, workshop.Id, departmentId, "EMP001", "1234567890");
+        await CreateEmployeeAsync(scope, workshop.Id, departmentId, "EMP002", "0987654321");
+        await CreateEmployeeAsync(scope, workshop.Id, departmentId, "EMP003", "1111111111");
+
+        var pagination = new PaginationDto(1, 10);
+        var result = await query.GetUserDepartmentsAsync(userId, pagination);
+
+        result.Items.Should().ContainSingle();
+        result.Items.First().EmployeesCount.Should().Be(3);
+    }
+
+    [Fact]
+    public async Task GetUserDepartmentsAsync_ShouldCountOnlyEmployeesOfEachDepartment()
+    {
+        await using var scope = fixture.CreateScope();
+        var query = scope.ServiceProvider.GetRequiredService<IDepartmentQuery>();
+        var userId = await CreateUserAsync(scope);
+
+        var departmentId1 = Guid.NewGuid();
+        var departmentId2 = Guid.NewGuid();
+        var workshop = await CreateWorkshopWithDepartmentsAsync(scope, userId,
+            (departmentId1, "بخش تولید"),
+            (departmentId2, "بخش انبار"));
+
+        await CreateEmployeeAsync(scope, workshop.Id, departmentId1, "EMP001", "1234567890");
+        await CreateEmployeeAsync(scope, workshop.Id, departmentId1, "EMP002", "0987654321");
+        await CreateEmployeeAsync(scope, workshop.Id, departmentId2, "EMP003", "1111111111");
+
+        var pagination = new PaginationDto(1, 10);
+        var result = await query.GetUserDepartmentsAsync(userId, pagination);
+
+        result.Items.Should().HaveCount(2);
+        result.Items.First(x => x.DepartmentId == departmentId1).EmployeesCount.Should().Be(2);
+        result.Items.First(x => x.DepartmentId == departmentId2).EmployeesCount.Should().Be(1);
+    }
+
+    [Fact]
+    public async Task GetUserDepartmentsAsync_ShouldCountTerminatedEmployeesAsWell()
+    {
+        await using var scope = fixture.CreateScope();
+        var employeeRepository = scope.ServiceProvider.GetRequiredService<EmployeeRepository>();
+        var query = scope.ServiceProvider.GetRequiredService<IDepartmentQuery>();
+        var userId = await CreateUserAsync(scope);
+
+        var departmentId = Guid.NewGuid();
+        var workshop = await CreateWorkshopWithDepartmentsAsync(scope, userId,
+            (departmentId, "بخش تولید"));
+
+        await CreateEmployeeAsync(scope, workshop.Id, departmentId, "EMP001", "1234567890");
+        var terminatedEmployee = await CreateEmployeeAsync(scope, workshop.Id, departmentId, "EMP002", "0987654321");
+
+        terminatedEmployee.Terminate(DateOnly.FromDateTime(DateTime.Now)).ShouldBeSuccess();
+        await employeeRepository.UpdateAsync(terminatedEmployee);
+
+        var pagination = new PaginationDto(1, 10);
+        var result = await query.GetUserDepartmentsAsync(userId, pagination);
+
+        result.Items.Should().ContainSingle();
+        result.Items.First().EmployeesCount.Should().Be(2);
     }
 
     #endregion

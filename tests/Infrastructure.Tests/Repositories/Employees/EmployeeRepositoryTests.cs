@@ -223,4 +223,95 @@ public class EmployeeRepositoryTests(WageCoreDbContextFixture fixture)
 
         deleteResult.Should().BeFalse();
     }
+
+    [Fact]
+    public async Task UpdateAsync_WhenEmployeeIsTerminated_ShouldPersistTerminationDate()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<EmployeeRepository>();
+        var userId = await CreateUserAsync(scope);
+        var departmentId = Guid.NewGuid();
+        var workshop = await CreateWorkshopWithDepartmentAsync(scope, userId, departmentId);
+
+        var employee = await CreateEmployeeAsync(scope, workshop.Id, departmentId);
+        var terminationDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-1));
+
+        employee.Terminate(terminationDate).ShouldBeSuccess();
+
+        var updateResult = await repository.UpdateAsync(employee);
+
+        updateResult.Should().BeTrue();
+
+        var storedEmployee = await repository.GetByIdAsync(userId, employee.Id);
+        storedEmployee.Should().NotBeNull();
+        storedEmployee!.TerminationDate.Should().Be(terminationDate);
+        storedEmployee.IsTerminated.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task UpdateAsync_WhenEmployeeIsRehired_ShouldClearTerminationDateAndPersistNewHireData()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<EmployeeRepository>();
+        var userId = await CreateUserAsync(scope);
+        var departmentId = Guid.NewGuid();
+        var workshop = await CreateWorkshopWithDepartmentAsync(scope, userId, departmentId);
+
+        var employee = await CreateEmployeeAsync(scope, workshop.Id, departmentId);
+        var terminationDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-3));
+        var rehireDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-1));
+
+        employee.Terminate(terminationDate).ShouldBeSuccess();
+        await repository.UpdateAsync(employee);
+
+        employee.Rehire(new EmployeeRehireDto(
+            departmentId,
+            workshop.RegistrationDate,
+            rehireDate)).ShouldBeSuccess();
+
+        var updateResult = await repository.UpdateAsync(employee);
+
+        updateResult.Should().BeTrue();
+
+        var storedEmployee = await repository.GetByIdAsync(userId, employee.Id);
+        storedEmployee.Should().NotBeNull();
+        storedEmployee!.TerminationDate.Should().BeNull();
+        storedEmployee.IsTerminated.Should().BeFalse();
+        storedEmployee.HireDate.Should().Be(rehireDate);
+        storedEmployee.DepartmentId.Should().Be(departmentId);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_WhenEmployeeIsRehiredInAnotherDepartment_ShouldPersistNewDepartment()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<EmployeeRepository>();
+        var workshopRepository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
+        var userId = await CreateUserAsync(scope);
+        var departmentId = Guid.NewGuid();
+        var workshop = await CreateWorkshopWithDepartmentAsync(scope, userId, departmentId);
+
+        var newDepartmentId = Guid.NewGuid();
+        workshop.CreateDepartment(newDepartmentId, "بخش اداری").ShouldBeSuccess();
+        await workshopRepository.UpdateAsync(workshop);
+
+        var employee = await CreateEmployeeAsync(scope, workshop.Id, departmentId);
+
+        employee.Terminate(DateOnly.FromDateTime(DateTime.Now.AddDays(-3))).ShouldBeSuccess();
+        await repository.UpdateAsync(employee);
+
+        employee.Rehire(new EmployeeRehireDto(
+            newDepartmentId,
+            workshop.RegistrationDate,
+            DateOnly.FromDateTime(DateTime.Now.AddDays(-1)))).ShouldBeSuccess();
+
+        var updateResult = await repository.UpdateAsync(employee);
+
+        updateResult.Should().BeTrue();
+
+        var storedEmployee = await repository.GetByIdAsync(userId, employee.Id);
+        storedEmployee.Should().NotBeNull();
+        storedEmployee!.DepartmentId.Should().Be(newDepartmentId);
+        storedEmployee.TerminationDate.Should().BeNull();
+    }
 }

@@ -108,4 +108,53 @@ public class ControlBankAccountTests
 
         result.ShouldBeFailure("کارمند ترک کار شده است");
     }
+
+    [Fact]
+    public void ReplaceBankAccounts_WithEmptyList_ShouldFail()
+    {
+        var employee = _builder.CreateResult().ShouldBeSuccess();
+
+        var result = employee.ReplaceBankAccounts([]);
+
+        result.ShouldBeFailure("کارمند باید حداقل یک حساب بانکی داشته باشد.");
+    }
+
+    [Fact]
+    public void ReplaceBankAccounts_WithNull_ShouldFail()
+    {
+        var employee = _builder.CreateResult().ShouldBeSuccess();
+
+        var result = employee.ReplaceBankAccounts(null);
+
+        result.ShouldBeFailure("اطلاعات حساب‌های بانکی نمیتواند خالی باشد.");
+    }
+
+    [Fact]
+    public void ReplaceBankAccounts_WithEmptyList_ShouldNotRemovePreviousBankAccounts()
+    {
+        var employee = _builder.CreateResult().ShouldBeSuccess();
+        employee.ReplaceBankAccounts([
+            new EmployeeBankAccountDto("حساب حقوق", "IR123456789012345678901234")
+        ]).ShouldBeSuccess();
+
+        var result = employee.ReplaceBankAccounts([]);
+
+        result.ShouldBeFailure("کارمند باید حداقل یک حساب بانکی داشته باشد.");
+        using (new AssertionScope())
+        {
+            employee.BankAccounts.Should().ContainSingle();
+            employee.BankAccounts.First().Iban.Should().Be("123456789012345678901234");
+        }
+    }
+
+    [Fact]
+    public void ReplaceBankAccounts_WithEmptyList_WhenEmployeeIsTerminated_ShouldFailWithTerminationMessage()
+    {
+        var employee = _builder.CreateResult().ShouldBeSuccess();
+        employee.Terminate(DateOnly.FromDateTime(DateTime.Now)).ShouldBeSuccess();
+
+        var result = employee.ReplaceBankAccounts([]);
+
+        result.ShouldBeFailure("کارمند ترک کار شده است");
+    }
 }
