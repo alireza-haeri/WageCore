@@ -21,4 +21,5 @@ public record GetEmployeeForEditResponse(
     bool IsSubjectTo7PercentInsurance,
     bool IsSubjectTo20PercentInsurance,
     bool IsSubjectTo3PercentInsurance,
-    InsuranceCalculationProfile InsuranceCalculationProfile);
+    InsuranceCalculationProfile InsuranceCalculationProfile,
+    List<EmployeeBankAccountResponse> BankAccounts);

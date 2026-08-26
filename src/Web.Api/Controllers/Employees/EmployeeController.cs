@@ -37,7 +37,10 @@ public class EmployeeController(IMediator mediator) : BaseController
                 request.Insurance.IsSubjectTo7PercentInsurance,
                 request.Insurance.IsSubjectTo20PercentInsurance,
                 request.Insurance.IsSubjectTo3PercentInsurance,
-                request.Insurance.InsuranceCalculationProfile)
+                request.Insurance.InsuranceCalculationProfile),
+            BankAccounts: request.BankAccounts
+                .Select(x => new EmployeeBankAccountDto(x.Title, x.Iban, x.Id))
+                .ToList()
         ), cancellationToken);
 
         return Result(result);
@@ -66,7 +69,18 @@ public class EmployeeController(IMediator mediator) : BaseController
                 request.Employee.HireDate.ToDateOnly(),
                 request.Employee.PhoneNumber,
                 request.Employee.JobTitle,
-                request.Employee.IsTaxSubject)
+                request.Employee.IsTaxSubject),
+            Insurance: new EmployeeInsuranceDto(
+                request.Insurance.InsuranceNumber,
+                request.Insurance.SocialSecurityContractRow,
+                request.Insurance.PositionInInsuranceList,
+                request.Insurance.IsSubjectTo7PercentInsurance,
+                request.Insurance.IsSubjectTo20PercentInsurance,
+                request.Insurance.IsSubjectTo3PercentInsurance,
+                request.Insurance.InsuranceCalculationProfile),
+            BankAccounts: request.BankAccounts
+                .Select(x => new EmployeeBankAccountDto(x.Title, x.Iban, x.Id))
+                .ToList()
         ), cancellationToken);
 
         return Result(result);
@@ -151,7 +165,13 @@ public class EmployeeController(IMediator mediator) : BaseController
             e.IsSubjectTo7PercentInsurance,
             e.IsSubjectTo20PercentInsurance,
             e.IsSubjectTo3PercentInsurance,
-            e.InsuranceCalculationProfile
+            e.InsuranceCalculationProfile,
+            e.BankAccounts
+                .Select(x => new EmployeeBankAccountResponse(
+                    x.Title,
+                    $"IR{x.Iban}",
+                    x.Id))
+                .ToList()
         ));
 
         return Result(response);
