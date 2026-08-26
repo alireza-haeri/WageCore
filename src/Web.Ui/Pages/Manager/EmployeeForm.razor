@@ -189,33 +189,33 @@
                     <ValidationMessage TValue="EmployeeInsuranceRequestInsuranceCalculationProfile?" For="() => _formHelper.Model.InsuranceCalculationProfile" class="f-help text-danger"/>
                 </div>
 
-                <div class="col-md-4">
+                <label class="col-md-4">
                     <div class="sw-card">
                         <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsTaxSubject"/><i></i></span>
                         <span class="swt">مشمول مالیات حقوق است؟<span class="swd">اگر خیر باشد، مالیات فیش صفر ثبت می‌شود.</span></span>
                     </div>
-                </div>
+                </label>
 
-                <div class="col-md-4">
+                <label class="col-md-4">
                     <div class="sw-card">
                         <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo7PercentInsurance" disabled="@IsEdit"/><i></i></span>
                         <span class="swt">مشمول بیمهٔ ۷٪</span>
                     </div>
-                </div>
+                </label>
 
-                <div class="col-md-4">
+                <label class="col-md-4">
                     <div class="sw-card">
                         <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo20PercentInsurance" disabled="@IsEdit"/><i></i></span>
                         <span class="swt">مشمول بیمهٔ ۲۰٪</span>
                     </div>
-                </div>
+                </label>
 
-                <div class="col-md-4">
+                <label class="col-md-4">
                     <div class="sw-card">
                         <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo3PercentInsurance" disabled="@IsEdit"/><i></i></span>
                         <span class="swt">مشمول بیمهٔ ۳٪</span>
                     </div>
-                </div>
+                </label>
             </div>
 
             <div class="form-foot">
