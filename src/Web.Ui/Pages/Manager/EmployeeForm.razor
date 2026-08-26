@@ -35,7 +35,7 @@
             <div class="row g-3">
                 <div class="col-md-4 field">
                     <label class="f-label" for="e-workshop"><span class="req-s">*</span>کارگاه</label>
-                    <InputSelect @bind-Value="_formHelper.Model.WorkshopId" @bind-Value:after="OnWorkshopChanged" class="in" id="e-workshop" data-autofocus>
+                    <InputSelect @bind-Value="_formHelper.Model.WorkshopId" @bind-Value:after="OnWorkshopChanged" class="in" id="e-workshop" data-autofocus disabled="@IsEdit">
                         <option value="">انتخاب کنید...</option>
                         @if (_userWorkshops is not null)
                         {
@@ -46,6 +46,10 @@
                         }
                     </InputSelect>
                     <ValidationMessage TValue="Guid?" For="() => _formHelper.Model.WorkshopId" class="f-help text-danger"/>
+                    @if (IsEdit)
+                    {
+                        <div class="f-help">در ویرایش، کارگاه قابل تغییر نیست.</div>
+                    }
                 </div>
 
                 <div class="col-md-4 field">
@@ -149,28 +153,36 @@
                 بیمه و مالیات
             </div>
 
+            @if (IsEdit)
+            {
+                <div class="note n-blu mb-3">
+                    <svg class="ic"><use href="assets/img/icons.svg#i-info"/></svg>
+                    <div>در این بخش فعلاً فقط وضعیت مالیات قابل ویرایش است و اطلاعات بیمه برای نمایش بارگذاری می‌شود.</div>
+                </div>
+            }
+
             <div class="row g-3">
                 <div class="col-md-4 field">
                     <label class="f-label" for="e-insuranceNumber"><span class="req-s">*</span>شماره بیمه</label>
-                    <InputText @bind-Value="_formHelper.Model.InsuranceNumber" class="in in-ltr" id="e-insuranceNumber" maxlength="20"/>
+                    <InputText @bind-Value="_formHelper.Model.InsuranceNumber" class="in in-ltr" id="e-insuranceNumber" maxlength="20" disabled="@IsEdit"/>
                     <ValidationMessage TValue="string" For="() => _formHelper.Model.InsuranceNumber" class="f-help text-danger"/>
                 </div>
 
                 <div class="col-md-4 field">
                     <label class="f-label" for="e-socialSecurityContractRow">ردیف پیمان بیمه <span class="f-badge fb-gold">اختیاری</span></label>
-                    <InputText @bind-Value="_formHelper.Model.SocialSecurityContractRow" class="in in-ltr" id="e-socialSecurityContractRow" maxlength="20"/>
+                    <InputText @bind-Value="_formHelper.Model.SocialSecurityContractRow" class="in in-ltr" id="e-socialSecurityContractRow" maxlength="20" disabled="@IsEdit"/>
                     <ValidationMessage TValue="string" For="() => _formHelper.Model.SocialSecurityContractRow" class="f-help text-danger"/>
                 </div>
 
                 <div class="col-md-4 field">
                     <label class="f-label" for="e-positionInInsuranceList"><span class="req-s">*</span>سمت در لیست بیمه</label>
-                    <InputText @bind-Value="_formHelper.Model.PositionInInsuranceList" class="in" id="e-positionInInsuranceList" maxlength="100"/>
+                    <InputText @bind-Value="_formHelper.Model.PositionInInsuranceList" class="in" id="e-positionInInsuranceList" maxlength="100" disabled="@IsEdit"/>
                     <ValidationMessage TValue="string" For="() => _formHelper.Model.PositionInInsuranceList" class="f-help text-danger"/>
                 </div>
 
                 <div class="col-md-4 field">
                     <label class="f-label" for="e-insuranceCalculationProfile"><span class="req-s">*</span>پروفایل محاسبه بیمه</label>
-                    <InputSelect @bind-Value="_formHelper.Model.InsuranceCalculationProfile" class="in" id="e-insuranceCalculationProfile">
+                    <InputSelect @bind-Value="_formHelper.Model.InsuranceCalculationProfile" class="in" id="e-insuranceCalculationProfile" disabled="@IsEdit">
                         <option value="">انتخاب کنید...</option>
                         <option value="@EmployeeInsuranceRequestInsuranceCalculationProfile.FullLegal">کامل و قانونی</option>
                         <option value="@EmployeeInsuranceRequestInsuranceCalculationProfile.MinimumLaborLaw">حداقل قانون کار</option>
@@ -187,21 +199,21 @@
 
                 <div class="col-md-4">
                     <div class="sw-card">
-                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo7PercentInsurance"/><i></i></span>
+                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo7PercentInsurance" disabled="@IsEdit"/><i></i></span>
                         <span class="swt">مشمول بیمهٔ ۷٪</span>
                     </div>
                 </div>
 
                 <div class="col-md-4">
                     <div class="sw-card">
-                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo20PercentInsurance"/><i></i></span>
+                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo20PercentInsurance" disabled="@IsEdit"/><i></i></span>
                         <span class="swt">مشمول بیمهٔ ۲۰٪</span>
                     </div>
                 </div>
 
                 <div class="col-md-4">
                     <div class="sw-card">
-                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo3PercentInsurance"/><i></i></span>
+                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo3PercentInsurance" disabled="@IsEdit"/><i></i></span>
                         <span class="swt">مشمول بیمهٔ ۳٪</span>
                     </div>
                 </div>
@@ -216,7 +228,7 @@
                     else
                     {
                         <svg class="ic"><use href="assets/img/icons.svg#i-check"/></svg>
-                        <span>ثبت کارمند</span>
+                        <span>@(IsEdit ? "ویرایش کارمند" : "ثبت کارمند")</span>
                     }
                 </button>
                 <a class="btn btn-g" href="/employees">انصراف</a>
@@ -228,7 +240,7 @@
 @code {
     [Parameter] public Guid? Id { get; set; }
 
-    private FormHelper<EmployeeFormModel> _formHelper = new();
+    private FormHelper<EmployeeFormModel> _formHelper = new(fieldMapping: CreateFieldMapping());
     private List<GetUserWorkshopsNameQueryResponseWorkshopName>? _userWorkshops;
     private List<GetUserDepartmentsQueryResponse>? _userDepartments;
     private bool _isLoading;
@@ -236,14 +248,60 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadWorkshopsAsync();
+
         if (IsEdit)
         {
-            ToastService.ShowToastInfo("امکان ویرایش کارمند هنوز برای این صفحه آماده نشده است.");
-            NavigationManager.NavigateTo("/employees");
-            return;
-        }
+            _isLoading = true;
+            try
+            {
+                var result = await ApiService.SendAsync(
+                    apiCall: () => ApiClient.GetEmployeeForEditAsync(Id!.Value)
+                );
 
-        await LoadWorkshopsAsync();
+                if (result is { IsSuccess: true })
+                {
+                    var employee = result.Response;
+                    _formHelper.Model = new EmployeeFormModel
+                    {
+                        WorkshopId = employee.WorkshopId,
+                        DepartmentId = employee.DepartmentId,
+                        PersonalCode = employee.PersonalCode,
+                        FullName = employee.FullName,
+                        NationalCode = employee.NationalCode,
+                        BirthCertificateNumber = employee.BirthCertificateNumber,
+                        FatherName = employee.FatherName,
+                        Gender = (EmployeeInformationRequestGender)employee.Gender,
+                        MaritalStatus = (EmployeeInformationRequestMaritalStatus)employee.MaritalStatus,
+                        ChildrenCount = employee.ChildrenCount,
+                        HireDate = employee.HireDate,
+                        PhoneNumber = employee.PhoneNumber,
+                        JobTitle = employee.JobTitle,
+                        IsTaxSubject = employee.IsTaxSubject,
+                        InsuranceNumber = employee.InsuranceNumber,
+                        SocialSecurityContractRow = employee.SocialSecurityContractRow,
+                        PositionInInsuranceList = employee.PositionInInsuranceList,
+                        IsSubjectTo7PercentInsurance = employee.IsSubjectTo7PercentInsurance,
+                        IsSubjectTo20PercentInsurance = employee.IsSubjectTo20PercentInsurance,
+                        IsSubjectTo3PercentInsurance = employee.IsSubjectTo3PercentInsurance,
+                        InsuranceCalculationProfile = (EmployeeInsuranceRequestInsuranceCalculationProfile)employee.InsuranceCalculationProfile
+                    };
+
+                    await LoadDepartmentsAsync(employee.WorkshopId);
+                    OnMaritalStatusChanged();
+                    _formHelper.RebuildEditContext();
+                }
+                else
+                {
+                    ToastService.ShowToastError("کارمند مورد نظر یافت نشد.");
+                    NavigationManager.NavigateTo("/employees");
+                }
+            }
+            finally
+            {
+                _isLoading = false;
+            }
+        }
     }
 
     private async Task LoadWorkshopsAsync()
@@ -252,6 +310,21 @@
         if (result?.IsSuccess is true)
         {
             _userWorkshops = result.Response.WorkshopNames.ToList();
+        }
+    }
+
+    private async Task LoadDepartmentsAsync(Guid workshopId)
+    {
+        var result = await ApiService.SendAsync(() => ApiClient.GetUserDepartmentsAsync(
+            pagination_PageNumber: 1,
+            pagination_PageSize: 100,
+            pagination_Offset: null,
+            searchName: null,
+            workshopId: workshopId));
+
+        if (result?.IsSuccess is true)
+        {
+            _userDepartments = result.Response.Items.ToList();
         }
     }
 
@@ -265,17 +338,7 @@
             return;
         }
 
-        var result = await ApiService.SendAsync(() => ApiClient.GetUserDepartmentsAsync(
-            pagination_PageNumber: 1,
-            pagination_PageSize: 100,
-            pagination_Offset: null,
-            searchName: null,
-            workshopId: _formHelper.Model.WorkshopId));
-
-        if (result?.IsSuccess is true)
-        {
-            _userDepartments = result.Response.Items.ToList();
-        }
+        await LoadDepartmentsAsync(_formHelper.Model.WorkshopId.Value);
     }
 
     private void OnMaritalStatusChanged()
@@ -289,12 +352,12 @@
     private async Task HandleSubmit()
     {
         if (_isLoading) return;
-        
+
         _formHelper.ClearErrors();
-        
-        if(!_formHelper.Validate())
+
+        if (!_formHelper.Validate())
             return;
-        
+
         _isLoading = true;
 
         var model = _formHelper.Model;
@@ -302,49 +365,110 @@
             ? 0
             : model.ChildrenCount ?? 0;
 
-        var result = await ApiService.SendAsync(
-            apiCall: () => ApiClient.CreateEmployeeAsync(new CreateEmployeeRequest(
-                employee: new EmployeeInformationRequest(
-                    birthCertificateNumber: model.BirthCertificateNumber,
-                    childrenCount: childrenCount,
-                    departmentId: model.DepartmentId ?? Guid.Empty,
-                    fatherName: model.FatherName,
-                    fullName: model.FullName,
-                    gender: model.Gender ?? EmployeeInformationRequestGender.Man,
-                    hireDate: model.HireDate,
-                    isTaxSubject: model.IsTaxSubject,
-                    jobTitle: model.JobTitle,
-                    maritalStatus: model.MaritalStatus ?? EmployeeInformationRequestMaritalStatus.Single,
-                    nationalCode: model.NationalCode,
-                    personalCode: model.PersonalCode,
-                    phoneNumber: model.PhoneNumber),
-                insurance: new EmployeeInsuranceRequest(
-                    insuranceCalculationProfile: model.InsuranceCalculationProfile ?? EmployeeInsuranceRequestInsuranceCalculationProfile.FullLegal,
-                    insuranceNumber: model.InsuranceNumber,
-                    isSubjectTo20PercentInsurance: model.IsSubjectTo20PercentInsurance,
-                    isSubjectTo3PercentInsurance: model.IsSubjectTo3PercentInsurance,
-                    isSubjectTo7PercentInsurance: model.IsSubjectTo7PercentInsurance,
-                    positionInInsuranceList: model.PositionInInsuranceList,
-                    socialSecurityContractRow: model.SocialSecurityContractRow),
-                workshopId: model.WorkshopId ?? Guid.Empty
-            )),
-            successMessage: "کارمند با موفقیت ثبت شد.",
-            showErrorToastValidation: false
-        );
+        var employeeRequest = new EmployeeInformationRequest(
+            birthCertificateNumber: model.BirthCertificateNumber,
+            childrenCount: childrenCount,
+            departmentId: model.DepartmentId ?? Guid.Empty,
+            fatherName: model.FatherName,
+            fullName: model.FullName,
+            gender: model.Gender ?? EmployeeInformationRequestGender.Man,
+            hireDate: model.HireDate,
+            isTaxSubject: model.IsTaxSubject,
+            jobTitle: model.JobTitle,
+            maritalStatus: model.MaritalStatus ?? EmployeeInformationRequestMaritalStatus.Single,
+            nationalCode: model.NationalCode,
+            personalCode: model.PersonalCode,
+            phoneNumber: model.PhoneNumber);
 
-        if (result is { IsSuccess: true })
+        if (IsEdit)
         {
-            NavigationManager.NavigateTo("/employees");
+            var result = await ApiService.SendAsync(
+                apiCall: () => ApiClient.UpdateEmployeeAsync(Id!.Value, new UpdateEmployeeRequest(employeeRequest)),
+                successMessage: "کارمند با موفقیت ویرایش شد.",
+                showErrorToastValidation: false
+            );
+
+            if (result is { IsSuccess: true })
+            {
+                NavigationManager.NavigateTo("/employees");
+            }
+            else if (result != null)
+            {
+                _formHelper.SetServerErrors(result.Errors);
+                ToastService.ShowToastWarning("لطفاً خطاها را بررسی کنید.");
+            }
         }
-        else if (result != null)
+        else
         {
-            _formHelper.SetServerErrors(result.Errors);
-            ToastService.ShowToastWarning("لطفاً خطاها را بررسی کنید.");
+            var insuranceRequest = new EmployeeInsuranceRequest(
+                insuranceCalculationProfile: model.InsuranceCalculationProfile ?? EmployeeInsuranceRequestInsuranceCalculationProfile.FullLegal,
+                insuranceNumber: model.InsuranceNumber,
+                isSubjectTo20PercentInsurance: model.IsSubjectTo20PercentInsurance,
+                isSubjectTo3PercentInsurance: model.IsSubjectTo3PercentInsurance,
+                isSubjectTo7PercentInsurance: model.IsSubjectTo7PercentInsurance,
+                positionInInsuranceList: model.PositionInInsuranceList,
+                socialSecurityContractRow: model.SocialSecurityContractRow);
+
+            var result = await ApiService.SendAsync(
+                apiCall: () => ApiClient.CreateEmployeeAsync(new CreateEmployeeRequest(
+                    employee: employeeRequest,
+                    insurance: insuranceRequest,
+                    workshopId: model.WorkshopId ?? Guid.Empty
+                )),
+                successMessage: "کارمند با موفقیت ثبت شد.",
+                showErrorToastValidation: false
+            );
+
+            if (result is { IsSuccess: true })
+            {
+                NavigationManager.NavigateTo("/employees");
+            }
+            else if (result != null)
+            {
+                _formHelper.SetServerErrors(result.Errors);
+                ToastService.ShowToastWarning("لطفاً خطاها را بررسی کنید.");
+            }
         }
 
         _isLoading = false;
     }
 
+    private static Dictionary<string, string> CreateFieldMapping() => new()
+    {
+        ["WorkshopId"] = nameof(EmployeeFormModel.WorkshopId),
+        ["DepartmentId"] = nameof(EmployeeFormModel.DepartmentId),
+        ["Employee.DepartmentId"] = nameof(EmployeeFormModel.DepartmentId),
+        ["PersonalCode"] = nameof(EmployeeFormModel.PersonalCode),
+        ["Employee.PersonalCode"] = nameof(EmployeeFormModel.PersonalCode),
+        ["FullName"] = nameof(EmployeeFormModel.FullName),
+        ["Employee.FullName"] = nameof(EmployeeFormModel.FullName),
+        ["NationalCode"] = nameof(EmployeeFormModel.NationalCode),
+        ["Employee.NationalCode"] = nameof(EmployeeFormModel.NationalCode),
+        ["BirthCertificateNumber"] = nameof(EmployeeFormModel.BirthCertificateNumber),
+        ["Employee.BirthCertificateNumber"] = nameof(EmployeeFormModel.BirthCertificateNumber),
+        ["FatherName"] = nameof(EmployeeFormModel.FatherName),
+        ["Employee.FatherName"] = nameof(EmployeeFormModel.FatherName),
+        ["Gender"] = nameof(EmployeeFormModel.Gender),
+        ["Employee.Gender"] = nameof(EmployeeFormModel.Gender),
+        ["MaritalStatus"] = nameof(EmployeeFormModel.MaritalStatus),
+        ["Employee.MaritalStatus"] = nameof(EmployeeFormModel.MaritalStatus),
+        ["ChildrenCount"] = nameof(EmployeeFormModel.ChildrenCount),
+        ["Employee.ChildrenCount"] = nameof(EmployeeFormModel.ChildrenCount),
+        ["HireDate"] = nameof(EmployeeFormModel.HireDate),
+        ["Employee.HireDate"] = nameof(EmployeeFormModel.HireDate),
+        ["PhoneNumber"] = nameof(EmployeeFormModel.PhoneNumber),
+        ["Employee.PhoneNumber"] = nameof(EmployeeFormModel.PhoneNumber),
+        ["JobTitle"] = nameof(EmployeeFormModel.JobTitle),
+        ["Employee.JobTitle"] = nameof(EmployeeFormModel.JobTitle),
+        ["InsuranceNumber"] = nameof(EmployeeFormModel.InsuranceNumber),
+        ["Insurance.InsuranceNumber"] = nameof(EmployeeFormModel.InsuranceNumber),
+        ["SocialSecurityContractRow"] = nameof(EmployeeFormModel.SocialSecurityContractRow),
+        ["Insurance.SocialSecurityContractRow"] = nameof(EmployeeFormModel.SocialSecurityContractRow),
+        ["PositionInInsuranceList"] = nameof(EmployeeFormModel.PositionInInsuranceList),
+        ["Insurance.PositionInInsuranceList"] = nameof(EmployeeFormModel.PositionInInsuranceList),
+        ["InsuranceCalculationProfile"] = nameof(EmployeeFormModel.InsuranceCalculationProfile),
+        ["Insurance.InsuranceCalculationProfile"] = nameof(EmployeeFormModel.InsuranceCalculationProfile)
+    };
 
     public class EmployeeFormModel : BaseModel
     {
