@@ -20,6 +20,8 @@ global using Web.Api.Controllers.Departments.Contracts;
 global using Web.Api.Controllers.Employees.Contracts;
 global using Web.Api.Controllers.LaborLawRules.Contracts;
 global using Application.Features.LaborLawRules;
+global using Application.Features.CalculationFormulas;
+global using Web.Api.Controllers.CalculationFormulas.Contracts;
 global using Core.Domain.Enums;
 global using Shared.Web.DateTimeHandling.JsonConvertor;
 global using Shared.Web.DateTimeHandling.CustomTypes;
