@@ -5,3 +5,4 @@ global using Shared.Kernel.Extensions;
 global using Core.Contracts.Workshops;
 global using Core.Contracts.Departments;
 global using Core.Contracts.Employees;
+global using Core.Domain.Enums;

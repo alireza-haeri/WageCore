@@ -1,3 +1,5 @@
+using Core.Domain.Enums;
+
 namespace Shared.Tests.Builders;
 
 public class LaborLawRuleItemBuilder

@@ -14,3 +14,5 @@ global using Core.Abstractions.Repositories.Departments;
 global using Core.Abstractions.Repositories.Employees;
 global using Core.Abstractions.Repositories.LaborLaw;
 global using Application.Validations;
+global using Core.Domain.Enums;
+global using Core.Contracts.Employees;

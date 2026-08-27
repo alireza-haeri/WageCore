@@ -1,5 +1,4 @@
-using Core.Abstractions.Repositories.Employees;
-using Core.Abstractions.Repositories.LaborLaw;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Features.EmployeeSalaryProfiles;
 
@@ -7,7 +6,8 @@ public class CreateEmployeeSalaryProfileCommandHandler(
     IEmployeeRepository employeeRepository,
     IEmployeeSalaryProfileRepository employeeSalaryProfileRepository,
     IEmployeeSalaryProfileQuery employeeSalaryProfileQuery,
-    ILaborLawRuleQuery laborLawRuleQuery)
+    ILaborLawRuleQuery laborLawRuleQuery,
+    Logger<CreateEmployeeSalaryProfileCommandHandler> logger)
     : IRequestHandler<CreateEmployeeSalaryProfileCommand, Result<CreateEmployeeSalaryProfileCommandResponse>>
 {
     public async Task<Result<CreateEmployeeSalaryProfileCommandResponse>> Handle(
@@ -30,7 +30,10 @@ public class CreateEmployeeSalaryProfileCommandHandler(
             cancellationToken);
 
         if (minimumMonthlySalary is null)
+        {
+            logger.LogCritical("MinimumMonthlySalary for {DateTime} not found", ruleDate);
             return Result<CreateEmployeeSalaryProfileCommandResponse>.NotfoundFailure("حداقل حقوق ماهانه یافت نشد.");
+        }
 
         var salaryProfile = EmployeeSalaryProfile.Create(
             request.EmployeeId,
@@ -47,7 +50,8 @@ public class CreateEmployeeSalaryProfileCommandHandler(
             cancellationToken);
 
         if (createResult is null)
-            return Result<CreateEmployeeSalaryProfileCommandResponse>.GeneralFailure("خطا در ایجاد پروفایل حقوق کارمند");
+            return Result<CreateEmployeeSalaryProfileCommandResponse>.GeneralFailure(
+                "خطا در ایجاد پروفایل حقوق کارمند");
 
         return Result<CreateEmployeeSalaryProfileCommandResponse>.Success(
             new CreateEmployeeSalaryProfileCommandResponse(createResult.Value));

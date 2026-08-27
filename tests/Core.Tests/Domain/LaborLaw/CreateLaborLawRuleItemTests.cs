@@ -1,3 +1,5 @@
+using Core.Domain.Enums;
+
 namespace Core.Tests.Domain.LaborLaw;
 
 public class CreateLaborLawRuleItemTests

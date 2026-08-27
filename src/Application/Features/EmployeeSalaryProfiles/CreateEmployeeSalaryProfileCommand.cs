@@ -1,5 +1,3 @@
-using Core.Contracts.Employees;
-
 namespace Application.Features.EmployeeSalaryProfiles;
 
 public record CreateEmployeeSalaryProfileCommand(

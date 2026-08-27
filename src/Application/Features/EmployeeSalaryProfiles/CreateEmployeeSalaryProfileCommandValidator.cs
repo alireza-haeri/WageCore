@@ -1,5 +1,3 @@
-using Application.Validations;
-
 namespace Application.Features.EmployeeSalaryProfiles;
 
 public class CreateEmployeeSalaryProfileCommandValidator : AbstractValidator<CreateEmployeeSalaryProfileCommand>
