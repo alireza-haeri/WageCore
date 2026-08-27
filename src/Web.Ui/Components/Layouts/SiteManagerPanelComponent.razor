@@ -1,0 +1,74 @@
+@using System.Security.Claims
+@namespace Web.Ui.Components.Layouts
+
+<aside class="sidebar" id="sideEl">
+    <div class="sb-brand">
+        <svg class="lg">
+            <use href="assets/img/icons.svg#i-logo"/>
+        </svg>
+        <div><b>سامانهٔ حقوق و دستمزد</b><small>پنل مدیر سایت</small></div>
+    </div>
+    <div class="sb-group">قوانین کار</div>
+    <nav class="sb-nav">
+        <NavLink ActiveClass="active" Match="NavLinkMatch.Prefix" class="sb-item" href="/site-manager/labor-law-rules">
+            <svg class="ic">
+                <use href="assets/img/icons.svg#i-doc"/>
+            </svg>
+            قوانین کار
+        </NavLink>
+    </nav>
+    @if (_managerFullName is not null)
+    {
+        <div class="sb-foot">
+            <div class="sb-user">
+                <div class="sb-av">@_managerFullName[0]</div>
+                <div><b>@_managerFullName</b><small class="ltr">@_managerPhoneNumberOrEmail</small></div>
+                <button class="icobtn" title="خروج از سامانه" @onclick="Logout">
+                    <svg class="ic">
+                        <use href="assets/img/icons.svg#i-logout"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    }
+</aside>
+
+@code
+{
+    private string? _managerFullName;
+    private string? _managerPhoneNumberOrEmail;
+
+    protected override async Task OnInitializedAsync()
+    {
+        NavigationManager.LocationChanged += OnLocationChanged;
+
+        var authState = await AuthProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        _managerFullName = user.Identity?.Name;
+        _managerPhoneNumberOrEmail = user.Claims
+            .FirstOrDefault(c => c.Type is ClaimTypes.MobilePhone or ClaimTypes.Email)?.Value;
+    }
+
+    private async void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        try
+        {
+            await JsRuntime.InvokeVoidAsync("closeSide");
+        }
+        catch
+        {
+        }
+    }
+
+    private async Task Logout()
+    {
+        await AuthService.LogoutAsync();
+        AuthProvider.NotifyUserLogout();
+        NavigationManager.NavigateTo("/login", true);
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
+}

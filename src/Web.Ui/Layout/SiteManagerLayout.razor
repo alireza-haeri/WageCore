@@ -5,12 +5,10 @@
 
 <div class="app-shell">
 
-    <!-- سایدبار -->
-    <PanelComponent/>
+    <SiteManagerPanelComponent/>
 
     <div class="sb-backdrop" id="sbBack"></div>
     <div class="main-col">
-        <!-- تاپ‌بار -->
         <header class="topbar">
             <button class="icobtn tb-burger" id="btnBurger" title="منو">
                 <svg class="ic">
@@ -18,18 +16,12 @@
                 </svg>
             </button>
             <div class="tb-title">
-                <h1>داشبورد</h1><small>خلاصهٔ وضعیت حقوق و دستمزد — مرداد ۱۴۰۵</small>
+                <h1>قوانین کار</h1><small>مدیریت مبالغ قانونی — حداقل حقوق ماهانه</small>
             </div>
             <div class="ms-auto d-flex align-items-center gap-2">
                     <span class="tb-date"><svg class="ic">
                             <use href="assets/img/icons.svg#i-calendar"/>
-                        </svg>شنبه، ۱۷ مرداد ۱۴۰۵</span>
-                <button class="icobtn tb-bell" title="اعلان‌ها"
-                        data-demo="۲ اعلان: یک فیش پیش‌نویس در انتظار تأیید است.">
-                    <svg class="ic">
-                        <use href="assets/img/icons.svg#i-bell"/>
-                    </svg>
-                </button>
+                        </svg>پنل مدیر سایت</span>
             </div>
         </header>
         <main class="main-content">
@@ -39,8 +31,7 @@
         <div id="pbar"></div>
         <div class="toast-zone" id="toastZone"></div>
         
-        <footer class="app-foot">سامانهٔ حقوق و دستمزد · قالب نمایشی — منطق درج، ویرایش، حذف و محاسبه با <b>.NET</b>
-            تکمیل می‌شود · مرداد ۱۴۰۵
+        <footer class="app-foot">سامانهٔ حقوق و دستمزد · پنل مدیر سایت
         </footer>
     </div>
 
@@ -53,9 +44,10 @@
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthProvider.GetAuthenticationStateAsync();
-        if (authState.User.IsInRole(AppRoles.SiteManagerRule))
+        if (authState.User.Identity?.IsAuthenticated is true &&
+            !authState.User.IsInRole(AppRoles.SiteManagerRule))
         {
-            NavigationManager.NavigateTo("/site-manager/labor-law-rules");
+            NavigationManager.NavigateTo("/dashboard");
         }
     }
 }

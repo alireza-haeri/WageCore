@@ -20,4 +20,9 @@ public static class StringHelperExtensions
     {
         return number.ToString().ToPersianNumber();
     }
+
+    public static string ToPersianNumber(this long number)
+    {
+        return number.ToString("N0").ToPersianNumber();
+    }
 }

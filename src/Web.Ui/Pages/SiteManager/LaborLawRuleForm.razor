@@ -1,0 +1,210 @@
+@page "/site-manager/labor-law-rule-form/{id:guid}"
+@page "/site-manager/labor-law-rule-form"
+@layout SiteManagerLayout
+@attribute [Authorize(Roles = AppRoles.SiteManagerRule)]
+
+<div class="page-head">
+    <div class="ph-t">
+        <div class="crumb">
+            پنل مدیر سایت
+            <svg class="ic"><use href="assets/img/icons.svg#i-chl"/></svg>
+            <a href="/site-manager/labor-law-rules">قوانین کار</a>
+            <svg class="ic"><use href="assets/img/icons.svg#i-chl"/></svg>
+            <span>@(IsEdit ? "ویرایش قانون" : "قانون جدید")</span>
+        </div>
+        <h1>@(IsEdit ? "ویرایش قانون کار" : "ثبت قانون کار جدید")</h1>
+        <p>مقدار به ریال است و تاریخ اجرا شمسی ثبت می‌شود.</p>
+    </div>
+    <div class="ph-actions">
+        <a class="btn btn-g" href="/site-manager/labor-law-rules">
+            <svg class="ic"><use href="assets/img/icons.svg#i-x"/></svg>
+            انصراف
+        </a>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="panel-b">
+        <EditForm EditContext="@_formHelper.EditContext" OnValidSubmit="@HandleSubmit">
+            <ValidationMessage TValue="string" For="() => _formHelper.Model.General" class="f-help text-danger"/>
+
+            <div class="sec">
+                <svg class="ic"><use href="assets/img/icons.svg#i-doc"/></svg>
+                مشخصات قانون
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-6 field">
+                    <label class="f-label" for="r-key"><span class="req-s">*</span>کلید قانون</label>
+                    <InputSelect @bind-Value="_formHelper.Model.Key" class="in" id="r-key" data-autofocus>
+                        <option value="">انتخاب کنید...</option>
+                        <option value="@CreateLaborLawRuleRequestKey.MinimumMonthlySalary">حداقل حقوق ماهانه</option>
+                    </InputSelect>
+                    <ValidationMessage TValue="CreateLaborLawRuleRequestKey?" For="() => _formHelper.Model.Key"
+                                       class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-6 field">
+                    <label class="f-label" for="r-from"><span class="req-s">*</span>تاریخ اجرا</label>
+                    <InputText @bind-Value="_formHelper.Model.EffectiveFrom" class="in num" id="r-from"
+                               inputmode="numeric" placeholder="۱۴۰۵/۰۱/۰۱"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.EffectiveFrom"
+                                       class="f-help text-danger"/>
+                    <div class="f-help">شمسی؛ به فرمت ۱۴۰۵/۰۱/۰۱.</div>
+                </div>
+
+                <div class="col-md-6 field">
+                    <label class="f-label" for="r-value"><span class="req-s">*</span>مقدار (ریال)</label>
+                    <InputText @bind-Value="_formHelper.Model.Value" class="in in-ltr" id="r-value"
+                               inputmode="numeric" placeholder="71661840"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.Value"
+                                       class="f-help text-danger"/>
+                    <div class="f-help">عدد صحیح ریال؛ نمی‌تواند منفی باشد.</div>
+                </div>
+            </div>
+
+            <div class="form-foot">
+                <button type="submit" class="btn btn-p" disabled="@_isLoading">
+                    @if (_isLoading)
+                    {
+                        <span>در حال پردازش...</span>
+                    }
+                    else
+                    {
+                        <svg class="ic"><use href="assets/img/icons.svg#i-check"/></svg>
+                        <span>@(IsEdit ? "ویرایش قانون" : "ثبت قانون")</span>
+                    }
+                </button>
+                <a class="btn btn-g" href="/site-manager/labor-law-rules">انصراف</a>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [Parameter] public Guid? Id { get; set; }
+
+    private FormHelper<LaborLawRuleFormModel> _formHelper = new();
+    private bool _isLoading;
+    private bool IsEdit => Id.HasValue && Id.Value != Guid.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (IsEdit)
+        {
+            _isLoading = true;
+            try
+            {
+                var result = await ApiService.SendAsync(
+                    apiCall: () => ApiClient.GetLaborLawRuleForEditAsync(Id!.Value)
+                );
+
+                if (result is { IsSuccess: true })
+                {
+                    var rule = result.Response;
+                    _formHelper.Model = new LaborLawRuleFormModel
+                    {
+                        Key = (CreateLaborLawRuleRequestKey)rule.Key,
+                        Value = ((long)rule.Value).ToString(),
+                        EffectiveFrom = rule.EffectiveFrom
+                    };
+
+                    _formHelper.RebuildEditContext();
+                }
+                else
+                {
+                    ToastService.ShowToastError("قانون مورد نظر یافت نشد.");
+                    NavigationManager.NavigateTo("/site-manager/labor-law-rules");
+                }
+            }
+            finally
+            {
+                _isLoading = false;
+            }
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (_isLoading) return;
+        _isLoading = true;
+
+        _formHelper.ClearErrors();
+
+        var model = _formHelper.Model;
+        if (!double.TryParse(model.Value, out var value))
+        {
+            _formHelper.SetServerErrors(new Dictionary<string, ICollection<string>>
+            {
+                { nameof(LaborLawRuleFormModel.Value), ["مقدار باید عدد باشد."] }
+            });
+            ToastService.ShowToastWarning("لطفاً خطاها را بررسی کنید.");
+            _isLoading = false;
+            return;
+        }
+
+        if (IsEdit)
+        {
+            var result = await ApiService.SendAsync(
+                apiCall: () => ApiClient.UpdateLaborLawRuleAsync(Id!.Value, new UpdateLaborLawRuleRequest(
+                    model.EffectiveFrom,
+                    (UpdateLaborLawRuleRequestKey)model.Key!,
+                    value
+                )),
+                successMessage: "قانون با موفقیت ویرایش شد.",
+                showErrorToastValidation: false
+            );
+
+            if (result is { IsSuccess: true })
+            {
+                NavigationManager.NavigateTo("/site-manager/labor-law-rules");
+            }
+            else if (result != null)
+            {
+                _formHelper.SetServerErrors(result.Errors);
+                ToastService.ShowToastWarning("لطفاً خطاها را بررسی کنید.");
+            }
+        }
+        else
+        {
+            var result = await ApiService.SendAsync(
+                apiCall: () => ApiClient.CreateLaborLawRuleAsync(new CreateLaborLawRuleRequest(
+                    effectiveFrom: model.EffectiveFrom,
+                    key: model.Key!.Value,
+                    value: value
+                )),
+                successMessage: "قانون با موفقیت ثبت شد.",
+                showErrorToastValidation: false
+            );
+
+            if (result is { IsSuccess: true })
+            {
+                NavigationManager.NavigateTo("/site-manager/labor-law-rules");
+            }
+            else if (result != null)
+            {
+                _formHelper.SetServerErrors(result.Errors);
+                ToastService.ShowToastWarning("لطفاً خطاها را بررسی کنید.");
+            }
+        }
+
+        _isLoading = false;
+    }
+
+    public class LaborLawRuleFormModel : BaseModel
+    {
+        [Required(ErrorMessage = "کلید قانون اجباری است.")]
+        [Display(Name = "کلید قانون")]
+        public CreateLaborLawRuleRequestKey? Key { get; set; }
+
+        [Required(ErrorMessage = "مقدار اجباری است.")]
+        [RegularExpression(@"^\d+(\.\d+)?$", ErrorMessage = "مقدار باید عدد غیرمنفی باشد.")]
+        [Display(Name = "مقدار")]
+        public string Value { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "تاریخ اجرا اجباری است.")]
+        [Display(Name = "تاریخ اجرا")]
+        [RegularExpression(@"^\d{4}/\d{2}/\d{2}$", ErrorMessage = "تاریخ را به فرمت ۱۴۰۵/۰۱/۰۱ وارد کنید.")]
+        public string EffectiveFrom { get; set; } = null!;
+    }
+}

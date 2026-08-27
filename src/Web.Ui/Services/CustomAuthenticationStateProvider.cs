@@ -17,7 +17,7 @@ public class CustomAuthenticationStateProvider(IStorageService storage) : Authen
             var token = await storage.GetValueAsync<string>(TokenKey);
             if (!string.IsNullOrEmpty(token))
             {
-                var identity = new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt");
+                var identity = CreateIdentity(token);
                 _currentUser = new ClaimsPrincipal(identity);
             }
             else
@@ -33,7 +33,7 @@ public class CustomAuthenticationStateProvider(IStorageService storage) : Authen
 
     public void NotifyUserAuthentication(string token)
     {
-        var identity = new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt");
+        var identity = CreateIdentity(token);
         _currentUser = new ClaimsPrincipal(identity);
         NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(_currentUser)));
     }
@@ -72,7 +72,7 @@ public class CustomAuthenticationStateProvider(IStorageService storage) : Authen
         return claims;
     }
 
-    private byte[] ParseBase64WithoutPadding(string base64)
+    private static byte[] ParseBase64WithoutPadding(string base64)
     {
         switch (base64.Length % 4)
         {
