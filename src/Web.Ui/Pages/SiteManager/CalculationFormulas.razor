@@ -1,0 +1,279 @@
+@page "/site-manager/calculation-formulas"
+@layout SiteManagerLayout
+@attribute [Authorize(Roles = AppRoles.SiteManagerRule)]
+@implements IDisposable
+
+<div class="page-head">
+    <div class="ph-t">
+        <div class="crumb">پنل مدیر سایت
+            <svg class="ic"><use href="assets/img/icons.svg#i-chl"/></svg>
+            فرمول‌های محاسبه
+        </div>
+        <h1>فرمول‌های محاسبه</h1>
+        <p>عبارت محاسبه با تاریخ اجرا ثبت می‌شود؛ فیش‌ها از آخرین فرمول فعال استفاده می‌کنند.</p>
+    </div>
+    <div class="ph-actions">
+        <a class="btn btn-p" href="/site-manager/calculation-formula-form">
+            <svg class="ic"><use href="assets/img/icons.svg#i-plus"/></svg>
+            فرمول جدید
+        </a>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="toolbar">
+        <select class="in tb-sel" @bind="_selectedKey" @bind:after="OnKeyChanged">
+            <option value="">همهٔ کلیدها</option>
+            <option value="@CalculationFormulaKey.OvertimePay">اضافه‌کاری</option>
+        </select>
+        <span class="chip c-grn ms-auto">
+            <span class="c-dot"></span>@((_formulas?.TotalCount ?? 0).ToPersianNumber()) فرمول
+        </span>
+    </div>
+
+    <div class="panel-b p-0">
+        @if (_isLoading)
+        {
+            <div class="text-center p-4">
+                <span>در حال بارگذاری...</span>
+            </div>
+        }
+        else if (_formulas is null || _formulas.Items.Count == 0)
+        {
+            <div class="text-center p-4" style="color:var(--muted)">
+                <svg class="ic" style="width:32px;height:32px;opacity:.5">
+                    <use href="assets/img/icons.svg#i-doc"/>
+                </svg>
+                <p class="mt-2">فرمولی یافت نشد.</p>
+            </div>
+        }
+        else
+        {
+            <div class="tblwrap">
+                <table class="tbl">
+                    <thead>
+                    <tr>
+                        <th>کلید</th>
+                        <th>عبارت</th>
+                        <th>تاریخ اجرا</th>
+                        <th style="text-align:left">عملیات</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var formula in _formulas.Items)
+                    {
+                        <tr>
+                            <td class="pname">@GetKeyDisplayName(formula.Key)</td>
+                            <td class="num">@formula.Expression</td>
+                            <td class="num">@formula.DisplayEffectiveFrom</td>
+                            <td>
+                                <span class="rowact">
+                                    <a class="icobtn" href="/site-manager/calculation-formula-form/@formula.Id" title="ویرایش">
+                                        <svg class="ic"><use href="assets/img/icons.svg#i-pen"/></svg>
+                                    </a>
+                                    <button class="icobtn danger" title="حذف"
+                                            @onclick="() => ConfirmDelete(formula)"
+                                            disabled="@_isDeleting">
+                                        <svg class="ic"><use href="assets/img/icons.svg#i-trash"/></svg>
+                                    </button>
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+
+    @if (_formulas is not null && _formulas.Items.Count > 0)
+    {
+        <div class="panel-f">
+            نمایش @_formulas.Items.Count.ToPersianNumber() فرمول از @_formulas.TotalCount.ToPersianNumber()
+
+            @if (_totalPages > 1)
+            {
+                <div class="d-flex justify-content-center align-items-center gap-2 ms-auto">
+                    <button class="btn btn-g" disabled="@(_pageNumber <= 1)"
+                            @onclick="() => GoToPage(_pageNumber - 1)">
+                        قبلی
+                    </button>
+
+                    @foreach (var pageNum in GetPageNumbers())
+                    {
+                        if (pageNum == -1)
+                        {
+                            <span style="padding:0 8px">...</span>
+                        }
+                        else
+                        {
+                            <button class="btn @(pageNum == _pageNumber ? "btn-p" : "btn-g")"
+                                    @onclick="() => GoToPage(pageNum)">
+                                @pageNum
+                            </button>
+                        }
+                    }
+
+                    <button class="btn btn-g" disabled="@(_pageNumber >= _totalPages)"
+                            @onclick="() => GoToPage(_pageNumber + 1)">
+                        بعدی
+                    </button>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@if (_formulaToDelete is not null)
+{
+    <div class="modal-backdrop show" style="z-index:1040"></div>
+    <div class="modal show d-block" tabindex="-1" style="z-index:1050">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">تأیید حذف</h5>
+                    <button type="button" class="btn-close" @onclick="CancelDelete" disabled="@_isDeleting"></button>
+                </div>
+                <div class="modal-body">
+                    <p>آیا از حذف فرمول <b>«@GetKeyDisplayName(_formulaToDelete.Key)»</b> با تاریخ اجرا <b>@_formulaToDelete.DisplayEffectiveFrom</b> اطمینان دارید؟</p>
+                    <p class="text-danger" style="font-size:12px">این عملیات قابل بازگشت نیست.</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-g" @onclick="CancelDelete" disabled="@_isDeleting">انصراف</button>
+                    <button class="btn btn-danger" @onclick="DeleteFormula" disabled="@_isDeleting">
+                        @if (_isDeleting)
+                        {
+                            <span>در حال حذف...</span>
+                        }
+                        else
+                        {
+                            <span>حذف</span>
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private GetCalculationFormulasResponsePagedResult? _formulas;
+    private bool _isLoading;
+    private bool _isDeleting;
+    private string _selectedKey = string.Empty;
+    private int _pageNumber = 1;
+    private const int PageSize = 10;
+    private int _totalPages => _formulas is null
+        ? 0
+        : (int)Math.Ceiling(_formulas.TotalCount / (double)PageSize);
+
+    private GetCalculationFormulasResponse? _formulaToDelete;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadFormulasAsync();
+    }
+
+    private async Task LoadFormulasAsync()
+    {
+        _isLoading = true;
+        StateHasChanged();
+
+        CalculationFormulaKey? key = string.IsNullOrEmpty(_selectedKey)
+            ? null
+            : Enum.Parse<CalculationFormulaKey>(_selectedKey);
+
+        var result = await ApiService.SendAsync(() => ApiClient.GetCalculationFormulasAsync(
+            _pageNumber, PageSize, null, key));
+
+        if (result?.IsSuccess is true)
+        {
+            _formulas = result.Response;
+        }
+
+        _isLoading = false;
+        StateHasChanged();
+    }
+
+    private async Task OnKeyChanged()
+    {
+        _pageNumber = 1;
+        await LoadFormulasAsync();
+    }
+
+    private async Task GoToPage(int page)
+    {
+        if (page < 1 || page > _totalPages || page == _pageNumber) return;
+        _pageNumber = page;
+        await LoadFormulasAsync();
+    }
+
+    private IEnumerable<int> GetPageNumbers()
+    {
+        const int visible = 5;
+        if (_totalPages <= visible + 2)
+        {
+            for (var i = 1; i <= _totalPages; i++) yield return i;
+            yield break;
+        }
+
+        yield return 1;
+
+        var start = Math.Max(2, _pageNumber - visible / 2);
+        var end = Math.Min(_totalPages - 1, start + visible - 1);
+        start = Math.Max(2, end - visible + 1);
+
+        if (start > 2) yield return -1;
+        for (var i = start; i <= end; i++) yield return i;
+        if (end < _totalPages - 1) yield return -1;
+
+        yield return _totalPages;
+    }
+
+    private void ConfirmDelete(GetCalculationFormulasResponse formula)
+    {
+        _formulaToDelete = formula;
+    }
+
+    private void CancelDelete()
+    {
+        if (_isDeleting) return;
+        _formulaToDelete = null;
+    }
+
+    private async Task DeleteFormula()
+    {
+        if (_formulaToDelete is null || _isDeleting) return;
+
+        _isDeleting = true;
+
+        var result = await ApiService.SendAsync(
+            apiCall: () => ApiClient.DeleteCalculationFormulaAsync(_formulaToDelete.Id),
+            successMessage: "فرمول با موفقیت حذف شد."
+        );
+
+        _isDeleting = false;
+
+        if (result?.IsSuccess is true)
+        {
+            _formulaToDelete = null;
+
+            if (_formulas?.Items.Count == 1 && _pageNumber > 1)
+            {
+                _pageNumber--;
+            }
+
+            await LoadFormulasAsync();
+        }
+    }
+
+    private static string GetKeyDisplayName(GetCalculationFormulasResponseKey key) => key switch
+    {
+        GetCalculationFormulasResponseKey.OvertimePay => "اضافه‌کاری",
+        _ => key.ToString()
+    };
+
+    public void Dispose()
+    {
+    }
+}

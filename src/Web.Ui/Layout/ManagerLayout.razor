@@ -48,3 +48,14 @@
 
 <script src="/assets/js/searchable-select.js"></script>
 <script src="/assets/js/forms.js"></script>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthProvider.GetAuthenticationStateAsync();
+        if (authState.User.IsInRole(AppRoles.SiteManagerRule))
+        {
+            NavigationManager.NavigateTo("/site-manager/labor-law-rules");
+        }
+    }
+}

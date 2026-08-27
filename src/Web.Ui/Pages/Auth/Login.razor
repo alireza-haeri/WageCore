@@ -139,7 +139,7 @@
 
         if (await AuthService.IsAuthenticatedAsync())
         {
-            NavigationManager.NavigateTo(_returnUrl);
+            NavigationManager.NavigateTo(await GetHomeUrlAsync(_returnUrl));
         }
     }
 
@@ -183,7 +183,7 @@
                 await AuthService.LoginAsync(result.Response.Token, result.Response.ExpireInMinutes);
 
                 AuthProvider.NotifyUserAuthentication(result.Response.Token);
-                NavigationManager.NavigateTo(_returnUrl!);
+                NavigationManager.NavigateTo(await GetHomeUrlAsync(_returnUrl!));
             }
             else
             {
@@ -195,6 +195,17 @@
         _isLoading = false;
     }
 
+    private async Task<string> GetHomeUrlAsync(string fallback)
+    {
+        var authState = await AuthProvider.GetAuthenticationStateAsync();
+        if (authState.User.IsInRole(AppRoles.SiteManagerRule))
+            return "/site-manager/labor-law-rules";
+
+        if (fallback.Contains("/site-manager", StringComparison.OrdinalIgnoreCase))
+            return "/dashboard";
+
+        return fallback;
+    }
 
     public class LoginModel : BaseModel
     {

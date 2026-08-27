@@ -23,6 +23,18 @@ public class LoginUserCommandHandlerTests
         );
     }
 
+    private void SetupSuccessfulLogin(User user, IReadOnlyCollection<string>? roles = null)
+    {
+        _userRepository.CheckPasswordAsync(user, ValidPassword, Arg.Any<CancellationToken>())
+            .Returns(true);
+
+        _userRepository.GetRolesAsync(user.Id, Arg.Any<CancellationToken>())
+            .Returns(roles ?? []);
+
+        _jwtTokenService.GenerateToken(user, Arg.Any<IReadOnlyCollection<string>?>())
+            .Returns(new JwtTokenResponse("fake-token", 60));
+    }
+
     [Fact]
     public async Task Handle_WithValidPhoneAndPassword_ShouldReturnToken()
     {
@@ -35,11 +47,7 @@ public class LoginUserCommandHandlerTests
         _userRepository.GetAsync(ValidPhoneNumber, null, Arg.Any<CancellationToken>())
             .Returns(user);
 
-        _userRepository.CheckPasswordAsync(user, ValidPassword, Arg.Any<CancellationToken>())
-            .Returns(true);
-
-        _jwtTokenService.GenerateToken(user)
-            .Returns(new JwtTokenResponse("fake-token", 60));
+        SetupSuccessfulLogin(user);
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
@@ -60,11 +68,7 @@ public class LoginUserCommandHandlerTests
         _userRepository.GetAsync(null, ValidEmail, Arg.Any<CancellationToken>())
             .Returns(user);
 
-        _userRepository.CheckPasswordAsync(user, ValidPassword, Arg.Any<CancellationToken>())
-            .Returns(true);
-
-        _jwtTokenService.GenerateToken(user)
-            .Returns(new JwtTokenResponse("fake-token", 60));
+        SetupSuccessfulLogin(user);
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
@@ -122,11 +126,7 @@ public class LoginUserCommandHandlerTests
         _userRepository.GetAsync(ValidPhoneNumber, null, Arg.Any<CancellationToken>())
             .Returns(user);
 
-        _userRepository.CheckPasswordAsync(user, ValidPassword, Arg.Any<CancellationToken>())
-            .Returns(true);
-
-        _jwtTokenService.GenerateToken(user)
-            .Returns(new JwtTokenResponse("fake-token", 60));
+        SetupSuccessfulLogin(user);
 
         await _handler.Handle(command, CancellationToken.None);
 
@@ -145,11 +145,7 @@ public class LoginUserCommandHandlerTests
         _userRepository.GetAsync(ValidPhoneNumber, null, Arg.Any<CancellationToken>())
             .Returns(user);
 
-        _userRepository.CheckPasswordAsync(user, ValidPassword, Arg.Any<CancellationToken>())
-            .Returns(true);
-
-        _jwtTokenService.GenerateToken(user)
-            .Returns(new JwtTokenResponse("fake-token", 60));
+        SetupSuccessfulLogin(user);
 
         await _handler.Handle(command, CancellationToken.None);
 
@@ -186,7 +182,7 @@ public class LoginUserCommandHandlerTests
 
         await _handler.Handle(command, CancellationToken.None);
 
-        _jwtTokenService.DidNotReceive().GenerateToken(Arg.Any<User>());
+        _jwtTokenService.DidNotReceive().GenerateToken(Arg.Any<User>(), Arg.Any<IReadOnlyCollection<string>?>());
     }
 
     [Fact]
@@ -199,7 +195,7 @@ public class LoginUserCommandHandlerTests
 
         await _handler.Handle(command, CancellationToken.None);
 
-        _jwtTokenService.DidNotReceive().GenerateToken(Arg.Any<User>());
+        _jwtTokenService.DidNotReceive().GenerateToken(Arg.Any<User>(), Arg.Any<IReadOnlyCollection<string>?>());
     }
 
     [Fact]
@@ -214,14 +210,31 @@ public class LoginUserCommandHandlerTests
         _userRepository.GetAsync(ValidPhoneNumber, null, Arg.Any<CancellationToken>())
             .Returns(user);
 
-        _userRepository.CheckPasswordAsync(user, ValidPassword, Arg.Any<CancellationToken>())
-            .Returns(true);
-
-        _jwtTokenService.GenerateToken(user)
-            .Returns(new JwtTokenResponse("fake-token", 60));
+        SetupSuccessfulLogin(user);
 
         await _handler.Handle(command, CancellationToken.None);
 
-        _jwtTokenService.Received(1).GenerateToken(user);
+        _jwtTokenService.Received(1).GenerateToken(user, Arg.Any<IReadOnlyCollection<string>?>());
+    }
+
+    [Fact]
+    public async Task Handle_ShouldPassUserRolesToGenerateToken()
+    {
+        var command = new LoginUserCommand(ValidPhoneNumber, null, ValidPassword);
+        var user = _userBuilder
+            .WithPhoneNumber(ValidPhoneNumber)
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        _userRepository.GetAsync(ValidPhoneNumber, null, Arg.Any<CancellationToken>())
+            .Returns(user);
+
+        SetupSuccessfulLogin(user, [ApplicationRoles.SiteManagerRule]);
+
+        await _handler.Handle(command, CancellationToken.None);
+
+        _jwtTokenService.Received(1).GenerateToken(
+            user,
+            Arg.Is<IReadOnlyCollection<string>>(roles => roles.Contains(ApplicationRoles.SiteManagerRule)));
     }
 }

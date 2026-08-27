@@ -64,6 +64,9 @@ try
 {
     Log.Information("Starting migration database...");
     await app.MigrateDatabaseAsync();
+
+    Log.Information("Starting seed database...");
+    await app.SeedDatabaseAsync();
     
     Log.Information("Starting web application...");
     await app.RunAsync();

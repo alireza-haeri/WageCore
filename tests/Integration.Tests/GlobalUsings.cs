@@ -15,3 +15,5 @@ global using Microsoft.AspNetCore.Mvc;
 global using Shared.Web.DateTimeHandling.CustomTypes;
 global using System.Net;
 global using Integration.Tests.Controllers;
+global using Shared.Tests.Helpers;
+global using Shared.Web.DateTimeHandling.CustomTypes;

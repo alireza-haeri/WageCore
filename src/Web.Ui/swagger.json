@@ -5,6 +5,292 @@
     "version": "1.0.0"
   },
   "paths": {
+    "/api/v1/calculation-formulas": {
+      "post": {
+        "tags": [
+          "CalculationFormula"
+        ],
+        "summary": "CreateCalculationFormula",
+        "operationId": "CreateCalculationFormula",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateCalculationFormulaRequest"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateCalculationFormulaRequest"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateCalculationFormulaRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateCalculationFormulaCommandResponseResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateCalculationFormulaCommandResponseResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateCalculationFormulaCommandResponseResult"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "CalculationFormula"
+        ],
+        "summary": "GetCalculationFormulas",
+        "operationId": "GetCalculationFormulas",
+        "parameters": [
+          {
+            "name": "Pagination.PageNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Pagination.PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Pagination.Offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "CalculationFormulaKey",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "x-enumNames": [
+                "OvertimePay"
+              ],
+              "enum": [
+                0
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCalculationFormulasResponsePagedResultResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCalculationFormulasResponsePagedResultResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCalculationFormulasResponsePagedResultResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/calculation-formulas/{calculationFormulaId}": {
+      "put": {
+        "tags": [
+          "CalculationFormula"
+        ],
+        "summary": "UpdateCalculationFormula",
+        "operationId": "UpdateCalculationFormula",
+        "parameters": [
+          {
+            "name": "calculationFormulaId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdateCalculationFormulaRequest"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdateCalculationFormulaRequest"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdateCalculationFormulaRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "CalculationFormula"
+        ],
+        "summary": "DeleteCalculationFormula",
+        "operationId": "DeleteCalculationFormula",
+        "parameters": [
+          {
+            "name": "calculationFormulaId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/calculation-formulas/{calculationFormulaId}/edit": {
+      "get": {
+        "tags": [
+          "CalculationFormula"
+        ],
+        "summary": "GetCalculationFormulaForEdit",
+        "operationId": "GetCalculationFormulaForEdit",
+        "parameters": [
+          {
+            "name": "calculationFormulaId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCalculationFormulaForEditResponseResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCalculationFormulaForEditResponseResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCalculationFormulaForEditResponseResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/client-logs": {
       "post": {
         "tags": [
@@ -946,6 +1232,292 @@
         }
       }
     },
+    "/api/v1/labor-law-rules": {
+      "post": {
+        "tags": [
+          "LaborLawRule"
+        ],
+        "summary": "CreateLaborLawRule",
+        "operationId": "CreateLaborLawRule",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateLaborLawRuleRequest"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateLaborLawRuleRequest"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateLaborLawRuleRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateLaborLawRuleCommandResponseResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateLaborLawRuleCommandResponseResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateLaborLawRuleCommandResponseResult"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "LaborLawRule"
+        ],
+        "summary": "GetLaborLawRules",
+        "operationId": "GetLaborLawRules",
+        "parameters": [
+          {
+            "name": "Pagination.PageNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Pagination.PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Pagination.Offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "LaborLawRuleKey",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "x-enumNames": [
+                "MinimumMonthlySalary"
+              ],
+              "enum": [
+                0
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLaborLawRulesResponsePagedResultResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLaborLawRulesResponsePagedResultResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLaborLawRulesResponsePagedResultResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/labor-law-rules/{laborLawRuleId}": {
+      "put": {
+        "tags": [
+          "LaborLawRule"
+        ],
+        "summary": "UpdateLaborLawRule",
+        "operationId": "UpdateLaborLawRule",
+        "parameters": [
+          {
+            "name": "laborLawRuleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdateLaborLawRuleRequest"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdateLaborLawRuleRequest"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdateLaborLawRuleRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "LaborLawRule"
+        ],
+        "summary": "DeleteLaborLawRule",
+        "operationId": "DeleteLaborLawRule",
+        "parameters": [
+          {
+            "name": "laborLawRuleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/labor-law-rules/{laborLawRuleId}/edit": {
+      "get": {
+        "tags": [
+          "LaborLawRule"
+        ],
+        "summary": "GetLaborLawRuleForEdit",
+        "operationId": "GetLaborLawRuleForEdit",
+        "parameters": [
+          {
+            "name": "laborLawRuleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLaborLawRuleForEditResponseResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLaborLawRuleForEditResponseResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLaborLawRuleForEditResponseResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/workshops": {
       "post": {
         "tags": [
@@ -1340,6 +1912,83 @@
           }
         }
       },
+      "CreateCalculationFormulaCommandResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "calculationFormulaId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "CreateCalculationFormulaCommandResponseResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreateCalculationFormulaCommandResponse"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "CreateCalculationFormulaRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "calculationFormulaKey": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "OvertimePay"
+            ],
+            "enum": [
+              0
+            ]
+          },
+          "expression": {
+            "type": "string",
+            "nullable": true
+          },
+          "effectiveFrom": {
+            "type": "string"
+          }
+        }
+      },
       "CreateDepartmentCommandResponse": {
         "type": "object",
         "additionalProperties": false,
@@ -1492,6 +2141,83 @@
             "items": {
               "$ref": "#/components/schemas/EmployeeBankAccountRequest"
             }
+          }
+        }
+      },
+      "CreateLaborLawRuleCommandResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "laborLawRuleId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "CreateLaborLawRuleCommandResponseResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreateLaborLawRuleCommandResponse"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "CreateLaborLawRuleRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "laborLawRuleKey": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "MinimumMonthlySalary"
+            ],
+            "enum": [
+              0
+            ]
+          },
+          "value": {
+            "type": "number",
+            "format": "double"
+          },
+          "effectiveFrom": {
+            "type": "string"
           }
         }
       },
@@ -1739,6 +2465,176 @@
           }
         }
       },
+      "GetCalculationFormulaForEditResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "OvertimePay"
+            ],
+            "enum": [
+              0
+            ]
+          },
+          "expression": {
+            "type": "string",
+            "nullable": true
+          },
+          "effectiveFrom": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "GetCalculationFormulaForEditResponseResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GetCalculationFormulaForEditResponse"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "GetCalculationFormulasResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "key": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "OvertimePay"
+            ],
+            "enum": [
+              0
+            ]
+          },
+          "expression": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayEffectiveFrom": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "GetCalculationFormulasResponsePagedResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/GetCalculationFormulasResponse"
+            }
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "readOnly": true,
+            "format": "int32"
+          }
+        }
+      },
+      "GetCalculationFormulasResponsePagedResultResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GetCalculationFormulasResponsePagedResult"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
       "GetDepartmentForEditQueryResponse": {
         "type": "object",
         "additionalProperties": false,
@@ -1947,6 +2843,176 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/GetEmployeeForEditResponse"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "GetLaborLawRuleForEditResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "MinimumMonthlySalary"
+            ],
+            "enum": [
+              0
+            ]
+          },
+          "value": {
+            "type": "number",
+            "format": "double"
+          },
+          "effectiveFrom": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "GetLaborLawRuleForEditResponseResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GetLaborLawRuleForEditResponse"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "GetLaborLawRulesResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "key": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "MinimumMonthlySalary"
+            ],
+            "enum": [
+              0
+            ]
+          },
+          "value": {
+            "type": "number",
+            "format": "double"
+          },
+          "displayEffectiveFrom": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "GetLaborLawRulesResponsePagedResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/GetLaborLawRulesResponse"
+            }
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "readOnly": true,
+            "format": "int32"
+          }
+        }
+      },
+      "GetLaborLawRulesResponsePagedResultResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GetLaborLawRulesResponsePagedResult"
               }
             ]
           },
@@ -2708,6 +3774,29 @@
           }
         }
       },
+      "UpdateCalculationFormulaRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "calculationFormulaKey": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "OvertimePay"
+            ],
+            "enum": [
+              0
+            ]
+          },
+          "expression": {
+            "type": "string",
+            "nullable": true
+          },
+          "effectiveFrom": {
+            "type": "string"
+          }
+        }
+      },
       "UpdateDepartmentRequest": {
         "type": "object",
         "additionalProperties": false,
@@ -2744,6 +3833,29 @@
             "items": {
               "$ref": "#/components/schemas/EmployeeBankAccountRequest"
             }
+          }
+        }
+      },
+      "UpdateLaborLawRuleRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "laborLawRuleKey": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "MinimumMonthlySalary"
+            ],
+            "enum": [
+              0
+            ]
+          },
+          "value": {
+            "type": "number",
+            "format": "double"
+          },
+          "effectiveFrom": {
+            "type": "string"
           }
         }
       },
@@ -2801,6 +3913,9 @@
   ],
   "tags": [
     {
+      "name": "CalculationFormula"
+    },
+    {
       "name": "ClientLogs"
     },
     {
@@ -2811,6 +3926,9 @@
     },
     {
       "name": "Identity"
+    },
+    {
+      "name": "LaborLawRule"
     },
     {
       "name": "Workshop"
