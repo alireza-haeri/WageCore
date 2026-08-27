@@ -3,6 +3,7 @@ namespace Application.Tests.Features.LaborLawRules.Command.UpdateLaborLawRule;
 public class UpdateLaborLawRuleCommandHandlerTests
 {
     private readonly ILaborLawRuleRepository _laborLawRuleRepository;
+    private readonly ILaborLawRuleQuery _laborLawRuleQuery;
     private readonly UpdateLaborLawRuleCommandHandler _handler;
     private readonly LaborLawRuleItemBuilder _builder;
 
@@ -13,7 +14,8 @@ public class UpdateLaborLawRuleCommandHandlerTests
     public UpdateLaborLawRuleCommandHandlerTests()
     {
         _laborLawRuleRepository = Substitute.For<ILaborLawRuleRepository>();
-        _handler = new UpdateLaborLawRuleCommandHandler(_laborLawRuleRepository);
+        _laborLawRuleQuery = Substitute.For<ILaborLawRuleQuery>();
+        _handler = new UpdateLaborLawRuleCommandHandler(_laborLawRuleRepository, _laborLawRuleQuery);
         _builder = new LaborLawRuleItemBuilder();
     }
 
@@ -32,6 +34,15 @@ public class UpdateLaborLawRuleCommandHandlerTests
         DateOnly? effectiveFrom = null) =>
         new(ruleId ?? ValidRuleId, key, value, effectiveFrom ?? ValidEffectiveFrom);
 
+    private void SetupNoDuplicateEffectiveFrom()
+    {
+        _laborLawRuleQuery.IsExistEffectiveFrom(
+                Arg.Any<DateOnly>(),
+                Arg.Any<Guid?>(),
+                Arg.Any<CancellationToken>())
+            .Returns(false);
+    }
+
     [Fact]
     public async Task Handle_WithValidData_ShouldUpdateRuleAndReturnTrue()
     {
@@ -40,6 +51,7 @@ public class UpdateLaborLawRuleCommandHandlerTests
 
         _laborLawRuleRepository.GetByIdAsync(ValidRuleId, Arg.Any<CancellationToken>())
             .Returns(rule);
+        SetupNoDuplicateEffectiveFrom();
         _laborLawRuleRepository.UpdateAsync(rule, Arg.Any<CancellationToken>())
             .Returns(true);
 
@@ -70,6 +82,27 @@ public class UpdateLaborLawRuleCommandHandlerTests
     }
 
     [Fact]
+    public async Task Handle_WhenEffectiveFromAlreadyExists_ShouldReturnValidationFailure()
+    {
+        var command = CreateValidCommand();
+        var rule = CreateValidRule();
+
+        _laborLawRuleRepository.GetByIdAsync(ValidRuleId, Arg.Any<CancellationToken>())
+            .Returns(rule);
+        _laborLawRuleQuery.IsExistEffectiveFrom(
+                ValidEffectiveFrom,
+                ValidRuleId,
+                Arg.Any<CancellationToken>())
+            .Returns(true);
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.ShouldBeFailure("تاریخ اجرا تکراری است.", BadResultType.Validation);
+        await _laborLawRuleRepository.DidNotReceive()
+            .UpdateAsync(Arg.Any<LaborLawRuleItem>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
     public async Task Handle_WhenDomainUpdateFails_ShouldReturnGeneralFailure()
     {
         var command = CreateValidCommand(value: -1);
@@ -77,6 +110,7 @@ public class UpdateLaborLawRuleCommandHandlerTests
 
         _laborLawRuleRepository.GetByIdAsync(ValidRuleId, Arg.Any<CancellationToken>())
             .Returns(rule);
+        SetupNoDuplicateEffectiveFrom();
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
@@ -93,6 +127,7 @@ public class UpdateLaborLawRuleCommandHandlerTests
 
         _laborLawRuleRepository.GetByIdAsync(ValidRuleId, Arg.Any<CancellationToken>())
             .Returns(rule);
+        SetupNoDuplicateEffectiveFrom();
         _laborLawRuleRepository.UpdateAsync(rule, Arg.Any<CancellationToken>())
             .Returns(false);
 

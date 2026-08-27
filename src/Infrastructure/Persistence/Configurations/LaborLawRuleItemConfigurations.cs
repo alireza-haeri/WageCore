@@ -23,6 +23,6 @@ public class LaborLawRuleItemConfigurations : IEntityTypeConfiguration<LaborLawR
             .IsRequired()
             .HasColumnType("date");
 
-        builder.HasIndex(x => new { x.Key, x.EffectiveFrom });
+        builder.HasIndex(x => x.EffectiveFrom).IsUnique();
     }
 }

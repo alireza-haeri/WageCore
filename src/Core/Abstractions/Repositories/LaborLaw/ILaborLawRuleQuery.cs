@@ -13,4 +13,9 @@ public interface ILaborLawRuleQuery
     Task<LaborLawRuleByIdResult?> GetLaborLawRuleByIdAsync(
         Guid ruleId,
         CancellationToken cancellationToken = default);
+
+    Task<bool> IsExistEffectiveFrom(
+        DateOnly effectiveFrom,
+        Guid? excludeRuleId = null,
+        CancellationToken cancellationToken = default);
 }

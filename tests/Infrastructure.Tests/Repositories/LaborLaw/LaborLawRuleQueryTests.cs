@@ -146,6 +146,46 @@ public class LaborLawRuleQueryTests(WageCoreDbContextFixture fixture)
     }
 
     [Fact]
+    public async Task IsExistEffectiveFrom_WhenDateExists_ShouldReturnTrue()
+    {
+        await using var scope = fixture.CreateScope();
+        var query = scope.ServiceProvider.GetRequiredService<ILaborLawRuleQuery>();
+        var effectiveFrom = DateOnly.FromDateTime(DateTime.Now.AddDays(-7));
+
+        await CreateRuleAsync(scope, 71_661_840m, effectiveFrom);
+
+        var result = await query.IsExistEffectiveFrom(effectiveFrom);
+
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task IsExistEffectiveFrom_WhenDateDoesNotExist_ShouldReturnFalse()
+    {
+        await using var scope = fixture.CreateScope();
+        var query = scope.ServiceProvider.GetRequiredService<ILaborLawRuleQuery>();
+
+        await CreateRuleAsync(scope, 71_661_840m, DateOnly.FromDateTime(DateTime.Now.AddDays(-7)));
+
+        var result = await query.IsExistEffectiveFrom(DateOnly.FromDateTime(DateTime.Now.AddDays(-1)));
+
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task IsExistEffectiveFrom_WithExcludeRuleId_ShouldIgnoreThatRule()
+    {
+        await using var scope = fixture.CreateScope();
+        var query = scope.ServiceProvider.GetRequiredService<ILaborLawRuleQuery>();
+        var effectiveFrom = DateOnly.FromDateTime(DateTime.Now.AddDays(-7));
+        var rule = await CreateRuleAsync(scope, 71_661_840m, effectiveFrom);
+
+        var result = await query.IsExistEffectiveFrom(effectiveFrom, rule.Id);
+
+        result.Should().BeFalse();
+    }
+
+    [Fact]
     public async Task GetLaborLawRuleByIdAsync_WhenRuleDoesNotExist_ShouldReturnNull()
     {
         await using var scope = fixture.CreateScope();

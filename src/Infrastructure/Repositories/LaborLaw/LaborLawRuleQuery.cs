@@ -80,4 +80,28 @@ public class LaborLawRuleQuery(IDbConnectionFactory dbConnectionFactory) : ILabo
         using var connection = dbConnectionFactory.CreateConnection();
         return await connection.QueryFirstOrDefaultAsync<LaborLawRuleByIdResult>(command);
     }
+
+    public async Task<bool> IsExistEffectiveFrom(
+        DateOnly effectiveFrom,
+        Guid? excludeRuleId = null,
+        CancellationToken cancellationToken = default)
+    {
+        string sql = $"""
+                      SELECT CASE WHEN EXISTS (
+                          SELECT 1
+                          FROM {LaborLawRuleItem.TableName} r
+                          WHERE r.EffectiveFrom = @EffectiveFrom
+                          AND (@ExcludeRuleId IS NULL OR r.Id <> @ExcludeRuleId)
+                      ) THEN 1 ELSE 0 END
+                      """;
+
+        var command = new CommandDefinition(sql, new
+        {
+            EffectiveFrom = effectiveFrom,
+            ExcludeRuleId = excludeRuleId
+        }, cancellationToken: cancellationToken);
+
+        using var connection = dbConnectionFactory.CreateConnection();
+        return await connection.ExecuteScalarAsync<bool>(command);
+    }
 }
