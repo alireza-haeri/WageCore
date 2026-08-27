@@ -1,15 +1,15 @@
 using Core.Abstractions.Repositories.Employees;
+using Core.Abstractions.Repositories.LaborLaw;
 
 namespace Application.Features.EmployeeSalaryProfiles;
 
 public class CreateEmployeeSalaryProfileCommandHandler(
     IEmployeeRepository employeeRepository,
     IEmployeeSalaryProfileRepository employeeSalaryProfileRepository,
-    IEmployeeSalaryProfileQuery employeeSalaryProfileQuery)
+    IEmployeeSalaryProfileQuery employeeSalaryProfileQuery,
+    ILaborLawRuleQuery laborLawRuleQuery)
     : IRequestHandler<CreateEmployeeSalaryProfileCommand, Result<CreateEmployeeSalaryProfileCommandResponse>>
 {
-    public const decimal MinimumMonthlySalary = 71_661_840m;
-
     public async Task<Result<CreateEmployeeSalaryProfileCommandResponse>> Handle(
         CreateEmployeeSalaryProfileCommand request,
         CancellationToken cancellationToken)
@@ -23,11 +23,20 @@ public class CreateEmployeeSalaryProfileCommandHandler(
             request.EmployeeId,
             cancellationToken);
 
+        var ruleDate = request.SalaryProfile.EffectiveFrom ?? DateOnly.FromDateTime(DateTime.Now);
+        var minimumMonthlySalary = await laborLawRuleQuery.GetActiveValueAsync(
+            LaborLawRuleKey.MinimumMonthlySalary,
+            ruleDate,
+            cancellationToken);
+
+        if (minimumMonthlySalary is null)
+            return Result<CreateEmployeeSalaryProfileCommandResponse>.NotfoundFailure("حداقل حقوق ماهانه یافت نشد.");
+
         var salaryProfile = EmployeeSalaryProfile.Create(
             request.EmployeeId,
             employee.HireDate,
             latestExistingEffectiveFrom,
-            MinimumMonthlySalary,
+            minimumMonthlySalary,
             request.SalaryProfile);
 
         if (!salaryProfile.IsSuccess)

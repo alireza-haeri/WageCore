@@ -12,4 +12,5 @@ global using Shared.Kernel.Extensions;
 global using Core.Abstractions.Repositories.Workshops;
 global using Core.Abstractions.Repositories.Departments;
 global using Core.Abstractions.Repositories.Employees;
+global using Core.Abstractions.Repositories.LaborLaw;
 global using Application.Validations;
