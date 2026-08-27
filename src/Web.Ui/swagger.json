@@ -946,6 +946,292 @@
         }
       }
     },
+    "/api/v1/labor-law-rules": {
+      "post": {
+        "tags": [
+          "LaborLawRule"
+        ],
+        "summary": "CreateLaborLawRule",
+        "operationId": "CreateLaborLawRule",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateLaborLawRuleRequest"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateLaborLawRuleRequest"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateLaborLawRuleRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateLaborLawRuleCommandResponseResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateLaborLawRuleCommandResponseResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateLaborLawRuleCommandResponseResult"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "LaborLawRule"
+        ],
+        "summary": "GetLaborLawRules",
+        "operationId": "GetLaborLawRules",
+        "parameters": [
+          {
+            "name": "Pagination.PageNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Pagination.PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Pagination.Offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Key",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "x-enumNames": [
+                "MinimumMonthlySalary"
+              ],
+              "enum": [
+                0
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLaborLawRulesResponsePagedResultResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLaborLawRulesResponsePagedResultResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLaborLawRulesResponsePagedResultResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/labor-law-rules/{laborLawRuleId}": {
+      "put": {
+        "tags": [
+          "LaborLawRule"
+        ],
+        "summary": "UpdateLaborLawRule",
+        "operationId": "UpdateLaborLawRule",
+        "parameters": [
+          {
+            "name": "laborLawRuleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdateLaborLawRuleRequest"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdateLaborLawRuleRequest"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdateLaborLawRuleRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "LaborLawRule"
+        ],
+        "summary": "DeleteLaborLawRule",
+        "operationId": "DeleteLaborLawRule",
+        "parameters": [
+          {
+            "name": "laborLawRuleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/labor-law-rules/{laborLawRuleId}/edit": {
+      "get": {
+        "tags": [
+          "LaborLawRule"
+        ],
+        "summary": "GetLaborLawRuleForEdit",
+        "operationId": "GetLaborLawRuleForEdit",
+        "parameters": [
+          {
+            "name": "laborLawRuleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLaborLawRuleForEditResponseResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLaborLawRuleForEditResponseResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLaborLawRuleForEditResponseResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/workshops": {
       "post": {
         "tags": [
@@ -1495,6 +1781,83 @@
           }
         }
       },
+      "CreateLaborLawRuleCommandResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "laborLawRuleId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "CreateLaborLawRuleCommandResponseResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreateLaborLawRuleCommandResponse"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "CreateLaborLawRuleRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "MinimumMonthlySalary"
+            ],
+            "enum": [
+              0
+            ]
+          },
+          "value": {
+            "type": "number",
+            "format": "double"
+          },
+          "effectiveFrom": {
+            "type": "string"
+          }
+        }
+      },
       "CreateWorkshopCommandResponse": {
         "type": "object",
         "additionalProperties": false,
@@ -1947,6 +2310,176 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/GetEmployeeForEditResponse"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "GetLaborLawRuleForEditResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "MinimumMonthlySalary"
+            ],
+            "enum": [
+              0
+            ]
+          },
+          "value": {
+            "type": "number",
+            "format": "double"
+          },
+          "effectiveFrom": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "GetLaborLawRuleForEditResponseResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GetLaborLawRuleForEditResponse"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "GetLaborLawRulesResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "key": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "MinimumMonthlySalary"
+            ],
+            "enum": [
+              0
+            ]
+          },
+          "value": {
+            "type": "number",
+            "format": "double"
+          },
+          "displayEffectiveFrom": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "GetLaborLawRulesResponsePagedResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/GetLaborLawRulesResponse"
+            }
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "readOnly": true,
+            "format": "int32"
+          }
+        }
+      },
+      "GetLaborLawRulesResponsePagedResultResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GetLaborLawRulesResponsePagedResult"
               }
             ]
           },
@@ -2747,6 +3280,29 @@
           }
         }
       },
+      "UpdateLaborLawRuleRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "MinimumMonthlySalary"
+            ],
+            "enum": [
+              0
+            ]
+          },
+          "value": {
+            "type": "number",
+            "format": "double"
+          },
+          "effectiveFrom": {
+            "type": "string"
+          }
+        }
+      },
       "UpdateWorkshopRequest": {
         "type": "object",
         "additionalProperties": false,
@@ -2811,6 +3367,9 @@
     },
     {
       "name": "Identity"
+    },
+    {
+      "name": "LaborLawRule"
     },
     {
       "name": "Workshop"
