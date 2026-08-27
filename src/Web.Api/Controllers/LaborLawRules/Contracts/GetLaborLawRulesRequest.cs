@@ -2,7 +2,7 @@ namespace Web.Api.Controllers.LaborLawRules.Contracts;
 
 public record GetLaborLawRulesRequest(
     PaginationDto Pagination,
-    LaborLawRuleKey? Key = null);
+    LaborLawRuleKey? LaborLawRuleKey = null);
 
 public record GetLaborLawRulesResponse(
     Guid Id,

@@ -17,7 +17,7 @@ public class LaborLawRuleController(IMediator mediator) : BaseController
         CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new CreateLaborLawRuleCommand(
-            Key: request.Key,
+            Key: request.LaborLawRuleKey,
             Value: request.Value,
             EffectiveFrom: request.EffectiveFrom.ToDateOnly()
         ), cancellationToken);
@@ -61,7 +61,7 @@ public class LaborLawRuleController(IMediator mediator) : BaseController
     {
         var result = await mediator.Send(new GetLaborLawRulesQuery(
             Pagination: request.Pagination,
-            Key: request.Key
+            Key: request.LaborLawRuleKey
         ), cancellationToken);
 
         var response = result

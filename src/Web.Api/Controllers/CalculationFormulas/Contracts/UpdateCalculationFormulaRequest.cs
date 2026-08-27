@@ -1,6 +1,6 @@
 namespace Web.Api.Controllers.CalculationFormulas.Contracts;
 
 public record UpdateCalculationFormulaRequest(
-    FormulaKey Key,
+    FormulaKey CalculationFormulaKey,
     string Expression,
     PersianDate EffectiveFrom);

@@ -16,7 +16,7 @@ public class CalculationFormulaController(IMediator mediator) : BaseController
         CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new CreateCalculationFormulaCommand(
-            Key: request.Key,
+            Key: request.CalculationFormulaKey,
             Expression: request.Expression,
             EffectiveFrom: request.EffectiveFrom.ToDateOnly()
         ), cancellationToken);
@@ -33,7 +33,7 @@ public class CalculationFormulaController(IMediator mediator) : BaseController
     {
         var result = await mediator.Send(new UpdateCalculationFormulaCommand(
             CalculationFormulaId: calculationFormulaId,
-            Key: request.Key,
+            Key: request.CalculationFormulaKey,
             Expression: request.Expression,
             EffectiveFrom: request.EffectiveFrom.ToDateOnly()
         ), cancellationToken);
@@ -41,7 +41,7 @@ public class CalculationFormulaController(IMediator mediator) : BaseController
         return Result(result);
     }
 
-    [HttpDelete("{calculationFormulaId:guid}")]
+    [HttpDelete]("{calculationFormulaId:guid}")]
     [SwaggerOperation(OperationId = "DeleteCalculationFormula")]
     public async Task<ActionResult<Result<bool>>> DeleteCalculationFormula(
         Guid calculationFormulaId,
@@ -62,7 +62,7 @@ public class CalculationFormulaController(IMediator mediator) : BaseController
     {
         var result = await mediator.Send(new GetCalculationFormulasQuery(
             Pagination: request.Pagination,
-            Key: request.Key
+            Key: request.CalculationFormulaKey
         ), cancellationToken);
 
         var response = result

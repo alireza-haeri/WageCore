@@ -2,7 +2,7 @@ namespace Web.Api.Controllers.CalculationFormulas.Contracts;
 
 public record GetCalculationFormulasRequest(
     PaginationDto Pagination,
-    FormulaKey? Key = null);
+    FormulaKey? CalculationFormulaKey = null);
 
 public record GetCalculationFormulasResponse(
     Guid Id,
