@@ -7,7 +7,7 @@ public class CreateEmployeeSalaryProfileCommandHandler(
     IEmployeeSalaryProfileRepository employeeSalaryProfileRepository,
     IEmployeeSalaryProfileQuery employeeSalaryProfileQuery,
     ILaborLawRuleQuery laborLawRuleQuery,
-    Logger<CreateEmployeeSalaryProfileCommandHandler> logger)
+    ILogger<CreateEmployeeSalaryProfileCommandHandler> logger)
     : IRequestHandler<CreateEmployeeSalaryProfileCommand, Result<CreateEmployeeSalaryProfileCommandResponse>>
 {
     public async Task<Result<CreateEmployeeSalaryProfileCommandResponse>> Handle(
