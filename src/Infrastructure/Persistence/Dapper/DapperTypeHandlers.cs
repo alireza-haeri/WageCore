@@ -8,5 +8,6 @@ public static class DapperTypeHandlers
     {
         SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
         SqlMapper.AddTypeHandler(new WorkshopRegionTypeHandler());
+        SqlMapper.AddTypeHandler(new LaborLawRuleKeyTypeHandler());
     }
 }

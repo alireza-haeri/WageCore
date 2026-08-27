@@ -38,6 +38,9 @@ public static class DependencyInjection
         builder.Services.AddScoped<IDepartmentQuery, DepartmentQuery>();
         builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
         builder.Services.AddScoped<IEmployeeQuery, EmployeeQuery>();
+        builder.Services.AddScoped<ILaborLawRuleRepository, LaborLawRuleRepository>();
+        builder.Services.AddScoped<ILaborLawRuleQuery, LaborLawRuleQuery>();
+        builder.Services.AddScoped<SiteManagerSeeder>();
 
         return builder;
     }
@@ -51,6 +54,16 @@ public static class DependencyInjection
             var dbContext = scope.ServiceProvider.GetRequiredService<WageCoreDbContext>();
             await dbContext.Database.MigrateAsync();
         }
+    }
+
+    public static async Task SeedDatabaseAsync(this WebApplication app)
+    {
+        if (app.Environment.IsEnvironment("Testing"))
+            return;
+
+        await using var scope = app.Services.CreateAsyncScope();
+        var seeder = scope.ServiceProvider.GetRequiredService<SiteManagerSeeder>();
+        await seeder.SeedAsync();
     }
 
     public static WebApplicationBuilder AddAuthentication(this WebApplicationBuilder builder)

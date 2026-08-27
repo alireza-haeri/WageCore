@@ -48,6 +48,8 @@ public sealed class WageCoreDbContextFixture : IAsyncLifetime
             new TestSqlConnectionFactory(_connectionString));
 
         services.AddLogging();
+        services.AddSingleton(TestApplicationSettings.Create());
+        services.AddScoped<SiteManagerSeeder>();
         services.AddScoped<UserRepository>();
         services.AddScoped<WorkshopRepository>();
         services.AddScoped<EmployeeRepository>();
@@ -55,6 +57,9 @@ public sealed class WageCoreDbContextFixture : IAsyncLifetime
         services.AddScoped<IWorkshopQuery, WorkshopQuery>();
         services.AddScoped<IDepartmentQuery, DepartmentQuery>();
         services.AddScoped<IEmployeeQuery, EmployeeQuery>();
+        services.AddScoped<LaborLawRuleRepository>();
+        services.AddScoped<ILaborLawRuleRepository, LaborLawRuleRepository>();
+        services.AddScoped<ILaborLawRuleQuery, LaborLawRuleQuery>();
 
         _serviceProvider = services.BuildServiceProvider();
 

@@ -53,6 +53,17 @@ public class UserRepository(UserManager<ApplicationUser> userManager, ILogger<Us
                            (email != null && u.Email == email), cancellationToken);
     }
 
+    public async Task<IReadOnlyCollection<string>> GetRolesAsync(Guid userId,
+        CancellationToken cancellationToken = default)
+    {
+        var applicationUser = await userManager.FindByIdAsync(userId.ToString());
+        if (applicationUser is null)
+            return [];
+
+        var roles = await userManager.GetRolesAsync(applicationUser);
+        return roles.ToList();
+    }
+
     private IdentityResult ToIdentityResult(Microsoft.AspNetCore.Identity.IdentityResult result) =>
         new
         (

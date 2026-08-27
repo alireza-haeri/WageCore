@@ -4,7 +4,7 @@ public class JwtTokenService(IOptions<ApplicationSettings> options) : IJwtTokenS
 {
     private readonly JwtTokenSettings _jwtTokenSettings = options.Value.JwtToken;
 
-    public JwtTokenResponse GenerateToken(User user)
+    public JwtTokenResponse GenerateToken(User user, IReadOnlyCollection<string>? roles = null)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtTokenSettings.SigningKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -18,6 +18,8 @@ public class JwtTokenService(IOptions<ApplicationSettings> options) : IJwtTokenS
             claims.Add(new(ClaimTypes.MobilePhone, user.PhoneNumber));
         if (user.Email != null)
             claims.Add(new(ClaimTypes.Email, user.Email));
+        if (roles is not null)
+            claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         var token = new JwtSecurityToken(
             audience: _jwtTokenSettings.Audience,

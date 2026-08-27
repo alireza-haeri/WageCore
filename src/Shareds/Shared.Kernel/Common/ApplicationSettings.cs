@@ -7,6 +7,14 @@ public sealed class ApplicationSettings
     public required JwtTokenSettings JwtToken { get; init; }
     public required DatabaseSettings Databases { get; init; }
     public required CorsPolicySettings CorsPolicy { get; init; }
+    public required SiteManagerSettings SiteManager { get; init; }
+}
+
+public sealed class SiteManagerSettings
+{
+    public required string Email { get; init; }
+    public required string Password { get; init; }
+    public required string FullName { get; init; }
 }
 
 public sealed class DatabaseSettings

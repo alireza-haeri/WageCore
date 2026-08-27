@@ -151,6 +151,30 @@ public class JwtTokenServiceTests
     }
 
     [Fact]
+    public void GenerateToken_ShouldContainRoleClaims_WhenRolesProvided()
+    {
+        var user = _userBuilder.CreateResult().ShouldBeSuccess();
+
+        var result = _service.GenerateToken(user, [ApplicationRoles.SiteManagerRule]);
+
+        var claims = JwtTokenHelper.GetTokenClaims(result.Token);
+        claims.Should().Contain(c =>
+            c.Type == ClaimTypes.Role &&
+            c.Value == ApplicationRoles.SiteManagerRule);
+    }
+
+    [Fact]
+    public void GenerateToken_ShouldNotContainRoleClaims_WhenRolesNotProvided()
+    {
+        var user = _userBuilder.CreateResult().ShouldBeSuccess();
+
+        var result = _service.GenerateToken(user);
+
+        var claims = JwtTokenHelper.GetTokenClaims(result.Token);
+        claims.Should().NotContain(c => c.Type == ClaimTypes.Role);
+    }
+
+    [Fact]
     public void GenerateToken_TokenShouldBeValidatable()
     {
         var user = _userBuilder.CreateResult().ShouldBeSuccess();

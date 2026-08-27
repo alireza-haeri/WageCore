@@ -25,6 +25,12 @@ public static class TestApplicationSettings
             CorsPolicy = new CorsPolicySettings
             {
                 Origins = ["http://localhost"]
+            },
+            SiteManager = new SiteManagerSettings
+            {
+                Email = "site.manager@test.local",
+                Password = "SiteManager@123",
+                FullName = "مدیر سایت"
             }
         };
 

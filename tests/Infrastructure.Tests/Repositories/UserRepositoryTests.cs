@@ -317,6 +317,51 @@ public class UserRepositoryTests(WageCoreDbContextFixture fixture) : IClassFixtu
     }
 
     [Fact]
+    public async Task GetRolesAsync_WhenUserHasRole_ShouldReturnRoles()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<UserRepository>();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+
+        var user = _userBuilder
+            .WithPhoneNumber(ValidPhone)
+            .WithEmail(ValidEmail)
+            .WithFullName(ValidFullName)
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        await repository.CreateAsync(user, ValidPassword);
+        await roleManager.CreateAsync(new IdentityRole<Guid>(ApplicationRoles.SiteManagerRule));
+        var applicationUser = await userManager.FindByIdAsync(user.Id.ToString());
+        await userManager.AddToRoleAsync(applicationUser!, ApplicationRoles.SiteManagerRule);
+
+        var result = await repository.GetRolesAsync(user.Id);
+
+        result.Should().Contain(ApplicationRoles.SiteManagerRule);
+    }
+
+    [Fact]
+    public async Task GetRolesAsync_WhenUserHasNoRole_ShouldReturnEmpty()
+    {
+        await using var scope = fixture.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<UserRepository>();
+
+        var user = _userBuilder
+            .WithPhoneNumber(ValidPhone)
+            .WithEmail(ValidEmail)
+            .WithFullName(ValidFullName)
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        await repository.CreateAsync(user, ValidPassword);
+
+        var result = await repository.GetRolesAsync(user.Id);
+
+        result.Should().BeEmpty();
+    }
+
+    [Fact]
     public async Task ExistsAsync_WhenUserDoesNotExist_ShouldReturnFalse()
     {
         await using var scope = fixture.CreateScope();

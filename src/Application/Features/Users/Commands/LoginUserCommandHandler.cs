@@ -26,7 +26,8 @@ public class LoginUserCommandHandler(IUserRepository userRepository, IJwtTokenSe
                 { "Email", ["ایمیل یا رمز عبور اشتباه است!"] }
             });
 
-        var token = jwtTokenService.GenerateToken(user!);
+        var roles = await userRepository.GetRolesAsync(user!.Id, cancellationToken);
+        var token = jwtTokenService.GenerateToken(user, roles);
         return Result<LoginUserCommandResponse>.Success(
             new LoginUserCommandResponse
             (

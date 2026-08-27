@@ -1,4 +1,5 @@
-
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Application.Tests.Features.EmployeeSalaryProfiles.Command.CreateEmployeeSalaryProfile;
 
@@ -24,11 +25,13 @@ public class CreateEmployeeSalaryProfileCommandHandlerTests
         _laborLawRuleQuery = Substitute.For<ILaborLawRuleQuery>();
         _employeeBuilder = new EmployeeBuilder();
         _salaryProfileBuilder = new EmployeeSalaryProfileBuilder();
+        var logger = new Logger<CreateEmployeeSalaryProfileCommandHandler>(NullLoggerFactory.Instance);
         _handler = new CreateEmployeeSalaryProfileCommandHandler(
             _employeeRepository,
             _employeeSalaryProfileRepository,
             _employeeSalaryProfileQuery,
-            _laborLawRuleQuery);
+            _laborLawRuleQuery,
+            logger);
     }
 
     private Employee CreateValidEmployee(Guid? employeeId = null, DateOnly? hireDate = null)
