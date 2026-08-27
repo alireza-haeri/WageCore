@@ -6,4 +6,25 @@ public class EmployeeSalaryProfileRepository : IEmployeeSalaryProfileRepository
     {
         throw new NotImplementedException();
     }
+
+    public Task<EmployeeSalaryProfile?> GetByIdAsync(
+        Guid userId,
+        Guid employeeSalaryProfileId,
+        CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<bool> UpdateAsync(EmployeeSalaryProfile salaryProfile, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<bool> DeleteAsync(
+        Guid userId,
+        Guid employeeSalaryProfileId,
+        CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
 }

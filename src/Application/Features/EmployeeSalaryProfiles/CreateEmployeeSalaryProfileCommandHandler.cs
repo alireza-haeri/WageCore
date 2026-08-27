@@ -21,6 +21,7 @@ public class CreateEmployeeSalaryProfileCommandHandler(
         var latestExistingEffectiveFrom = await employeeSalaryProfileQuery.GetLatestEffectiveFromAsync(
             request.UserId,
             request.EmployeeId,
+            null,
             cancellationToken);
 
         var ruleDate = request.SalaryProfile.EffectiveFrom ?? DateOnly.FromDateTime(DateTime.Now);

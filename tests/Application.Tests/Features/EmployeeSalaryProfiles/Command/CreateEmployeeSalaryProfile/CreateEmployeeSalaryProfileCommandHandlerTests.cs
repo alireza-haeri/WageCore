@@ -78,7 +78,7 @@ public class CreateEmployeeSalaryProfileCommandHandlerTests
         _employeeRepository.GetByIdAsync(ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
             .Returns(employee);
         _employeeSalaryProfileQuery.GetLatestEffectiveFromAsync(
-                ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
+                ValidUserId, ValidEmployeeId, null, Arg.Any<CancellationToken>())
             .Returns((DateOnly?)null);
         SetupMinimumMonthlySalary();
         _employeeSalaryProfileRepository.CreateAsync(Arg.Any<EmployeeSalaryProfile>(), Arg.Any<CancellationToken>())
@@ -121,7 +121,7 @@ public class CreateEmployeeSalaryProfileCommandHandlerTests
         _employeeRepository.GetByIdAsync(ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
             .Returns(employee);
         _employeeSalaryProfileQuery.GetLatestEffectiveFromAsync(
-                ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
+                ValidUserId, ValidEmployeeId, null, Arg.Any<CancellationToken>())
             .Returns((DateOnly?)null);
         SetupMinimumMonthlySalary(null);
 
@@ -141,7 +141,7 @@ public class CreateEmployeeSalaryProfileCommandHandlerTests
         _employeeRepository.GetByIdAsync(ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
             .Returns(employee);
         _employeeSalaryProfileQuery.GetLatestEffectiveFromAsync(
-                ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
+                ValidUserId, ValidEmployeeId, null, Arg.Any<CancellationToken>())
             .Returns((DateOnly?)null);
         SetupMinimumMonthlySalary();
         _employeeSalaryProfileRepository.CreateAsync(Arg.Any<EmployeeSalaryProfile>(), Arg.Any<CancellationToken>())
@@ -169,7 +169,7 @@ public class CreateEmployeeSalaryProfileCommandHandlerTests
         _employeeRepository.GetByIdAsync(ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
             .Returns(employee);
         _employeeSalaryProfileQuery.GetLatestEffectiveFromAsync(
-                ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
+                ValidUserId, ValidEmployeeId, null, Arg.Any<CancellationToken>())
             .Returns((DateOnly?)null);
         SetupMinimumMonthlySalary();
 
@@ -195,7 +195,7 @@ public class CreateEmployeeSalaryProfileCommandHandlerTests
         _employeeRepository.GetByIdAsync(ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
             .Returns(employee);
         _employeeSalaryProfileQuery.GetLatestEffectiveFromAsync(
-                ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
+                ValidUserId, ValidEmployeeId, null, Arg.Any<CancellationToken>())
             .Returns(latestExisting);
         SetupMinimumMonthlySalary();
 
@@ -216,7 +216,7 @@ public class CreateEmployeeSalaryProfileCommandHandlerTests
         _employeeRepository.GetByIdAsync(ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
             .Returns(employee);
         _employeeSalaryProfileQuery.GetLatestEffectiveFromAsync(
-                ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
+                ValidUserId, ValidEmployeeId, null, Arg.Any<CancellationToken>())
             .Returns((DateOnly?)null);
         SetupMinimumMonthlySalary();
 
@@ -234,7 +234,7 @@ public class CreateEmployeeSalaryProfileCommandHandlerTests
         _employeeRepository.GetByIdAsync(ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
             .Returns(employee);
         _employeeSalaryProfileQuery.GetLatestEffectiveFromAsync(
-                ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
+                ValidUserId, ValidEmployeeId, null, Arg.Any<CancellationToken>())
             .Returns((DateOnly?)null);
         SetupMinimumMonthlySalary();
         _employeeSalaryProfileRepository.CreateAsync(Arg.Any<EmployeeSalaryProfile>(), Arg.Any<CancellationToken>())
@@ -254,7 +254,7 @@ public class CreateEmployeeSalaryProfileCommandHandlerTests
         _employeeRepository.GetByIdAsync(ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
             .Returns(employee);
         _employeeSalaryProfileQuery.GetLatestEffectiveFromAsync(
-                ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
+                ValidUserId, ValidEmployeeId, null, Arg.Any<CancellationToken>())
             .Returns((DateOnly?)null);
         SetupMinimumMonthlySalary();
         _employeeSalaryProfileRepository.CreateAsync(Arg.Any<EmployeeSalaryProfile>(), Arg.Any<CancellationToken>())
