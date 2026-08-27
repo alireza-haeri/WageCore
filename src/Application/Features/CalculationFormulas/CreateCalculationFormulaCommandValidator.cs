@@ -11,7 +11,8 @@ public class CreateCalculationFormulaCommandValidator : AbstractValidator<Create
             .WithMessage("کلید فرمول معتبر نیست.");
 
         RuleFor(x => x.Expression)
-            .NotEmpty().WithMessage("عبارت فرمول اجباری است.");
+            .NotEmpty().WithMessage("عبارت فرمول اجباری است.")
+            .MaximumLength(2000).WithMessage("عبارت فرمول نمیتواند بیشتر از 2000 کاراکتر باشد.");
 
         RuleFor(x => x.EffectiveFrom)
             .NotEmpty().WithMessage("تاریخ اجرا اجباری است.");

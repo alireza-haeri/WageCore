@@ -55,6 +55,27 @@ public class CreateCalculationFormulaCommandValidatorTests
     }
 
     [Fact]
+    public void Validate_WithExpressionLongerThan2000Characters_ShouldHaveValidationError()
+    {
+        var command = CreateValidCommand(expression: new string('a', 2001));
+
+        var result = _validator.TestValidate(command);
+
+        result.ShouldHaveValidationErrorFor(x => x.Expression)
+            .WithErrorMessage("عبارت فرمول نمیتواند بیشتر از 2000 کاراکتر باشد.");
+    }
+
+    [Fact]
+    public void Validate_WithExpressionOf2000Characters_ShouldNotHaveExpressionError()
+    {
+        var command = CreateValidCommand(expression: new string('a', 2000));
+
+        var result = _validator.TestValidate(command);
+
+        result.ShouldNotHaveValidationErrorFor(x => x.Expression);
+    }
+
+    [Fact]
     public void Validate_WithNullEffectiveFrom_ShouldHaveValidationError()
     {
         var command = new CreateCalculationFormulaCommand(
