@@ -24,7 +24,7 @@
     <div class="toolbar">
         <select class="in tb-sel" @bind="_selectedKey" @bind:after="OnKeyChanged">
             <option value="">همهٔ کلیدها</option>
-            <option value="@Key.MinimumMonthlySalary">حداقل حقوق ماهانه</option>
+            <option value="@LaborLawRuleKey.MinimumMonthlySalary">حداقل حقوق ماهانه</option>
         </select>
         <span class="chip c-grn ms-auto">
             <span class="c-dot"></span>@((_laborLawRules?.TotalCount ?? 0).ToPersianNumber()) قانون
@@ -179,9 +179,9 @@
         _isLoading = true;
         StateHasChanged();
 
-        Key? key = string.IsNullOrEmpty(_selectedKey)
+        LaborLawRuleKey? key = string.IsNullOrEmpty(_selectedKey)
             ? null
-            : Enum.Parse<Key>(_selectedKey);
+            : Enum.Parse<LaborLawRuleKey>(_selectedKey);
 
         var result = await ApiService.SendAsync(() => ApiClient.GetLaborLawRulesAsync(
             _pageNumber, PageSize, null, key));

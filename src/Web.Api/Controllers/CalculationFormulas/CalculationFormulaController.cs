@@ -41,7 +41,7 @@ public class CalculationFormulaController(IMediator mediator) : BaseController
         return Result(result);
     }
 
-    [HttpDelete]("{calculationFormulaId:guid}")]
+    [HttpDelete("{calculationFormulaId:guid}")]
     [SwaggerOperation(OperationId = "DeleteCalculationFormula")]
     public async Task<ActionResult<Result<bool>>> DeleteCalculationFormula(
         Guid calculationFormulaId,

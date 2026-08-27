@@ -38,9 +38,9 @@
                     <label class="f-label" for="r-key"><span class="req-s">*</span>کلید قانون</label>
                     <InputSelect @bind-Value="_formHelper.Model.Key" class="in" id="r-key" data-autofocus>
                         <option value="">انتخاب کنید...</option>
-                        <option value="@CreateLaborLawRuleRequestKey.MinimumMonthlySalary">حداقل حقوق ماهانه</option>
+                        <option value="@LaborLawRuleKey.MinimumMonthlySalary">حداقل حقوق ماهانه</option>
                     </InputSelect>
-                    <ValidationMessage TValue="CreateLaborLawRuleRequestKey?" For="() => _formHelper.Model.Key"
+                    <ValidationMessage TValue="LaborLawRuleKey?" For="() => _formHelper.Model.Key"
                                        class="f-help text-danger"/>
                 </div>
 
@@ -104,7 +104,7 @@
                     var rule = result.Response;
                     _formHelper.Model = new LaborLawRuleFormModel
                     {
-                        Key = (CreateLaborLawRuleRequestKey)rule.Key,
+                        Key = (LaborLawRuleKey)rule.Key,
                         Value = ((long)rule.Value).ToString(),
                         EffectiveFrom = rule.EffectiveFrom
                     };
@@ -148,7 +148,7 @@
             var result = await ApiService.SendAsync(
                 apiCall: () => ApiClient.UpdateLaborLawRuleAsync(Id!.Value, new UpdateLaborLawRuleRequest(
                     model.EffectiveFrom,
-                    (UpdateLaborLawRuleRequestKey)model.Key!,
+                    (UpdateLaborLawRuleRequestLaborLawRuleKey)model.Key!,
                     value
                 )),
                 successMessage: "قانون با موفقیت ویرایش شد.",
@@ -170,7 +170,7 @@
             var result = await ApiService.SendAsync(
                 apiCall: () => ApiClient.CreateLaborLawRuleAsync(new CreateLaborLawRuleRequest(
                     effectiveFrom: model.EffectiveFrom,
-                    key: model.Key!.Value,
+                    laborLawRuleKey: (CreateLaborLawRuleRequestLaborLawRuleKey)model.Key!.Value,
                     value: value
                 )),
                 successMessage: "قانون با موفقیت ثبت شد.",
@@ -195,7 +195,7 @@
     {
         [Required(ErrorMessage = "کلید قانون اجباری است.")]
         [Display(Name = "کلید قانون")]
-        public CreateLaborLawRuleRequestKey? Key { get; set; }
+        public LaborLawRuleKey? Key { get; set; }
 
         [Required(ErrorMessage = "مقدار اجباری است.")]
         [RegularExpression(@"^\d+(\.\d+)?$", ErrorMessage = "مقدار باید عدد غیرمنفی باشد.")]

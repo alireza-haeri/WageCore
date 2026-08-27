@@ -30,6 +30,46 @@ namespace Web.Ui.Services
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// CreateCalculationFormula
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<CreateCalculationFormulaCommandResponseResult> CreateCalculationFormulaAsync(CreateCalculationFormulaRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// GetCalculationFormulas
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<GetCalculationFormulasResponsePagedResultResult> GetCalculationFormulasAsync(int? pagination_PageNumber = null, int? pagination_PageSize = null, int? pagination_Offset = null, CalculationFormulaKey? calculationFormulaKey = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// UpdateCalculationFormula
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BooleanResult> UpdateCalculationFormulaAsync(System.Guid calculationFormulaId, UpdateCalculationFormulaRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// DeleteCalculationFormula
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BooleanResult> DeleteCalculationFormulaAsync(System.Guid calculationFormulaId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// GetCalculationFormulaForEdit
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<GetCalculationFormulaForEditResponseResult> GetCalculationFormulaForEditAsync(System.Guid calculationFormulaId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// LogClientEntries
         /// </summary>
         /// <returns>OK</returns>
@@ -170,7 +210,7 @@ namespace Web.Ui.Services
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetLaborLawRulesResponsePagedResultResult> GetLaborLawRulesAsync(int? pagination_PageNumber = null, int? pagination_PageSize = null, int? pagination_Offset = null, Key? key = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<GetLaborLawRulesResponsePagedResultResult> GetLaborLawRulesAsync(int? pagination_PageNumber = null, int? pagination_PageSize = null, int? pagination_Offset = null, LaborLawRuleKey? laborLawRuleKey = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -277,6 +317,415 @@ namespace Web.Ui.Services
         partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, string url);
         partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// CreateCalculationFormula
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<CreateCalculationFormulaCommandResponseResult> CreateCalculationFormulaAsync(CreateCalculationFormulaRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.StringContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/v1/calculation-formulas"
+                    urlBuilder_.Append("api/v1/calculation-formulas");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<CreateCalculationFormulaCommandResponseResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// GetCalculationFormulas
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<GetCalculationFormulasResponsePagedResultResult> GetCalculationFormulasAsync(int? pagination_PageNumber = null, int? pagination_PageSize = null, int? pagination_Offset = null, CalculationFormulaKey? calculationFormulaKey = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/v1/calculation-formulas"
+                    urlBuilder_.Append("api/v1/calculation-formulas");
+                    urlBuilder_.Append('?');
+                    if (pagination_PageNumber != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Pagination.PageNumber")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(pagination_PageNumber, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (pagination_PageSize != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Pagination.PageSize")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(pagination_PageSize, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (pagination_Offset != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Pagination.Offset")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(pagination_Offset, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (calculationFormulaKey != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("CalculationFormulaKey")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(calculationFormulaKey, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<GetCalculationFormulasResponsePagedResultResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// UpdateCalculationFormula
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<BooleanResult> UpdateCalculationFormulaAsync(System.Guid calculationFormulaId, UpdateCalculationFormulaRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (calculationFormulaId == null)
+                throw new System.ArgumentNullException("calculationFormulaId");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.StringContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("PUT");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/v1/calculation-formulas/{calculationFormulaId}"
+                    urlBuilder_.Append("api/v1/calculation-formulas/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(calculationFormulaId, System.Globalization.CultureInfo.InvariantCulture)));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<BooleanResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// DeleteCalculationFormula
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<BooleanResult> DeleteCalculationFormulaAsync(System.Guid calculationFormulaId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (calculationFormulaId == null)
+                throw new System.ArgumentNullException("calculationFormulaId");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("DELETE");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/v1/calculation-formulas/{calculationFormulaId}"
+                    urlBuilder_.Append("api/v1/calculation-formulas/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(calculationFormulaId, System.Globalization.CultureInfo.InvariantCulture)));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<BooleanResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// GetCalculationFormulaForEdit
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<GetCalculationFormulaForEditResponseResult> GetCalculationFormulaForEditAsync(System.Guid calculationFormulaId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (calculationFormulaId == null)
+                throw new System.ArgumentNullException("calculationFormulaId");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/v1/calculation-formulas/{calculationFormulaId}/edit"
+                    urlBuilder_.Append("api/v1/calculation-formulas/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(calculationFormulaId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/edit");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<GetCalculationFormulaForEditResponseResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -1664,7 +2113,7 @@ namespace Web.Ui.Services
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<GetLaborLawRulesResponsePagedResultResult> GetLaborLawRulesAsync(int? pagination_PageNumber = null, int? pagination_PageSize = null, int? pagination_Offset = null, Key? key = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<GetLaborLawRulesResponsePagedResultResult> GetLaborLawRulesAsync(int? pagination_PageNumber = null, int? pagination_PageSize = null, int? pagination_Offset = null, LaborLawRuleKey? laborLawRuleKey = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1692,9 +2141,9 @@ namespace Web.Ui.Services
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("Pagination.Offset")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(pagination_Offset, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
-                    if (key != null)
+                    if (laborLawRuleKey != null)
                     {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("Key")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(key, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                        urlBuilder_.Append(System.Uri.EscapeDataString("LaborLawRuleKey")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(laborLawRuleKey, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
                     urlBuilder_.Length--;
 
@@ -2665,6 +3114,68 @@ namespace Web.Ui.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record CreateCalculationFormulaCommandResponse
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public CreateCalculationFormulaCommandResponse(System.Guid @calculationFormulaId)
+        {
+            this.CalculationFormulaId = @calculationFormulaId;
+        }
+
+        [Newtonsoft.Json.JsonProperty("calculationFormulaId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid CalculationFormulaId { get; init; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record CreateCalculationFormulaCommandResponseResult
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public CreateCalculationFormulaCommandResponseResult(CreateCalculationFormulaCommandResponseResultBadResultType? @badResultType, System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<string>> @errors, bool @isSuccess, CreateCalculationFormulaCommandResponse @response)
+        {
+            this.IsSuccess = @isSuccess;
+            this.BadResultType = @badResultType;
+            this.Response = @response;
+            this.Errors = @errors;
+        }
+
+        [Newtonsoft.Json.JsonProperty("isSuccess", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsSuccess { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("badResultType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public CreateCalculationFormulaCommandResponseResultBadResultType? BadResultType { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("response", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public CreateCalculationFormulaCommandResponse Response { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("errors", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<string>> Errors { get; init; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record CreateCalculationFormulaRequest
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public CreateCalculationFormulaRequest(CreateCalculationFormulaRequestCalculationFormulaKey @calculationFormulaKey, string @effectiveFrom, string @expression)
+        {
+            this.CalculationFormulaKey = @calculationFormulaKey;
+            this.Expression = @expression;
+            this.EffectiveFrom = @effectiveFrom;
+        }
+
+        [Newtonsoft.Json.JsonProperty("calculationFormulaKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public CreateCalculationFormulaRequestCalculationFormulaKey CalculationFormulaKey { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("expression", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Expression { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("effectiveFrom", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string EffectiveFrom { get; init; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial record CreateDepartmentCommandResponse
     {
         [Newtonsoft.Json.JsonConstructor]
@@ -2832,15 +3343,15 @@ namespace Web.Ui.Services
     public partial record CreateLaborLawRuleRequest
     {
         [Newtonsoft.Json.JsonConstructor]
-        public CreateLaborLawRuleRequest(string @effectiveFrom, CreateLaborLawRuleRequestKey @key, double @value)
+        public CreateLaborLawRuleRequest(string @effectiveFrom, CreateLaborLawRuleRequestLaborLawRuleKey @laborLawRuleKey, double @value)
         {
-            this.Key = @key;
+            this.LaborLawRuleKey = @laborLawRuleKey;
             this.Value = @value;
             this.EffectiveFrom = @effectiveFrom;
         }
 
-        [Newtonsoft.Json.JsonProperty("key", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public CreateLaborLawRuleRequestKey Key { get; init; }
+        [Newtonsoft.Json.JsonProperty("laborLawRuleKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public CreateLaborLawRuleRequestLaborLawRuleKey LaborLawRuleKey { get; init; }
 
         [Newtonsoft.Json.JsonProperty("value", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double Value { get; init; }
@@ -3065,6 +3576,136 @@ namespace Web.Ui.Services
 
         [Newtonsoft.Json.JsonProperty("insuranceCalculationProfile", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public EmployeeInsuranceRequestInsuranceCalculationProfile InsuranceCalculationProfile { get; init; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record GetCalculationFormulaForEditResponse
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public GetCalculationFormulaForEditResponse(string @effectiveFrom, string @expression, GetCalculationFormulaForEditResponseKey @key)
+        {
+            this.Key = @key;
+            this.Expression = @expression;
+            this.EffectiveFrom = @effectiveFrom;
+        }
+
+        [Newtonsoft.Json.JsonProperty("key", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public GetCalculationFormulaForEditResponseKey Key { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("expression", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Expression { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("effectiveFrom", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string EffectiveFrom { get; init; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record GetCalculationFormulaForEditResponseResult
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public GetCalculationFormulaForEditResponseResult(GetCalculationFormulaForEditResponseResultBadResultType? @badResultType, System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<string>> @errors, bool @isSuccess, GetCalculationFormulaForEditResponse @response)
+        {
+            this.IsSuccess = @isSuccess;
+            this.BadResultType = @badResultType;
+            this.Response = @response;
+            this.Errors = @errors;
+        }
+
+        [Newtonsoft.Json.JsonProperty("isSuccess", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsSuccess { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("badResultType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public GetCalculationFormulaForEditResponseResultBadResultType? BadResultType { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("response", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public GetCalculationFormulaForEditResponse Response { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("errors", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<string>> Errors { get; init; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record GetCalculationFormulasResponse
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public GetCalculationFormulasResponse(string @displayEffectiveFrom, string @expression, System.Guid @id, GetCalculationFormulasResponseKey @key)
+        {
+            this.Id = @id;
+            this.Key = @key;
+            this.Expression = @expression;
+            this.DisplayEffectiveFrom = @displayEffectiveFrom;
+        }
+
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid Id { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("key", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public GetCalculationFormulasResponseKey Key { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("expression", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Expression { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("displayEffectiveFrom", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string DisplayEffectiveFrom { get; init; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record GetCalculationFormulasResponsePagedResult
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public GetCalculationFormulasResponsePagedResult(System.Collections.Generic.ICollection<GetCalculationFormulasResponse> @items, int @pageNumber, int @pageSize, int @totalCount, int @totalPages)
+        {
+            this.Items = @items;
+            this.TotalCount = @totalCount;
+            this.PageNumber = @pageNumber;
+            this.PageSize = @pageSize;
+            this.TotalPages = @totalPages;
+        }
+
+        [Newtonsoft.Json.JsonProperty("items", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<GetCalculationFormulasResponse> Items { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("totalCount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int TotalCount { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("pageNumber", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int PageNumber { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("pageSize", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int PageSize { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("totalPages", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int TotalPages { get; init; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record GetCalculationFormulasResponsePagedResultResult
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public GetCalculationFormulasResponsePagedResultResult(GetCalculationFormulasResponsePagedResultResultBadResultType? @badResultType, System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<string>> @errors, bool @isSuccess, GetCalculationFormulasResponsePagedResult @response)
+        {
+            this.IsSuccess = @isSuccess;
+            this.BadResultType = @badResultType;
+            this.Response = @response;
+            this.Errors = @errors;
+        }
+
+        [Newtonsoft.Json.JsonProperty("isSuccess", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsSuccess { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("badResultType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public GetCalculationFormulasResponsePagedResultResultBadResultType? BadResultType { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("response", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public GetCalculationFormulasResponsePagedResult Response { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("errors", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<string>> Errors { get; init; }
 
     }
 
@@ -3997,6 +4638,28 @@ namespace Web.Ui.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record UpdateCalculationFormulaRequest
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public UpdateCalculationFormulaRequest(UpdateCalculationFormulaRequestCalculationFormulaKey @calculationFormulaKey, string @effectiveFrom, string @expression)
+        {
+            this.CalculationFormulaKey = @calculationFormulaKey;
+            this.Expression = @expression;
+            this.EffectiveFrom = @effectiveFrom;
+        }
+
+        [Newtonsoft.Json.JsonProperty("calculationFormulaKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public UpdateCalculationFormulaRequestCalculationFormulaKey CalculationFormulaKey { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("expression", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Expression { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("effectiveFrom", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string EffectiveFrom { get; init; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial record UpdateDepartmentRequest
     {
         [Newtonsoft.Json.JsonConstructor]
@@ -4036,15 +4699,15 @@ namespace Web.Ui.Services
     public partial record UpdateLaborLawRuleRequest
     {
         [Newtonsoft.Json.JsonConstructor]
-        public UpdateLaborLawRuleRequest(string @effectiveFrom, UpdateLaborLawRuleRequestKey @key, double @value)
+        public UpdateLaborLawRuleRequest(string @effectiveFrom, UpdateLaborLawRuleRequestLaborLawRuleKey @laborLawRuleKey, double @value)
         {
-            this.Key = @key;
+            this.LaborLawRuleKey = @laborLawRuleKey;
             this.Value = @value;
             this.EffectiveFrom = @effectiveFrom;
         }
 
-        [Newtonsoft.Json.JsonProperty("key", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public UpdateLaborLawRuleRequestKey Key { get; init; }
+        [Newtonsoft.Json.JsonProperty("laborLawRuleKey", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public UpdateLaborLawRuleRequestLaborLawRuleKey LaborLawRuleKey { get; init; }
 
         [Newtonsoft.Json.JsonProperty("value", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double Value { get; init; }
@@ -4089,6 +4752,14 @@ namespace Web.Ui.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum CalculationFormulaKey
+    {
+
+        OvertimePay = 0,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum Status
     {
 
@@ -4099,7 +4770,7 @@ namespace Web.Ui.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum Key
+    public enum LaborLawRuleKey
     {
 
         MinimumMonthlySalary = 0,
@@ -4127,6 +4798,28 @@ namespace Web.Ui.Services
         General = 2,
 
         Unauthorized = 3,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum CreateCalculationFormulaCommandResponseResultBadResultType
+    {
+
+        NotFound = 0,
+
+        Validation = 1,
+
+        General = 2,
+
+        Unauthorized = 3,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum CreateCalculationFormulaRequestCalculationFormulaKey
+    {
+
+        OvertimePay = 0,
 
     }
 
@@ -4173,7 +4866,7 @@ namespace Web.Ui.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum CreateLaborLawRuleRequestKey
+    public enum CreateLaborLawRuleRequestLaborLawRuleKey
     {
 
         MinimumMonthlySalary = 0,
@@ -4235,6 +4928,50 @@ namespace Web.Ui.Services
         FullLegal = 0,
 
         MinimumLaborLaw = 1,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum GetCalculationFormulaForEditResponseKey
+    {
+
+        OvertimePay = 0,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum GetCalculationFormulaForEditResponseResultBadResultType
+    {
+
+        NotFound = 0,
+
+        Validation = 1,
+
+        General = 2,
+
+        Unauthorized = 3,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum GetCalculationFormulasResponseKey
+    {
+
+        OvertimePay = 0,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum GetCalculationFormulasResponsePagedResultResultBadResultType
+    {
+
+        NotFound = 0,
+
+        Validation = 1,
+
+        General = 2,
+
+        Unauthorized = 3,
 
     }
 
@@ -4487,7 +5224,15 @@ namespace Web.Ui.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum UpdateLaborLawRuleRequestKey
+    public enum UpdateCalculationFormulaRequestCalculationFormulaKey
+    {
+
+        OvertimePay = 0,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum UpdateLaborLawRuleRequestLaborLawRuleKey
     {
 
         MinimumMonthlySalary = 0,

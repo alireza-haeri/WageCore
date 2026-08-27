@@ -34,7 +34,7 @@ public class LaborLawRuleController(IMediator mediator) : BaseController
     {
         var result = await mediator.Send(new UpdateLaborLawRuleCommand(
             LaborLawRuleId: laborLawRuleId,
-            Key: request.Key,
+            Key: request.LaborLawRuleKey,
             Value: request.Value,
             EffectiveFrom: request.EffectiveFrom.ToDateOnly()
         ), cancellationToken);
