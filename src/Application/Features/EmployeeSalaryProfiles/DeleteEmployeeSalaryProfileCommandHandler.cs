@@ -22,7 +22,7 @@ public class DeleteEmployeeSalaryProfileCommandHandler(
             salaryProfile.EffectiveFrom,
             cancellationToken);
         if (hasPayrollRecordEffectOld)
-            return Result<bool>.GeneralFailure("امکان ویرایش این حکم وجود ندارد، چون فیش پرداختی برای این بازه صادر شده است.");
+            return Result<bool>.GeneralFailure("امکان حذف این حکم وجود ندارد، چون فیش پرداختی برای این بازه صادر شده است.");
 
         var deleteResult = await employeeSalaryProfileRepository.DeleteAsync(
             request.UserId,

@@ -7,6 +7,9 @@ public class DeleteEmployeeSalaryProfileCommandValidator : AbstractValidator<Del
         RuleFor(x => x.UserId)
             .NotEmpty().WithMessage("شناسه کاربر نمیتواند خالی باشد.");
 
+        RuleFor(x => x.EmployeeId)
+            .NotEmpty().WithMessage("شناسه کارمند نمیتواند خالی باشد.");
+
         RuleFor(x => x.EmployeeSalaryProfileId)
             .NotEmpty().WithMessage("شناسه پروفایل حقوق کارمند نمیتواند خالی باشد.");
     }
