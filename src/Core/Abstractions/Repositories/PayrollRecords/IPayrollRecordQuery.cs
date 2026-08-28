@@ -1,7 +1,7 @@
 namespace Core.Abstractions.Repositories.PayrollRecords;
 
 /// <summary>
-/// Read-only access to the PayrollRecord domain (the domain itself is not created yet).
+/// Read-only access to the PayrollRecord domain.
 /// </summary>
 public interface IPayrollRecordQuery
 {

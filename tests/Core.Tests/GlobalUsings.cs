@@ -7,3 +7,4 @@ global using FluentAssertions;
 global using Core.Domain;
 global using Core.Domain.Enums;
 global using Core.Contracts.Employees;
+global using Core.Contracts.PayrollRecords;
