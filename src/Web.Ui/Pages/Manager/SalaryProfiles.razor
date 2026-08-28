@@ -7,24 +7,17 @@
             <svg class="ic">
                 <use href="assets/img/icons.svg#i-chl"/>
             </svg>
-            فیش‌های حقوقی
+            احکام حقوقی
         </div>
-        <h1>فیش‌های حقوقی</h1>
-        <p>فیش هر ماه = حکم کارمند + کارکرد ماه + بخشنامهٔ همان سال.</p>
+        <h1>احکام حقوقی</h1>
+        <p>هر تغییر حقوق = یک حکم جدید با تاریخ؛ حکم‌های قبلی تاریخچه می‌مانند.</p>
     </div>
     <div class="ph-actions">
-        <button class="btn btn-g" data-demo="خروجی اکسل در پیاده‌سازی اصلی تولید می‌شود.">
-            <svg
-                class="ic">
-                <use href="assets/img/icons.svg#i-dl"/>
-            </svg>
-            خروجی اکسل
-        </button>
-        <a class="btn btn-p" href="payslip-form.html">
+        <a class="btn btn-p" href="profile-form.html">
             <svg class="ic">
                 <use href="assets/img/icons.svg#i-plus"/>
             </svg>
-            صدور فیش جدید</a>
+            صدور حکم جدید</a>
     </div>
 </div>
 <div class="panel">
@@ -33,148 +26,107 @@
             <svg class="ic">
                 <use href="assets/img/icons.svg#i-search"/>
             </svg>
-            <input placeholder="جست‌وجو با نام یا کد پرسنلی…"></div>
-        <select class="in tb-sel">
-            <option>سال ۱۴۰۵</option>
-            <option>سال ۱۴۰۴</option>
-        </select>
-        <select class="in tb-sel">
-            <option>مرداد</option>
-            <option>تیر</option>
-            <option>خرداد</option>
-        </select>
+            <input placeholder="جست‌وجوی نام کارمند…"></div>
         <select class="in tb-sel">
             <option>همهٔ وضعیت‌ها</option>
-            <option>پیش‌نویس</option>
-            <option>نهایی</option>
-            <option>پرداخت‌شده</option>
+            <option>فعال</option>
+            <option>منقضی</option>
         </select>
-        <span class="chip c-gold ms-auto"><span class="c-dot"></span>۱ پیش‌نویس در انتظار تأیید</span>
+        <span class="chip c-grn ms-auto"><span class="c-dot"></span>۵ حکم فعال · ۱ منقضی</span>
     </div>
     <div class="tblwrap">
         <table class="tbl">
             <thead>
             <tr>
                 <th>کارمند</th>
-                <th>دوره</th>
-                <th>کارکرد</th>
-                <th>ناخالص (ریال)</th>
-                <th>کسورات (ریال)</th>
-                <th>خالص (ریال)</th>
+                <th>بازهٔ اعتبار</th>
+                <th>حقوق پایه (۳۰ روزه)</th>
+                <th>مزایا و شیفت</th>
                 <th>وضعیت</th>
                 <th style="text-align:left">عملیات</th>
             </tr>
             </thead>
             <tbody>
             <tr>
-                <td class="pname">رضا محمدی<span class="sub"><span class="ltr">P-1001</span> ·
-                                            تولید</span></td>
-                <td>مرداد ۱۴۰۵</td>
-                <td class="num">۳۰ روز<span class="sub">۲۴ ساعت اضافه</span></td>
-                <td class="mnum">۲٬۰۹۹٬۷۰۰٬۹۲۸</td>
-                <td class="mnum neg">۱۱۴٬۸۰۰٬۰۰۰</td>
-                <td class="mnum pos">۱٬۹۸۴٬۹۰۰٬۹۲۸</td>
-                <td><span class="chip c-grn"><span class="c-dot"></span>پرداخت‌شده</span></td>
-                <td><span class="rowact"><button class="icobtn" title="مشاهدهٔ فیش" data-slip><svg
-                                class="ic">
-                                                    <use href="assets/img/icons.svg#i-eye"/>
-                                                </svg></button><button class="icobtn" title="چاپ"
-                                                                       data-demo="در پیاده‌سازی اصلی، PDF فیش تولید می‌شود."><svg
-                                class="ic">
-                                                    <use href="assets/img/icons.svg#i-print"/>
-                                                </svg></button><button class="icobtn danger" title="حذف"
-                                                                       data-confirm="حذف فیش «رضا محمدی»"><svg
-                                class="ic">
+                <td class="pname">رضا محمدی<span class="sub">P-1001 · تولید</span></td>
+                <td class="num">از ۱۴۰۵/۰۱/۰۱<span class="sub">باز (بدون پایان)</span></td>
+                <td class="mnum">۱٬۲۸۰٬۰۰۰٬۰۰۰</td>
+                <td><span class="chip c-blu">شیفت صبح‌عصر ۱۰٪</span></td>
+                <td><span class="chip c-grn"><span class="c-dot"></span>فعال</span></td>
+                <td><span class="rowact"><a class="icobtn" href="profile-form.html"
+                                            title="ویرایش"><svg class="ic">
+                                                    <use href="assets/img/icons.svg#i-pen"/>
+                                                </svg></a><button class="icobtn danger" title="حذف"
+                                                                  data-confirm="حذف حکم «رضا محمدی»"><svg class="ic">
                                                     <use href="assets/img/icons.svg#i-trash"/>
                                                 </svg></button></span></td>
             </tr>
             <tr>
-                <td class="pname">زهرا کریمی<span class="sub"><span class="ltr">P-1002</span> ·
-                                            حسابداری</span></td>
-                <td>مرداد ۱۴۰۵</td>
-                <td class="num">۲۹ روز<span class="sub">۱ روز مرخصی</span></td>
-                <td class="mnum">۲٬۰۳۱٬۵۳۵٬۴۰۰</td>
-                <td class="mnum neg">۱۷۸٬۰۰۰٬۰۰۰</td>
-                <td class="mnum pos">۱٬۸۵۳٬۵۳۵٬۴۰۰</td>
-                <td><span class="chip c-blu"><span class="c-dot"></span>نهایی</span></td>
-                <td><span class="rowact"><button class="icobtn" title="مشاهدهٔ فیش" data-slip><svg
-                                class="ic">
-                                                    <use href="assets/img/icons.svg#i-eye"/>
-                                                </svg></button><button class="icobtn" title="چاپ"
-                                                                       data-demo="در پیاده‌سازی اصلی، PDF فیش تولید می‌شود."><svg
-                                class="ic">
-                                                    <use href="assets/img/icons.svg#i-print"/>
-                                                </svg></button><button class="icobtn danger" title="حذف"
-                                                                       data-confirm="حذف فیش «زهرا کریمی»"><svg
-                                class="ic">
+                <td class="pname">زهرا کریمی<span class="sub">P-1002 · حسابداری</span></td>
+                <td class="num">از ۱۴۰۵/۰۳/۰۱<span class="sub">باز (بدون پایان)</span></td>
+                <td class="mnum">۱٬۵۴۰٬۰۰۰٬۰۰۰</td>
+                <td><span class="chip c-gold">حق جذب ۳۵۰٬۰۰۰٬۰۰۰</span></td>
+                <td><span class="chip c-grn"><span class="c-dot"></span>فعال</span></td>
+                <td><span class="rowact"><a class="icobtn" href="profile-form.html"
+                                            title="ویرایش"><svg class="ic">
+                                                    <use href="assets/img/icons.svg#i-pen"/>
+                                                </svg></a><button class="icobtn danger" title="حذف"
+                                                                  data-confirm="حذف حکم «زهرا کریمی»"><svg class="ic">
                                                     <use href="assets/img/icons.svg#i-trash"/>
                                                 </svg></button></span></td>
             </tr>
             <tr>
-                <td class="pname">فاطمه نادری<span class="sub"><span class="ltr">P-1004</span> ·
-                                            تولید</span></td>
-                <td>مرداد ۱۴۰۵</td>
-                <td class="num">۲۸ روز<span class="sub">۱۶ ساعت اضافه · ۲۲ شب</span></td>
-                <td class="mnum">۲٬۱۷۶٬۹۲۸٬۷۰۰</td>
-                <td class="mnum neg">۱۱۶٬۹۰۰٬۰۰۰</td>
-                <td class="mnum pos">۲٬۰۶۰٬۰۲۸٬۷۰۰</td>
-                <td><span class="chip c-blu"><span class="c-dot"></span>نهایی</span></td>
-                <td><span class="rowact"><button class="icobtn" title="مشاهدهٔ فیش" data-slip><svg
-                                class="ic">
-                                                    <use href="assets/img/icons.svg#i-eye"/>
-                                                </svg></button><button class="icobtn" title="چاپ"
-                                                                       data-demo="در پیاده‌سازی اصلی، PDF فیش تولید می‌شود."><svg
-                                class="ic">
-                                                    <use href="assets/img/icons.svg#i-print"/>
-                                                </svg></button><button class="icobtn danger" title="حذف"
-                                                                       data-confirm="حذف فیش «فاطمه نادری»"><svg
-                                class="ic">
+                <td class="pname">فاطمه نادری<span class="sub">P-1004 · تولید</span></td>
+                <td class="num">از ۱۴۰۴/۰۷/۰۱<span class="sub">باز (بدون پایان)</span></td>
+                <td class="mnum">۱٬۳۱۰٬۰۰۰٬۰۰۰</td>
+                <td><span class="chip c-blu">شیفت صبح‌شب ۲۲٫۵٪</span></td>
+                <td><span class="chip c-grn"><span class="c-dot"></span>فعال</span></td>
+                <td><span class="rowact"><a class="icobtn" href="profile-form.html"
+                                            title="ویرایش"><svg class="ic">
+                                                    <use href="assets/img/icons.svg#i-pen"/>
+                                                </svg></a><button class="icobtn danger" title="حذف"
+                                                                  data-confirm="حذف حکم «فاطمه نادری»"><svg class="ic">
                                                     <use href="assets/img/icons.svg#i-trash"/>
                                                 </svg></button></span></td>
             </tr>
             <tr>
-                <td class="pname">مریم صادقی<span class="sub"><span class="ltr">P-1005</span> ·
-                                            فروش</span></td>
-                <td>مرداد ۱۴۰۵</td>
-                <td class="num">۳۰ روز</td>
-                <td class="mnum">۲٬۰۴۸٬۹۳۷٬۳۲۸</td>
-                <td class="mnum neg">۲۲۰٬۸۰۰٬۰۰۰</td>
-                <td class="mnum pos">۱٬۸۲۸٬۱۳۷٬۳۲۸</td>
-                <td><span class="chip c-grn"><span class="c-dot"></span>پرداخت‌شده</span></td>
-                <td><span class="rowact"><button class="icobtn" title="مشاهدهٔ فیش" data-slip><svg
-                                class="ic">
-                                                    <use href="assets/img/icons.svg#i-eye"/>
-                                                </svg></button><button class="icobtn" title="چاپ"
-                                                                       data-demo="در پیاده‌سازی اصلی، PDF فیش تولید می‌شود."><svg
-                                class="ic">
-                                                    <use href="assets/img/icons.svg#i-print"/>
-                                                </svg></button><button class="icobtn danger" title="حذف"
-                                                                       data-confirm="حذف فیش «مریم صادقی»"><svg
-                                class="ic">
+                <td class="pname">مریم صادقی<span class="sub">P-1005 · فروش</span></td>
+                <td class="num">از ۱۴۰۵/۰۱/۰۱<span class="sub">باز (بدون پایان)</span></td>
+                <td class="mnum">۱٬۴۸۰٬۰۰۰٬۰۰۰</td>
+                <td><span class="chip c-gray">بدون شیفت</span></td>
+                <td><span class="chip c-grn"><span class="c-dot"></span>فعال</span></td>
+                <td><span class="rowact"><a class="icobtn" href="profile-form.html"
+                                            title="ویرایش"><svg class="ic">
+                                                    <use href="assets/img/icons.svg#i-pen"/>
+                                                </svg></a><button class="icobtn danger" title="حذف"
+                                                                  data-confirm="حذف حکم «مریم صادقی»"><svg class="ic">
                                                     <use href="assets/img/icons.svg#i-trash"/>
                                                 </svg></button></span></td>
             </tr>
             <tr>
-                <td class="pname">حسین عباسی<span class="sub"><span class="ltr">P-1003</span> ·
-                                            انبار</span></td>
-                <td>مرداد ۱۴۰۵</td>
-                <td class="num">۳۰ روز</td>
-                <td class="mnum">۱٬۵۵۰٬۰۰۰٬۰۰۰</td>
-                <td class="mnum neg">۱۰۸٬۵۰۰٬۰۰۰</td>
-                <td class="mnum pos">۱٬۴۴۱٬۵۰۰٬۰۰۰</td>
-                <td><span class="chip c-gold"><span class="c-dot"></span>پیش‌نویس</span></td>
-                <td><span class="rowact"><button class="icobtn" title="مشاهدهٔ فیش" data-slip><svg
-                                class="ic">
-                                                    <use href="assets/img/icons.svg#i-eye"/>
-                                                </svg></button><button class="icobtn" title="چاپ"
-                                                                       data-demo="در پیاده‌سازی اصلی، PDF فیش تولید می‌شود."><svg
-                                class="ic">
-                                                    <use href="assets/img/icons.svg#i-print"/>
-                                                </svg></button><button class="icobtn danger" title="حذف"
-                                                                       data-confirm="حذف فیش «حسین عباسی»"><svg
-                                class="ic">
+                <td class="pname">حسین عباسی<span class="sub">P-1003 · انبار</span></td>
+                <td class="num">از ۱۴۰۴/۱۱/۰۱<span class="sub">باز (بدون پایان)</span></td>
+                <td class="mnum">۱٬۱۹۰٬۰۰۰٬۰۰۰</td>
+                <td><span class="chip c-gold">حق سرپرستی ۱۲۰٬۰۰۰٬۰۰۰</span></td>
+                <td><span class="chip c-grn"><span class="c-dot"></span>فعال</span></td>
+                <td><span class="rowact"><a class="icobtn" href="profile-form.html"
+                                            title="ویرایش"><svg class="ic">
+                                                    <use href="assets/img/icons.svg#i-pen"/>
+                                                </svg></a><button class="icobtn danger" title="حذف"
+                                                                  data-confirm="حذف حکم «حسین عباسی»"><svg class="ic">
                                                     <use href="assets/img/icons.svg#i-trash"/>
                                                 </svg></button></span></td>
+            </tr>
+            <tr style="opacity:.6">
+                <td class="pname">مریم صادقی<span class="sub">P-1005 · فروش</span></td>
+                <td class="num">از ۱۴۰۴/۰۱/۰۱<span class="sub">تا ۱۴۰۴/۱۲/۲۹</span></td>
+                <td class="mnum">۱٬۳۵۰٬۰۰۰٬۰۰۰</td>
+                <td><span class="chip c-gray">بدون شیفت</span></td>
+                <td><span class="chip c-gray"><span class="c-dot"></span>منقضی</span></td>
+                <td><span class="rowact"><a class="icobtn" href="profile-form.html"
+                                            title="مشاهده"><svg class="ic">
+                                                    <use href="assets/img/icons.svg#i-eye"/>
+                                                </svg></a></span></td>
             </tr>
             </tbody>
         </table>
@@ -183,9 +135,9 @@
         <svg class="ic" style="width:14px;height:14px">
             <use href="assets/img/icons.svg#i-info"/>
         </svg>
-        وضعیت فقط رو به جلو حرکت می‌کند: پیش‌نویس ← نهایی ← پرداخت‌شده. فیش نهایی قابل ویرایش
-        نیست؛ برای اصلاح، فیش اصلاحی صادر می‌شود.
-        <div class="pgn">
+        همپوشانی دو حکم برای یک کارمند ممنوع است؛ فقط آخرین حکم می‌تواند باز باشد.
+        <div
+            class="pgn">
             <button class="on">۱</button>
         </div>
     </div>
