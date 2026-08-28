@@ -1,8 +1,6 @@
 using System.Net.Http.Headers;
 using Application.Features.LaborLawRules;
-using Core.Domain;
 using Core.Domain.Enums;
-using Web.Api.Controllers.LaborLawRules.Contracts;
 using Web.Api.Controllers.Users.Contracts;
 
 namespace Integration.Tests.Api;
@@ -46,12 +44,12 @@ public class LaborLawRuleControllerTests(ApiFixture fixture) : IClassFixture<Api
         await SeedSiteManagerAsync();
         await LoginAsSiteManagerAsync();
 
-        var request = new CreateLaborLawRuleRequest(
-            LaborLawRuleKey.MinimumMonthlySalary,
-            71_661_840m,
-            new PersianDate("1403/01/01"));
-
-        var response = await _client.PostAsJsonAsync(LaborLawRulesUrl, request);
+        var response = await _client.PostAsJsonAsync(LaborLawRulesUrl, new
+        {
+            laborLawRuleKey = LaborLawRuleKey.MinimumMonthlySalary,
+            value = 71_661_840m,
+            effectiveFrom = "1403/01/01"
+        });
         var result = await response.ShouldBeSuccess<CreateLaborLawRuleCommandResponse>();
 
         result.LaborLawRuleId.Should().NotBeEmpty();
@@ -66,12 +64,12 @@ public class LaborLawRuleControllerTests(ApiFixture fixture) : IClassFixture<Api
 
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", registerResult.Token);
 
-        var request = new CreateLaborLawRuleRequest(
-            LaborLawRuleKey.MinimumMonthlySalary,
-            71_661_840m,
-            new PersianDate("1403/01/01"));
-
-        var response = await _client.PostAsJsonAsync(LaborLawRulesUrl, request);
+        var response = await _client.PostAsJsonAsync(LaborLawRulesUrl, new
+        {
+            laborLawRuleKey = LaborLawRuleKey.MinimumMonthlySalary,
+            value = 71_661_840m,
+            effectiveFrom = "1403/01/01"
+        });
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
