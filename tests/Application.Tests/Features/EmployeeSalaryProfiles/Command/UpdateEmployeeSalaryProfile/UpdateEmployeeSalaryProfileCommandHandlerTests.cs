@@ -208,13 +208,13 @@ public class UpdateEmployeeSalaryProfileCommandHandlerTests
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
-        result.ShouldBeFailure("این پروفایل حقوق بر روی فیش حقوقی اثر دارد و امکان ویرایش آن وجود ندارد.", BadResultType.General);
+        result.ShouldBeFailure("امکان ویرایش این حکم وجود ندارد، چون فیش پرداختی برای این بازه صادر شده است.", BadResultType.General);
         await _employeeSalaryProfileRepository.DidNotReceive()
             .UpdateAsync(Arg.Any<EmployeeSalaryProfile>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    public async Task Handle_ShouldCheckPayrollRecordEffectByEffectiveFrom()
+    public async Task Handle_WhenEffectiveFromUnchanged_ShouldCheckOnlyExistingPeriod()
     {
         var command = CreateValidCommand();
         var employee = CreateValidEmployee();
@@ -237,8 +237,87 @@ public class UpdateEmployeeSalaryProfileCommandHandlerTests
         await _payrollRecordQuery.Received(1).HasPayrollRecordEffectAsync(
             ValidUserId,
             ValidEmployeeId,
-            command.SalaryProfile.EffectiveFrom!.Value,
+            profile.EffectiveFrom,
             Arg.Any<CancellationToken>());
+        await _payrollRecordQuery.Received(1).HasPayrollRecordEffectAsync(
+            Arg.Any<Guid>(),
+            Arg.Any<Guid>(),
+            Arg.Any<DateOnly>(),
+            Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_WhenEffectiveFromChanges_ShouldCheckExistingAndNewPeriod()
+    {
+        var newEffectiveFrom = DateOnly.FromDateTime(DateTime.Now.AddDays(-1));
+        var salaryProfile = _salaryProfileBuilder
+            .WithEffectiveFrom(newEffectiveFrom)
+            .WithBaseMonthlySalary(ValidMinimumMonthlySalary)
+            .BuildDto();
+        var command = CreateValidCommand(salaryProfile);
+        var employee = CreateValidEmployee();
+        var profile = CreateValidSalaryProfile();
+
+        _employeeRepository.GetByIdAsync(ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
+            .Returns(employee);
+        _employeeSalaryProfileRepository.GetByIdAsync(ValidUserId, ValidSalaryProfileId, Arg.Any<CancellationToken>())
+            .Returns(profile);
+        SetupNoPayrollRecordEffect();
+        SetupMinimumMonthlySalary();
+        _employeeSalaryProfileQuery.GetLatestEffectiveFromAsync(
+                ValidUserId, ValidEmployeeId, ValidSalaryProfileId, Arg.Any<CancellationToken>())
+            .Returns((DateOnly?)null);
+        _employeeSalaryProfileRepository.UpdateAsync(profile, Arg.Any<CancellationToken>())
+            .Returns(true);
+
+        await _handler.Handle(command, CancellationToken.None);
+
+        await _payrollRecordQuery.Received(1).HasPayrollRecordEffectAsync(
+            ValidUserId,
+            ValidEmployeeId,
+            profile.EffectiveFrom,
+            Arg.Any<CancellationToken>());
+        await _payrollRecordQuery.Received(1).HasPayrollRecordEffectAsync(
+            ValidUserId,
+            ValidEmployeeId,
+            newEffectiveFrom,
+            Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_WhenChangingToAffectedPeriod_ShouldReturnGeneralFailure()
+    {
+        var newEffectiveFrom = DateOnly.FromDateTime(DateTime.Now.AddDays(-1));
+        var salaryProfile = _salaryProfileBuilder
+            .WithEffectiveFrom(newEffectiveFrom)
+            .WithBaseMonthlySalary(ValidMinimumMonthlySalary)
+            .BuildDto();
+        var command = CreateValidCommand(salaryProfile);
+        var employee = CreateValidEmployee();
+        var profile = CreateValidSalaryProfile();
+
+        _employeeRepository.GetByIdAsync(ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
+            .Returns(employee);
+        _employeeSalaryProfileRepository.GetByIdAsync(ValidUserId, ValidSalaryProfileId, Arg.Any<CancellationToken>())
+            .Returns(profile);
+        _payrollRecordQuery.HasPayrollRecordEffectAsync(
+                ValidUserId,
+                ValidEmployeeId,
+                profile.EffectiveFrom,
+                Arg.Any<CancellationToken>())
+            .Returns(false);
+        _payrollRecordQuery.HasPayrollRecordEffectAsync(
+                ValidUserId,
+                ValidEmployeeId,
+                newEffectiveFrom,
+                Arg.Any<CancellationToken>())
+            .Returns(true);
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.ShouldBeFailure("امکان انتقال این حکم به این بازه وجود ندارد، چون فیش پرداختی برای این بازه صادر شده است.", BadResultType.General);
+        await _employeeSalaryProfileRepository.DidNotReceive()
+            .UpdateAsync(Arg.Any<EmployeeSalaryProfile>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]

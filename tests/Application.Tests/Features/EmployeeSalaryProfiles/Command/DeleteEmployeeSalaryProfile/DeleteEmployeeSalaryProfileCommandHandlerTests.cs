@@ -37,8 +37,9 @@ public class DeleteEmployeeSalaryProfileCommandHandlerTests
 
     private static DeleteEmployeeSalaryProfileCommand CreateValidCommand(
         Guid? userId = null,
+        Guid? employeeId = null,
         Guid? salaryProfileId = null) =>
-        new(userId ?? ValidUserId, salaryProfileId ?? ValidSalaryProfileId);
+        new(userId ?? ValidUserId, employeeId ?? ValidEmployeeId, salaryProfileId ?? ValidSalaryProfileId);
 
     [Fact]
     public async Task Handle_WithValidData_ShouldDeleteSalaryProfileAndReturnTrue()
@@ -81,6 +82,22 @@ public class DeleteEmployeeSalaryProfileCommandHandlerTests
     }
 
     [Fact]
+    public async Task Handle_WhenSalaryProfileBelongsToDifferentEmployee_ShouldReturnNotFoundFailure()
+    {
+        var command = CreateValidCommand();
+        var profile = CreateValidSalaryProfile(employeeId: Guid.NewGuid());
+
+        _employeeSalaryProfileRepository.GetByIdAsync(ValidUserId, ValidSalaryProfileId, Arg.Any<CancellationToken>())
+            .Returns(profile);
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.ShouldBeFailure("پروفایل حقوق کارمند مورد نظر یافت نشد.", BadResultType.NotFound);
+        await _employeeSalaryProfileRepository.DidNotReceive()
+            .DeleteAsync(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
     public async Task Handle_WhenSalaryProfileHasPayrollRecordEffect_ShouldReturnGeneralFailure()
     {
         var command = CreateValidCommand();
@@ -97,7 +114,7 @@ public class DeleteEmployeeSalaryProfileCommandHandlerTests
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
-        result.ShouldBeFailure("این پروفایل حقوق بر روی فیش حقوقی اثر دارد و امکان حذف آن وجود ندارد.", BadResultType.General);
+        result.ShouldBeFailure("امکان حذف این حکم وجود ندارد، چون فیش پرداختی برای این بازه صادر شده است.", BadResultType.General);
         await _employeeSalaryProfileRepository.DidNotReceive()
             .DeleteAsync(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>());
     }

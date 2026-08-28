@@ -9,6 +9,7 @@ public class CreateEmployeeSalaryProfileCommandHandlerTests
     private readonly IEmployeeSalaryProfileRepository _employeeSalaryProfileRepository;
     private readonly IEmployeeSalaryProfileQuery _employeeSalaryProfileQuery;
     private readonly ILaborLawRuleQuery _laborLawRuleQuery;
+    private readonly IPayrollRecordQuery _payrollRecordQuery;
     private readonly CreateEmployeeSalaryProfileCommandHandler _handler;
     private readonly EmployeeBuilder _employeeBuilder;
     private readonly EmployeeSalaryProfileBuilder _salaryProfileBuilder;
@@ -23,6 +24,7 @@ public class CreateEmployeeSalaryProfileCommandHandlerTests
         _employeeSalaryProfileRepository = Substitute.For<IEmployeeSalaryProfileRepository>();
         _employeeSalaryProfileQuery = Substitute.For<IEmployeeSalaryProfileQuery>();
         _laborLawRuleQuery = Substitute.For<ILaborLawRuleQuery>();
+        _payrollRecordQuery = Substitute.For<IPayrollRecordQuery>();
         _employeeBuilder = new EmployeeBuilder();
         _salaryProfileBuilder = new EmployeeSalaryProfileBuilder();
         var logger = new Logger<CreateEmployeeSalaryProfileCommandHandler>(NullLoggerFactory.Instance);
@@ -31,6 +33,7 @@ public class CreateEmployeeSalaryProfileCommandHandlerTests
             _employeeSalaryProfileRepository,
             _employeeSalaryProfileQuery,
             _laborLawRuleQuery,
+            _payrollRecordQuery,
             logger);
     }
 
@@ -68,6 +71,16 @@ public class CreateEmployeeSalaryProfileCommandHandlerTests
             .Returns(value);
     }
 
+    private void SetupNoPayrollRecordEffect()
+    {
+        _payrollRecordQuery.HasPayrollRecordEffectAsync(
+                Arg.Any<Guid>(),
+                Arg.Any<Guid>(),
+                Arg.Any<DateOnly>(),
+                Arg.Any<CancellationToken>())
+            .Returns(false);
+    }
+
     [Fact]
     public async Task Handle_WithValidData_ShouldCreateSalaryProfileAndReturnId()
     {
@@ -81,6 +94,7 @@ public class CreateEmployeeSalaryProfileCommandHandlerTests
                 ValidUserId, ValidEmployeeId, null, Arg.Any<CancellationToken>())
             .Returns((DateOnly?)null);
         SetupMinimumMonthlySalary();
+        SetupNoPayrollRecordEffect();
         _employeeSalaryProfileRepository.CreateAsync(Arg.Any<EmployeeSalaryProfile>(), Arg.Any<CancellationToken>())
             .Returns(createdId);
 
@@ -266,5 +280,58 @@ public class CreateEmployeeSalaryProfileCommandHandlerTests
             Arg.Is<EmployeeSalaryProfile>(x =>
                 x.BaseMonthlySalary >= ValidMinimumMonthlySalary),
             Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_ShouldCheckPayrollRecordEffectByEffectiveFrom()
+    {
+        var command = CreateValidCommand();
+        var employee = CreateValidEmployee();
+
+        _employeeRepository.GetByIdAsync(ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
+            .Returns(employee);
+        _employeeSalaryProfileQuery.GetLatestEffectiveFromAsync(
+                ValidUserId, ValidEmployeeId, null, Arg.Any<CancellationToken>())
+            .Returns((DateOnly?)null);
+        SetupMinimumMonthlySalary();
+        SetupNoPayrollRecordEffect();
+        _employeeSalaryProfileRepository.CreateAsync(Arg.Any<EmployeeSalaryProfile>(), Arg.Any<CancellationToken>())
+            .Returns(Guid.NewGuid());
+
+        await _handler.Handle(command, CancellationToken.None);
+
+        await _payrollRecordQuery.Received(1).HasPayrollRecordEffectAsync(
+            ValidUserId,
+            ValidEmployeeId,
+            command.SalaryProfile.EffectiveFrom!.Value,
+            Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_WhenSalaryProfileHasPayrollRecordEffect_ShouldReturnGeneralFailure()
+    {
+        var command = CreateValidCommand();
+        var employee = CreateValidEmployee();
+
+        _employeeRepository.GetByIdAsync(ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
+            .Returns(employee);
+        _employeeSalaryProfileQuery.GetLatestEffectiveFromAsync(
+                ValidUserId, ValidEmployeeId, null, Arg.Any<CancellationToken>())
+            .Returns((DateOnly?)null);
+        SetupMinimumMonthlySalary();
+        _payrollRecordQuery.HasPayrollRecordEffectAsync(
+                ValidUserId,
+                ValidEmployeeId,
+                command.SalaryProfile.EffectiveFrom!.Value,
+                Arg.Any<CancellationToken>())
+            .Returns(true);
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.ShouldBeFailure(
+            "امکان انتقال این حکم به این بازه وجود ندارد، چون فیش پرداختی برای این بازه صادر شده است.",
+            BadResultType.General);
+        await _employeeSalaryProfileRepository.DidNotReceive()
+            .CreateAsync(Arg.Any<EmployeeSalaryProfile>(), Arg.Any<CancellationToken>());
     }
 }
