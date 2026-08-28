@@ -53,28 +53,5 @@ public class PayrollRecordValidator : AbstractValidator<PayrollRecordDto>
             .Cascade(CascadeMode.Stop)
             .NotNull().WithMessage("ساعات کار جمعه اجباری است.")
             .GreaterThanOrEqualTo(0).WithMessage("ساعات کار جمعه نمیتواند منفی باشد.");
-
-        RuleFor(x => x.OvertimeAmount)
-            .Cascade(CascadeMode.Stop)
-            .NotNull().WithMessage("مبلغ اضافه‌کاری اجباری است.")
-            .GreaterThanOrEqualTo(0).WithMessage("مبلغ اضافه‌کاری نمیتواند منفی باشد.");
-
-        RuleFor(x => x.NightShiftExtraAmount)
-            .Cascade(CascadeMode.Stop)
-            .NotNull().WithMessage("فوق‌العاده شیفت شب اجباری است.")
-            .GreaterThanOrEqualTo(0).WithMessage("فوق‌العاده شیفت شب نمیتواند منفی باشد.");
-
-        RuleFor(x => x.FridayWorkAllowance)
-            .Cascade(CascadeMode.Stop)
-            .NotNull().WithMessage("حق کار جمعه اجباری است.")
-            .GreaterThanOrEqualTo(0).WithMessage("حق کار جمعه نمیتواند منفی باشد.");
-
-        RuleFor(x => x.CalculatedTaxAmount)
-            .Cascade(CascadeMode.Stop)
-            .NotNull().WithMessage("مالیات محاسبه شده اجباری است.")
-            .GreaterThanOrEqualTo(0).WithMessage("مالیات محاسبه شده نمیتواند منفی باشد.");
-
-        RuleFor(x => x.NetPayableAmount)
-            .NotNull().WithMessage("مبلغ خالص قابل پرداخت اجباری است.");
     }
 }

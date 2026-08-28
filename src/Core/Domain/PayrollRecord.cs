@@ -32,7 +32,8 @@ public class PayrollRecord
         bool employeeIsTaxSubject,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
-        PayrollRecordDto? payrollRecord)
+        PayrollRecordDto? payrollRecord,
+        PayrollRecordAmountsDto? payrollAmounts)
     {
         var validationResult = Validate(
             payrollRecordId,
@@ -40,7 +41,8 @@ public class PayrollRecord
             employeeIsTaxSubject,
             maxMonthlyOvertimeHours,
             maxFridayHours,
-            payrollRecord);
+            payrollRecord,
+            payrollAmounts);
 
         if (!validationResult.IsSuccess)
             return DomainResult<PayrollRecord>.Failure(validationResult.ErrorMessage!);
@@ -58,11 +60,11 @@ public class PayrollRecord
             LeaveDaysCount = payrollRecord.LeaveDaysCount!.Value,
             AbsenceDaysCount = payrollRecord.AbsenceDaysCount!.Value,
             MissionDaysCount = payrollRecord.MissionDaysCount!.Value,
-            OvertimeAmount = payrollRecord.OvertimeAmount!.Value,
-            NightShiftExtraAmount = payrollRecord.NightShiftExtraAmount!.Value,
-            FridayWorkAllowance = payrollRecord.FridayWorkAllowance!.Value,
-            CalculatedTaxAmount = payrollRecord.CalculatedTaxAmount!.Value,
-            NetPayableAmount = payrollRecord.NetPayableAmount!.Value,
+            OvertimeAmount = payrollAmounts!.OvertimeAmount,
+            NightShiftExtraAmount = payrollAmounts.NightShiftExtraAmount,
+            FridayWorkAllowance = payrollAmounts.FridayWorkAllowance,
+            CalculatedTaxAmount = payrollAmounts.CalculatedTaxAmount,
+            NetPayableAmount = payrollAmounts.NetPayableAmount,
             Status = PayrollRecordStatus.Draft
         });
     }
@@ -72,20 +74,23 @@ public class PayrollRecord
         bool employeeIsTaxSubject,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
-        PayrollRecordDto? payrollRecord) =>
+        PayrollRecordDto? payrollRecord,
+        PayrollRecordAmountsDto? payrollAmounts) =>
         Create(
             Guid.NewGuid(),
             employeeId,
             employeeIsTaxSubject,
             maxMonthlyOvertimeHours,
             maxFridayHours,
-            payrollRecord);
+            payrollRecord,
+            payrollAmounts);
 
     public DomainResult Update(
         bool employeeIsTaxSubject,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
-        PayrollRecordDto? payrollRecord)
+        PayrollRecordDto? payrollRecord,
+        PayrollRecordAmountsDto? payrollAmounts)
     {
         var canModifyResult = EnsureCanModify();
         if (!canModifyResult.IsSuccess)
@@ -95,7 +100,8 @@ public class PayrollRecord
             employeeIsTaxSubject,
             maxMonthlyOvertimeHours,
             maxFridayHours,
-            payrollRecord);
+            payrollRecord,
+            payrollAmounts);
 
         if (!validationResult.IsSuccess)
             return validationResult;
@@ -109,11 +115,11 @@ public class PayrollRecord
         LeaveDaysCount = payrollRecord.LeaveDaysCount!.Value;
         AbsenceDaysCount = payrollRecord.AbsenceDaysCount!.Value;
         MissionDaysCount = payrollRecord.MissionDaysCount!.Value;
-        OvertimeAmount = payrollRecord.OvertimeAmount!.Value;
-        NightShiftExtraAmount = payrollRecord.NightShiftExtraAmount!.Value;
-        FridayWorkAllowance = payrollRecord.FridayWorkAllowance!.Value;
-        CalculatedTaxAmount = payrollRecord.CalculatedTaxAmount!.Value;
-        NetPayableAmount = payrollRecord.NetPayableAmount!.Value;
+        OvertimeAmount = payrollAmounts!.OvertimeAmount;
+        NightShiftExtraAmount = payrollAmounts.NightShiftExtraAmount;
+        FridayWorkAllowance = payrollAmounts.FridayWorkAllowance;
+        CalculatedTaxAmount = payrollAmounts.CalculatedTaxAmount;
+        NetPayableAmount = payrollAmounts.NetPayableAmount;
 
         return DomainResult.Success();
     }
@@ -150,7 +156,8 @@ public class PayrollRecord
         bool employeeIsTaxSubject,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
-        PayrollRecordDto? payrollRecord)
+        PayrollRecordDto? payrollRecord,
+        PayrollRecordAmountsDto? payrollAmounts)
     {
         if (payrollRecordId == Guid.Empty)
             return DomainResult.Failure("شناسه فیش پرداختی نمیتواند خالی باشد.");
@@ -162,17 +169,22 @@ public class PayrollRecord
             employeeIsTaxSubject,
             maxMonthlyOvertimeHours,
             maxFridayHours,
-            payrollRecord);
+            payrollRecord,
+            payrollAmounts);
     }
 
     private static DomainResult ValidateCommon(
         bool employeeIsTaxSubject,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
-        PayrollRecordDto? payrollRecord)
+        PayrollRecordDto? payrollRecord,
+        PayrollRecordAmountsDto? payrollAmounts)
     {
         if (payrollRecord is null)
             return DomainResult.Failure("اطلاعات فیش پرداختی نمیتواند خالی باشد.");
+
+        if (payrollAmounts is null)
+            return DomainResult.Failure("مبالغ فیش پرداختی نمیتواند خالی باشد.");
 
         var periodResult = ValidatePeriod(payrollRecord);
         if (!periodResult.IsSuccess)
@@ -218,27 +230,24 @@ public class PayrollRecord
         if (payrollRecord.FridayWorkHours > maxFridayHours)
             return DomainResult.Failure("ساعات کار جمعه نباید بیشتر از حداکثر ساعات کار جمعه باشد.");
 
-        var overtimeAmountResult = ValidateNonNegative(payrollRecord.OvertimeAmount, "مبلغ اضافه‌کاری");
+        var overtimeAmountResult = ValidateNonNegative(payrollAmounts.OvertimeAmount, "مبلغ اضافه‌کاری");
         if (!overtimeAmountResult.IsSuccess)
             return overtimeAmountResult;
 
-        var nightShiftExtraResult = ValidateNonNegative(payrollRecord.NightShiftExtraAmount, "فوق‌العاده شیفت شب");
+        var nightShiftExtraResult = ValidateNonNegative(payrollAmounts.NightShiftExtraAmount, "فوق‌العاده شیفت شب");
         if (!nightShiftExtraResult.IsSuccess)
             return nightShiftExtraResult;
 
-        var fridayWorkAllowanceResult = ValidateNonNegative(payrollRecord.FridayWorkAllowance, "حق کار جمعه");
+        var fridayWorkAllowanceResult = ValidateNonNegative(payrollAmounts.FridayWorkAllowance, "حق کار جمعه");
         if (!fridayWorkAllowanceResult.IsSuccess)
             return fridayWorkAllowanceResult;
 
-        var taxAmountResult = ValidateNonNegative(payrollRecord.CalculatedTaxAmount, "مالیات محاسبه شده");
+        var taxAmountResult = ValidateNonNegative(payrollAmounts.CalculatedTaxAmount, "مالیات محاسبه شده");
         if (!taxAmountResult.IsSuccess)
             return taxAmountResult;
 
-        if (employeeIsTaxSubject && payrollRecord.CalculatedTaxAmount == 0)
+        if (employeeIsTaxSubject && payrollAmounts.CalculatedTaxAmount == 0)
             return DomainResult.Failure("برای کارمند مشمول مالیات، مالیات محاسبه شده نمیتواند صفر باشد.");
-
-        if (payrollRecord.NetPayableAmount is null)
-            return DomainResult.Failure("مبلغ خالص قابل پرداخت نمیتواند خالی باشد.");
 
         return DomainResult.Success();
     }

@@ -102,7 +102,8 @@ public class PayrollRecordStatusTests
             1m,
             1m,
             1m,
-            1m,
+            1m);
+        var amounts = new PayrollRecordAmountsDto(
             800_000m,
             300_000m,
             250_000m,
@@ -111,7 +112,7 @@ public class PayrollRecordStatusTests
 
         using (new AssertionScope())
         {
-            record.Update(false, 20m, 12m, dto).IsSuccess.Should().BeTrue();
+            record.Update(false, 20m, 12m, dto, amounts).IsSuccess.Should().BeTrue();
             record.EnsureCanDelete().IsSuccess.Should().BeTrue();
         }
     }
@@ -131,7 +132,8 @@ public class PayrollRecordStatusTests
             1m,
             1m,
             1m,
-            1m,
+            1m);
+        var amounts = new PayrollRecordAmountsDto(
             800_000m,
             300_000m,
             250_000m,
@@ -140,7 +142,7 @@ public class PayrollRecordStatusTests
 
         using (new AssertionScope())
         {
-            record.Update(false, 20m, 12m, dto).IsSuccess.Should().BeFalse();
+            record.Update(false, 20m, 12m, dto, amounts).IsSuccess.Should().BeFalse();
             record.EnsureCanDelete().IsSuccess.Should().BeFalse();
         }
     }

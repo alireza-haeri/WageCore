@@ -9,9 +9,4 @@ public record PayrollRecordDto(
     decimal? FridayWorkHours,
     decimal? LeaveDaysCount,
     decimal? AbsenceDaysCount,
-    decimal? MissionDaysCount,
-    decimal? OvertimeAmount,
-    decimal? NightShiftExtraAmount,
-    decimal? FridayWorkAllowance,
-    decimal? CalculatedTaxAmount,
-    decimal? NetPayableAmount);
+    decimal? MissionDaysCount);

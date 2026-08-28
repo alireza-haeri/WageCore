@@ -16,11 +16,11 @@ public class PayrollRecordBuilder
     private decimal? _leaveDaysCount = 2m;
     private decimal? _absenceDaysCount = 0m;
     private decimal? _missionDaysCount = 1m;
-    private decimal? _overtimeAmount = 800_000m;
-    private decimal? _nightShiftExtraAmount = 300_000m;
-    private decimal? _fridayWorkAllowance = 250_000m;
-    private decimal? _calculatedTaxAmount = 1_500_000m;
-    private decimal? _netPayableAmount = 15_000_000m;
+    private decimal _overtimeAmount = 800_000m;
+    private decimal _nightShiftExtraAmount = 300_000m;
+    private decimal _fridayWorkAllowance = 250_000m;
+    private decimal _calculatedTaxAmount = 1_500_000m;
+    private decimal _netPayableAmount = 15_000_000m;
 
     public PayrollRecordBuilder WithId(Guid id)
     {
@@ -55,18 +55,6 @@ public class PayrollRecordBuilder
     public PayrollRecordBuilder WithPeriod(DateOnly? periodStart, DateOnly? periodEnd)
     {
         _periodStart = periodStart;
-        _periodEnd = periodEnd;
-        return this;
-    }
-
-    public PayrollRecordBuilder WithPeriodStart(DateOnly? periodStart)
-    {
-        _periodStart = periodStart;
-        return this;
-    }
-
-    public PayrollRecordBuilder WithPeriodEnd(DateOnly? periodEnd)
-    {
         _periodEnd = periodEnd;
         return this;
     }
@@ -113,31 +101,31 @@ public class PayrollRecordBuilder
         return this;
     }
 
-    public PayrollRecordBuilder WithOvertimeAmount(decimal? overtimeAmount)
+    public PayrollRecordBuilder WithOvertimeAmount(decimal overtimeAmount)
     {
         _overtimeAmount = overtimeAmount;
         return this;
     }
 
-    public PayrollRecordBuilder WithNightShiftExtraAmount(decimal? nightShiftExtraAmount)
+    public PayrollRecordBuilder WithNightShiftExtraAmount(decimal nightShiftExtraAmount)
     {
         _nightShiftExtraAmount = nightShiftExtraAmount;
         return this;
     }
 
-    public PayrollRecordBuilder WithFridayWorkAllowance(decimal? fridayWorkAllowance)
+    public PayrollRecordBuilder WithFridayWorkAllowance(decimal fridayWorkAllowance)
     {
         _fridayWorkAllowance = fridayWorkAllowance;
         return this;
     }
 
-    public PayrollRecordBuilder WithCalculatedTaxAmount(decimal? calculatedTaxAmount)
+    public PayrollRecordBuilder WithCalculatedTaxAmount(decimal calculatedTaxAmount)
     {
         _calculatedTaxAmount = calculatedTaxAmount;
         return this;
     }
 
-    public PayrollRecordBuilder WithNetPayableAmount(decimal? netPayableAmount)
+    public PayrollRecordBuilder WithNetPayableAmount(decimal netPayableAmount)
     {
         _netPayableAmount = netPayableAmount;
         return this;
@@ -153,7 +141,10 @@ public class PayrollRecordBuilder
             _fridayWorkHours,
             _leaveDaysCount,
             _absenceDaysCount,
-            _missionDaysCount,
+            _missionDaysCount);
+
+    public PayrollRecordAmountsDto BuildAmountsDto() =>
+        new(
             _overtimeAmount,
             _nightShiftExtraAmount,
             _fridayWorkAllowance,
@@ -168,6 +159,7 @@ public class PayrollRecordBuilder
             _employeeIsTaxSubject,
             _maxMonthlyOvertimeHours,
             _maxFridayHours,
-            BuildDto());
+            BuildDto(),
+            BuildAmountsDto());
     }
 }

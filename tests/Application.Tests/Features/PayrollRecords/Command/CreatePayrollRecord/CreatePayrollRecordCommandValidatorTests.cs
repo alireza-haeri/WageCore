@@ -29,15 +29,6 @@ public class CreatePayrollRecordCommandValidatorTests
             _ => _builder.BuildDto() with { FridayWorkHours = value }
         };
 
-    private PayrollRecordDto CreateAmountDto(string fieldName, decimal? value) =>
-        fieldName switch
-        {
-            "OvertimeAmount" => _builder.BuildDto() with { OvertimeAmount = value },
-            "NightShiftExtraAmount" => _builder.BuildDto() with { NightShiftExtraAmount = value },
-            "FridayWorkAllowance" => _builder.BuildDto() with { FridayWorkAllowance = value },
-            _ => _builder.BuildDto() with { CalculatedTaxAmount = value }
-        };
-
     [Fact]
     public void Validate_WithValidCommand_ShouldNotHaveAnyErrors()
     {
@@ -285,71 +276,6 @@ public class CreatePayrollRecordCommandValidatorTests
         result.ShouldNotHaveAnyValidationErrors();
     }
 
-    [Theory]
-    [InlineData("OvertimeAmount")]
-    [InlineData("NightShiftExtraAmount")]
-    [InlineData("FridayWorkAllowance")]
-    [InlineData("CalculatedTaxAmount")]
-    public void Validate_WithNullAmount_ShouldHaveValidationError(string fieldName)
-    {
-        var command = CreateValidCommand(CreateAmountDto(fieldName, null));
-
-        var result = _validator.TestValidate(command);
-
-        result.ShouldHaveValidationErrorFor($"PayrollRecord.{fieldName}");
-    }
-
-    [Theory]
-    [InlineData("OvertimeAmount")]
-    [InlineData("NightShiftExtraAmount")]
-    [InlineData("FridayWorkAllowance")]
-    [InlineData("CalculatedTaxAmount")]
-    public void Validate_WithNegativeAmount_ShouldHaveValidationError(string fieldName)
-    {
-        var command = CreateValidCommand(CreateAmountDto(fieldName, -0.5m));
-
-        var result = _validator.TestValidate(command);
-
-        result.ShouldHaveValidationErrorFor($"PayrollRecord.{fieldName}");
-    }
-
-    [Theory]
-    [InlineData("OvertimeAmount")]
-    [InlineData("NightShiftExtraAmount")]
-    [InlineData("FridayWorkAllowance")]
-    [InlineData("CalculatedTaxAmount")]
-    public void Validate_WithZeroAmount_ShouldNotHaveAnyErrors(string fieldName)
-    {
-        var payrollRecord = CreateAmountDto(fieldName, 0m);
-        var command = CreateValidCommand(payrollRecord);
-
-        var result = _validator.TestValidate(command);
-
-        result.ShouldNotHaveAnyValidationErrors();
-    }
-
-    [Fact]
-    public void Validate_WithNullNetPayableAmount_ShouldHaveValidationError()
-    {
-        var payrollRecord = _builder.BuildDto() with { NetPayableAmount = null };
-        var command = CreateValidCommand(payrollRecord);
-
-        var result = _validator.TestValidate(command);
-
-        result.ShouldHaveValidationErrorFor(x => x.PayrollRecord.NetPayableAmount);
-    }
-
-    [Fact]
-    public void Validate_WithNegativeNetPayableAmount_ShouldNotHaveValidationError()
-    {
-        var payrollRecord = _builder.BuildDto() with { NetPayableAmount = -125_000m };
-        var command = CreateValidCommand(payrollRecord);
-
-        var result = _validator.TestValidate(command);
-
-        result.ShouldNotHaveValidationErrorFor(x => x.PayrollRecord.NetPayableAmount);
-    }
-
     [Fact]
     public void Validate_WithPeriodLongerThanOneMonth_ShouldNotHaveValidationError()
     {
@@ -377,14 +303,4 @@ public class CreatePayrollRecordCommandValidatorTests
         result.ShouldNotHaveValidationErrorFor(x => x.PayrollRecord.OvertimeHours);
     }
 
-    [Fact]
-    public void Validate_WithZeroTaxAmount_ShouldNotHaveValidationError()
-    {
-        var payrollRecord = _builder.BuildDto() with { CalculatedTaxAmount = 0m };
-        var command = CreateValidCommand(payrollRecord);
-
-        var result = _validator.TestValidate(command);
-
-        result.ShouldNotHaveValidationErrorFor(x => x.PayrollRecord.CalculatedTaxAmount);
-    }
 }

@@ -87,14 +87,16 @@ public class CreatePayrollRecordTests
     public void Create_WithGeneratedId_ShouldReturnSuccess()
     {
         var employeeId = Guid.NewGuid();
-        var dto = _builder.WithPeriod(PeriodStart, PeriodEnd).BuildDto();
+        var payrollRecord = _builder.WithPeriod(PeriodStart, PeriodEnd).BuildDto();
+        var payrollAmounts = _builder.BuildAmountsDto();
 
         var result = PayrollRecord.Create(
             employeeId,
             false,
             20m,
             12m,
-            dto);
+            payrollRecord,
+            payrollAmounts);
 
         var response = result.ShouldBeSuccess();
         using (new AssertionScope())
@@ -129,9 +131,25 @@ public class CreatePayrollRecordTests
             false,
             20m,
             12m,
-            null);
+            null,
+            _builder.BuildAmountsDto());
 
         result.ShouldBeFailure("اطلاعات فیش پرداختی");
+    }
+
+    [Fact]
+    public void Create_WithNullPayrollAmounts_ShouldFail()
+    {
+        var result = PayrollRecord.Create(
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            false,
+            20m,
+            12m,
+            _builder.WithPeriod(PeriodStart, PeriodEnd).BuildDto(),
+            null);
+
+        result.ShouldBeFailure("مبالغ فیش پرداختی نمیتواند خالی باشد.");
     }
 
     [Fact]
@@ -437,14 +455,6 @@ public class CreatePayrollRecordTests
     }
 
     [Fact]
-    public void Create_WithNullCalculatedTaxAmount_ShouldFail()
-    {
-        var result = _builder.WithCalculatedTaxAmount(null).CreateResult();
-
-        result.ShouldBeFailure("مالیات محاسبه شده");
-    }
-
-    [Fact]
     public void Create_WithNegativeCalculatedTaxAmount_ShouldFail()
     {
         var result = _builder.WithCalculatedTaxAmount(-1m).CreateResult();
@@ -486,14 +496,6 @@ public class CreatePayrollRecordTests
     }
 
     [Fact]
-    public void Create_WithNullOvertimeAmount_ShouldFail()
-    {
-        var result = _builder.WithOvertimeAmount(null).CreateResult();
-
-        result.ShouldBeFailure("مبلغ اضافه‌کاری نمیتواند خالی باشد.");
-    }
-
-    [Fact]
     public void Create_WithNegativeOvertimeAmount_ShouldFail()
     {
         var result = _builder.WithOvertimeAmount(-1m).CreateResult();
@@ -502,27 +504,11 @@ public class CreatePayrollRecordTests
     }
 
     [Fact]
-    public void Create_WithNullNightShiftExtraAmount_ShouldFail()
-    {
-        var result = _builder.WithNightShiftExtraAmount(null).CreateResult();
-
-        result.ShouldBeFailure("فوق‌العاده شیفت شب نمیتواند خالی باشد.");
-    }
-
-    [Fact]
     public void Create_WithNegativeNightShiftExtraAmount_ShouldFail()
     {
         var result = _builder.WithNightShiftExtraAmount(-0.5m).CreateResult();
 
         result.ShouldBeFailure("فوق‌العاده شیفت شب نمیتواند منفی باشد.");
-    }
-
-    [Fact]
-    public void Create_WithNullFridayWorkAllowance_ShouldFail()
-    {
-        var result = _builder.WithFridayWorkAllowance(null).CreateResult();
-
-        result.ShouldBeFailure("حق کار جمعه نمیتواند خالی باشد.");
     }
 
     [Fact]
@@ -564,14 +550,6 @@ public class CreatePayrollRecordTests
     }
 
     [Fact]
-    public void Create_WithNullNetPayableAmount_ShouldFail()
-    {
-        var result = _builder.WithNetPayableAmount(null).CreateResult();
-
-        result.ShouldBeFailure("مبلغ خالص قابل پرداخت نمیتواند خالی باشد.");
-    }
-
-    [Fact]
     public void Create_WithNegativeNetPayableAmount_ShouldReturnSuccess()
     {
         var result = _builder
@@ -580,5 +558,4 @@ public class CreatePayrollRecordTests
 
         result.ShouldBeSuccess().NetPayableAmount.Should().Be(-125_000m);
     }
-
 }
