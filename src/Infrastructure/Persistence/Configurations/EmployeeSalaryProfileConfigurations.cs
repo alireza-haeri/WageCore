@@ -20,13 +20,13 @@ public class EmployeeSalaryProfileConfigurations : IEntityTypeConfiguration<Empl
 
         builder.Property(x => x.BaseMonthlySalary)
             .IsRequired()
-            .HasPrecision(18, 2);
+            .HasPrecision(18, 0);
 
         builder.Property(x => x.AttractionAllowance)
-            .HasPrecision(18, 2);
+            .HasPrecision(18, 0);
 
         builder.Property(x => x.SupervisionAllowance)
-            .HasPrecision(18, 2);
+            .HasPrecision(18, 0);
 
         builder.Property(x => x.SeniorityBaseApplicationMode)
             .IsRequired()
@@ -52,19 +52,19 @@ public class EmployeeSalaryProfileConfigurations : IEntityTypeConfiguration<Empl
             .HasMaxLength(100);
 
         builder.Property(x => x.HousingAllowance)
-            .HasPrecision(18, 2);
+            .HasPrecision(18, 0);
 
         builder.Property(x => x.FoodAllowance)
-            .HasPrecision(18, 2);
+            .HasPrecision(18, 0);
 
         builder.Property(x => x.ChildAllowancePerChild)
-            .HasPrecision(18, 2);
+            .HasPrecision(18, 0);
 
         builder.Property(x => x.TransportationAllowanceNet)
-            .HasPrecision(18, 2);
+            .HasPrecision(18, 0);
 
         builder.Property(x => x.KaranehAmountNet)
-            .HasPrecision(18, 2);
+            .HasPrecision(18, 0);
 
         builder.HasOne<Employee>()
             .WithMany()
