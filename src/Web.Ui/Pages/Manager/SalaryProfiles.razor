@@ -1,192 +1,412 @@
 @page "/salaryprofiles"
 @layout ManagerLayout
+@implements IDisposable
 
 <div class="page-head">
     <div class="ph-t">
         <div class="crumb">پنل
-            <svg class="ic">
-                <use href="assets/img/icons.svg#i-chl"/>
-            </svg>
-            فیش‌های حقوقی
+            <svg class="ic"><use href="assets/img/icons.svg#i-chl"/></svg>
+            احکام حقوقی
         </div>
-        <h1>فیش‌های حقوقی</h1>
-        <p>فیش هر ماه = حکم کارمند + کارکرد ماه + بخشنامهٔ همان سال.</p>
+        <h1>احکام حقوقی</h1>
+        <p>هر تغییر حقوق = یک حکم جدید با تاریخ؛ حکم‌های قبلی تاریخچه می‌مانند.</p>
     </div>
     <div class="ph-actions">
-        <button class="btn btn-g" data-demo="خروجی اکسل در پیاده‌سازی اصلی تولید می‌شود.">
-            <svg
-                class="ic">
-                <use href="assets/img/icons.svg#i-dl"/>
-            </svg>
-            خروجی اکسل
-        </button>
-        <a class="btn btn-p" href="payslip-form.html">
-            <svg class="ic">
-                <use href="assets/img/icons.svg#i-plus"/>
-            </svg>
-            صدور فیش جدید</a>
+        <a class="btn btn-p" href="/salaryprofile-form">
+            <svg class="ic"><use href="assets/img/icons.svg#i-plus"/></svg>
+            صدور حکم جدید
+        </a>
     </div>
 </div>
+
 <div class="panel">
     <div class="toolbar">
         <div class="srch">
-            <svg class="ic">
-                <use href="assets/img/icons.svg#i-search"/>
-            </svg>
-            <input placeholder="جست‌وجو با نام یا کد پرسنلی…"></div>
-        <select class="in tb-sel">
-            <option>سال ۱۴۰۵</option>
-            <option>سال ۱۴۰۴</option>
+            <svg class="ic"><use href="assets/img/icons.svg#i-search"/></svg>
+            <input placeholder="جست‌وجو با نام، کد پرسنلی یا کد ملی…"
+                   value="@_search"
+                   @oninput="OnSearchInput"/>
+        </div>
+        <select class="in tb-sel" @bind="_selectedWorkshopId" @bind:after="OnWorkshopChanged">
+            <option value="">همهٔ کارگاه‌ها</option>
+            @if (_userWorkshops is not null)
+            {
+                foreach (var workshop in _userWorkshops)
+                {
+                    <option value="@workshop.WorkshopId">@workshop.DisplayName</option>
+                }
+            }
         </select>
-        <select class="in tb-sel">
-            <option>مرداد</option>
-            <option>تیر</option>
-            <option>خرداد</option>
+        <select class="in tb-sel" @bind="_selectedDepartmentId" @bind:after="OnDepartmentChanged">
+            <option value="">همهٔ بخش‌ها</option>
+            @if (_userDepartments is not null)
+            {
+                foreach (var department in _userDepartments)
+                {
+                    <option value="@department.DepartmentId">@department.DisplayName</option>
+                }
+            }
         </select>
-        <select class="in tb-sel">
-            <option>همهٔ وضعیت‌ها</option>
-            <option>پیش‌نویس</option>
-            <option>نهایی</option>
-            <option>پرداخت‌شده</option>
+        <select class="in tb-sel" @bind="_selectedStatus" @bind:after="OnStatusChanged">
+            <option value="">همهٔ وضعیت‌ها</option>
+            <option value="@Status2.Active">فعال</option>
+            <option value="@Status2.Expired">منقضی</option>
         </select>
-        <span class="chip c-gold ms-auto"><span class="c-dot"></span>۱ پیش‌نویس در انتظار تأیید</span>
+        <span class="chip c-grn ms-auto">
+            <span class="c-dot"></span>@((_salaryProfiles?.TotalCount ?? 0).ToPersianNumber()) حکم
+        </span>
     </div>
-    <div class="tblwrap">
-        <table class="tbl">
-            <thead>
-            <tr>
-                <th>کارمند</th>
-                <th>دوره</th>
-                <th>کارکرد</th>
-                <th>ناخالص (ریال)</th>
-                <th>کسورات (ریال)</th>
-                <th>خالص (ریال)</th>
-                <th>وضعیت</th>
-                <th style="text-align:left">عملیات</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td class="pname">رضا محمدی<span class="sub"><span class="ltr">P-1001</span> ·
-                                            تولید</span></td>
-                <td>مرداد ۱۴۰۵</td>
-                <td class="num">۳۰ روز<span class="sub">۲۴ ساعت اضافه</span></td>
-                <td class="mnum">۲٬۰۹۹٬۷۰۰٬۹۲۸</td>
-                <td class="mnum neg">۱۱۴٬۸۰۰٬۰۰۰</td>
-                <td class="mnum pos">۱٬۹۸۴٬۹۰۰٬۹۲۸</td>
-                <td><span class="chip c-grn"><span class="c-dot"></span>پرداخت‌شده</span></td>
-                <td><span class="rowact"><button class="icobtn" title="مشاهدهٔ فیش" data-slip><svg
-                                class="ic">
-                                                    <use href="assets/img/icons.svg#i-eye"/>
-                                                </svg></button><button class="icobtn" title="چاپ"
-                                                                       data-demo="در پیاده‌سازی اصلی، PDF فیش تولید می‌شود."><svg
-                                class="ic">
-                                                    <use href="assets/img/icons.svg#i-print"/>
-                                                </svg></button><button class="icobtn danger" title="حذف"
-                                                                       data-confirm="حذف فیش «رضا محمدی»"><svg
-                                class="ic">
-                                                    <use href="assets/img/icons.svg#i-trash"/>
-                                                </svg></button></span></td>
-            </tr>
-            <tr>
-                <td class="pname">زهرا کریمی<span class="sub"><span class="ltr">P-1002</span> ·
-                                            حسابداری</span></td>
-                <td>مرداد ۱۴۰۵</td>
-                <td class="num">۲۹ روز<span class="sub">۱ روز مرخصی</span></td>
-                <td class="mnum">۲٬۰۳۱٬۵۳۵٬۴۰۰</td>
-                <td class="mnum neg">۱۷۸٬۰۰۰٬۰۰۰</td>
-                <td class="mnum pos">۱٬۸۵۳٬۵۳۵٬۴۰۰</td>
-                <td><span class="chip c-blu"><span class="c-dot"></span>نهایی</span></td>
-                <td><span class="rowact"><button class="icobtn" title="مشاهدهٔ فیش" data-slip><svg
-                                class="ic">
-                                                    <use href="assets/img/icons.svg#i-eye"/>
-                                                </svg></button><button class="icobtn" title="چاپ"
-                                                                       data-demo="در پیاده‌سازی اصلی، PDF فیش تولید می‌شود."><svg
-                                class="ic">
-                                                    <use href="assets/img/icons.svg#i-print"/>
-                                                </svg></button><button class="icobtn danger" title="حذف"
-                                                                       data-confirm="حذف فیش «زهرا کریمی»"><svg
-                                class="ic">
-                                                    <use href="assets/img/icons.svg#i-trash"/>
-                                                </svg></button></span></td>
-            </tr>
-            <tr>
-                <td class="pname">فاطمه نادری<span class="sub"><span class="ltr">P-1004</span> ·
-                                            تولید</span></td>
-                <td>مرداد ۱۴۰۵</td>
-                <td class="num">۲۸ روز<span class="sub">۱۶ ساعت اضافه · ۲۲ شب</span></td>
-                <td class="mnum">۲٬۱۷۶٬۹۲۸٬۷۰۰</td>
-                <td class="mnum neg">۱۱۶٬۹۰۰٬۰۰۰</td>
-                <td class="mnum pos">۲٬۰۶۰٬۰۲۸٬۷۰۰</td>
-                <td><span class="chip c-blu"><span class="c-dot"></span>نهایی</span></td>
-                <td><span class="rowact"><button class="icobtn" title="مشاهدهٔ فیش" data-slip><svg
-                                class="ic">
-                                                    <use href="assets/img/icons.svg#i-eye"/>
-                                                </svg></button><button class="icobtn" title="چاپ"
-                                                                       data-demo="در پیاده‌سازی اصلی، PDF فیش تولید می‌شود."><svg
-                                class="ic">
-                                                    <use href="assets/img/icons.svg#i-print"/>
-                                                </svg></button><button class="icobtn danger" title="حذف"
-                                                                       data-confirm="حذف فیش «فاطمه نادری»"><svg
-                                class="ic">
-                                                    <use href="assets/img/icons.svg#i-trash"/>
-                                                </svg></button></span></td>
-            </tr>
-            <tr>
-                <td class="pname">مریم صادقی<span class="sub"><span class="ltr">P-1005</span> ·
-                                            فروش</span></td>
-                <td>مرداد ۱۴۰۵</td>
-                <td class="num">۳۰ روز</td>
-                <td class="mnum">۲٬۰۴۸٬۹۳۷٬۳۲۸</td>
-                <td class="mnum neg">۲۲۰٬۸۰۰٬۰۰۰</td>
-                <td class="mnum pos">۱٬۸۲۸٬۱۳۷٬۳۲۸</td>
-                <td><span class="chip c-grn"><span class="c-dot"></span>پرداخت‌شده</span></td>
-                <td><span class="rowact"><button class="icobtn" title="مشاهدهٔ فیش" data-slip><svg
-                                class="ic">
-                                                    <use href="assets/img/icons.svg#i-eye"/>
-                                                </svg></button><button class="icobtn" title="چاپ"
-                                                                       data-demo="در پیاده‌سازی اصلی، PDF فیش تولید می‌شود."><svg
-                                class="ic">
-                                                    <use href="assets/img/icons.svg#i-print"/>
-                                                </svg></button><button class="icobtn danger" title="حذف"
-                                                                       data-confirm="حذف فیش «مریم صادقی»"><svg
-                                class="ic">
-                                                    <use href="assets/img/icons.svg#i-trash"/>
-                                                </svg></button></span></td>
-            </tr>
-            <tr>
-                <td class="pname">حسین عباسی<span class="sub"><span class="ltr">P-1003</span> ·
-                                            انبار</span></td>
-                <td>مرداد ۱۴۰۵</td>
-                <td class="num">۳۰ روز</td>
-                <td class="mnum">۱٬۵۵۰٬۰۰۰٬۰۰۰</td>
-                <td class="mnum neg">۱۰۸٬۵۰۰٬۰۰۰</td>
-                <td class="mnum pos">۱٬۴۴۱٬۵۰۰٬۰۰۰</td>
-                <td><span class="chip c-gold"><span class="c-dot"></span>پیش‌نویس</span></td>
-                <td><span class="rowact"><button class="icobtn" title="مشاهدهٔ فیش" data-slip><svg
-                                class="ic">
-                                                    <use href="assets/img/icons.svg#i-eye"/>
-                                                </svg></button><button class="icobtn" title="چاپ"
-                                                                       data-demo="در پیاده‌سازی اصلی، PDF فیش تولید می‌شود."><svg
-                                class="ic">
-                                                    <use href="assets/img/icons.svg#i-print"/>
-                                                </svg></button><button class="icobtn danger" title="حذف"
-                                                                       data-confirm="حذف فیش «حسین عباسی»"><svg
-                                class="ic">
-                                                    <use href="assets/img/icons.svg#i-trash"/>
-                                                </svg></button></span></td>
-            </tr>
-            </tbody>
-        </table>
+
+    <div class="panel-b p-0">
+        @if (_isLoading)
+        {
+            <div class="text-center p-4">
+                <span>در حال بارگذاری...</span>
+            </div>
+        }
+        else if (_salaryProfiles is null || _salaryProfiles.Items.Count == 0)
+        {
+            <div class="text-center p-4" style="color:var(--muted)">
+                <svg class="ic" style="width:32px;height:32px;opacity:.5">
+                    <use href="assets/img/icons.svg#i-doc"/>
+                </svg>
+                <p class="mt-2">حکمی یافت نشد.</p>
+            </div>
+        }
+        else
+        {
+            <div class="tblwrap">
+                <table class="tbl">
+                    <thead>
+                    <tr>
+                        <th>کارمند</th>
+                        <th>تاریخ اعمال</th>
+                        <th>حقوق پایه (ریال)</th>
+                        <th>وضعیت</th>
+                        <th style="text-align:left">عملیات</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var profile in _salaryProfiles.Items)
+                    {
+                        <tr>
+                            <td class="pname">@profile.EmployeeName
+                                <span class="sub"><span class="ltr">@profile.PersonalCode</span> · @profile.DepartmentName</span>
+                            </td>
+                            <td class="num">از @profile.DisplayEffectiveFrom<span class="sub">باز (بدون پایان)</span></td>
+                            <td class="mnum">@FormatAmount(profile.BaseMonthlySalary)</td>
+                            <td>
+                                <span class="chip @GetStatusChipClass((int)profile.Status)">
+                                    <span class="c-dot"></span>@GetStatusDisplayName((int)profile.Status)
+                                </span>
+                            </td>
+                            <td>
+                                <span class="rowact">
+                                    <a class="icobtn" href="/salaryprofile-form/@profile.EmployeeSalaryProfileId" title="ویرایش">
+                                        <svg class="ic"><use href="assets/img/icons.svg#i-pen"/></svg>
+                                    </a>
+                                    <button class="icobtn danger" title="حذف"
+                                            @onclick="() => ConfirmDelete(profile)"
+                                            disabled="@_isDeleting">
+                                        <svg class="ic"><use href="assets/img/icons.svg#i-trash"/></svg>
+                                    </button>
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
     </div>
-    <div class="panel-f">
-        <svg class="ic" style="width:14px;height:14px">
-            <use href="assets/img/icons.svg#i-info"/>
-        </svg>
-        وضعیت فقط رو به جلو حرکت می‌کند: پیش‌نویس ← نهایی ← پرداخت‌شده. فیش نهایی قابل ویرایش
-        نیست؛ برای اصلاح، فیش اصلاحی صادر می‌شود.
-        <div class="pgn">
-            <button class="on">۱</button>
+
+    @if (_salaryProfiles is not null && _salaryProfiles.Items.Count > 0)
+    {
+        <div class="panel-f">
+            نمایش @_salaryProfiles.Items.Count.ToPersianNumber() حکم از @_salaryProfiles.TotalCount.ToPersianNumber()
+
+            @if (_totalPages > 1)
+            {
+                <div class="d-flex justify-content-center align-items-center gap-2 ms-auto">
+                    <button class="btn btn-g" disabled="@(_pageNumber <= 1)"
+                            @onclick="() => GoToPage(_pageNumber - 1)">
+                        قبلی
+                    </button>
+
+                    @foreach (var pageNum in GetPageNumbers())
+                    {
+                        if (pageNum == -1)
+                        {
+                            <span style="padding:0 8px">...</span>
+                        }
+                        else
+                        {
+                            <button class="btn @(pageNum == _pageNumber ? "btn-p" : "btn-g")"
+                                    @onclick="() => GoToPage(pageNum)">
+                                @pageNum
+                            </button>
+                        }
+                    }
+
+                    <button class="btn btn-g" disabled="@(_pageNumber >= _totalPages)"
+                            @onclick="() => GoToPage(_pageNumber + 1)">
+                        بعدی
+                    </button>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@if (_profileToDelete is not null)
+{
+    <div class="modal-backdrop show" style="z-index:1040"></div>
+    <div class="modal show d-block" tabindex="-1" style="z-index:1050">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">تأیید حذف</h5>
+                    <button type="button" class="btn-close" @onclick="CancelDelete" disabled="@_isDeleting"></button>
+                </div>
+                <div class="modal-body">
+                    <p>آیا از حذف حکم <b>«@_profileToDelete.EmployeeName»</b> (از @_profileToDelete.DisplayEffectiveFrom) اطمینان دارید؟</p>
+                    <p class="text-danger" style="font-size:12px">این عملیات قابل بازگشت نیست.</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-g" @onclick="CancelDelete" disabled="@_isDeleting">انصراف</button>
+                    <button class="btn btn-danger" @onclick="DeleteProfile" disabled="@_isDeleting">
+                        @if (_isDeleting)
+                        {
+                            <span>در حال حذف...</span>
+                        }
+                        else
+                        {
+                            <span>حذف</span>
+                        }
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+}
+
+@code {
+    private GetEmployeeSalaryProfilesResponsePagedResult? _salaryProfiles;
+    private List<GetUserWorkshopsNameQueryResponseWorkshopName>? _userWorkshops;
+    private List<GetUserDepartmentsNameQueryResponseDepartmentName>? _userDepartments;
+    private bool _isLoading;
+    private string? _search;
+    private string _selectedWorkshopId = string.Empty;
+    private string _selectedDepartmentId = string.Empty;
+    private string _selectedStatus = string.Empty;
+
+    private int _pageNumber = 1;
+    private const int PageSize = 10;
+    private int _totalPages => _salaryProfiles is null
+        ? 0
+        : (int)Math.Ceiling(_salaryProfiles.TotalCount / (double)PageSize);
+
+    private Timer? _debounceTimer;
+    private GetEmployeeSalaryProfilesResponse? _profileToDelete;
+    private bool _isDeleting;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadWorkshopsAsync();
+        await LoadDepartmentsAsync();
+        await LoadSalaryProfilesAsync();
+    }
+
+    private async Task LoadWorkshopsAsync()
+    {
+        var result = await ApiService.SendAsync(() => ApiClient.GetUserWorkshopsNameAsync());
+        if (result?.IsSuccess is true)
+        {
+            _userWorkshops = result.Response.WorkshopNames.ToList();
+        }
+    }
+
+    private async Task LoadDepartmentsAsync()
+    {
+        if (string.IsNullOrEmpty(_selectedWorkshopId))
+        {
+            var result = await ApiService.SendAsync(() => ApiClient.GetUserDepartmentsNameAsync());
+            if (result?.IsSuccess is true)
+            {
+                _userDepartments = result.Response.DepartmentNames.ToList();
+            }
+
+            return;
+        }
+
+        var workshopId = Guid.Parse(_selectedWorkshopId);
+        var resultFiltered = await ApiService.SendAsync(() => ApiClient.GetUserDepartmentsAsync(1, 100, null, null, workshopId));
+        if (resultFiltered?.IsSuccess is true)
+        {
+            _userDepartments = resultFiltered.Response.Items
+                .Select(x => new GetUserDepartmentsNameQueryResponseDepartmentName(x.Id, x.Name))
+                .ToList();
+        }
+    }
+
+    private async Task LoadSalaryProfilesAsync()
+    {
+        _isLoading = true;
+        StateHasChanged();
+
+        Guid? workshopId = string.IsNullOrEmpty(_selectedWorkshopId)
+            ? null
+            : Guid.Parse(_selectedWorkshopId);
+
+        Guid? departmentId = string.IsNullOrEmpty(_selectedDepartmentId)
+            ? null
+            : Guid.Parse(_selectedDepartmentId);
+
+        Status2? status = string.IsNullOrEmpty(_selectedStatus)
+            ? null
+            : Enum.Parse<Status2>(_selectedStatus);
+
+        var searchTerm = string.IsNullOrWhiteSpace(_search) ? null : _search.Trim();
+
+        var result = await ApiService.SendAsync(() => ApiClient.GetEmployeeSalaryProfilesAsync(
+            _pageNumber,
+            PageSize,
+            null,
+            null,
+            searchTerm,
+            status,
+            workshopId,
+            departmentId));
+
+        if (result?.IsSuccess is true)
+        {
+            _salaryProfiles = result.Response;
+        }
+
+        _isLoading = false;
+        StateHasChanged();
+    }
+
+    private void OnSearchInput(ChangeEventArgs e)
+    {
+        _search = e.Value?.ToString();
+        _debounceTimer?.Dispose();
+        _debounceTimer = new Timer(async _ =>
+        {
+            await InvokeAsync(async () =>
+            {
+                _pageNumber = 1;
+                await LoadSalaryProfilesAsync();
+            });
+        }, null, 500, Timeout.Infinite);
+    }
+
+    private async Task OnWorkshopChanged()
+    {
+        _selectedDepartmentId = string.Empty;
+        _pageNumber = 1;
+        await LoadDepartmentsAsync();
+        await LoadSalaryProfilesAsync();
+    }
+
+    private async Task OnDepartmentChanged()
+    {
+        _pageNumber = 1;
+        await LoadSalaryProfilesAsync();
+    }
+
+    private async Task OnStatusChanged()
+    {
+        _pageNumber = 1;
+        await LoadSalaryProfilesAsync();
+    }
+
+    private async Task GoToPage(int page)
+    {
+        if (page < 1 || page > _totalPages || page == _pageNumber) return;
+        _pageNumber = page;
+        await LoadSalaryProfilesAsync();
+    }
+
+    private IEnumerable<int> GetPageNumbers()
+    {
+        const int visible = 5;
+        if (_totalPages <= visible + 2)
+        {
+            for (var i = 1; i <= _totalPages; i++) yield return i;
+            yield break;
+        }
+
+        yield return 1;
+
+        var start = Math.Max(2, _pageNumber - visible / 2);
+        var end = Math.Min(_totalPages - 1, start + visible - 1);
+        start = Math.Max(2, end - visible + 1);
+
+        if (start > 2) yield return -1;
+        for (var i = start; i <= end; i++) yield return i;
+        if (end < _totalPages - 1) yield return -1;
+
+        yield return _totalPages;
+    }
+
+    private void ConfirmDelete(GetEmployeeSalaryProfilesResponse profile)
+    {
+        _profileToDelete = profile;
+    }
+
+    private void CancelDelete()
+    {
+        if (_isDeleting) return;
+        _profileToDelete = null;
+    }
+
+    private async Task DeleteProfile()
+    {
+        if (_profileToDelete is null || _isDeleting) return;
+
+        _isDeleting = true;
+
+        var result = await ApiService.SendAsync(
+            apiCall: () => ApiClient.DeleteEmployeeSalaryProfileAsync(
+                _profileToDelete.EmployeeSalaryProfileId,
+                _profileToDelete.EmployeeId),
+            successMessage: "حکم با موفقیت حذف شد."
+        );
+
+        _isDeleting = false;
+
+        if (result?.IsSuccess is true)
+        {
+            _profileToDelete = null;
+
+            if (_salaryProfiles?.Items.Count == 1 && _pageNumber > 1)
+            {
+                _pageNumber--;
+            }
+
+            await LoadSalaryProfilesAsync();
+        }
+    }
+
+    private static string FormatAmount(double amount) => ((long)amount).ToPersianNumber();
+
+    private static string GetStatusDisplayName(int status) => status switch
+    {
+        0 => "فعال",
+        1 => "منقضی",
+        _ => "نامشخص"
+    };
+
+    private static string GetStatusChipClass(int status) => status switch
+    {
+        0 => "c-grn",
+        1 => "c-gray",
+        _ => "c-gray"
+    };
+
+    public void Dispose()
+    {
+        _debounceTimer?.Dispose();
+    }
+}

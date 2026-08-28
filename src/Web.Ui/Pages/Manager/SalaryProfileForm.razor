@@ -1,216 +1,506 @@
+@page "/salaryprofile-form/{id:guid}"
 @page "/salaryprofile-form"
 @layout ManagerLayout
 
 <div class="page-head">
     <div class="ph-t">
-        <div class="crumb">پنل
-            <svg class="ic">
-                <use href="assets/img/icons.svg#i-chl"/>
-            </svg>
-            <a href="payslips.html">فیش‌های حقوقی</a>
-            <svg class="ic">
-                <use href="assets/img/icons.svg#i-chl"/>
-            </svg>
-            فیش جدید
+        <div class="crumb">
+            پنل
+            <svg class="ic"><use href="assets/img/icons.svg#i-chl"/></svg>
+            <a href="/salaryprofiles">احکام حقوقی</a>
+            <svg class="ic"><use href="assets/img/icons.svg#i-chl"/></svg>
+            <span>@(IsEdit ? "ویرایش حکم" : "حکم جدید")</span>
         </div>
-        <h1>صدور فیش جدید</h1>
-        <p>فقط ورودی‌های کارکرد را وارد کنید — نتایج در پیاده‌سازی اصلی سمت سرور محاسبه می‌شود.</p>
+        <h1>@(IsEdit ? "ویرایش حکم حقوقی" : "صدور حکم حقوقی جدید")</h1>
+        <p>هر تغییر حقوق = یک حکم جدید با تاریخ؛ مبالغ به ریال و تاریخ شمسی ثبت می‌شود.</p>
     </div>
     <div class="ph-actions">
-        <a class="btn btn-g" href="payslips.html">
-            <svg class="ic">
-                <use href="assets/img/icons.svg#i-x"/>
-            </svg>
-            انصراف</a>
-        <button class="btn btn-p" data-demo="فیش به‌صورت پیش‌نویس ثبت شد (نمایشی).">
-            <svg class="ic">
-                <use href="assets/img/icons.svg#i-check"/>
-            </svg>
-            صدور فیش
-        </button>
+        <a class="btn btn-g" href="/salaryprofiles">
+            <svg class="ic"><use href="assets/img/icons.svg#i-x"/></svg>
+            انصراف
+        </a>
     </div>
 </div>
-<div class="row g-4">
-    <div class="col-lg-8">
-        <div class="panel">
-            <div class="panel-b">
-                <form>
-                    <input type="hidden" name="Id">
-                    <div class="sec">
-                        <svg class="ic">
-                            <use href="assets/img/icons.svg#i-calendar"/>
-                        </svg>
-                        دوره و کارمند
-                    </div>
-                    <div class="row g-3">
-                        <div class="col-md-6 field">
-                            <label class="f-label" for="r-emp"><span class="req-s">*</span>فیشِ چه کسی؟
-                                <span class="f-badge fb-grn">EmployeeId</span></label>
-                            <select class="in" id="r-emp" data-autofocus>
-                                <option>رضا محمدی — P-1001</option>
-                                <option>زهرا کریمی — P-1002</option>
-                                <option>حسین عباسی — P-1003</option>
-                                <option>فاطمه نادری — P-1004</option>
-                                <option>مریم صادقی — P-1005</option>
-                            </select>
-                            <div class="f-help">ترکیب (کارمند، سال، ماه) یکتاست.</div>
-                        </div>
-                        <div class="col-md-3 field">
-                            <label class="f-label" for="r-year"><span class="req-s">*</span>سال <span
-                                    class="f-badge fb-grn">PeriodYear</span></label>
-                            <select class="in" id="r-year">
-                                <option>۱۴۰۴</option>
-                                <option selected>۱۴۰۵</option>
-                                <option>۱۴۰۶</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3 field">
-                            <label class="f-label" for="r-month"><span class="req-s">*</span>ماه <span
-                                    class="f-badge fb-grn">PeriodMonth</span></label>
-                            <select class="in" id="r-month">
-                                <option>فروردین</option>
-                                <option>اردیبهشت</option>
-                                <option>خرداد</option>
-                                <option>تیر</option>
-                                <option selected>مرداد</option>
-                                <option>شهریور</option>
-                                <option>مهر</option>
-                                <option>آبان</option>
-                                <option>آذر</option>
-                                <option>دی</option>
-                                <option>بهمن</option>
-                                <option>اسفند</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="sec">
-                        <svg class="ic">
-                            <use href="assets/img/icons.svg#i-clock"/>
-                        </svg>
-                        کارکرد ماه — روزها
-                    </div>
-                    <div class="row g-3">
-                        <div class="col-md-3 col-6 field">
-                            <label class="f-label" for="r-wdays"><span class="req-s">*</span>روزهای
-                                کارکرد <span class="f-badge fb-grn">WorkedDaysCount</span></label>
-                            <input type="number" class="in num" id="r-wdays" value="30" min="0" max="31"
-                                   step="0.5">
-                        </div>
-                        <div class="col-md-3 col-6 field">
-                            <label class="f-label" for="r-leave"><span class="req-s">*</span>روزهای
-                                مرخصی</label>
-                            <input type="number" class="in num" id="r-leave" value="0" min="0" max="31">
-                            <div class="f-help">استحقاقی با حقوق؛ جزو کارکرد است.</div>
-                        </div>
-                        <div class="col-md-3 col-6 field">
-                            <label class="f-label" for="r-abs"><span class="req-s">*</span>روزهای
-                                غیبت</label>
-                            <input type="number" class="in num" id="r-abs" value="0" min="0" max="31">
-                            <div class="f-help">هر روز = کسر حقوق همان روز.</div>
-                        </div>
-                        <div class="col-md-3 col-6 field">
-                            <label class="f-label" for="r-mission"><span class="req-s">*</span>روزهای
-                                مأموریت</label>
-                            <input type="number" class="in num" id="r-mission" value="0" min="0"
-                                   max="31">
-                        </div>
-                    </div>
-                    <div class="sec">
-                        <svg class="ic">
-                            <use href="assets/img/icons.svg#i-clock"/>
-                        </svg>
-                        کارکرد ماه — ساعت‌ها
-                    </div>
-                    <div class="row g-3">
-                        <div class="col-md-4 field">
-                            <label class="f-label" for="r-ot"><span class="req-s">*</span>ساعات
-                                اضافه‌کاری <span class="f-badge fb-grn">OvertimeHours</span></label>
-                            <input type="number" class="in num" id="r-ot" value="24" min="0">
-                            <div class="f-help">سقف قانونی: ۴ ساعت در روز.</div>
-                        </div>
-                        <div class="col-md-4 field">
-                            <label class="f-label" for="r-night"><span class="req-s">*</span>ساعات
-                                شب‌کاری <span class="f-badge fb-grn">NightShiftHours</span></label>
-                            <input type="number" class="in num" id="r-night" value="18" min="0">
-                            <div class="f-help">شب = ساعت ۲۲ تا ۶.</div>
-                        </div>
-                        <div class="col-md-4 field">
-                            <label class="f-label" for="r-fri"><span class="req-s">*</span>ساعات
-                                جمعه‌کاری <span class="f-badge fb-grn">FridayWorkHours</span></label>
-                            <input type="number" class="in num" id="r-fri" value="8" min="0">
-                        </div>
-                    </div>
-                    <div class="sec">
-                        <svg class="ic">
-                            <use href="assets/img/icons.svg#i-percent"/>
-                        </svg>
-                        مالیات و وضعیت
-                    </div>
-                    <div class="row g-3">
-                        <div class="col-md-5 field">
-                            <label class="f-label" for="r-tax">مبلغ مالیات <span
-                                    class="f-badge fb-blu">منشأ خارجی</span></label>
-                            <div class="amount"><input class="in" id="r-tax" value="0"
-                                                       inputmode="numeric"><span class="unit">ریال</span></div>
-                            <div class="f-help">از سامانهٔ مالیات حقوق می‌آید؛ اگر کارمند مشمول نباشد
-                                حتماً صفر است.
-                            </div>
-                        </div>
-                        <div class="col-md-4 field">
-                            <label class="f-label" for="r-status"><span class="req-s">*</span>وضعیت فیش
-                                <span class="f-badge fb-grn">Status</span></label>
-                            <select class="in" id="r-status">
-                                <option>پیش‌نویس</option>
-                                <option disabled>نهایی</option>
-                                <option disabled>پرداخت‌شده</option>
-                            </select>
-                            <div class="f-help">فیش جدید همیشه پیش‌نویس ایجاد می‌شود.</div>
-                        </div>
-                    </div>
-                    <div class="form-foot">
-                        <button type="button" class="btn btn-g"
-                                data-demo="فیش به‌عنوان پیش‌نویس ذخیره شد (نمایشی).">ذخیره پیش‌نویس
-                        </button>
-                        <button type="button" class="btn btn-p"
-                                data-demo="فیش به‌صورت نمایشی صادر شد.">
-                            <svg class="ic">
-                                <use href="assets/img/icons.svg#i-check"/>
-                            </svg>
-                            صدور فیش
-                        </button>
-                        <a class="btn btn-g ms-auto" href="payslips.html">انصراف</a>
-                    </div>
-                </form>
+
+<div class="panel">
+    <div class="panel-b">
+        <EditForm EditContext="@_formHelper.EditContext" OnSubmit="@HandleSubmit">
+            <ValidationMessage TValue="string" For="() => _formHelper.Model.General" class="f-help text-danger"/>
+
+            <div class="sec">
+                <svg class="ic"><use href="assets/img/icons.svg#i-calendar"/></svg>
+                بازهٔ اعتبار
             </div>
-        </div>
-    </div>
-    <div class="col-lg-4">
-        <div class="calc-box">
-            <h4>
-                <svg class="ic">
-                    <use href="assets/img/icons.svg#i-receipt"/>
-                </svg>
-                پیش‌نمایش محاسبه
-            </h4>
-            <div class="crow"><span>مزد هر ساعت (پایه ÷ ۲۲۰)</span><span>۵٬۸۱۸٬۱۸۲</span></div>
-            <div class="crow"><span>حقوق پایه (۳۰ روز)</span><span>۱٬۲۸۰٬۰۰۰٬۰۰۰</span></div>
-            <div class="crow"><span>اضافه‌کاری ×۱٫۴ (۲۴ ساعت)</span><span>۱۹۵٬۴۹۰٬۹۰۰</span></div>
-            <div class="crow"><span>مازاد شب‌کاری ۳۵٪ (۱۸ ساعت)</span><span>۳۶٬۶۵۴٬۵۰۰</span></div>
-            <div class="crow"><span>فوق‌العادهٔ جمعه‌کاری ۴۰٪ (۸ ساعت)</span><span>۱۸٬۶۱۸٬۲۰۰</span>
-            </div>
-            <div class="crow"><span>مسکن + بن + حق اولاد (۲ فرزند)</span><span>۵۶۸٬۹۳۷٬۳۲۸</span></div>
-            <div class="crow tot"><span>جمع ناخالص</span><span>۲٬۰۹۹٬۷۰۰٬۹۲۸</span></div>
-            <div class="crow ded"><span>بیمهٔ سهم کارگر ۷٪</span><span>−۱۱۴٬۸۰۰٬۰۰۰</span></div>
-            <div class="crow ded"><span>مالیات</span><span>۰</span></div>
-            <div class="cnet"><span>خالص پرداختی</span><b>۱٬۹۸۴٬۹۰۰٬۹۲۸</b></div>
-            <div class="calc-note">
-                <svg class="ic">
-                    <use href="assets/img/icons.svg#i-info"/>
-                </svg>
-                <div>این اعداد نمونه‌اند؛ فرمول‌ها مطابق سند دامنه و در پیاده‌سازی اصلی سمت سرور اجرا
-                    می‌شوند.
+
+            <div class="row g-3">
+                <div class="col-md-5 field">
+                    <label class="f-label" for="p-employee"><span class="req-s">*</span>برای کدام کارمند؟</label>
+                    <InputSelect @bind-Value="_formHelper.Model.EmployeeId" class="in" id="p-employee"
+                                 data-autofocus disabled="@IsEdit">
+                        <option value="">انتخاب کنید...</option>
+                        @if (_userEmployees is not null)
+                        {
+                            foreach (var employee in _userEmployees)
+                            {
+                                <option value="@employee.Id">@employee.FullName — @employee.PersonalCode</option>
+                            }
+                        }
+                    </InputSelect>
+                    <ValidationMessage TValue="Guid?" For="() => _formHelper.Model.EmployeeId"
+                                       class="f-help text-danger"/>
+                </div>
+                <div class="col-md-7 field">
+                    <label class="f-label" for="p-from"><span class="req-s">*</span>از تاریخ</label>
+                    <InputText @bind-Value="_formHelper.Model.EffectiveFrom" class="in num" id="p-from"
+                               inputmode="numeric" placeholder="۱۴۰۵/۰۶/۰۱"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.EffectiveFrom"
+                                       class="f-help text-danger"/>
+                    <div class="f-help">شمسی؛ به فرمت ۱۴۰۵/۰۶/۰۱. معمولاً روز بعد از پایان حکم قبل.</div>
                 </div>
             </div>
-        </div>
+
+            <div class="sec">
+                <svg class="ic"><use href="assets/img/icons.svg#i-coins"/></svg>
+                پایه و مزایای ماهانه <small>مبالغ به ریال</small>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-4 field">
+                    <label class="f-label" for="p-base"><span class="req-s">*</span>حقوق پایهٔ ماهانه (۳۰ روزه)</label>
+                    <div class="amount">
+                        <InputText @bind-Value="_formHelper.Model.BaseMonthlySalary" class="in in-ltr" id="p-base"
+                                   inputmode="numeric" placeholder="1280000000"/>
+                        <span class="unit">ریال</span>
+                    </div>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.BaseMonthlySalary"
+                                       class="f-help text-danger"/>
+                    <div class="f-help">عدد صحیح ریال؛ نباید از حداقل قانونی منطقه کمتر باشد.</div>
+                </div>
+                <div class="col-md-4 field">
+                    <label class="f-label" for="p-attr">حق جذب <span class="f-badge fb-gold">اختیاری</span></label>
+                    <div class="amount">
+                        <InputText @bind-Value="_formHelper.Model.AttractionAllowance" class="in in-ltr" id="p-attr"
+                                   inputmode="numeric" placeholder="0"/>
+                        <span class="unit">ریال</span>
+                    </div>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.AttractionAllowance"
+                                       class="f-help text-danger"/>
+                </div>
+                <div class="col-md-4 field">
+                    <label class="f-label" for="p-super">حق سرپرستی <span class="f-badge fb-gold">اختیاری</span></label>
+                    <div class="amount">
+                        <InputText @bind-Value="_formHelper.Model.SupervisionAllowance" class="in in-ltr" id="p-super"
+                                   inputmode="numeric" placeholder="0"/>
+                        <span class="unit">ریال</span>
+                    </div>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.SupervisionAllowance"
+                                       class="f-help text-danger"/>
+                </div>
+            </div>
+
+            <div class="sec">
+                <svg class="ic"><use href="assets/img/icons.svg#i-clock"/></svg>
+                سنوات
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-4 field">
+                    <label class="f-label" for="p-senmode"><span class="req-s">*</span>نحوهٔ اعمال پایه سنوات</label>
+                    <InputSelect @bind-Value="_formHelper.Model.SeniorityBaseApplicationMode"
+                                 @bind-Value:after="OnSeniorityModeChanged" class="in" id="p-senmode">
+                        <option value="">انتخاب کنید...</option>
+                        <option value="@EmployeeSalaryProfileRequestSeniorityBaseApplicationMode.Manual">ثابت (مقدار دستی)</option>
+                        <option value="@EmployeeSalaryProfileRequestSeniorityBaseApplicationMode.Automatic">خودکار (سیستم حساب می‌کند)</option>
+                    </InputSelect>
+                    <ValidationMessage TValue="EmployeeSalaryProfileRequestSeniorityBaseApplicationMode?"
+                                       For="() => _formHelper.Model.SeniorityBaseApplicationMode"
+                                       class="f-help text-danger"/>
+                </div>
+                <div class="col-md-4 field">
+                    <label class="f-label" for="p-senmethod">روش محاسبهٔ پایه سنوات</label>
+                    <InputSelect @bind-Value="_formHelper.Model.SeniorityBaseCalculationMethod" class="in" id="p-senmethod"
+                                 disabled="@(_formHelper.Model.SeniorityBaseApplicationMode != EmployeeSalaryProfileRequestSeniorityBaseApplicationMode.Automatic)">
+                        <option value="">انتخاب کنید...</option>
+                        <option value="@EmployeeSalaryProfileRequestSeniorityBaseCalculationMethod.Daily">روزانه</option>
+                        <option value="@EmployeeSalaryProfileRequestSeniorityBaseCalculationMethod.CumulativeAuto">تجمیعی خودکار</option>
+                    </InputSelect>
+                    <ValidationMessage TValue="EmployeeSalaryProfileRequestSeniorityBaseCalculationMethod?"
+                                       For="() => _formHelper.Model.SeniorityBaseCalculationMethod"
+                                       class="f-help text-danger"/>
+                    <div class="f-help">فقط وقتی «نحوهٔ اعمال» خودکار باشد پر می‌شود.</div>
+                </div>
+                <div class="col-md-4 field">
+                    <label class="f-label" for="p-yearend"><span class="req-s">*</span>نحوهٔ سنوات پایان سال</label>
+                    <InputSelect @bind-Value="_formHelper.Model.YearEndSeniorityMode" class="in" id="p-yearend">
+                        <option value="">انتخاب کنید...</option>
+                        <option value="@EmployeeSalaryProfileRequestYearEndSeniorityMode.MonthlyAccrual">محاسبه ماهانه (تعهدی)</option>
+                        <option value="@EmployeeSalaryProfileRequestYearEndSeniorityMode.AnnualLumpSum">محاسبه سالانه (یکجا)</option>
+                        <option value="@EmployeeSalaryProfileRequestYearEndSeniorityMode.NotCalculation">بدون محاسبه</option>
+                    </InputSelect>
+                    <ValidationMessage TValue="EmployeeSalaryProfileRequestYearEndSeniorityMode?"
+                                       For="() => _formHelper.Model.YearEndSeniorityMode"
+                                       class="f-help text-danger"/>
+                </div>
+            </div>
+
+            <div class="sec">
+                <svg class="ic"><use href="assets/img/icons.svg#i-scale"/></svg>
+                شیفت و مزایای مصوب
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-4 field">
+                    <label class="f-label" for="p-shift"><span class="req-s">*</span>نوع شیفت</label>
+                    <InputSelect @bind-Value="_formHelper.Model.ShiftType" class="in" id="p-shift">
+                        <option value="">انتخاب کنید...</option>
+                        <option value="@EmployeeSalaryProfileRequestShiftType.None">بدون شیفت</option>
+                        <option value="@EmployeeSalaryProfileRequestShiftType.MorningEvening">صبح‌عصر</option>
+                        <option value="@EmployeeSalaryProfileRequestShiftType.MorningNight">صبح‌شب</option>
+                        <option value="@EmployeeSalaryProfileRequestShiftType.EveningNight">عصر‌شب</option>
+                        <option value="@EmployeeSalaryProfileRequestShiftType.MorningEveningNight">صبح‌عصر‌شب</option>
+                    </InputSelect>
+                    <ValidationMessage TValue="EmployeeSalaryProfileRequestShiftType?"
+                                       For="() => _formHelper.Model.ShiftType"
+                                       class="f-help text-danger"/>
+                </div>
+                <div class="col-md-4 field">
+                    <label class="f-label" for="p-house">حق مسکن <span class="f-badge fb-gold">اختیاری</span></label>
+                    <div class="amount">
+                        <InputText @bind-Value="_formHelper.Model.HousingAllowance" class="in in-ltr" id="p-house"
+                                   inputmode="numeric" placeholder="140000000"/>
+                        <span class="unit">ریال</span>
+                    </div>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.HousingAllowance"
+                                       class="f-help text-danger"/>
+                </div>
+                <div class="col-md-4 field">
+                    <label class="f-label" for="p-food">خواربار و بن <span class="f-badge fb-gold">اختیاری</span></label>
+                    <div class="amount">
+                        <InputText @bind-Value="_formHelper.Model.FoodAllowance" class="in in-ltr" id="p-food"
+                                   inputmode="numeric" placeholder="220000000"/>
+                        <span class="unit">ریال</span>
+                    </div>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.FoodAllowance"
+                                       class="f-help text-danger"/>
+                </div>
+                <div class="col-md-4 field">
+                    <label class="f-label" for="p-child">حق اولاد هر فرزند <span class="f-badge fb-gold">اختیاری</span></label>
+                    <div class="amount">
+                        <InputText @bind-Value="_formHelper.Model.ChildAllowancePerChild" class="in in-ltr" id="p-child"
+                                   inputmode="numeric" placeholder="104468664"/>
+                        <span class="unit">ریال</span>
+                    </div>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.ChildAllowancePerChild"
+                                       class="f-help text-danger"/>
+                    <div class="f-help">پرداختی ماهانه = این مبلغ × تعداد فرزندان پرونده.</div>
+                </div>
+                <div class="col-md-4 field">
+                    <label class="f-label" for="p-trans">ایاب‌وذهاب (خالص) <span class="f-badge fb-gold">اختیاری</span></label>
+                    <div class="amount">
+                        <InputText @bind-Value="_formHelper.Model.TransportationAllowanceNet" class="in in-ltr" id="p-trans"
+                                   inputmode="numeric" placeholder="0"/>
+                        <span class="unit">ریال</span>
+                    </div>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.TransportationAllowanceNet"
+                                       class="f-help text-danger"/>
+                    <div class="f-help">کسورات به آن اعمال نمی‌شود.</div>
+                </div>
+                <div class="col-md-4 field">
+                    <label class="f-label" for="p-kar">کارانه (خالص) <span class="f-badge fb-gold">اختیاری</span></label>
+                    <div class="amount">
+                        <InputText @bind-Value="_formHelper.Model.KaranehAmountNet" class="in in-ltr" id="p-kar"
+                                   inputmode="numeric" placeholder="0"/>
+                        <span class="unit">ریال</span>
+                    </div>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.KaranehAmountNet"
+                                       class="f-help text-danger"/>
+                </div>
+            </div>
+
+            <div class="note n-gold">
+                <svg class="ic"><use href="assets/img/icons.svg#i-info"/></svg>
+                <div>حقوق پایه مبلغ توافقی است، فقط نباید از حداقل قانونی منطقه کمتر باشد. حق اولاد عمداً اینجاست چون «مبلغ دلبخواه مدیر» است؛ سقف قانونی آن (در صورت اعلام) به بخشنامه‌ها می‌رود.</div>
+            </div>
+
+            <div class="form-foot">
+                <button type="submit" class="btn btn-p" disabled="@_isLoading">
+                    @if (_isLoading)
+                    {
+                        <span>در حال پردازش...</span>
+                    }
+                    else
+                    {
+                        <svg class="ic"><use href="assets/img/icons.svg#i-check"/></svg>
+                        <span>@(IsEdit ? "ویرایش حکم" : "صدور حکم")</span>
+                    }
+                </button>
+                <a class="btn btn-g" href="/salaryprofiles">انصراف</a>
+            </div>
+        </EditForm>
     </div>
 </div>
+
+@code {
+    [Parameter] public Guid? Id { get; set; }
+
+    private FormHelper<SalaryProfileFormModel> _formHelper = new(fieldMapping: CreateFieldMapping());
+    private List<GetUserEmployeesResponse>? _userEmployees;
+    private bool _isLoading;
+    private bool IsEdit => Id.HasValue && Id.Value != Guid.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadEmployeesAsync();
+
+        if (IsEdit)
+        {
+            _isLoading = true;
+            try
+            {
+                var result = await ApiService.SendAsync(
+                    apiCall: () => ApiClient.GetEmployeeSalaryProfileForEditAsync(Id!.Value)
+                );
+
+                if (result is { IsSuccess: true })
+                {
+                    var profile = result.Response;
+                    _formHelper.Model = new SalaryProfileFormModel
+                    {
+                        EmployeeId = profile.EmployeeId,
+                        EffectiveFrom = profile.EffectiveFrom,
+                        BaseMonthlySalary = ((long)profile.BaseMonthlySalary).ToString(),
+                        AttractionAllowance = FormatOptionalAmount(profile.AttractionAllowance),
+                        SupervisionAllowance = FormatOptionalAmount(profile.SupervisionAllowance),
+                        SeniorityBaseApplicationMode = (EmployeeSalaryProfileRequestSeniorityBaseApplicationMode)profile.SeniorityBaseApplicationMode,
+                        SeniorityBaseCalculationMethod = profile.SeniorityBaseCalculationMethod.HasValue
+                            ? (EmployeeSalaryProfileRequestSeniorityBaseCalculationMethod?)profile.SeniorityBaseCalculationMethod.Value
+                            : null,
+                        YearEndSeniorityMode = (EmployeeSalaryProfileRequestYearEndSeniorityMode)profile.YearEndSeniorityMode,
+                        ShiftType = (EmployeeSalaryProfileRequestShiftType)profile.ShiftType,
+                        HousingAllowance = FormatOptionalAmount(profile.HousingAllowance),
+                        FoodAllowance = FormatOptionalAmount(profile.FoodAllowance),
+                        ChildAllowancePerChild = FormatOptionalAmount(profile.ChildAllowancePerChild),
+                        TransportationAllowanceNet = FormatOptionalAmount(profile.TransportationAllowanceNet),
+                        KaranehAmountNet = FormatOptionalAmount(profile.KaranehAmountNet)
+                    };
+
+                    _formHelper.RebuildEditContext();
+                }
+                else
+                {
+                    ToastService.ShowToastError("حکم مورد نظر یافت نشد.");
+                    NavigationManager.NavigateTo("/salaryprofiles");
+                }
+            }
+            finally
+            {
+                _isLoading = false;
+            }
+        }
+    }
+
+    private async Task LoadEmployeesAsync()
+    {
+        var result = await ApiService.SendAsync(() => ApiClient.GetUserEmployeesAsync(1, 100, null, null, null, null, null));
+        if (result?.IsSuccess is true)
+        {
+            _userEmployees = result.Response.Items.ToList();
+        }
+    }
+
+    private void OnSeniorityModeChanged()
+    {
+        if (_formHelper.Model.SeniorityBaseApplicationMode != EmployeeSalaryProfileRequestSeniorityBaseApplicationMode.Automatic)
+        {
+            _formHelper.Model.SeniorityBaseCalculationMethod = null;
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (_isLoading) return;
+
+        _formHelper.ClearErrors();
+
+        var isFormValid = _formHelper.Validate();
+        if (!isFormValid)
+        {
+            ToastService.ShowToastWarning("لطفاً خطاها را بررسی کنید.");
+            return;
+        }
+
+        var model = _formHelper.Model;
+
+        if (!long.TryParse(model.BaseMonthlySalary, out var baseMonthlySalary))
+        {
+            _formHelper.SetServerErrors(new Dictionary<string, ICollection<string>>
+            {
+                { nameof(SalaryProfileFormModel.BaseMonthlySalary), ["حقوق پایه ماهانه باید عدد صحیح ریال باشد."] }
+            });
+            ToastService.ShowToastWarning("لطفاً خطاها را بررسی کنید.");
+            return;
+        }
+
+        var salaryProfile = new EmployeeSalaryProfileRequest(
+            attractionAllowance: ParseOptionalAmount(model.AttractionAllowance),
+            baseMonthlySalary: baseMonthlySalary,
+            childAllowancePerChild: ParseOptionalAmount(model.ChildAllowancePerChild),
+            effectiveFrom: model.EffectiveFrom,
+            foodAllowance: ParseOptionalAmount(model.FoodAllowance),
+            housingAllowance: ParseOptionalAmount(model.HousingAllowance),
+            karanehAmountNet: ParseOptionalAmount(model.KaranehAmountNet),
+            seniorityBaseApplicationMode: model.SeniorityBaseApplicationMode ?? EmployeeSalaryProfileRequestSeniorityBaseApplicationMode.Manual,
+            seniorityBaseCalculationMethod: model.SeniorityBaseCalculationMethod,
+            shiftType: model.ShiftType ?? EmployeeSalaryProfileRequestShiftType.None,
+            supervisionAllowance: ParseOptionalAmount(model.SupervisionAllowance),
+            transportationAllowanceNet: ParseOptionalAmount(model.TransportationAllowanceNet),
+            yearEndSeniorityMode: model.YearEndSeniorityMode ?? EmployeeSalaryProfileRequestYearEndSeniorityMode.MonthlyAccrual);
+
+        _isLoading = true;
+
+        if (IsEdit)
+        {
+            var result = await ApiService.SendAsync(
+                apiCall: () => ApiClient.UpdateEmployeeSalaryProfileAsync(
+                    Id!.Value,
+                    new UpdateEmployeeSalaryProfileRequest(
+                        employeeId: model.EmployeeId ?? Guid.Empty,
+                        salaryProfile: salaryProfile)
+                ),
+                successMessage: "حکم با موفقیت ویرایش شد.",
+                showErrorToastValidation: false
+            );
+
+            if (result is { IsSuccess: true })
+            {
+                NavigationManager.NavigateTo("/salaryprofiles");
+            }
+            else if (result != null)
+            {
+                _formHelper.SetServerErrors(result.Errors);
+                ToastService.ShowToastWarning("لطفاً خطاها را بررسی کنید.");
+            }
+        }
+        else
+        {
+            var result = await ApiService.SendAsync(
+                apiCall: () => ApiClient.CreateEmployeeSalaryProfileAsync(
+                    new CreateEmployeeSalaryProfileRequest(
+                        employeeId: model.EmployeeId ?? Guid.Empty,
+                        salaryProfile: salaryProfile)
+                ),
+                successMessage: "حکم با موفقیت صادر شد.",
+                showErrorToastValidation: false
+            );
+
+            if (result is { IsSuccess: true })
+            {
+                NavigationManager.NavigateTo("/salaryprofiles");
+            }
+            else if (result != null)
+            {
+                _formHelper.SetServerErrors(result.Errors);
+                ToastService.ShowToastWarning("لطفاً خطاها را بررسی کنید.");
+            }
+        }
+
+        _isLoading = false;
+    }
+
+    private static string FormatOptionalAmount(double? amount)
+        => amount.HasValue ? ((long)amount.Value).ToString() : string.Empty;
+
+    private static double? ParseOptionalAmount(string? value)
+        => string.IsNullOrWhiteSpace(value) ? null : double.Parse(value);
+
+    private static Dictionary<string, string> CreateFieldMapping() => new()
+    {
+        ["EmployeeId"] = nameof(SalaryProfileFormModel.EmployeeId),
+        ["EffectiveFrom"] = nameof(SalaryProfileFormModel.EffectiveFrom),
+        ["SalaryProfile.EffectiveFrom"] = nameof(SalaryProfileFormModel.EffectiveFrom),
+        ["BaseMonthlySalary"] = nameof(SalaryProfileFormModel.BaseMonthlySalary),
+        ["SalaryProfile.BaseMonthlySalary"] = nameof(SalaryProfileFormModel.BaseMonthlySalary),
+        ["AttractionAllowance"] = nameof(SalaryProfileFormModel.AttractionAllowance),
+        ["SalaryProfile.AttractionAllowance"] = nameof(SalaryProfileFormModel.AttractionAllowance),
+        ["SupervisionAllowance"] = nameof(SalaryProfileFormModel.SupervisionAllowance),
+        ["SalaryProfile.SupervisionAllowance"] = nameof(SalaryProfileFormModel.SupervisionAllowance),
+        ["SeniorityBaseApplicationMode"] = nameof(SalaryProfileFormModel.SeniorityBaseApplicationMode),
+        ["SalaryProfile.SeniorityBaseApplicationMode"] = nameof(SalaryProfileFormModel.SeniorityBaseApplicationMode),
+        ["SeniorityBaseCalculationMethod"] = nameof(SalaryProfileFormModel.SeniorityBaseCalculationMethod),
+        ["SalaryProfile.SeniorityBaseCalculationMethod"] = nameof(SalaryProfileFormModel.SeniorityBaseCalculationMethod),
+        ["YearEndSeniorityMode"] = nameof(SalaryProfileFormModel.YearEndSeniorityMode),
+        ["SalaryProfile.YearEndSeniorityMode"] = nameof(SalaryProfileFormModel.YearEndSeniorityMode),
+        ["ShiftType"] = nameof(SalaryProfileFormModel.ShiftType),
+        ["SalaryProfile.ShiftType"] = nameof(SalaryProfileFormModel.ShiftType),
+        ["HousingAllowance"] = nameof(SalaryProfileFormModel.HousingAllowance),
+        ["SalaryProfile.HousingAllowance"] = nameof(SalaryProfileFormModel.HousingAllowance),
+        ["FoodAllowance"] = nameof(SalaryProfileFormModel.FoodAllowance),
+        ["SalaryProfile.FoodAllowance"] = nameof(SalaryProfileFormModel.FoodAllowance),
+        ["ChildAllowancePerChild"] = nameof(SalaryProfileFormModel.ChildAllowancePerChild),
+        ["SalaryProfile.ChildAllowancePerChild"] = nameof(SalaryProfileFormModel.ChildAllowancePerChild),
+        ["TransportationAllowanceNet"] = nameof(SalaryProfileFormModel.TransportationAllowanceNet),
+        ["SalaryProfile.TransportationAllowanceNet"] = nameof(SalaryProfileFormModel.TransportationAllowanceNet),
+        ["KaranehAmountNet"] = nameof(SalaryProfileFormModel.KaranehAmountNet),
+        ["SalaryProfile.KaranehAmountNet"] = nameof(SalaryProfileFormModel.KaranehAmountNet)
+    };
+
+    public class SalaryProfileFormModel : BaseModel
+    {
+        [Required(ErrorMessage = "انتخاب کارمند اجباری است.")]
+        [Display(Name = "کارمند")]
+        public Guid? EmployeeId { get; set; }
+
+        [Required(ErrorMessage = "تاریخ اعمال اجباری است.")]
+        [RegularExpression(@"^\d{4}/\d{2}/\d{2}$", ErrorMessage = "تاریخ را به فرمت ۱۴۰۵/۰۶/۰۱ وارد کنید.")]
+        [Display(Name = "از تاریخ")]
+        public string EffectiveFrom { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "حقوق پایه ماهانه اجباری است.")]
+        [RegularExpression(@"^\d+$", ErrorMessage = "حقوق پایه ماهانه باید عدد صحیح ریال باشد.")]
+        [Display(Name = "حقوق پایه ماهانه")]
+        public string BaseMonthlySalary { get; set; } = string.Empty;
+
+        [RegularExpression(@"^(\d+)?$", ErrorMessage = "حق جذب باید عدد صحیح ریال باشد.")]
+        [Display(Name = "حق جذب")]
+        public string? AttractionAllowance { get; set; }
+
+        [RegularExpression(@"^(\d+)?$", ErrorMessage = "حق سرپرستی باید عدد صحیح ریال باشد.")]
+        [Display(Name = "حق سرپرستی")]
+        public string? SupervisionAllowance { get; set; }
+
+        [Required(ErrorMessage = "نحوه اعمال پایه سنوات اجباری است.")]
+        [Display(Name = "نحوه اعمال پایه سنوات")]
+        public EmployeeSalaryProfileRequestSeniorityBaseApplicationMode? SeniorityBaseApplicationMode { get; set; }
+
+        [Display(Name = "روش محاسبه پایه سنوات")]
+        public EmployeeSalaryProfileRequestSeniorityBaseCalculationMethod? SeniorityBaseCalculationMethod { get; set; }
+
+        [Required(ErrorMessage = "نحوه سنوات پایان سال اجباری است.")]
+        [Display(Name = "نحوه سنوات پایان سال")]
+        public EmployeeSalaryProfileRequestYearEndSeniorityMode? YearEndSeniorityMode { get; set; }
+
+        [Required(ErrorMessage = "نوع شیفت اجباری است.")]
+        [Display(Name = "نوع شیفت")]
+        public EmployeeSalaryProfileRequestShiftType? ShiftType { get; set; }
+
+        [RegularExpression(@"^(\d+)?$", ErrorMessage = "حق مسکن باید عدد صحیح ریال باشد.")]
+        [Display(Name = "حق مسکن")]
+        public string? HousingAllowance { get; set; }
+
+        [RegularExpression(@"^(\d+)?$", ErrorMessage = "حق بن خواربار باید عدد صحیح ریال باشد.")]
+        [Display(Name = "خواربار و بن")]
+        public string? FoodAllowance { get; set; }
+
+        [RegularExpression(@"^(\d+)?$", ErrorMessage = "حق اولاد به ازای هر فرزند باید عدد صحیح ریال باشد.")]
+        [Display(Name = "حق اولاد هر فرزند")]
+        public string? ChildAllowancePerChild { get; set; }
+
+        [RegularExpression(@"^(\d+)?$", ErrorMessage = "حق ایاب و ذهاب خالص باید عدد صحیح ریال باشد.")]
+        [Display(Name = "ایاب و ذهاب")]
+        public string? TransportationAllowanceNet { get; set; }
+
+        [RegularExpression(@"^(\d+)?$", ErrorMessage = "مبلغ خالص کارانه باید عدد صحیح ریال باشد.")]
+        [Display(Name = "کارانه")]
+        public string? KaranehAmountNet { get; set; }
+    }
+}
