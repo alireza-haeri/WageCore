@@ -93,9 +93,9 @@ public class PayrollRecordStatusTests
     public void DraftRecord_ShouldBeUpdatableAndDeletable()
     {
         var record = CreateDraftRecord();
+        var periodStart = new DateOnly(2025, 2, 1);
+        var periodEnd = new DateOnly(2025, 2, 28);
         var dto = new PayrollRecordDto(
-            new DateOnly(2025, 2, 1),
-            new DateOnly(2025, 2, 28),
             20m,
             3m,
             2m,
@@ -112,7 +112,8 @@ public class PayrollRecordStatusTests
 
         using (new AssertionScope())
         {
-            record.Update(false, 20m, 12m, dto, amounts).IsSuccess.Should().BeTrue();
+            record.Update(periodStart, periodEnd, false, 20m, 12m, dto, amounts)
+                .IsSuccess.Should().BeTrue();
             record.EnsureCanDelete().IsSuccess.Should().BeTrue();
         }
     }
@@ -123,9 +124,9 @@ public class PayrollRecordStatusTests
         var record = CreateDraftRecord();
         record.MarkAsPaid().ShouldBeSuccess();
 
+        var periodStart = new DateOnly(2025, 2, 1);
+        var periodEnd = new DateOnly(2025, 2, 28);
         var dto = new PayrollRecordDto(
-            new DateOnly(2025, 2, 1),
-            new DateOnly(2025, 2, 28),
             20m,
             3m,
             2m,
@@ -142,7 +143,8 @@ public class PayrollRecordStatusTests
 
         using (new AssertionScope())
         {
-            record.Update(false, 20m, 12m, dto, amounts).IsSuccess.Should().BeFalse();
+            record.Update(periodStart, periodEnd, false, 20m, 12m, dto, amounts)
+                .IsSuccess.Should().BeFalse();
             record.EnsureCanDelete().IsSuccess.Should().BeFalse();
         }
     }

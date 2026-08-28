@@ -87,22 +87,24 @@ public class CreatePayrollRecordTests
     public void Create_WithGeneratedId_ShouldReturnSuccess()
     {
         var employeeId = Guid.NewGuid();
-        var payrollRecord = _builder.WithPeriod(PeriodStart, PeriodEnd).BuildDto();
-        var payrollAmounts = _builder.BuildAmountsDto();
 
         var result = PayrollRecord.Create(
             employeeId,
+            PeriodStart,
+            PeriodEnd,
             false,
             20m,
             12m,
-            payrollRecord,
-            payrollAmounts);
+            _builder.WithPeriod(PeriodStart, PeriodEnd).BuildDto(),
+            _builder.BuildAmountsDto());
 
         var response = result.ShouldBeSuccess();
         using (new AssertionScope())
         {
             response.Id.Should().NotBeEmpty();
             response.EmployeeId.Should().Be(employeeId);
+            response.PeriodStart.Should().Be(PeriodStart);
+            response.PeriodEnd.Should().Be(PeriodEnd);
         }
     }
 
@@ -128,6 +130,8 @@ public class CreatePayrollRecordTests
         var result = PayrollRecord.Create(
             Guid.NewGuid(),
             Guid.NewGuid(),
+            PeriodStart,
+            PeriodEnd,
             false,
             20m,
             12m,
@@ -143,33 +147,15 @@ public class CreatePayrollRecordTests
         var result = PayrollRecord.Create(
             Guid.NewGuid(),
             Guid.NewGuid(),
+            PeriodStart,
+            PeriodEnd,
             false,
             20m,
             12m,
-            _builder.WithPeriod(PeriodStart, PeriodEnd).BuildDto(),
+            _builder.BuildDto(),
             null);
 
         result.ShouldBeFailure("مبالغ فیش پرداختی نمیتواند خالی باشد.");
-    }
-
-    [Fact]
-    public void Create_WithNullPeriodStart_ShouldFail()
-    {
-        var result = _builder
-            .WithPeriod(null, PeriodEnd)
-            .CreateResult();
-
-        result.ShouldBeFailure("تاریخ شروع دوره");
-    }
-
-    [Fact]
-    public void Create_WithNullPeriodEnd_ShouldFail()
-    {
-        var result = _builder
-            .WithPeriod(PeriodStart, null)
-            .CreateResult();
-
-        result.ShouldBeFailure("تاریخ پایان دوره");
     }
 
     [Fact]

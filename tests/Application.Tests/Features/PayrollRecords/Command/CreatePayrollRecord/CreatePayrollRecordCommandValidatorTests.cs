@@ -7,19 +7,21 @@ public class CreatePayrollRecordCommandValidatorTests
 
     private static readonly Guid ValidUserId = Guid.NewGuid();
     private static readonly Guid ValidEmployeeId = Guid.NewGuid();
+    private const int ValidPersianYear = 1404;
+    private const int ValidPersianMonth = 6;
 
     private CreatePayrollRecordCommand CreateValidCommand(
         PayrollRecordDto? payrollRecord = null,
         Guid? userId = null,
-        Guid? employeeId = null)
-    {
-        var dto = payrollRecord ?? _builder.BuildDto();
-
-        return new CreatePayrollRecordCommand(
+        Guid? employeeId = null,
+        int? persianYear = null,
+        int? persianMonth = null) =>
+        new(
             userId ?? ValidUserId,
             employeeId ?? ValidEmployeeId,
-            dto);
-    }
+            persianYear ?? ValidPersianYear,
+            persianMonth ?? ValidPersianMonth,
+            payrollRecord ?? _builder.BuildDto());
 
     private PayrollRecordDto CreateHoursDto(string fieldName, decimal? value) =>
         fieldName switch
@@ -62,65 +64,64 @@ public class CreatePayrollRecordCommandValidatorTests
     [Fact]
     public void Validate_WithNullPayrollRecord_ShouldHaveValidationError()
     {
-        var command = new CreatePayrollRecordCommand(ValidUserId, ValidEmployeeId, null!);
+        var command = new CreatePayrollRecordCommand(
+            ValidUserId,
+            ValidEmployeeId,
+            ValidPersianYear,
+            ValidPersianMonth,
+            null!);
 
         var result = _validator.TestValidate(command);
 
         result.ShouldHaveValidationErrorFor(x => x.PayrollRecord);
     }
 
-    [Fact]
-    public void Validate_WithNullPeriodStart_ShouldHaveValidationError()
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void Validate_WithNonPositivePersianYear_ShouldHaveValidationError(int persianYear)
     {
-        var payrollRecord = _builder.BuildDto() with { PeriodStart = null };
-        var command = CreateValidCommand(payrollRecord);
+        var command = CreateValidCommand(persianYear: persianYear);
 
         var result = _validator.TestValidate(command);
 
-        result.ShouldHaveValidationErrorFor(x => x.PayrollRecord.PeriodStart);
+        result.ShouldHaveValidationErrorFor(x => x.PersianYear);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-5)]
+    [InlineData(13)]
+    public void Validate_WithPersianMonthOutOfRange_ShouldHaveValidationError(int persianMonth)
+    {
+        var command = CreateValidCommand(persianMonth: persianMonth);
+
+        var result = _validator.TestValidate(command);
+
+        result.ShouldHaveValidationErrorFor(x => x.PersianMonth);
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(6)]
+    [InlineData(12)]
+    public void Validate_WithValidPersianMonth_ShouldNotHaveValidationError(int persianMonth)
+    {
+        var command = CreateValidCommand(persianMonth: persianMonth);
+
+        var result = _validator.TestValidate(command);
+
+        result.ShouldNotHaveValidationErrorFor(x => x.PersianMonth);
     }
 
     [Fact]
-    public void Validate_WithNullPeriodEnd_ShouldHaveValidationError()
+    public void Validate_WithFuturePersianYear_ShouldNotHaveValidationError()
     {
-        var payrollRecord = _builder.BuildDto() with { PeriodEnd = null };
-        var command = CreateValidCommand(payrollRecord);
+        var command = CreateValidCommand(persianYear: 1500, persianMonth: 12);
 
         var result = _validator.TestValidate(command);
 
-        result.ShouldHaveValidationErrorFor(x => x.PayrollRecord.PeriodEnd);
-    }
-
-    [Fact]
-    public void Validate_WithPeriodEndBeforePeriodStart_ShouldHaveValidationError()
-    {
-        var periodStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-10));
-        var payrollRecord = _builder.BuildDto() with
-        {
-            PeriodStart = periodStart,
-            PeriodEnd = periodStart.AddDays(-1)
-        };
-        var command = CreateValidCommand(payrollRecord);
-
-        var result = _validator.TestValidate(command);
-
-        result.ShouldHaveValidationErrorFor(x => x.PayrollRecord.PeriodEnd);
-    }
-
-    [Fact]
-    public void Validate_WithPeriodEndEqualToPeriodStart_ShouldNotHaveValidationError()
-    {
-        var periodStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-10));
-        var payrollRecord = _builder.BuildDto() with
-        {
-            PeriodStart = periodStart,
-            PeriodEnd = periodStart
-        };
-        var command = CreateValidCommand(payrollRecord);
-
-        var result = _validator.TestValidate(command);
-
-        result.ShouldNotHaveValidationErrorFor(x => x.PayrollRecord.PeriodEnd);
+        result.ShouldNotHaveAnyValidationErrors();
     }
 
     [Fact]
@@ -277,22 +278,6 @@ public class CreatePayrollRecordCommandValidatorTests
     }
 
     [Fact]
-    public void Validate_WithPeriodLongerThanOneMonth_ShouldNotHaveValidationError()
-    {
-        var periodStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-60));
-        var payrollRecord = _builder.BuildDto() with
-        {
-            PeriodStart = periodStart,
-            PeriodEnd = periodStart.AddDays(45)
-        };
-        var command = CreateValidCommand(payrollRecord);
-
-        var result = _validator.TestValidate(command);
-
-        result.ShouldNotHaveAnyValidationErrors();
-    }
-
-    [Fact]
     public void Validate_WithOvertimeHoursAboveAnyCap_ShouldNotHaveValidationError()
     {
         var payrollRecord = _builder.BuildDto() with { OvertimeHours = 500m };
@@ -302,5 +287,4 @@ public class CreatePayrollRecordCommandValidatorTests
 
         result.ShouldNotHaveValidationErrorFor(x => x.PayrollRecord.OvertimeHours);
     }
-
 }

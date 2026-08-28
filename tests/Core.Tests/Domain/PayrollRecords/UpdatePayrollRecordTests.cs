@@ -15,12 +15,8 @@ public class UpdatePayrollRecordTests
             .CreateResult()
             .ShouldBeSuccess();
 
-    private static PayrollRecordDto BuildDto(
-        DateOnly periodStart,
-        DateOnly periodEnd) =>
+    private static PayrollRecordDto BuildDto() =>
         new(
-            periodStart,
-            periodEnd,
             20m,
             3m,
             2m,
@@ -43,10 +39,12 @@ public class UpdatePayrollRecordTests
         var record = CreateRecord();
 
         var result = record.Update(
+            NewPeriodStart,
+            NewPeriodEnd,
             false,
             20m,
             12m,
-            BuildDto(NewPeriodStart, NewPeriodEnd),
+            BuildDto(),
             BuildAmounts());
 
         result.ShouldBeSuccess();
@@ -77,10 +75,12 @@ public class UpdatePayrollRecordTests
         var employeeId = record.EmployeeId;
 
         var result = record.Update(
+            NewPeriodStart,
+            NewPeriodEnd,
             false,
             20m,
             12m,
-            BuildDto(NewPeriodStart, NewPeriodEnd),
+            BuildDto(),
             BuildAmounts());
 
         result.ShouldBeSuccess();
@@ -97,10 +97,12 @@ public class UpdatePayrollRecordTests
         var record = CreateRecord();
 
         var result = record.Update(
+            NewPeriodStart,
+            NewPeriodEnd,
             false,
             20m,
             12m,
-            BuildDto(NewPeriodStart, NewPeriodEnd),
+            BuildDto(),
             BuildAmounts());
 
         result.ShouldBeSuccess();
@@ -114,10 +116,12 @@ public class UpdatePayrollRecordTests
         record.MarkAsPaid().ShouldBeSuccess();
 
         var result = record.Update(
+            NewPeriodStart,
+            NewPeriodEnd,
             false,
             20m,
             12m,
-            BuildDto(NewPeriodStart, NewPeriodEnd),
+            BuildDto(),
             BuildAmounts());
 
         result.ShouldBeFailure("فیش پرداختی پرداخت شده قابل ویرایش نیست.");
@@ -129,11 +133,45 @@ public class UpdatePayrollRecordTests
     }
 
     [Fact]
+    public void Update_WithPeriodEndBeforePeriodStart_ShouldFail()
+    {
+        var record = CreateRecord();
+
+        var result = record.Update(
+            NewPeriodEnd,
+            NewPeriodStart,
+            false,
+            20m,
+            12m,
+            BuildDto(),
+            BuildAmounts());
+
+        result.ShouldBeFailure("تاریخ پایان دوره نباید قبل از تاریخ شروع دوره باشد.");
+    }
+
+    [Fact]
+    public void Update_WithPeriodLongerThanMaxAllowed_ShouldFail()
+    {
+        var record = CreateRecord();
+
+        var result = record.Update(
+            NewPeriodStart,
+            NewPeriodStart.AddDays(PayrollRecord.MaxPeriodLengthInDays),
+            false,
+            20m,
+            12m,
+            BuildDto(),
+            BuildAmounts());
+
+        result.ShouldBeFailure("بازه دوره فیش پرداختی نباید بیشتر از 31 روز باشد.");
+    }
+
+    [Fact]
     public void Update_WithNullPayrollRecord_ShouldFail()
     {
         var record = CreateRecord();
 
-        var result = record.Update(false, 20m, 12m, null, BuildAmounts());
+        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, null, BuildAmounts());
 
         result.ShouldBeFailure("اطلاعات فیش پرداختی");
     }
@@ -143,33 +181,18 @@ public class UpdatePayrollRecordTests
     {
         var record = CreateRecord();
 
-        var result = record.Update(false, 20m, 12m, BuildDto(NewPeriodStart, NewPeriodEnd), null);
+        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, BuildDto(), null);
 
         result.ShouldBeFailure("مبالغ فیش پرداختی نمیتواند خالی باشد.");
-    }
-
-    [Fact]
-    public void Update_WithPeriodLongerThanMaxAllowed_ShouldFail()
-    {
-        var record = CreateRecord();
-
-        var result = record.Update(
-            false,
-            20m,
-            12m,
-            BuildDto(NewPeriodStart, NewPeriodStart.AddDays(PayrollRecord.MaxPeriodLengthInDays)),
-            BuildAmounts());
-
-        result.ShouldBeFailure("بازه دوره فیش پرداختی نباید بیشتر از 31 روز باشد.");
     }
 
     [Fact]
     public void Update_WithNegativeHours_ShouldFail()
     {
         var record = CreateRecord();
-        var dto = BuildDto(NewPeriodStart, NewPeriodEnd) with { NightShiftHours = -1m };
+        var dto = BuildDto() with { NightShiftHours = -1m };
 
-        var result = record.Update(false, 20m, 12m, dto, BuildAmounts());
+        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, dto, BuildAmounts());
 
         result.ShouldBeFailure("ساعات شیفت شب نمیتواند منفی باشد.");
     }
@@ -178,9 +201,9 @@ public class UpdatePayrollRecordTests
     public void Update_WithOvertimeHoursAboveMaxMonthlyOvertimeHours_ShouldFail()
     {
         var record = CreateRecord();
-        var dto = BuildDto(NewPeriodStart, NewPeriodEnd) with { OvertimeHours = 21m };
+        var dto = BuildDto() with { OvertimeHours = 21m };
 
-        var result = record.Update(false, 20m, 12m, dto, BuildAmounts());
+        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, dto, BuildAmounts());
 
         result.ShouldBeFailure("ساعات اضافه‌کاری نباید بیشتر از حداکثر ساعات اضافه‌کاری ماهانه باشد.");
     }
@@ -189,9 +212,9 @@ public class UpdatePayrollRecordTests
     public void Update_WithFridayWorkHoursAboveMaxFridayHours_ShouldFail()
     {
         var record = CreateRecord();
-        var dto = BuildDto(NewPeriodStart, NewPeriodEnd) with { FridayWorkHours = 13m };
+        var dto = BuildDto() with { FridayWorkHours = 13m };
 
-        var result = record.Update(false, 20m, 12m, dto, BuildAmounts());
+        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, dto, BuildAmounts());
 
         result.ShouldBeFailure("ساعات کار جمعه نباید بیشتر از حداکثر ساعات کار جمعه باشد.");
     }
@@ -200,9 +223,9 @@ public class UpdatePayrollRecordTests
     public void Update_WithDaysCountOutOfRange_ShouldFail()
     {
         var record = CreateRecord();
-        var dto = BuildDto(NewPeriodStart, NewPeriodEnd) with { AbsenceDaysCount = 32m };
+        var dto = BuildDto() with { AbsenceDaysCount = 32m };
 
-        var result = record.Update(false, 20m, 12m, dto, BuildAmounts());
+        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, dto, BuildAmounts());
 
         result.ShouldBeFailure("تعداد روزهای غیبت باید بین 0 تا 31 روز باشد.");
     }
@@ -213,7 +236,7 @@ public class UpdatePayrollRecordTests
         var record = CreateRecord();
         var amounts = BuildAmounts(withZeroTax: true);
 
-        var result = record.Update(true, 20m, 12m, BuildDto(NewPeriodStart, NewPeriodEnd), amounts);
+        var result = record.Update(NewPeriodStart, NewPeriodEnd, true, 20m, 12m, BuildDto(), amounts);
 
         result.ShouldBeFailure("برای کارمند مشمول مالیات، مالیات محاسبه شده نمیتواند صفر باشد.");
     }
@@ -224,7 +247,7 @@ public class UpdatePayrollRecordTests
         var record = CreateRecord();
         var amounts = BuildAmounts(withZeroTax: true);
 
-        var result = record.Update(false, 20m, 12m, BuildDto(NewPeriodStart, NewPeriodEnd), amounts);
+        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, BuildDto(), amounts);
 
         result.ShouldBeSuccess();
         record.CalculatedTaxAmount.Should().Be(0m);
@@ -236,7 +259,7 @@ public class UpdatePayrollRecordTests
         var record = CreateRecord();
         var amounts = BuildAmounts() with { OvertimeAmount = -1m };
 
-        var result = record.Update(false, 20m, 12m, BuildDto(NewPeriodStart, NewPeriodEnd), amounts);
+        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, BuildDto(), amounts);
 
         result.ShouldBeFailure("مبلغ اضافه‌کاری نمیتواند منفی باشد.");
     }
@@ -247,7 +270,7 @@ public class UpdatePayrollRecordTests
         var record = CreateRecord();
         var amounts = BuildAmounts() with { NetPayableAmount = -125_000m };
 
-        var result = record.Update(false, 20m, 12m, BuildDto(NewPeriodStart, NewPeriodEnd), amounts);
+        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, BuildDto(), amounts);
 
         result.ShouldBeSuccess();
         record.NetPayableAmount.Should().Be(-125_000m);
@@ -257,9 +280,9 @@ public class UpdatePayrollRecordTests
     public void Update_WhenValidationFails_ShouldKeepPreviousValues()
     {
         var record = CreateRecord();
-        var dto = BuildDto(NewPeriodStart, NewPeriodEnd) with { MissionDaysCount = 99m };
+        var dto = BuildDto() with { MissionDaysCount = 99m };
 
-        var result = record.Update(false, 20m, 12m, dto, BuildAmounts());
+        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, dto, BuildAmounts());
 
         result.ShouldBeFailure("تعداد روزهای مأموریت باید بین 0 تا 31 روز باشد.");
         using (new AssertionScope())

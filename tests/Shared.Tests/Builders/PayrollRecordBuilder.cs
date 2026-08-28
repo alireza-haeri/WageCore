@@ -7,8 +7,8 @@ public class PayrollRecordBuilder
     private bool _employeeIsTaxSubject;
     private decimal? _maxMonthlyOvertimeHours = 20m;
     private decimal? _maxFridayHours = 12m;
-    private DateOnly? _periodStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-25));
-    private DateOnly? _periodEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(-1));
+    private DateOnly _periodStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-25));
+    private DateOnly _periodEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(-1));
     private decimal? _workedDaysCount = 24m;
     private decimal? _overtimeHours = 4m;
     private decimal? _nightShiftHours = 3m;
@@ -52,7 +52,7 @@ public class PayrollRecordBuilder
         return this;
     }
 
-    public PayrollRecordBuilder WithPeriod(DateOnly? periodStart, DateOnly? periodEnd)
+    public PayrollRecordBuilder WithPeriod(DateOnly periodStart, DateOnly periodEnd)
     {
         _periodStart = periodStart;
         _periodEnd = periodEnd;
@@ -133,8 +133,6 @@ public class PayrollRecordBuilder
 
     public PayrollRecordDto BuildDto() =>
         new(
-            _periodStart,
-            _periodEnd,
             _workedDaysCount,
             _overtimeHours,
             _nightShiftHours,
@@ -156,6 +154,8 @@ public class PayrollRecordBuilder
         return PayrollRecord.Create(
             _id,
             _employeeId,
+            _periodStart,
+            _periodEnd,
             _employeeIsTaxSubject,
             _maxMonthlyOvertimeHours,
             _maxFridayHours,

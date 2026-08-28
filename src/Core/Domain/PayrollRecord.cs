@@ -29,6 +29,8 @@ public class PayrollRecord
     public static DomainResult<PayrollRecord> Create(
         Guid payrollRecordId,
         Guid employeeId,
+        DateOnly periodStart,
+        DateOnly periodEnd,
         bool employeeIsTaxSubject,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
@@ -38,6 +40,8 @@ public class PayrollRecord
         var validationResult = Validate(
             payrollRecordId,
             employeeId,
+            periodStart,
+            periodEnd,
             employeeIsTaxSubject,
             maxMonthlyOvertimeHours,
             maxFridayHours,
@@ -51,8 +55,8 @@ public class PayrollRecord
         {
             Id = payrollRecordId,
             EmployeeId = employeeId,
-            PeriodStart = payrollRecord!.PeriodStart!.Value,
-            PeriodEnd = payrollRecord.PeriodEnd!.Value,
+            PeriodStart = periodStart,
+            PeriodEnd = periodEnd,
             WorkedDaysCount = payrollRecord.WorkedDaysCount!.Value,
             OvertimeHours = payrollRecord.OvertimeHours!.Value,
             NightShiftHours = payrollRecord.NightShiftHours!.Value,
@@ -71,6 +75,8 @@ public class PayrollRecord
 
     public static DomainResult<PayrollRecord> Create(
         Guid employeeId,
+        DateOnly periodStart,
+        DateOnly periodEnd,
         bool employeeIsTaxSubject,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
@@ -79,6 +85,8 @@ public class PayrollRecord
         Create(
             Guid.NewGuid(),
             employeeId,
+            periodStart,
+            periodEnd,
             employeeIsTaxSubject,
             maxMonthlyOvertimeHours,
             maxFridayHours,
@@ -86,6 +94,8 @@ public class PayrollRecord
             payrollAmounts);
 
     public DomainResult Update(
+        DateOnly periodStart,
+        DateOnly periodEnd,
         bool employeeIsTaxSubject,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
@@ -97,6 +107,8 @@ public class PayrollRecord
             return canModifyResult;
 
         var validationResult = ValidateCommon(
+            periodStart,
+            periodEnd,
             employeeIsTaxSubject,
             maxMonthlyOvertimeHours,
             maxFridayHours,
@@ -106,8 +118,8 @@ public class PayrollRecord
         if (!validationResult.IsSuccess)
             return validationResult;
 
-        PeriodStart = payrollRecord!.PeriodStart!.Value;
-        PeriodEnd = payrollRecord.PeriodEnd!.Value;
+        PeriodStart = periodStart;
+        PeriodEnd = periodEnd;
         WorkedDaysCount = payrollRecord.WorkedDaysCount!.Value;
         OvertimeHours = payrollRecord.OvertimeHours!.Value;
         NightShiftHours = payrollRecord.NightShiftHours!.Value;
@@ -153,6 +165,8 @@ public class PayrollRecord
     private static DomainResult Validate(
         Guid payrollRecordId,
         Guid employeeId,
+        DateOnly periodStart,
+        DateOnly periodEnd,
         bool employeeIsTaxSubject,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
@@ -166,6 +180,8 @@ public class PayrollRecord
             return DomainResult.Failure("شناسه کارمند نمیتواند خالی باشد.");
 
         return ValidateCommon(
+            periodStart,
+            periodEnd,
             employeeIsTaxSubject,
             maxMonthlyOvertimeHours,
             maxFridayHours,
@@ -174,6 +190,8 @@ public class PayrollRecord
     }
 
     private static DomainResult ValidateCommon(
+        DateOnly periodStart,
+        DateOnly periodEnd,
         bool employeeIsTaxSubject,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
@@ -186,7 +204,7 @@ public class PayrollRecord
         if (payrollAmounts is null)
             return DomainResult.Failure("مبالغ فیش پرداختی نمیتواند خالی باشد.");
 
-        var periodResult = ValidatePeriod(payrollRecord);
+        var periodResult = ValidatePeriod(periodStart, periodEnd);
         if (!periodResult.IsSuccess)
             return periodResult;
 
@@ -252,19 +270,13 @@ public class PayrollRecord
         return DomainResult.Success();
     }
 
-    private static DomainResult ValidatePeriod(PayrollRecordDto payrollRecord)
+    private static DomainResult ValidatePeriod(DateOnly periodStart, DateOnly periodEnd)
     {
-        if (payrollRecord.PeriodStart is null)
-            return DomainResult.Failure("تاریخ شروع دوره نمیتواند خالی باشد.");
-
-        if (payrollRecord.PeriodEnd is null)
-            return DomainResult.Failure("تاریخ پایان دوره نمیتواند خالی باشد.");
-
-        if (payrollRecord.PeriodEnd < payrollRecord.PeriodStart)
+        if (periodEnd < periodStart)
             return DomainResult.Failure("تاریخ پایان دوره نباید قبل از تاریخ شروع دوره باشد.");
 
-        var periodLengthInDays = payrollRecord.PeriodEnd.Value.DayNumber -
-                                 payrollRecord.PeriodStart.Value.DayNumber +
+        var periodLengthInDays = periodEnd.DayNumber -
+                                 periodStart.DayNumber +
                                  1;
 
         if (periodLengthInDays > MaxPeriodLengthInDays)

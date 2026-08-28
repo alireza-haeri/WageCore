@@ -6,15 +6,6 @@ public class PayrollRecordValidator : AbstractValidator<PayrollRecordDto>
 {
     public PayrollRecordValidator()
     {
-        RuleFor(x => x.PeriodStart)
-            .NotEmpty().WithMessage("تاریخ شروع دوره اجباری است.");
-
-        RuleFor(x => x.PeriodEnd)
-            .NotEmpty().WithMessage("تاریخ پایان دوره اجباری است.")
-            .Must((payrollRecord, periodEnd) => periodEnd >= payrollRecord.PeriodStart)
-            .WithMessage("تاریخ پایان دوره نباید قبل از تاریخ شروع دوره باشد.")
-            .When(x => x.PeriodStart is not null && x.PeriodEnd is not null);
-
         RuleFor(x => x.WorkedDaysCount)
             .Cascade(CascadeMode.Stop)
             .NotNull().WithMessage("تعداد روزهای کارکرد اجباری است.")
