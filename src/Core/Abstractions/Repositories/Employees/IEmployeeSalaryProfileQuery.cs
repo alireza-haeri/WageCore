@@ -14,6 +14,8 @@ public interface IEmployeeSalaryProfileQuery
         Guid? employeeId = null,
         string? search = null,
         EmployeeSalaryProfileStatus? status = null,
+        Guid? workshopId = null,
+        Guid? departmentId = null,
         CancellationToken cancellationToken = default);
 
     Task<EmployeeSalaryProfileByIdResult?> GetEmployeeSalaryProfileByIdAsync(

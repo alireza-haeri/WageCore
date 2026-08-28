@@ -11,6 +11,14 @@ public class GetEmployeeSalaryProfilesQueryValidator : AbstractValidator<GetEmpl
             .NotEqual(Guid.Empty).WithMessage("شناسه کارمند نمیتواند خالی باشد.")
             .When(x => x.EmployeeId.HasValue);
 
+        RuleFor(x => x.WorkshopId)
+            .NotEqual(Guid.Empty).WithMessage("شناسه کارگاه نمیتواند خالی باشد.")
+            .When(x => x.WorkshopId.HasValue);
+
+        RuleFor(x => x.DepartmentId)
+            .NotEqual(Guid.Empty).WithMessage("شناسه بخش نمیتواند خالی باشد.")
+            .When(x => x.DepartmentId.HasValue);
+
         RuleFor(x => x.Status)
             .IsInEnum().WithMessage("وضعیت پروفایل حقوق نامعتبر است.")
             .When(x => x.Status.HasValue);

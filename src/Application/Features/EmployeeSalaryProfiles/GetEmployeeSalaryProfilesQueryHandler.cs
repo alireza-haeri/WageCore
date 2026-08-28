@@ -15,6 +15,8 @@ public class GetEmployeeSalaryProfilesQueryHandler(IEmployeeSalaryProfileQuery e
             request.EmployeeId,
             request.Search,
             request.Status,
+            request.WorkshopId,
+            request.DepartmentId,
             cancellationToken);
 
         var response = pagedSalaryProfiles.Map(x =>
@@ -23,6 +25,8 @@ public class GetEmployeeSalaryProfilesQueryHandler(IEmployeeSalaryProfileQuery e
                 x.EmployeeId,
                 x.EmployeeName,
                 x.PersonalCode,
+                x.WorkshopName,
+                x.DepartmentName,
                 x.EffectiveFrom,
                 x.BaseMonthlySalary,
                 x.Status));

@@ -17,6 +17,8 @@ public class EmployeeSalaryProfileQuery : IEmployeeSalaryProfileQuery
         Guid? employeeId = null,
         string? search = null,
         EmployeeSalaryProfileStatus? status = null,
+        Guid? workshopId = null,
+        Guid? departmentId = null,
         CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();

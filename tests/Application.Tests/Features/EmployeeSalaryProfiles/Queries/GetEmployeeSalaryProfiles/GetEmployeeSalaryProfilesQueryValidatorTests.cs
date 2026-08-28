@@ -6,19 +6,33 @@ public class GetEmployeeSalaryProfilesQueryValidatorTests
 
     private static readonly Guid ValidUserId = Guid.NewGuid();
     private static readonly Guid ValidEmployeeId = Guid.NewGuid();
+    private static readonly Guid ValidWorkshopId = Guid.NewGuid();
+    private static readonly Guid ValidDepartmentId = Guid.NewGuid();
     private const string ValidSearch = "علی";
     private const EmployeeSalaryProfileStatus ValidStatus = EmployeeSalaryProfileStatus.Active;
     private static readonly PaginationDto ValidPagination = new(1, 10);
 
+    private static GetEmployeeSalaryProfilesQuery CreateValidQuery(
+        Guid? userId = null,
+        PaginationDto? pagination = null,
+        Guid? employeeId = null,
+        string? search = null,
+        EmployeeSalaryProfileStatus? status = null,
+        Guid? workshopId = null,
+        Guid? departmentId = null) =>
+        new(
+            userId ?? ValidUserId,
+            pagination ?? ValidPagination,
+            employeeId ?? ValidEmployeeId,
+            search ?? ValidSearch,
+            status ?? ValidStatus,
+            workshopId ?? ValidWorkshopId,
+            departmentId ?? ValidDepartmentId);
+
     [Fact]
     public void Validate_WithValidQuery_ShouldNotHaveAnyErrors()
     {
-        var query = new GetEmployeeSalaryProfilesQuery(
-            ValidUserId,
-            ValidPagination,
-            ValidEmployeeId,
-            ValidSearch,
-            ValidStatus);
+        var query = CreateValidQuery();
 
         var result = _validator.TestValidate(query);
 
@@ -28,12 +42,7 @@ public class GetEmployeeSalaryProfilesQueryValidatorTests
     [Fact]
     public void Validate_WithEmptyUserId_ShouldHaveValidationError()
     {
-        var query = new GetEmployeeSalaryProfilesQuery(
-            Guid.Empty,
-            ValidPagination,
-            ValidEmployeeId,
-            ValidSearch,
-            ValidStatus);
+        var query = CreateValidQuery(userId: Guid.Empty);
 
         var result = _validator.TestValidate(query);
 
@@ -43,12 +52,7 @@ public class GetEmployeeSalaryProfilesQueryValidatorTests
     [Fact]
     public void Validate_WithEmptyEmployeeId_ShouldHaveValidationError()
     {
-        var query = new GetEmployeeSalaryProfilesQuery(
-            ValidUserId,
-            ValidPagination,
-            Guid.Empty,
-            ValidSearch,
-            ValidStatus);
+        var query = CreateValidQuery(employeeId: Guid.Empty);
 
         var result = _validator.TestValidate(query);
 
@@ -56,14 +60,29 @@ public class GetEmployeeSalaryProfilesQueryValidatorTests
     }
 
     [Fact]
+    public void Validate_WithEmptyWorkshopId_ShouldHaveValidationError()
+    {
+        var query = CreateValidQuery(workshopId: Guid.Empty);
+
+        var result = _validator.TestValidate(query);
+
+        result.ShouldHaveValidationErrorFor(x => x.WorkshopId);
+    }
+
+    [Fact]
+    public void Validate_WithEmptyDepartmentId_ShouldHaveValidationError()
+    {
+        var query = CreateValidQuery(departmentId: Guid.Empty);
+
+        var result = _validator.TestValidate(query);
+
+        result.ShouldHaveValidationErrorFor(x => x.DepartmentId);
+    }
+
+    [Fact]
     public void Validate_WithInvalidStatus_ShouldHaveValidationError()
     {
-        var query = new GetEmployeeSalaryProfilesQuery(
-            ValidUserId,
-            ValidPagination,
-            ValidEmployeeId,
-            ValidSearch,
-            (EmployeeSalaryProfileStatus)999);
+        var query = CreateValidQuery(status: (EmployeeSalaryProfileStatus)999);
 
         var result = _validator.TestValidate(query);
 
@@ -73,13 +92,7 @@ public class GetEmployeeSalaryProfilesQueryValidatorTests
     [Fact]
     public void Validate_WithSearchMoreThan100Characters_ShouldHaveValidationError()
     {
-        var search = new string('a', 101);
-        var query = new GetEmployeeSalaryProfilesQuery(
-            ValidUserId,
-            ValidPagination,
-            ValidEmployeeId,
-            search,
-            ValidStatus);
+        var query = CreateValidQuery(search: new string('a', 101));
 
         var result = _validator.TestValidate(query);
 
@@ -89,13 +102,7 @@ public class GetEmployeeSalaryProfilesQueryValidatorTests
     [Fact]
     public void Validate_WithInvalidPaginationPageNumber_ShouldHaveValidationError()
     {
-        var invalidPagination = new PaginationDto(0, 10);
-        var query = new GetEmployeeSalaryProfilesQuery(
-            ValidUserId,
-            invalidPagination,
-            ValidEmployeeId,
-            ValidSearch,
-            ValidStatus);
+        var query = CreateValidQuery(pagination: new PaginationDto(0, 10));
 
         var result = _validator.TestValidate(query);
 
@@ -105,13 +112,7 @@ public class GetEmployeeSalaryProfilesQueryValidatorTests
     [Fact]
     public void Validate_WithInvalidPaginationPageSize_ShouldHaveValidationError()
     {
-        var invalidPagination = new PaginationDto(1, 101);
-        var query = new GetEmployeeSalaryProfilesQuery(
-            ValidUserId,
-            invalidPagination,
-            ValidEmployeeId,
-            ValidSearch,
-            ValidStatus);
+        var query = CreateValidQuery(pagination: new PaginationDto(1, 101));
 
         var result = _validator.TestValidate(query);
 

@@ -7,7 +7,9 @@ public record GetEmployeeSalaryProfilesQuery(
     PaginationDto Pagination,
     Guid? EmployeeId = null,
     string? Search = null,
-    EmployeeSalaryProfileStatus? Status = null)
+    EmployeeSalaryProfileStatus? Status = null,
+    Guid? WorkshopId = null,
+    Guid? DepartmentId = null)
     : IRequest<Result<PagedResult<GetEmployeeSalaryProfilesQueryResponse>>>;
 
 public record GetEmployeeSalaryProfilesQueryResponse(
@@ -15,6 +17,8 @@ public record GetEmployeeSalaryProfilesQueryResponse(
     Guid EmployeeId,
     string EmployeeName,
     string PersonalCode,
+    string WorkshopName,
+    string DepartmentName,
     DateOnly EffectiveFrom,
     decimal BaseMonthlySalary,
     EmployeeSalaryProfileStatus Status);

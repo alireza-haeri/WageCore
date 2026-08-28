@@ -5,6 +5,8 @@ public record EmployeeSalaryProfileResult(
     Guid EmployeeId,
     string EmployeeName,
     string PersonalCode,
+    string WorkshopName,
+    string DepartmentName,
     DateOnly EffectiveFrom,
     decimal BaseMonthlySalary,
     EmployeeSalaryProfileStatus Status);
