@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Shared.Web.DateTimeHandling;
 using Core.Contracts.Employees;
 
 namespace Web.Api.Controllers.Employees;
 
+[Authorize]
 [Tags("Employee")]
 [Route("api/v1/employees")]
 public class EmployeeController(IMediator mediator) : BaseController

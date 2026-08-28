@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Authorization;
 using Shared.Web.DateTimeHandling;
 
 namespace Web.Api.Controllers.Workshops;
 
+[Authorize]
 [Tags("Workshop")]
 [Route("api/v1/workshops")]
 public class WorkshopController(IMediator mediator) : BaseController

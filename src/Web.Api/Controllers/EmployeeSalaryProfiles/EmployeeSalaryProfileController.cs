@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Shared.Web.DateTimeHandling;
 using Core.Contracts.Employees;
 
 namespace Web.Api.Controllers.EmployeeSalaryProfiles;
 
+[Authorize]
 [Tags("EmployeeSalaryProfile")]
 [Route("api/v1/employee-salary-profiles")]
 public class EmployeeSalaryProfileController(IMediator mediator) : BaseController

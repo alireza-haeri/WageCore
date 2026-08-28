@@ -1,5 +1,8 @@
+using Microsoft.AspNetCore.Authorization;
+
 namespace Web.Api.Controllers.Departments;
 
+[Authorize]
 [Tags("Department")]
 [Route("api/v1/departments")]
 public class DepartmentController(IMediator mediator) : BaseController
