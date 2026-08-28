@@ -3,9 +3,6 @@ namespace Core.Domain;
 public class PayrollRecord
 {
     public const string TableName = "PayrollRecords";
-
-    // A payroll record never covers more than one month, and the longest month has 31 days.
-    // The same bound applies to every day-count field, since a count above the period length is meaningless.
     public const int MaxPeriodLengthInDays = 31;
     public const int MaxDaysCount = 31;
 
@@ -20,18 +17,11 @@ public class PayrollRecord
     public decimal LeaveDaysCount { get; private set; }
     public decimal AbsenceDaysCount { get; private set; }
     public decimal MissionDaysCount { get; private set; }
-
-    // The amounts below are produced by the payroll calculation (or by the rule engine it uses) and
-    // only stored on the record, so the payslip keeps the exact figures that were paid out.
     public decimal OvertimeAmount { get; private set; }
     public decimal NightShiftExtraAmount { get; private set; }
     public decimal FridayWorkAllowance { get; private set; }
     public decimal CalculatedTaxAmount { get; private set; }
-
-    // Unlike the line amounts, the net payable can legitimately go below zero when deductions exceed
-    // the earnings of the period, so it is the only amount field without a zero floor.
     public decimal NetPayableAmount { get; private set; }
-
     public PayrollRecordStatus Status { get; private set; }
 
     public bool IsPaid => Status == PayrollRecordStatus.Paid;
@@ -128,10 +118,6 @@ public class PayrollRecord
         return DomainResult.Success();
     }
 
-    /// <summary>
-    /// Finalises the record so it can no longer be edited or deleted. Paying is deliberately one-way:
-    /// a wrong paid record is corrected with a new record instead of reopening this one.
-    /// </summary>
     public DomainResult MarkAsPaid()
     {
         var canModifyResult = EnsureCanModify();
@@ -148,10 +134,6 @@ public class PayrollRecord
             ? DomainResult.Failure("فیش پرداختی پرداخت شده قابل حذف نیست.")
             : DomainResult.Success();
 
-    /// <summary>
-    /// Inclusive-interval overlap test. Two periods overlap as soon as each one starts on or before the
-    /// other ends, so touching periods (one ending the day the next starts) do not overlap.
-    /// </summary>
     public static bool HasOverlap(
         DateOnly periodStart,
         DateOnly periodEnd,
@@ -224,7 +206,6 @@ public class PayrollRecord
         if (!fridayWorkHoursResult.IsSuccess)
             return fridayWorkHoursResult;
 
-        // The caps come from the rule engine; without them the limits cannot be checked at all.
         if (maxMonthlyOvertimeHours is null)
             return DomainResult.Failure("حداکثر ساعات اضافه‌کاری ماهانه نمیتواند خالی باشد.");
 
@@ -253,20 +234,12 @@ public class PayrollRecord
         if (!taxAmountResult.IsSuccess)
             return taxAmountResult;
 
-        // A tax-exempt employee legitimately has a zero tax line, but for a taxable one zero means the
-        // calculation never ran, so such a record must not be stored.
         if (employeeIsTaxSubject && payrollRecord.CalculatedTaxAmount == 0)
             return DomainResult.Failure("برای کارمند مشمول مالیات، مالیات محاسبه شده نمیتواند صفر باشد.");
 
-        // Net payable is the only amount allowed to be negative - deductions can exceed the earnings
-        // of the period - so it is only checked for being present.
         if (payrollRecord.NetPayableAmount is null)
             return DomainResult.Failure("مبلغ خالص قابل پرداخت نمیتواند خالی باشد.");
 
-        // Rule "one payroll record per employee per period" is intentionally NOT checked here: proving it
-        // needs the employee's other periods, and that belongs in a range query in the application layer.
-        // PayrollRecord.HasOverlap is the single definition of "overlapping", so that query and this
-        // entity can never disagree about the boundary.
         return DomainResult.Success();
     }
 
@@ -291,8 +264,6 @@ public class PayrollRecord
         return DomainResult.Success();
     }
 
-    // Day counts are allowed to be fractional (a half day off, for example) and are bounded only by
-    // the length of the longest month - never rounded here.
     private static DomainResult ValidateDaysCount(decimal? daysCount, string fieldName)
     {
         if (daysCount is null)
@@ -304,8 +275,6 @@ public class PayrollRecord
         return DomainResult.Success();
     }
 
-    // Shared floor for every hour count and every calculated amount: required, and never below zero.
-    // Amounts and hours are both allowed to be fractional and are never rounded here.
     private static DomainResult ValidateNonNegative(decimal? value, string fieldName)
     {
         if (value is null)
