@@ -1,4 +1,5 @@
 global using Core.Domain;
+global using Core.Domain.Enums;
 global using Shared.Kernel.Common;
 global using Xunit;
 global using Microsoft.Extensions.Options;

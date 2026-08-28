@@ -1,4 +1,4 @@
-namespace Core.Domain;
+namespace Core.Domain.Enums;
 
 /// <summary>
 /// Represents the lifecycle state of an employee's salary profile.
