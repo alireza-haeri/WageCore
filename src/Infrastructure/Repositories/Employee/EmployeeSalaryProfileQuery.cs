@@ -10,4 +10,23 @@ public class EmployeeSalaryProfileQuery : IEmployeeSalaryProfileQuery
     {
         throw new NotImplementedException();
     }
+
+    public Task<PagedResult<EmployeeSalaryProfileResult>> GetEmployeeSalaryProfilesAsync(
+        Guid userId,
+        PaginationDto pagination,
+        Guid? employeeId = null,
+        string? search = null,
+        EmployeeSalaryProfileStatus? status = null,
+        CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<EmployeeSalaryProfileByIdResult?> GetEmployeeSalaryProfileByIdAsync(
+        Guid userId,
+        Guid employeeSalaryProfileId,
+        CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
 }

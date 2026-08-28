@@ -7,4 +7,17 @@ public interface IEmployeeSalaryProfileQuery
         Guid employeeId,
         Guid? excludeSalaryProfileId = null,
         CancellationToken cancellationToken = default);
+
+    Task<PagedResult<EmployeeSalaryProfileResult>> GetEmployeeSalaryProfilesAsync(
+        Guid userId,
+        PaginationDto pagination,
+        Guid? employeeId = null,
+        string? search = null,
+        EmployeeSalaryProfileStatus? status = null,
+        CancellationToken cancellationToken = default);
+
+    Task<EmployeeSalaryProfileByIdResult?> GetEmployeeSalaryProfileByIdAsync(
+        Guid userId,
+        Guid employeeSalaryProfileId,
+        CancellationToken cancellationToken = default);
 }
