@@ -33,3 +33,4 @@ global using Core.Contracts.CalculationFormulas;
 global using Core.Contracts.PayrollRecords;
 global using FluentAssertions.Execution;
 global using Core.Domain.Enums;
+global using Application.Services;

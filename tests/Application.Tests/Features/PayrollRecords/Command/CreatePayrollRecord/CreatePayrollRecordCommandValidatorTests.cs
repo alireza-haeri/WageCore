@@ -11,7 +11,7 @@ public class CreatePayrollRecordCommandValidatorTests
     private const int ValidPersianMonth = 6;
 
     private CreatePayrollRecordCommand CreateValidCommand(
-        PayrollRecordDto? payrollRecord = null,
+        PayrollWorkInputDto? work = null,
         Guid? userId = null,
         Guid? employeeId = null,
         int? persianYear = null,
@@ -21,9 +21,9 @@ public class CreatePayrollRecordCommandValidatorTests
             employeeId ?? ValidEmployeeId,
             persianYear ?? ValidPersianYear,
             persianMonth ?? ValidPersianMonth,
-            payrollRecord ?? _builder.BuildDto());
+            work ?? _builder.BuildDto());
 
-    private PayrollRecordDto CreateHoursDto(string fieldName, decimal? value) =>
+    private PayrollWorkInputDto CreateHoursDto(string fieldName, decimal? value) =>
         fieldName switch
         {
             "OvertimeHours" => _builder.BuildDto() with { OvertimeHours = value },
@@ -62,7 +62,7 @@ public class CreatePayrollRecordCommandValidatorTests
     }
 
     [Fact]
-    public void Validate_WithNullPayrollRecord_ShouldHaveValidationError()
+    public void Validate_WithNullWork_ShouldHaveValidationError()
     {
         var command = new CreatePayrollRecordCommand(
             ValidUserId,
@@ -73,7 +73,7 @@ public class CreatePayrollRecordCommandValidatorTests
 
         var result = _validator.TestValidate(command);
 
-        result.ShouldHaveValidationErrorFor(x => x.PayrollRecord);
+        result.ShouldHaveValidationErrorFor(x => x.Work);
     }
 
     [Theory]
@@ -127,12 +127,12 @@ public class CreatePayrollRecordCommandValidatorTests
     [Fact]
     public void Validate_WithNullWorkedDaysCount_ShouldHaveValidationError()
     {
-        var payrollRecord = _builder.BuildDto() with { WorkedDaysCount = null };
-        var command = CreateValidCommand(payrollRecord);
+        var work = _builder.BuildDto() with { WorkedDaysCount = null };
+        var command = CreateValidCommand(work);
 
         var result = _validator.TestValidate(command);
 
-        result.ShouldHaveValidationErrorFor(x => x.PayrollRecord.WorkedDaysCount);
+        result.ShouldHaveValidationErrorFor(x => x.Work.WorkedDaysCount);
     }
 
     [Theory]
@@ -141,12 +141,12 @@ public class CreatePayrollRecordCommandValidatorTests
     [InlineData(100)]
     public void Validate_WithWorkedDaysCountOutOfRange_ShouldHaveValidationError(decimal daysCount)
     {
-        var payrollRecord = _builder.BuildDto() with { WorkedDaysCount = daysCount };
-        var command = CreateValidCommand(payrollRecord);
+        var work = _builder.BuildDto() with { WorkedDaysCount = daysCount };
+        var command = CreateValidCommand(work);
 
         var result = _validator.TestValidate(command);
 
-        result.ShouldHaveValidationErrorFor(x => x.PayrollRecord.WorkedDaysCount);
+        result.ShouldHaveValidationErrorFor(x => x.Work.WorkedDaysCount);
     }
 
     [Theory]
@@ -154,12 +154,12 @@ public class CreatePayrollRecordCommandValidatorTests
     [InlineData(31)]
     public void Validate_WithWorkedDaysCountOnRangeBoundary_ShouldNotHaveValidationError(decimal daysCount)
     {
-        var payrollRecord = _builder.BuildDto() with { WorkedDaysCount = daysCount };
-        var command = CreateValidCommand(payrollRecord);
+        var work = _builder.BuildDto() with { WorkedDaysCount = daysCount };
+        var command = CreateValidCommand(work);
 
         var result = _validator.TestValidate(command);
 
-        result.ShouldNotHaveValidationErrorFor(x => x.PayrollRecord.WorkedDaysCount);
+        result.ShouldNotHaveValidationErrorFor(x => x.Work.WorkedDaysCount);
     }
 
     [Theory]
@@ -168,17 +168,17 @@ public class CreatePayrollRecordCommandValidatorTests
     [InlineData("MissionDaysCount")]
     public void Validate_WithNullOptionalDayCounts_ShouldHaveValidationError(string fieldName)
     {
-        var payrollRecord = fieldName switch
+        var work = fieldName switch
         {
             "LeaveDaysCount" => _builder.BuildDto() with { LeaveDaysCount = null },
             "AbsenceDaysCount" => _builder.BuildDto() with { AbsenceDaysCount = null },
             _ => _builder.BuildDto() with { MissionDaysCount = null }
         };
-        var command = CreateValidCommand(payrollRecord);
+        var command = CreateValidCommand(work);
 
         var result = _validator.TestValidate(command);
 
-        result.ShouldHaveValidationErrorFor($"PayrollRecord.{fieldName}");
+        result.ShouldHaveValidationErrorFor($"Work.{fieldName}");
     }
 
     [Theory]
@@ -186,54 +186,54 @@ public class CreatePayrollRecordCommandValidatorTests
     [InlineData(31.5)]
     public void Validate_WithLeaveDaysCountOutOfRange_ShouldHaveValidationError(double daysCount)
     {
-        var payrollRecord = _builder.BuildDto() with { LeaveDaysCount = (decimal)daysCount };
-        var command = CreateValidCommand(payrollRecord);
+        var work = _builder.BuildDto() with { LeaveDaysCount = (decimal)daysCount };
+        var command = CreateValidCommand(work);
 
         var result = _validator.TestValidate(command);
 
-        result.ShouldHaveValidationErrorFor(x => x.PayrollRecord.LeaveDaysCount);
+        result.ShouldHaveValidationErrorFor(x => x.Work.LeaveDaysCount);
     }
 
     [Fact]
     public void Validate_WithAbsenceDaysCountOutOfRange_ShouldHaveValidationError()
     {
-        var payrollRecord = _builder.BuildDto() with { AbsenceDaysCount = 35m };
-        var command = CreateValidCommand(payrollRecord);
+        var work = _builder.BuildDto() with { AbsenceDaysCount = 35m };
+        var command = CreateValidCommand(work);
 
         var result = _validator.TestValidate(command);
 
-        result.ShouldHaveValidationErrorFor(x => x.PayrollRecord.AbsenceDaysCount);
+        result.ShouldHaveValidationErrorFor(x => x.Work.AbsenceDaysCount);
     }
 
     [Fact]
     public void Validate_WithMissionDaysCountOutOfRange_ShouldHaveValidationError()
     {
-        var payrollRecord = _builder.BuildDto() with { MissionDaysCount = -2m };
-        var command = CreateValidCommand(payrollRecord);
+        var work = _builder.BuildDto() with { MissionDaysCount = -2m };
+        var command = CreateValidCommand(work);
 
         var result = _validator.TestValidate(command);
 
-        result.ShouldHaveValidationErrorFor(x => x.PayrollRecord.MissionDaysCount);
+        result.ShouldHaveValidationErrorFor(x => x.Work.MissionDaysCount);
     }
 
     [Fact]
     public void Validate_WithFractionalDaysCount_ShouldNotHaveValidationError()
     {
-        var payrollRecord = _builder.BuildDto() with
+        var work = _builder.BuildDto() with
         {
             WorkedDaysCount = 12.5m,
             LeaveDaysCount = 1.5m,
             MissionDaysCount = 0.25m
         };
-        var command = CreateValidCommand(payrollRecord);
+        var command = CreateValidCommand(work);
 
         var result = _validator.TestValidate(command);
 
         using (new AssertionScope())
         {
-            result.ShouldNotHaveValidationErrorFor(x => x.PayrollRecord.WorkedDaysCount);
-            result.ShouldNotHaveValidationErrorFor(x => x.PayrollRecord.LeaveDaysCount);
-            result.ShouldNotHaveValidationErrorFor(x => x.PayrollRecord.MissionDaysCount);
+            result.ShouldNotHaveValidationErrorFor(x => x.Work.WorkedDaysCount);
+            result.ShouldNotHaveValidationErrorFor(x => x.Work.LeaveDaysCount);
+            result.ShouldNotHaveValidationErrorFor(x => x.Work.MissionDaysCount);
         }
     }
 
@@ -247,7 +247,7 @@ public class CreatePayrollRecordCommandValidatorTests
 
         var result = _validator.TestValidate(command);
 
-        result.ShouldHaveValidationErrorFor($"PayrollRecord.{fieldName}");
+        result.ShouldHaveValidationErrorFor($"Work.{fieldName}");
     }
 
     [Theory]
@@ -260,7 +260,7 @@ public class CreatePayrollRecordCommandValidatorTests
 
         var result = _validator.TestValidate(command);
 
-        result.ShouldHaveValidationErrorFor($"PayrollRecord.{fieldName}");
+        result.ShouldHaveValidationErrorFor($"Work.{fieldName}");
     }
 
     [Theory]
@@ -269,8 +269,8 @@ public class CreatePayrollRecordCommandValidatorTests
     [InlineData("FridayWorkHours")]
     public void Validate_WithZeroHours_ShouldNotHaveAnyErrors(string fieldName)
     {
-        var payrollRecord = CreateHoursDto(fieldName, 0m);
-        var command = CreateValidCommand(payrollRecord);
+        var work = CreateHoursDto(fieldName, 0m);
+        var command = CreateValidCommand(work);
 
         var result = _validator.TestValidate(command);
 
@@ -280,11 +280,11 @@ public class CreatePayrollRecordCommandValidatorTests
     [Fact]
     public void Validate_WithOvertimeHoursAboveAnyCap_ShouldNotHaveValidationError()
     {
-        var payrollRecord = _builder.BuildDto() with { OvertimeHours = 500m };
-        var command = CreateValidCommand(payrollRecord);
+        var work = _builder.BuildDto() with { OvertimeHours = 500m };
+        var command = CreateValidCommand(work);
 
         var result = _validator.TestValidate(command);
 
-        result.ShouldNotHaveValidationErrorFor(x => x.PayrollRecord.OvertimeHours);
+        result.ShouldNotHaveValidationErrorFor(x => x.Work.OvertimeHours);
     }
 }

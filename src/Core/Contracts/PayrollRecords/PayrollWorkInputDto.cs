@@ -1,6 +1,6 @@
 namespace Core.Contracts.PayrollRecords;
 
-public record PayrollRecordDto(
+public record PayrollWorkInputDto(
     decimal? WorkedDaysCount,
     decimal? OvertimeHours,
     decimal? NightShiftHours,

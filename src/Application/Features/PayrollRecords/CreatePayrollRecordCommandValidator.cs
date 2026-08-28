@@ -17,8 +17,8 @@ public class CreatePayrollRecordCommandValidator : AbstractValidator<CreatePayro
             .GreaterThanOrEqualTo(1).WithMessage("ماه شمسی باید بین 1 تا 12 باشد.")
             .LessThanOrEqualTo(12).WithMessage("ماه شمسی نباید بیشتر از 12 باشد.");
 
-        RuleFor(x => x.PayrollRecord)
-            .NotNull().WithMessage("اطلاعات فیش پرداختی اجباری است.")
-            .SetValidator(new PayrollRecordValidator());
+        RuleFor(x => x.Work)
+            .NotNull().WithMessage("اطلاعات کارکرد کارمند اجباری است.")
+            .SetValidator(new PayrollWorkInputValidator());
     }
 }

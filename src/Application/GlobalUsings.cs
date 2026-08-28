@@ -19,3 +19,4 @@ global using Application.Validations;
 global using Core.Domain.Enums;
 global using Core.Contracts.Employees;
 global using Core.Contracts.PayrollRecords;
+global using Application.Services;

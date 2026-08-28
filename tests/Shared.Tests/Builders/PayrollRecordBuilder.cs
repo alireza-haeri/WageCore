@@ -131,7 +131,7 @@ public class PayrollRecordBuilder
         return this;
     }
 
-    public PayrollRecordDto BuildDto() =>
+    public PayrollWorkInputDto BuildDto() =>
         new(
             _workedDaysCount,
             _overtimeHours,

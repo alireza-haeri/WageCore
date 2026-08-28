@@ -95,7 +95,7 @@ public class PayrollRecordStatusTests
         var record = CreateDraftRecord();
         var periodStart = new DateOnly(2025, 2, 1);
         var periodEnd = new DateOnly(2025, 2, 28);
-        var dto = new PayrollRecordDto(
+        var dto = new PayrollWorkInputDto(
             20m,
             3m,
             2m,
@@ -126,7 +126,7 @@ public class PayrollRecordStatusTests
 
         var periodStart = new DateOnly(2025, 2, 1);
         var periodEnd = new DateOnly(2025, 2, 28);
-        var dto = new PayrollRecordDto(
+        var dto = new PayrollWorkInputDto(
             20m,
             3m,
             2m,

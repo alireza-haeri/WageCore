@@ -15,7 +15,7 @@ public class UpdatePayrollRecordTests
             .CreateResult()
             .ShouldBeSuccess();
 
-    private static PayrollRecordDto BuildDto() =>
+    private static PayrollWorkInputDto BuildDto() =>
         new(
             20m,
             3m,

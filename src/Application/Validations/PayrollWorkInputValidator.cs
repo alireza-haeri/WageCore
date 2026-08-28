@@ -2,9 +2,9 @@ using Core.Contracts.PayrollRecords;
 
 namespace Application.Validations;
 
-public class PayrollRecordValidator : AbstractValidator<PayrollRecordDto>
+public class PayrollWorkInputValidator : AbstractValidator<PayrollWorkInputDto>
 {
-    public PayrollRecordValidator()
+    public PayrollWorkInputValidator()
     {
         RuleFor(x => x.WorkedDaysCount)
             .Cascade(CascadeMode.Stop)

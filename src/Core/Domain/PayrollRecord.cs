@@ -34,7 +34,7 @@ public class PayrollRecord
         bool employeeIsTaxSubject,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
-        PayrollRecordDto? payrollRecord,
+        PayrollWorkInputDto? workInput,
         PayrollRecordAmountsDto? payrollAmounts)
     {
         var validationResult = Validate(
@@ -45,7 +45,7 @@ public class PayrollRecord
             employeeIsTaxSubject,
             maxMonthlyOvertimeHours,
             maxFridayHours,
-            payrollRecord,
+            workInput,
             payrollAmounts);
 
         if (!validationResult.IsSuccess)
@@ -57,13 +57,13 @@ public class PayrollRecord
             EmployeeId = employeeId,
             PeriodStart = periodStart,
             PeriodEnd = periodEnd,
-            WorkedDaysCount = payrollRecord.WorkedDaysCount!.Value,
-            OvertimeHours = payrollRecord.OvertimeHours!.Value,
-            NightShiftHours = payrollRecord.NightShiftHours!.Value,
-            FridayWorkHours = payrollRecord.FridayWorkHours!.Value,
-            LeaveDaysCount = payrollRecord.LeaveDaysCount!.Value,
-            AbsenceDaysCount = payrollRecord.AbsenceDaysCount!.Value,
-            MissionDaysCount = payrollRecord.MissionDaysCount!.Value,
+            WorkedDaysCount = workInput.WorkedDaysCount!.Value,
+            OvertimeHours = workInput.OvertimeHours!.Value,
+            NightShiftHours = workInput.NightShiftHours!.Value,
+            FridayWorkHours = workInput.FridayWorkHours!.Value,
+            LeaveDaysCount = workInput.LeaveDaysCount!.Value,
+            AbsenceDaysCount = workInput.AbsenceDaysCount!.Value,
+            MissionDaysCount = workInput.MissionDaysCount!.Value,
             OvertimeAmount = payrollAmounts!.OvertimeAmount,
             NightShiftExtraAmount = payrollAmounts.NightShiftExtraAmount,
             FridayWorkAllowance = payrollAmounts.FridayWorkAllowance,
@@ -80,7 +80,7 @@ public class PayrollRecord
         bool employeeIsTaxSubject,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
-        PayrollRecordDto? payrollRecord,
+        PayrollWorkInputDto? workInput,
         PayrollRecordAmountsDto? payrollAmounts) =>
         Create(
             Guid.NewGuid(),
@@ -90,7 +90,7 @@ public class PayrollRecord
             employeeIsTaxSubject,
             maxMonthlyOvertimeHours,
             maxFridayHours,
-            payrollRecord,
+            workInput,
             payrollAmounts);
 
     public DomainResult Update(
@@ -99,7 +99,7 @@ public class PayrollRecord
         bool employeeIsTaxSubject,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
-        PayrollRecordDto? payrollRecord,
+        PayrollWorkInputDto? workInput,
         PayrollRecordAmountsDto? payrollAmounts)
     {
         var canModifyResult = EnsureCanModify();
@@ -112,7 +112,7 @@ public class PayrollRecord
             employeeIsTaxSubject,
             maxMonthlyOvertimeHours,
             maxFridayHours,
-            payrollRecord,
+            workInput,
             payrollAmounts);
 
         if (!validationResult.IsSuccess)
@@ -120,13 +120,13 @@ public class PayrollRecord
 
         PeriodStart = periodStart;
         PeriodEnd = periodEnd;
-        WorkedDaysCount = payrollRecord.WorkedDaysCount!.Value;
-        OvertimeHours = payrollRecord.OvertimeHours!.Value;
-        NightShiftHours = payrollRecord.NightShiftHours!.Value;
-        FridayWorkHours = payrollRecord.FridayWorkHours!.Value;
-        LeaveDaysCount = payrollRecord.LeaveDaysCount!.Value;
-        AbsenceDaysCount = payrollRecord.AbsenceDaysCount!.Value;
-        MissionDaysCount = payrollRecord.MissionDaysCount!.Value;
+        WorkedDaysCount = workInput.WorkedDaysCount!.Value;
+        OvertimeHours = workInput.OvertimeHours!.Value;
+        NightShiftHours = workInput.NightShiftHours!.Value;
+        FridayWorkHours = workInput.FridayWorkHours!.Value;
+        LeaveDaysCount = workInput.LeaveDaysCount!.Value;
+        AbsenceDaysCount = workInput.AbsenceDaysCount!.Value;
+        MissionDaysCount = workInput.MissionDaysCount!.Value;
         OvertimeAmount = payrollAmounts!.OvertimeAmount;
         NightShiftExtraAmount = payrollAmounts.NightShiftExtraAmount;
         FridayWorkAllowance = payrollAmounts.FridayWorkAllowance;
@@ -170,7 +170,7 @@ public class PayrollRecord
         bool employeeIsTaxSubject,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
-        PayrollRecordDto? payrollRecord,
+        PayrollWorkInputDto? workInput,
         PayrollRecordAmountsDto? payrollAmounts)
     {
         if (payrollRecordId == Guid.Empty)
@@ -185,7 +185,7 @@ public class PayrollRecord
             employeeIsTaxSubject,
             maxMonthlyOvertimeHours,
             maxFridayHours,
-            payrollRecord,
+            workInput,
             payrollAmounts);
     }
 
@@ -195,10 +195,10 @@ public class PayrollRecord
         bool employeeIsTaxSubject,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
-        PayrollRecordDto? payrollRecord,
+        PayrollWorkInputDto? workInput,
         PayrollRecordAmountsDto? payrollAmounts)
     {
-        if (payrollRecord is null)
+        if (workInput is null)
             return DomainResult.Failure("اطلاعات فیش پرداختی نمیتواند خالی باشد.");
 
         if (payrollAmounts is null)
@@ -208,31 +208,31 @@ public class PayrollRecord
         if (!periodResult.IsSuccess)
             return periodResult;
 
-        var daysCountResult = ValidateDaysCount(payrollRecord.WorkedDaysCount, "تعداد روزهای کارکرد");
+        var daysCountResult = ValidateDaysCount(workInput.WorkedDaysCount, "تعداد روزهای کارکرد");
         if (!daysCountResult.IsSuccess)
             return daysCountResult;
 
-        daysCountResult = ValidateDaysCount(payrollRecord.LeaveDaysCount, "تعداد روزهای مرخصی");
+        daysCountResult = ValidateDaysCount(workInput.LeaveDaysCount, "تعداد روزهای مرخصی");
         if (!daysCountResult.IsSuccess)
             return daysCountResult;
 
-        daysCountResult = ValidateDaysCount(payrollRecord.AbsenceDaysCount, "تعداد روزهای غیبت");
+        daysCountResult = ValidateDaysCount(workInput.AbsenceDaysCount, "تعداد روزهای غیبت");
         if (!daysCountResult.IsSuccess)
             return daysCountResult;
 
-        daysCountResult = ValidateDaysCount(payrollRecord.MissionDaysCount, "تعداد روزهای مأموریت");
+        daysCountResult = ValidateDaysCount(workInput.MissionDaysCount, "تعداد روزهای مأموریت");
         if (!daysCountResult.IsSuccess)
             return daysCountResult;
 
-        var overtimeHoursResult = ValidateNonNegative(payrollRecord.OvertimeHours, "ساعات اضافه‌کاری");
+        var overtimeHoursResult = ValidateNonNegative(workInput.OvertimeHours, "ساعات اضافه‌کاری");
         if (!overtimeHoursResult.IsSuccess)
             return overtimeHoursResult;
 
-        var nightShiftHoursResult = ValidateNonNegative(payrollRecord.NightShiftHours, "ساعات شیفت شب");
+        var nightShiftHoursResult = ValidateNonNegative(workInput.NightShiftHours, "ساعات شیفت شب");
         if (!nightShiftHoursResult.IsSuccess)
             return nightShiftHoursResult;
 
-        var fridayWorkHoursResult = ValidateNonNegative(payrollRecord.FridayWorkHours, "ساعات کار جمعه");
+        var fridayWorkHoursResult = ValidateNonNegative(workInput.FridayWorkHours, "ساعات کار جمعه");
         if (!fridayWorkHoursResult.IsSuccess)
             return fridayWorkHoursResult;
 
@@ -242,10 +242,10 @@ public class PayrollRecord
         if (maxFridayHours is null)
             return DomainResult.Failure("حداکثر ساعات کار جمعه نمیتواند خالی باشد.");
 
-        if (payrollRecord.OvertimeHours > maxMonthlyOvertimeHours)
+        if (workInput.OvertimeHours > maxMonthlyOvertimeHours)
             return DomainResult.Failure("ساعات اضافه‌کاری نباید بیشتر از حداکثر ساعات اضافه‌کاری ماهانه باشد.");
 
-        if (payrollRecord.FridayWorkHours > maxFridayHours)
+        if (workInput.FridayWorkHours > maxFridayHours)
             return DomainResult.Failure("ساعات کار جمعه نباید بیشتر از حداکثر ساعات کار جمعه باشد.");
 
         var overtimeAmountResult = ValidateNonNegative(payrollAmounts.OvertimeAmount, "مبلغ اضافه‌کاری");
