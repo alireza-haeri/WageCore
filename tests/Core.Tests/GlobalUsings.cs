@@ -5,4 +5,5 @@ global using Shared.Tests.Builders;
 global using Shared.Tests.TestData;
 global using FluentAssertions;
 global using Core.Domain;
+global using Core.Domain.Enums;
 global using Core.Contracts.Employees;

@@ -73,6 +73,38 @@ public class EmployeeSalaryProfile
             minimumMonthlySalary,
             salaryProfile);
 
+    public DomainResult Update(
+        DateOnly? employeeHireDate,
+        DateOnly? latestExistingEffectiveFrom,
+        decimal? minimumMonthlySalary,
+        EmployeeSalaryProfileDto? salaryProfile)
+    {
+        var validationResult = ValidateCommon(
+            employeeHireDate,
+            latestExistingEffectiveFrom,
+            minimumMonthlySalary,
+            salaryProfile);
+
+        if (!validationResult.IsSuccess)
+            return validationResult;
+
+        EffectiveFrom = salaryProfile!.EffectiveFrom!.Value;
+        BaseMonthlySalary = salaryProfile.BaseMonthlySalary!.Value;
+        AttractionAllowance = salaryProfile.AttractionAllowance;
+        SupervisionAllowance = salaryProfile.SupervisionAllowance;
+        SeniorityBaseApplicationMode = salaryProfile.SeniorityBaseApplicationMode!.Value;
+        SeniorityBaseCalculationMethod = salaryProfile.SeniorityBaseCalculationMethod;
+        YearEndSeniorityMode = salaryProfile.YearEndSeniorityMode!.Value;
+        ShiftType = salaryProfile.ShiftType!.Value;
+        HousingAllowance = salaryProfile.HousingAllowance;
+        FoodAllowance = salaryProfile.FoodAllowance;
+        ChildAllowancePerChild = salaryProfile.ChildAllowancePerChild;
+        TransportationAllowanceNet = salaryProfile.TransportationAllowanceNet;
+        KaranehAmountNet = salaryProfile.KaranehAmountNet;
+
+        return DomainResult.Success();
+    }
+
     private static DomainResult Validate(
         Guid salaryProfileId,
         Guid employeeId,
@@ -87,6 +119,15 @@ public class EmployeeSalaryProfile
         if (employeeId == Guid.Empty)
             return DomainResult.Failure("شناسه کارمند نمیتواند خالی باشد.");
 
+        return ValidateCommon(employeeHireDate, latestExistingEffectiveFrom, minimumMonthlySalary, salaryProfile);
+    }
+
+    private static DomainResult ValidateCommon(
+        DateOnly? employeeHireDate,
+        DateOnly? latestExistingEffectiveFrom,
+        decimal? minimumMonthlySalary,
+        EmployeeSalaryProfileDto? salaryProfile)
+    {
         if (salaryProfile is null)
             return DomainResult.Failure("اطلاعات پروفایل حقوق کارمند نمیتواند خالی باشد.");
 

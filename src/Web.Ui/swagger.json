@@ -1108,6 +1108,333 @@
         }
       }
     },
+    "/api/v1/employee-salary-profiles": {
+      "post": {
+        "tags": [
+          "EmployeeSalaryProfile"
+        ],
+        "summary": "CreateEmployeeSalaryProfile",
+        "operationId": "CreateEmployeeSalaryProfile",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateEmployeeSalaryProfileRequest"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateEmployeeSalaryProfileRequest"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateEmployeeSalaryProfileRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateEmployeeSalaryProfileCommandResponseResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateEmployeeSalaryProfileCommandResponseResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateEmployeeSalaryProfileCommandResponseResult"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "EmployeeSalaryProfile"
+        ],
+        "summary": "GetEmployeeSalaryProfiles",
+        "operationId": "GetEmployeeSalaryProfiles",
+        "parameters": [
+          {
+            "name": "Pagination.PageNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Pagination.PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Pagination.Offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "EmployeeId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Status",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "x-enumNames": [
+                "Active",
+                "Expired"
+              ],
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "name": "WorkshopId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "DepartmentId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetEmployeeSalaryProfilesResponsePagedResultResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetEmployeeSalaryProfilesResponsePagedResultResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetEmployeeSalaryProfilesResponsePagedResultResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/employee-salary-profiles/{employeeSalaryProfileId}": {
+      "put": {
+        "tags": [
+          "EmployeeSalaryProfile"
+        ],
+        "summary": "UpdateEmployeeSalaryProfile",
+        "operationId": "UpdateEmployeeSalaryProfile",
+        "parameters": [
+          {
+            "name": "employeeSalaryProfileId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdateEmployeeSalaryProfileRequest"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdateEmployeeSalaryProfileRequest"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdateEmployeeSalaryProfileRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "EmployeeSalaryProfile"
+        ],
+        "summary": "DeleteEmployeeSalaryProfile",
+        "operationId": "DeleteEmployeeSalaryProfile",
+        "parameters": [
+          {
+            "name": "employeeId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "employeeSalaryProfileId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/employee-salary-profiles/{employeeSalaryProfileId}/edit": {
+      "get": {
+        "tags": [
+          "EmployeeSalaryProfile"
+        ],
+        "summary": "GetEmployeeSalaryProfileForEdit",
+        "operationId": "GetEmployeeSalaryProfileForEdit",
+        "parameters": [
+          {
+            "name": "employeeSalaryProfileId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetEmployeeSalaryProfileForEditResponseResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetEmployeeSalaryProfileForEditResponseResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetEmployeeSalaryProfileForEditResponseResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/users/register": {
       "post": {
         "tags": [
@@ -2144,6 +2471,78 @@
           }
         }
       },
+      "CreateEmployeeSalaryProfileCommandResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "employeeSalaryProfileId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "CreateEmployeeSalaryProfileCommandResponseResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreateEmployeeSalaryProfileCommandResponse"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "CreateEmployeeSalaryProfileRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "employeeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "salaryProfile": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EmployeeSalaryProfileRequest"
+              }
+            ]
+          }
+        }
+      },
       "CreateLaborLawRuleCommandResponse": {
         "type": "object",
         "additionalProperties": false,
@@ -2462,6 +2861,111 @@
               0,
               1
             ]
+          }
+        }
+      },
+      "EmployeeSalaryProfileRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "effectiveFrom": {
+            "type": "string"
+          },
+          "baseMonthlySalary": {
+            "type": "number",
+            "format": "double"
+          },
+          "attractionAllowance": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "supervisionAllowance": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "seniorityBaseApplicationMode": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "Manual",
+              "Automatic"
+            ],
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "seniorityBaseCalculationMethod": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "Daily",
+              "CumulativeAuto"
+            ],
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "yearEndSeniorityMode": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "MonthlyAccrual",
+              "AnnualLumpSum",
+              "NotCalculation"
+            ],
+            "enum": [
+              0,
+              1,
+              2
+            ]
+          },
+          "shiftType": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "None",
+              "MorningEvening",
+              "MorningNight",
+              "EveningNight",
+              "MorningEveningNight"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3,
+              4
+            ]
+          },
+          "housingAllowance": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "foodAllowance": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "childAllowancePerChild": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "transportationAllowanceNet": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "karanehAmountNet": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
           }
         }
       },
@@ -2843,6 +3347,288 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/GetEmployeeForEditResponse"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "GetEmployeeSalaryProfileForEditResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "employeeSalaryProfileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "effectiveFrom": {
+            "type": "string",
+            "nullable": true
+          },
+          "baseMonthlySalary": {
+            "type": "number",
+            "format": "double"
+          },
+          "attractionAllowance": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "supervisionAllowance": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "seniorityBaseApplicationMode": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "Manual",
+              "Automatic"
+            ],
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "seniorityBaseCalculationMethod": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "Daily",
+              "CumulativeAuto"
+            ],
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "yearEndSeniorityMode": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "MonthlyAccrual",
+              "AnnualLumpSum",
+              "NotCalculation"
+            ],
+            "enum": [
+              0,
+              1,
+              2
+            ]
+          },
+          "shiftType": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "None",
+              "MorningEvening",
+              "MorningNight",
+              "EveningNight",
+              "MorningEveningNight"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3,
+              4
+            ]
+          },
+          "housingAllowance": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "foodAllowance": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "childAllowancePerChild": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "transportationAllowanceNet": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "karanehAmountNet": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        }
+      },
+      "GetEmployeeSalaryProfileForEditResponseResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GetEmployeeSalaryProfileForEditResponse"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "GetEmployeeSalaryProfilesResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "employeeSalaryProfileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "personalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "workshopName": {
+            "type": "string",
+            "nullable": true
+          },
+          "departmentName": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayEffectiveFrom": {
+            "type": "string",
+            "nullable": true
+          },
+          "baseMonthlySalary": {
+            "type": "number",
+            "format": "double"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "Active",
+              "Expired"
+            ],
+            "enum": [
+              0,
+              1
+            ]
+          }
+        }
+      },
+      "GetEmployeeSalaryProfilesResponsePagedResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/GetEmployeeSalaryProfilesResponse"
+            }
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "readOnly": true,
+            "format": "int32"
+          }
+        }
+      },
+      "GetEmployeeSalaryProfilesResponsePagedResultResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GetEmployeeSalaryProfilesResponsePagedResult"
               }
             ]
           },
@@ -3836,6 +4622,24 @@
           }
         }
       },
+      "UpdateEmployeeSalaryProfileRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "employeeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "salaryProfile": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EmployeeSalaryProfileRequest"
+              }
+            ]
+          }
+        }
+      },
       "UpdateLaborLawRuleRequest": {
         "type": "object",
         "additionalProperties": false,
@@ -3923,6 +4727,9 @@
     },
     {
       "name": "Employee"
+    },
+    {
+      "name": "EmployeeSalaryProfile"
     },
     {
       "name": "Identity"

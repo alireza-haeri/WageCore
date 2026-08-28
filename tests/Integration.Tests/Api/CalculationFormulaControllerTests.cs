@@ -2,7 +2,6 @@ using System.Net.Http.Headers;
 using Application.Features.CalculationFormulas;
 using Application.Features.Users.Commands;
 using Core.Domain.Enums;
-using Web.Api.Controllers.CalculationFormulas.Contracts;
 using Web.Api.Controllers.Users.Contracts;
 
 namespace Integration.Tests.Api;
@@ -46,12 +45,12 @@ public class CalculationFormulaControllerTests(ApiFixture fixture) : IClassFixtu
         await SeedSiteManagerAsync();
         await LoginAsSiteManagerAsync();
 
-        var request = new CreateCalculationFormulaRequest(
-            FormulaKey.OvertimePay,
-            "OvertimeHours * HourlyRate * 1.4",
-            new PersianDate("1403/01/01"));
-
-        var response = await _client.PostAsJsonAsync(CalculationFormulasUrl, request);
+        var response = await _client.PostAsJsonAsync(CalculationFormulasUrl, new
+        {
+            calculationFormulaKey = FormulaKey.OvertimePay,
+            expression = "OvertimeHours * HourlyRate * 1.4",
+            effectiveFrom = "1403/01/01"
+        });
         var result = await response.ShouldBeSuccess<CreateCalculationFormulaCommandResponse>();
 
         result.CalculationFormulaId.Should().NotBeEmpty();
@@ -66,12 +65,12 @@ public class CalculationFormulaControllerTests(ApiFixture fixture) : IClassFixtu
 
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", registerResult.Token);
 
-        var request = new CreateCalculationFormulaRequest(
-            FormulaKey.OvertimePay,
-            "OvertimeHours * HourlyRate * 1.4",
-            new PersianDate("1403/01/01"));
-
-        var response = await _client.PostAsJsonAsync(CalculationFormulasUrl, request);
+        var response = await _client.PostAsJsonAsync(CalculationFormulasUrl, new
+        {
+            calculationFormulaKey = FormulaKey.OvertimePay,
+            expression = "OvertimeHours * HourlyRate * 1.4",
+            effectiveFrom = "1403/01/01"
+        });
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
