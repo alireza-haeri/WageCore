@@ -7,6 +7,7 @@ public class CreateEmployeeSalaryProfileCommandHandler(
     IEmployeeSalaryProfileRepository employeeSalaryProfileRepository,
     IEmployeeSalaryProfileQuery employeeSalaryProfileQuery,
     ILaborLawRuleQuery laborLawRuleQuery,
+    IPayrollRecordQuery payrollRecordQuery,
     ILogger<CreateEmployeeSalaryProfileCommandHandler> logger)
     : IRequestHandler<CreateEmployeeSalaryProfileCommand, Result<CreateEmployeeSalaryProfileCommandResponse>>
 {
@@ -42,10 +43,17 @@ public class CreateEmployeeSalaryProfileCommandHandler(
             latestExistingEffectiveFrom,
             minimumMonthlySalary,
             request.SalaryProfile);
-
         if (!salaryProfile.IsSuccess)
             return Result<CreateEmployeeSalaryProfileCommandResponse>.GeneralFailure(salaryProfile.ErrorMessage!);
 
+        var hasPayrollRecordEffectNew = await payrollRecordQuery.HasPayrollRecordEffectAsync(
+            request.UserId,
+            request.EmployeeId,
+            request.SalaryProfile.EffectiveFrom!.Value,
+            cancellationToken);
+        if (hasPayrollRecordEffectNew)
+            return Result<CreateEmployeeSalaryProfileCommandResponse>.GeneralFailure("امکان انتقال این حکم به این بازه وجود ندارد، چون فیش پرداختی برای این بازه صادر شده است.");
+        
         var createResult = await employeeSalaryProfileRepository.CreateAsync(
             salaryProfile.Response!,
             cancellationToken);

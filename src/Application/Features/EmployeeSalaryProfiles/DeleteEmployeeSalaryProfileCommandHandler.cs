@@ -13,17 +13,16 @@ public class DeleteEmployeeSalaryProfileCommandHandler(
             request.UserId,
             request.EmployeeSalaryProfileId,
             cancellationToken);
-        if (salaryProfile is null)
+        if (salaryProfile is null || salaryProfile.EmployeeId != request.EmployeeId)
             return Result<bool>.NotfoundFailure("پروفایل حقوق کارمند مورد نظر یافت نشد.");
 
-        var hasPayrollRecordEffect = await payrollRecordQuery.HasPayrollRecordEffectAsync(
+        var hasPayrollRecordEffectOld = await payrollRecordQuery.HasPayrollRecordEffectAsync(
             request.UserId,
-            salaryProfile.EmployeeId,
+            request.EmployeeId,
             salaryProfile.EffectiveFrom,
             cancellationToken);
-
-        if (hasPayrollRecordEffect)
-            return Result<bool>.GeneralFailure("این پروفایل حقوق بر روی فیش حقوقی اثر دارد و امکان حذف آن وجود ندارد.");
+        if (hasPayrollRecordEffectOld)
+            return Result<bool>.GeneralFailure("امکان ویرایش این حکم وجود ندارد، چون فیش پرداختی برای این بازه صادر شده است.");
 
         var deleteResult = await employeeSalaryProfileRepository.DeleteAsync(
             request.UserId,

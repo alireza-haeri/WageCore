@@ -23,31 +23,36 @@ public class UpdateEmployeeSalaryProfileCommandHandler(
             request.UserId,
             request.EmployeeSalaryProfileId,
             cancellationToken);
-        if (salaryProfile is null)
+        if (salaryProfile is null || salaryProfile.EmployeeId != request.EmployeeId)
             return Result<bool>.NotfoundFailure("پروفایل حقوق کارمند مورد نظر یافت نشد.");
 
-        if (salaryProfile.EmployeeId != request.EmployeeId)
-            return Result<bool>.NotfoundFailure("پروفایل حقوق کارمند مورد نظر یافت نشد.");
-
-        var ruleDate = request.SalaryProfile.EffectiveFrom ?? salaryProfile.EffectiveFrom;
-
-        var hasPayrollRecordEffect = await payrollRecordQuery.HasPayrollRecordEffectAsync(
+        var hasPayrollRecordEffectOld = await payrollRecordQuery.HasPayrollRecordEffectAsync(
             request.UserId,
             request.EmployeeId,
-            ruleDate,
+            salaryProfile.EffectiveFrom,
             cancellationToken);
+        if (hasPayrollRecordEffectOld)
+            return Result<bool>.GeneralFailure("امکان ویرایش این حکم وجود ندارد، چون فیش پرداختی برای این بازه صادر شده است.");
 
-        if (hasPayrollRecordEffect)
-            return Result<bool>.GeneralFailure("این پروفایل حقوق بر روی فیش حقوقی اثر دارد و امکان ویرایش آن وجود ندارد.");
+        if (request.SalaryProfile.EffectiveFrom != salaryProfile.EffectiveFrom)
+        {
+            var hasPayrollRecordEffectNew = await payrollRecordQuery.HasPayrollRecordEffectAsync(
+                request.UserId,
+                request.EmployeeId,
+                request.SalaryProfile.EffectiveFrom!.Value,
+                cancellationToken);
+            if (hasPayrollRecordEffectNew)
+                return Result<bool>.GeneralFailure("امکان انتقال این حکم به این بازه وجود ندارد، چون فیش پرداختی برای این بازه صادر شده است.");
+        }
 
         var minimumMonthlySalary = await laborLawRuleQuery.GetActiveValueAsync(
             LaborLawRuleKey.MinimumMonthlySalary,
-            ruleDate,
+            request.SalaryProfile.EffectiveFrom!.Value,
             cancellationToken);
 
         if (minimumMonthlySalary is null)
         {
-            logger.LogCritical("MinimumMonthlySalary for {DateTime} not found", ruleDate);
+            logger.LogCritical("MinimumMonthlySalary for {DateTime} not found", request.SalaryProfile.EffectiveFrom);
             return Result<bool>.NotfoundFailure("حداقل حقوق ماهانه یافت نشد.");
         }
 
