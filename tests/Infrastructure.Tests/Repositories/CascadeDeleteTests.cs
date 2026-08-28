@@ -9,6 +9,7 @@ public class CascadeDeleteTests(WageCoreDbContextFixture fixture)
 
     private readonly WorkshopBuilder _workshopBuilder = new();
     private readonly EmployeeBuilder _employeeBuilder = new();
+    private readonly EmployeeSalaryProfileBuilder _salaryProfileBuilder = new();
 
     public async Task InitializeAsync() => await fixture.ResetDatabaseAsync();
     public Task DisposeAsync() => Task.CompletedTask;
@@ -89,6 +90,32 @@ public class CascadeDeleteTests(WageCoreDbContextFixture fixture)
             .Where(x => x.Id == employeeId)
             .SelectMany(x => x.BankAccounts)
             .CountAsync();
+    }
+
+    private async Task<EmployeeSalaryProfile> CreateSalaryProfileAsync(AsyncServiceScope scope,
+        Core.Domain.Employee employee, DateOnly effectiveFrom)
+    {
+        var repository = scope.ServiceProvider.GetRequiredService<IEmployeeSalaryProfileRepository>();
+
+        var salaryProfile = _salaryProfileBuilder
+            .WithId(Guid.NewGuid())
+            .WithEmployeeId(employee.Id)
+            .WithEmployeeHireDate(employee.HireDate)
+            .WithMinimumMonthlySalary(10_000_000m)
+            .WithEffectiveFrom(effectiveFrom)
+            .WithBaseMonthlySalary(20_000_000m)
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        (await repository.CreateAsync(salaryProfile)).Should().Be(salaryProfile.Id);
+
+        return salaryProfile;
+    }
+
+    private static async Task<int> CountSalaryProfilesAsync(AsyncServiceScope scope, Guid employeeId)
+    {
+        var context = scope.ServiceProvider.GetRequiredService<WageCoreDbContext>();
+        return await context.Set<EmployeeSalaryProfile>().CountAsync(x => x.EmployeeId == employeeId);
     }
 
     #region Delete Workshop
@@ -360,6 +387,39 @@ public class CascadeDeleteTests(WageCoreDbContextFixture fixture)
         {
             (await CountDepartmentsAsync(scope, workshop.Id)).Should().Be(1);
             (await CountEmployeesAsync(scope, workshop.Id)).Should().Be(1);
+        }
+    }
+
+    #endregion
+
+    #region Delete Employee
+
+    [Fact]
+    public async Task DeleteEmployee_WhenEmployeeHasSalaryProfiles_ShouldDeleteItsSalaryProfiles()
+    {
+        await using var scope = fixture.CreateScope();
+        var employeeRepository = scope.ServiceProvider.GetRequiredService<EmployeeRepository>();
+        var userId = await CreateUserAsync(scope);
+
+        var departmentId = Guid.NewGuid();
+        var workshop = await CreateWorkshopWithDepartmentsAsync(scope, userId, "1111111111",
+            (departmentId, "بخش تولید"));
+
+        var employee = await CreateEmployeeAsync(scope, workshop.Id, departmentId, "EMP001", "1234567890");
+
+        await CreateSalaryProfileAsync(scope, employee, employee.HireDate.AddDays(1));
+        await CreateSalaryProfileAsync(scope, employee, employee.HireDate.AddDays(2));
+
+        (await CountSalaryProfilesAsync(scope, employee.Id)).Should().Be(2);
+
+        var deleteResult = await employeeRepository.DeleteAsync(userId, employee.Id);
+
+        deleteResult.Should().BeTrue();
+
+        using (new AssertionScope())
+        {
+            (await employeeRepository.GetByIdAsync(userId, employee.Id)).Should().BeNull();
+            (await CountSalaryProfilesAsync(scope, employee.Id)).Should().Be(0);
         }
     }
 

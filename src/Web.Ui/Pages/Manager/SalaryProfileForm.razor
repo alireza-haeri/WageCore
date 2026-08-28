@@ -116,19 +116,20 @@
                                        For="() => _formHelper.Model.SeniorityBaseApplicationMode"
                                        class="f-help text-danger"/>
                 </div>
-                <div class="col-md-4 field">
-                    <label class="f-label" for="p-senmethod">روش محاسبهٔ پایه سنوات</label>
-                    <InputSelect @bind-Value="_formHelper.Model.SeniorityBaseCalculationMethod" class="in" id="p-senmethod"
-                                 disabled="@(_formHelper.Model.SeniorityBaseApplicationMode != EmployeeSalaryProfileRequestSeniorityBaseApplicationMode.Automatic)">
-                        <option value="">انتخاب کنید...</option>
-                        <option value="@EmployeeSalaryProfileRequestSeniorityBaseCalculationMethod.Daily">روزانه</option>
-                        <option value="@EmployeeSalaryProfileRequestSeniorityBaseCalculationMethod.CumulativeAuto">تجمیعی خودکار</option>
-                    </InputSelect>
-                    <ValidationMessage TValue="EmployeeSalaryProfileRequestSeniorityBaseCalculationMethod?"
-                                       For="() => _formHelper.Model.SeniorityBaseCalculationMethod"
-                                       class="f-help text-danger"/>
-                    <div class="f-help">فقط وقتی «نحوهٔ اعمال» خودکار باشد پر می‌شود.</div>
-                </div>
+                @if (_formHelper.Model.SeniorityBaseApplicationMode == EmployeeSalaryProfileRequestSeniorityBaseApplicationMode.Automatic)
+                {
+                    <div class="col-md-4 field">
+                        <label class="f-label" for="p-senmethod">روش محاسبهٔ پایه سنوات</label>
+                        <InputSelect @bind-Value="_formHelper.Model.SeniorityBaseCalculationMethod" class="in" id="p-senmethod">
+                            <option value="">انتخاب کنید...</option>
+                            <option value="@EmployeeSalaryProfileRequestSeniorityBaseCalculationMethod.Daily">روزانه</option>
+                            <option value="@EmployeeSalaryProfileRequestSeniorityBaseCalculationMethod.CumulativeAuto">تجمیعی خودکار</option>
+                        </InputSelect>
+                        <ValidationMessage TValue="EmployeeSalaryProfileRequestSeniorityBaseCalculationMethod?"
+                                           For="() => _formHelper.Model.SeniorityBaseCalculationMethod"
+                                           class="f-help text-danger"/>
+                    </div>
+                }
                 <div class="col-md-4 field">
                     <label class="f-label" for="p-yearend"><span class="req-s">*</span>نحوهٔ سنوات پایان سال</label>
                     <InputSelect @bind-Value="_formHelper.Model.YearEndSeniorityMode" class="in" id="p-yearend">
