@@ -1,3 +1,4 @@
+using Core.Contracts.CalculationFormulas;
 using Microsoft.Extensions.Logging;
 using NCalc;
 
@@ -5,31 +6,36 @@ namespace Application.Services;
 
 public class FormulaEvaluator(ILogger<FormulaEvaluator> logger) : IFormulaEvaluator
 {
-    public DomainResult<decimal> Evaluate(string expression, params object[] models)
+    public DomainResult<decimal> Evaluate(string expression, params object[] modelsAndVariables)
     {
         try
         {
-            var expr = new Expression(expression);
+            var parameters = new Dictionary<string, object>();
 
-            foreach (var model in models)
+            foreach (var modelOrVariable in modelsAndVariables)
             {
-                var modelType = model.GetType();
+                if (modelOrVariable is FormulaVariable variable)
+                {
+                    if (!TryAddParameter(parameters, variable.Name, variable.Value))
+                        return FailureForDuplicatedParameter(expression, variable.Name);
+
+                    continue;
+                }
+
+                var modelType = modelOrVariable.GetType();
 
                 foreach (var property in modelType.GetProperties())
                 {
-                    var value = property.GetValue(model);
-
-                    if (value is null || !IsSupportedType(value))
-                        continue;
-
                     var parameterName = $"{modelType.Name}{property.Name}";
 
-                    if (expr.Parameters.ContainsKey(parameterName))
+                    if (!TryAddParameter(parameters, parameterName, property.GetValue(modelOrVariable)))
                         return FailureForDuplicatedParameter(expression, parameterName);
-
-                    expr.Parameters[parameterName] = value;
                 }
             }
+
+            var expr = new Expression(expression);
+            foreach (var parameter in parameters)
+                expr.Parameters[parameter.Key] = parameter.Value;
 
             return DomainResult<decimal>.Success(Convert.ToDecimal(expr.Evaluate()));
         }
@@ -39,6 +45,9 @@ public class FormulaEvaluator(ILogger<FormulaEvaluator> logger) : IFormulaEvalua
             return DomainResult<decimal>.Failure($"خطا در محاسبه‌ی فرمول: {e.Message}");
         }
     }
+
+    private static bool TryAddParameter(IDictionary<string, object> parameters, string name, object? value) =>
+        value is null || !IsSupportedType(value) || parameters.TryAdd(name, value);
 
     private DomainResult<decimal> FailureForDuplicatedParameter(string expression, string parameterName)
     {
@@ -64,5 +73,7 @@ public class FormulaEvaluator(ILogger<FormulaEvaluator> logger) : IFormulaEvalua
             or sbyte
             or bool
             or string
-            or DateTime;
+            or DateTime
+            or DateOnly
+            or TimeOnly;
 }

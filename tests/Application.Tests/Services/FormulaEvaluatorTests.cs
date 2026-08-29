@@ -20,6 +20,8 @@ public class FormulaEvaluatorTests
 
     private record WorkshopSettings(decimal MinimumMonthlyWage, decimal FridayAllowanceFactor);
 
+    private record PayrollPeriod(DateOnly PeriodStart, TimeOnly StartTime);
+
     [Fact]
     public void Evaluate_WithConstantExpression_ShouldFollowOperatorsPrecedence()
     {
@@ -61,6 +63,39 @@ public class FormulaEvaluatorTests
     }
 
     [Fact]
+    public void Evaluate_WithDecimalVariable_ShouldBindItUnderItsOwnName()
+    {
+        var work = new WorkInput(24m);
+
+        var result = _evaluator.Evaluate(
+            "[WorkInputWorkedDaysCount] * [DailyWage]",
+            work,
+            new FormulaVariable("DailyWage", 40_000m));
+
+        result.ShouldBeSuccess().Should().Be(960_000m);
+    }
+
+    [Fact]
+    public void Evaluate_WithBooleanVariable_ShouldUseItAsTheCondition()
+    {
+        var result = _evaluator.Evaluate(
+            "IF([IsDraft], 5, 9)",
+            new FormulaVariable("IsDraft", true));
+
+        result.ShouldBeSuccess().Should().Be(5m);
+    }
+
+    [Fact]
+    public void Evaluate_WithStringVariable_ShouldCompareItForEquality()
+    {
+        var result = _evaluator.Evaluate(
+            @"IF([Note] = ""مأموریت"", 2, 8)",
+            new FormulaVariable("Note", "مأموریت"));
+
+        result.ShouldBeSuccess().Should().Be(2m);
+    }
+
+    [Fact]
     public void Evaluate_WhenSeveralModelsShareAPropertyName_ShouldKeepBothParameters()
     {
         var salary = new SalaryProfile(7_200_000m, 180m, 5_000_000m);
@@ -75,6 +110,32 @@ public class FormulaEvaluatorTests
     }
 
     [Fact]
+    public void Evaluate_WithDateOnlyValues_ShouldCompareThemForEquality()
+    {
+        var period = new PayrollPeriod(new DateOnly(2025, 2, 1), new TimeOnly(8, 0));
+
+        var result = _evaluator.Evaluate(
+            "IF([PayrollPeriodPeriodStart] = [RequestedPeriodStart], 12, 4)",
+            period,
+            new FormulaVariable("RequestedPeriodStart", new DateOnly(2025, 2, 1)));
+
+        result.ShouldBeSuccess().Should().Be(12m);
+    }
+
+    [Fact]
+    public void Evaluate_WithTimeOnlyValues_ShouldCompareThemForEquality()
+    {
+        var period = new PayrollPeriod(new DateOnly(2025, 2, 1), new TimeOnly(22, 30));
+
+        var result = _evaluator.Evaluate(
+            "IF([PayrollPeriodStartTime] = [RequestedStartTime], 3, 7)",
+            period,
+            new FormulaVariable("RequestedStartTime", new TimeOnly(22, 30)));
+
+        result.ShouldBeSuccess().Should().Be(3m);
+    }
+
+    [Fact]
     public void Evaluate_WhenTheSameModelIsPassedTwice_ShouldReturnFailure()
     {
         var salary = new SalaryProfile(7_200_000m, 180m, 5_000_000m);
@@ -85,7 +146,20 @@ public class FormulaEvaluatorTests
     }
 
     [Fact]
-    public void Evaluate_WithNullModels_ShouldReturnFailure()
+    public void Evaluate_WhenAVariableTakesAModelParameterName_ShouldReturnFailure()
+    {
+        var salary = new SalaryProfile(7_200_000m, 180m, 5_000_000m);
+
+        var result = _evaluator.Evaluate(
+            "[SalaryProfileBaseMonthlySalary]",
+            salary,
+            new FormulaVariable("SalaryProfileBaseMonthlySalary", 1m));
+
+        result.ShouldBeFailure("نام پارامتر SalaryProfileBaseMonthlySalary در فرمول تکراری است.");
+    }
+
+    [Fact]
+    public void Evaluate_WithNullModelsAndVariables_ShouldReturnFailure()
     {
         var result = _evaluator.Evaluate("[SalaryProfileBaseMonthlySalary]", null!);
 
