@@ -138,9 +138,8 @@ public class PayrollRecord
 
     public DomainResult MarkAsPaid()
     {
-        var canModifyResult = EnsureCanModify();
-        if (!canModifyResult.IsSuccess)
-            return canModifyResult;
+        if (IsPaid)
+            return DomainResult.Failure("فیش پرداختی قبلاً پرداخت شده است.");
 
         Status = PayrollRecordStatus.Paid;
 

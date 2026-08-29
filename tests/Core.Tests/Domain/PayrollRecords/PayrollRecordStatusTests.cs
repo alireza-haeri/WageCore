@@ -50,7 +50,7 @@ public class PayrollRecordStatusTests
 
         using (new AssertionScope())
         {
-            result.ShouldBeFailure("فیش پرداختی پرداخت شده قابل ویرایش نیست.");
+            result.ShouldBeFailure("فیش پرداختی قبلاً پرداخت شده است.");
             record.Status.Should().Be(PayrollRecordStatus.Paid);
         }
     }
