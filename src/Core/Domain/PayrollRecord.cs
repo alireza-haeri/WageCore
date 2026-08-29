@@ -208,6 +208,18 @@ public class PayrollRecord
         if (!periodResult.IsSuccess)
             return periodResult;
 
+        var attendanceResult = ValidateAttendance(workInput, maxMonthlyOvertimeHours, maxFridayHours);
+        if (!attendanceResult.IsSuccess)
+            return attendanceResult;
+
+        return ValidateAmounts(payrollAmounts, employeeIsTaxSubject);
+    }
+
+    private static DomainResult ValidateAttendance(
+        PayrollWorkInputDto workInput,
+        decimal? maxMonthlyOvertimeHours,
+        decimal? maxFridayHours)
+    {
         var daysCountResult = ValidateDaysCount(workInput.WorkedDaysCount, "تعداد روزهای کارکرد");
         if (!daysCountResult.IsSuccess)
             return daysCountResult;
@@ -248,6 +260,13 @@ public class PayrollRecord
         if (workInput.FridayWorkHours > maxFridayHours)
             return DomainResult.Failure("ساعات کار جمعه نباید بیشتر از حداکثر ساعات کار جمعه باشد.");
 
+        return DomainResult.Success();
+    }
+
+    private static DomainResult ValidateAmounts(
+        PayrollRecordAmountsDto payrollAmounts,
+        bool employeeIsTaxSubject)
+    {
         var overtimeAmountResult = ValidateNonNegative(payrollAmounts.OvertimeAmount, "مبلغ اضافه‌کاری");
         if (!overtimeAmountResult.IsSuccess)
             return overtimeAmountResult;
