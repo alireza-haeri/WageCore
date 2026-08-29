@@ -343,6 +343,8 @@ public class UpdatePayrollRecordCommandHandlerTests
 
         await _handler.Handle(CreateValidCommand(), CancellationToken.None);
 
+        await _payrollLimitsResolver.Received(1)
+            .ResolveAsync(PeriodStart, PeriodEnd, Arg.Any<CancellationToken>());
         await _payrollRecordQuery.Received(1).HasOverlappingPeriodAsync(
             ValidUserId,
             ValidEmployeeId,
