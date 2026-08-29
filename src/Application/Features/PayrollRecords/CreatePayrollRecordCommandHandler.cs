@@ -41,14 +41,18 @@ public class CreatePayrollRecordCommandHandler(
             period.StartPeriod,
             period.EndPeriod,
             cancellationToken);
-        var (workshop, salaryProfiles) = await Task.WhenAll(workshopTask, salaryProfilesTask);
+
+        await Task.WhenAll(workshopTask, salaryProfilesTask);
+
+        var workshop = await workshopTask;
+        var salaryProfiles = await salaryProfilesTask;
 
         if (workshop is null)
             return Result<CreatePayrollRecordCommandResponse>.NotfoundFailure("کارگاه مورد نظر یافت نشد.");
 
         if (salaryProfiles.Count == 0)
             return Result<CreatePayrollRecordCommandResponse>.NotfoundFailure(
-                "برای این بازه پروفایل حقوقی کارمند یافت نشد.");
+                "برای این بازه حکم حقوقی کارمند یافت نشد.");
 
         var calculationResult = await payrollCalculationService.CalculateAsync(
             employee,
