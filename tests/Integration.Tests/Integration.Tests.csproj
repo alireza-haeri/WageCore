@@ -5,8 +5,9 @@
         <PackageReference Include="xunit.runner.visualstudio"/>
         <PackageReference Include="coverlet.collector"/>
 
-        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+        <PackageReference Include="Respawn" />
+        <PackageReference Include="Testcontainers.MsSql" />
     </ItemGroup>
 
     <ItemGroup>
