@@ -16,12 +16,6 @@ public interface IPayrollRecordQuery
         DateOnly effectiveFrom,
         CancellationToken cancellationToken = default);
 
-    /// <summary>
-    /// Checks whether the employee already has a payroll record whose period overlaps
-    /// <paramref name="periodStart"/>..<paramref name="periodEnd"/>. Pass
-    /// <paramref name="excludePayrollRecordId"/> when updating a record, so it does not
-    /// overlap with itself.
-    /// </summary>
     Task<bool> HasOverlappingPeriodAsync(
         Guid userId,
         Guid employeeId,

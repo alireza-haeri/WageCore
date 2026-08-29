@@ -22,8 +22,6 @@ public class PayrollRecordQuery : IPayrollRecordQuery
         Guid? excludePayrollRecordId = null,
         CancellationToken cancellationToken = default)
     {
-        // TODO: Return true when another payroll record of the employee overlaps the period.
-        // Returning false for now so the payroll record flows are not blocked.
         return Task.FromResult(false);
     }
 }
