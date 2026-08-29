@@ -211,7 +211,7 @@ public class CreatePayrollRecordCommandHandlerTests
 
         var result = await _handler.Handle(CreateValidCommand(), CancellationToken.None);
 
-        result.ShouldBeFailure("برای این بازه پروفایل حقوقی کارمند یافت نشد.", BadResultType.NotFound);
+        result.ShouldBeFailure("برای این بازه حکم حقوقی کارمند یافت نشد.", BadResultType.NotFound);
         await DidNotReceiveCalculation();
         await _payrollRecordRepository.DidNotReceive()
             .CreateAsync(Arg.Any<PayrollRecord>(), Arg.Any<CancellationToken>());
