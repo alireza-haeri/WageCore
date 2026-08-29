@@ -180,6 +180,17 @@ public class Employee
         return DomainResult.Success();
     }
 
+    public DomainResult EnsureEmployedDuring(DateOnly periodStart, DateOnly periodEnd)
+    {
+        if (periodEnd < HireDate)
+            return DomainResult.Failure("کارمند در این بازه استخدام نشده بود.");
+
+        if (TerminationDate is not null && TerminationDate < periodStart)
+            return DomainResult.Failure("کارمند قبل از این بازه ترک کار کرده است.");
+
+        return DomainResult.Success();
+    }
+
     public DomainResult UpdateInsurance(EmployeeInsuranceDto? insurance)
     {
         var canModifyResult = EnsureCanModify();

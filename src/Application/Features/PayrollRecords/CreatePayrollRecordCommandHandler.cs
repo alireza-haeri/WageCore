@@ -23,6 +23,10 @@ public class CreatePayrollRecordCommandHandler(
         if (employee is null)
             return Result<CreatePayrollRecordCommandResponse>.NotfoundFailure("کارمند مورد نظر یافت نشد.");
 
+        var employmentResult = employee.EnsureEmployedDuring(period.StartPeriod, period.EndPeriod);
+        if (!employmentResult.IsSuccess)
+            return Result<CreatePayrollRecordCommandResponse>.GeneralFailure(employmentResult.ErrorMessage!);
+
         var hasOverlappingPeriod = await payrollRecordQuery.HasOverlappingPeriodAsync(
             request.UserId,
             request.EmployeeId,

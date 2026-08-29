@@ -218,6 +218,52 @@ public class CreatePayrollRecordCommandHandlerTests
     }
 
     [Fact]
+    public async Task Handle_WhenEmployeeWasHiredAfterThePeriod_ShouldReturnGeneralFailure()
+    {
+        SetupPeriod(PeriodStart, PeriodEnd);
+        _employeeRepository
+            .GetByIdAsync(ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
+            .Returns(new EmployeeBuilder()
+                .WithId(ValidEmployeeId)
+                .WithWorkshopId(ValidWorkshopId)
+                .WithHireDate(PeriodEnd.AddDays(1))
+                .CreateResult()
+                .ShouldBeSuccess());
+
+        var result = await _handler.Handle(CreateValidCommand(), CancellationToken.None);
+
+        result.ShouldBeFailure("کارمند در این بازه استخدام نشده بود.", BadResultType.General);
+        await DidNotReceiveOverlapCheck();
+        await DidNotReceiveSalaryProfiles();
+        await _workShopRepository.DidNotReceive()
+            .GetByIdAsync(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+        await DidNotReceiveCalculation();
+    }
+
+    [Fact]
+    public async Task Handle_WhenEmployeeTerminatedBeforeThePeriod_ShouldReturnGeneralFailure()
+    {
+        SetupPeriod(PeriodStart, PeriodEnd);
+        var employee = new EmployeeBuilder()
+            .WithId(ValidEmployeeId)
+            .WithWorkshopId(ValidWorkshopId)
+            .WithWorkshopRegistrationDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-90)))
+            .WithHireDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-60)))
+            .CreateResult()
+            .ShouldBeSuccess();
+        employee.Terminate(PeriodStart.AddDays(-3)).ShouldBeSuccess();
+        _employeeRepository
+            .GetByIdAsync(ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
+            .Returns(employee);
+
+        var result = await _handler.Handle(CreateValidCommand(), CancellationToken.None);
+
+        result.ShouldBeFailure("کارمند قبل از این بازه ترک کار کرده است.", BadResultType.General);
+        await DidNotReceiveOverlapCheck();
+        await DidNotReceiveCalculation();
+    }
+
+    [Fact]
     public async Task Handle_WhenAnotherPayrollRecordOverlapsThePeriod_ShouldReturnGeneralFailure()
     {
         SetupPeriod(PeriodStart, PeriodEnd);
