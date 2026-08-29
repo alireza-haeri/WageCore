@@ -3,6 +3,7 @@ namespace Application.Features.PayrollRecords;
 public class UpdatePayrollRecordCommandHandler(
     IEmployeeRepository employeeRepository,
     IPersianCalendarService persianCalendarService,
+    IPayrollLimitsResolver payrollLimitsResolver,
     IPayrollRecordQuery payrollRecordQuery,
     IPayrollRecordRepository payrollRecordRepository,
     IWorkShopRepository workShopRepository,
@@ -29,6 +30,15 @@ public class UpdatePayrollRecordCommandHandler(
         var canModifyResult = payrollRecord.EnsureCanModify();
         if (!canModifyResult.IsSuccess)
             return Result<bool>.GeneralFailure(canModifyResult.ErrorMessage!);
+
+        var limitsResult = await payrollLimitsResolver.ResolveAsync(
+            period.StartPeriod,
+            period.EndPeriod,
+            cancellationToken);
+        if (!limitsResult.IsSuccess)
+            return Result<bool>.ValidationFailure(limitsResult.Errors!);
+
+        var limits = limitsResult.Response!;
 
         var employee = await employeeRepository.GetByIdAsync(request.UserId, request.EmployeeId, cancellationToken);
         if (employee is null)
@@ -78,8 +88,8 @@ public class UpdatePayrollRecordCommandHandler(
             period.StartPeriod,
             period.EndPeriod,
             employee.IsTaxSubject,
-            calculation.MaxMonthlyOvertimeHours,
-            calculation.MaxFridayHours,
+            limits.MaxMonthlyOvertimeHours,
+            limits.MaxFridayHours,
             request.Work,
             new PayrollRecordAmountsDto(
                 calculation.OvertimeAmount,

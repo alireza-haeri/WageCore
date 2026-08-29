@@ -13,6 +13,7 @@ public static class DependencyInjection
 
         builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         builder.Services.AddScoped<IPayrollCalculationService, PayrollCalculationService>();
+        builder.Services.AddScoped<IPayrollLimitsResolver, PayrollLimitsResolver>();
 
         return builder;
     }

@@ -4,6 +4,7 @@ public class CreatePayrollRecordCommandHandlerTests
 {
     private readonly IEmployeeRepository _employeeRepository;
     private readonly IPersianCalendarService _persianCalendarService;
+    private readonly IPayrollLimitsResolver _payrollLimitsResolver;
     private readonly IPayrollRecordQuery _payrollRecordQuery;
     private readonly IWorkShopRepository _workShopRepository;
     private readonly IEmployeeSalaryProfileQuery _employeeSalaryProfileQuery;
@@ -46,6 +47,7 @@ public class CreatePayrollRecordCommandHandlerTests
 
         _employeeRepository = Substitute.For<IEmployeeRepository>();
         _persianCalendarService = Substitute.For<IPersianCalendarService>();
+        _payrollLimitsResolver = Substitute.For<IPayrollLimitsResolver>();
         _payrollRecordQuery = Substitute.For<IPayrollRecordQuery>();
         _workShopRepository = Substitute.For<IWorkShopRepository>();
         _employeeSalaryProfileQuery = Substitute.For<IEmployeeSalaryProfileQuery>();
@@ -66,11 +68,13 @@ public class CreatePayrollRecordCommandHandlerTests
                 Arg.Any<DateOnly>(),
                 Arg.Any<CancellationToken>())
             .Returns(_salaryProfiles);
+        SetupLimits(ValidLimits());
         SetupCalculation(ValidCalculation());
 
         _handler = new CreatePayrollRecordCommandHandler(
             _employeeRepository,
             _persianCalendarService,
+            _payrollLimitsResolver,
             _payrollRecordQuery,
             _workShopRepository,
             _employeeSalaryProfileQuery,
@@ -90,6 +94,14 @@ public class CreatePayrollRecordCommandHandlerTests
         _persianCalendarService
             .GetMonthRange(ValidPersianYear, ValidPersianMonth)
             .Returns((startPeriod, endPeriod));
+
+    private void SetupLimits(PayrollLimits limits) =>
+        _payrollLimitsResolver
+            .ResolveAsync(PeriodStart, PeriodEnd, Arg.Any<CancellationToken>())
+            .Returns(Result<PayrollLimits>.Success(limits));
+
+    private static PayrollLimits ValidLimits() =>
+        new(20m, 12m, 8m);
 
     private void SetupCalculation(PayrollCalculationResult calculation) =>
         _payrollCalculationService
@@ -143,7 +155,7 @@ public class CreatePayrollRecordCommandHandlerTests
                 Arg.Any<CancellationToken>());
 
     private static PayrollCalculationResult ValidCalculation() =>
-        new(20m, 12m, 800_000m, 300_000m, 250_000m, 1_500_000m, 15_000_000m);
+        new(800_000m, 300_000m, 250_000m, 1_500_000m, 15_000_000m);
 
     [Fact]
     public async Task Handle_WhenPeriodStartsAfterToday_ShouldReturnGeneralFailure()
@@ -158,6 +170,26 @@ public class CreatePayrollRecordCommandHandlerTests
         await _employeeRepository.DidNotReceive()
             .GetByIdAsync(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>());
         await DidNotReceiveSalaryProfiles();
+        await _payrollRecordRepository.DidNotReceive()
+            .CreateAsync(Arg.Any<PayrollRecord>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_WhenTheLimitsCannotBeResolved_ShouldReturnTheResolverErrors()
+    {
+        SetupPeriod(PeriodStart, PeriodEnd);
+        _payrollLimitsResolver
+            .ResolveAsync(PeriodStart, PeriodEnd, Arg.Any<CancellationToken>())
+            .Returns(Result<PayrollLimits>.NotfoundFailure("سقف ساعات اضافه‌کاری ماهانه یافت نشد."));
+
+        var result = await _handler.Handle(CreateValidCommand(), CancellationToken.None);
+
+        result.ShouldBeFailure("سقف ساعات اضافه‌کاری ماهانه یافت نشد.", BadResultType.Validation);
+        await _employeeRepository.DidNotReceive()
+            .GetByIdAsync(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+        await DidNotReceiveOverlapCheck();
+        await DidNotReceiveSalaryProfiles();
+        DidNotReceiveCalculation();
         await _payrollRecordRepository.DidNotReceive()
             .CreateAsync(Arg.Any<PayrollRecord>(), Arg.Any<CancellationToken>());
     }
@@ -345,14 +377,7 @@ public class CreatePayrollRecordCommandHandlerTests
     public async Task Handle_WhenDomainRejectsTheRecord_ShouldReturnGeneralFailure()
     {
         SetupPeriod(PeriodStart, PeriodEnd);
-        SetupCalculation(new PayrollCalculationResult(
-            2m,
-            12m,
-            800_000m,
-            300_000m,
-            250_000m,
-            1_500_000m,
-            15_000_000m));
+        SetupLimits(new PayrollLimits(2m, 12m, 8m));
 
         var result = await _handler.Handle(CreateValidCommand(), CancellationToken.None);
 

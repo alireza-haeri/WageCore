@@ -3,6 +3,7 @@ namespace Application.Features.PayrollRecords;
 public class CreatePayrollRecordCommandHandler(
     IEmployeeRepository employeeRepository,
     IPersianCalendarService persianCalendarService,
+    IPayrollLimitsResolver payrollLimitsResolver,
     IPayrollRecordQuery payrollRecordQuery,
     IWorkShopRepository workShopRepository,
     IEmployeeSalaryProfileQuery employeeSalaryProfileQuery,
@@ -18,6 +19,15 @@ public class CreatePayrollRecordCommandHandler(
 
         if (period.StartPeriod > DateOnly.FromDateTime(DateTime.Now))
             return Result<CreatePayrollRecordCommandResponse>.GeneralFailure("تاریخ شروع دوره نباید برای آینده باشد.");
+
+        var limitsResult = await payrollLimitsResolver.ResolveAsync(
+            period.StartPeriod,
+            period.EndPeriod,
+            cancellationToken);
+        if (!limitsResult.IsSuccess)
+            return Result<CreatePayrollRecordCommandResponse>.ValidationFailure(limitsResult.Errors!);
+
+        var limits = limitsResult.Response!;
 
         var employee = await employeeRepository.GetByIdAsync(request.UserId, request.EmployeeId, cancellationToken);
         if (employee is null)
@@ -70,8 +80,8 @@ public class CreatePayrollRecordCommandHandler(
             period.StartPeriod,
             period.EndPeriod,
             employee.IsTaxSubject,
-            calculation.MaxMonthlyOvertimeHours,
-            calculation.MaxFridayHours,
+            limits.MaxMonthlyOvertimeHours,
+            limits.MaxFridayHours,
             request.Work,
             new PayrollRecordAmountsDto(
                 calculation.OvertimeAmount,
