@@ -4,6 +4,8 @@ public class CreatePayrollRecordCommandHandler(
     IEmployeeRepository employeeRepository,
     IPersianCalendarService persianCalendarService,
     IPayrollRecordQuery payrollRecordQuery,
+    IWorkShopRepository workShopRepository,
+    IEmployeeSalaryProfileQuery employeeSalaryProfileQuery,
     IPayrollCalculationService payrollCalculationService,
     IPayrollRecordRepository payrollRecordRepository)
     : IRequestHandler<CreatePayrollRecordCommand, Result<CreatePayrollRecordCommandResponse>>
@@ -32,8 +34,26 @@ public class CreatePayrollRecordCommandHandler(
             return Result<CreatePayrollRecordCommandResponse>.GeneralFailure(
                 "برای این کارمند در این بازه فیش پرداختی دیگری ثبت شده است.");
 
-        var calculationResult = await payrollCalculationService.CalculateAsync(
+        var workshopTask = workShopRepository.GetByIdAsync(request.UserId, employee.WorkshopId, cancellationToken);
+        var salaryProfilesTask = employeeSalaryProfileQuery.GetEmployeeSalaryProfilesAffectingPeriodAsync(
+            request.UserId,
             request.EmployeeId,
+            period.StartPeriod,
+            period.EndPeriod,
+            cancellationToken);
+        var (workshop, salaryProfiles) = await Task.WhenAll(workshopTask, salaryProfilesTask);
+
+        if (workshop is null)
+            return Result<CreatePayrollRecordCommandResponse>.NotfoundFailure("کارگاه مورد نظر یافت نشد.");
+
+        if (salaryProfiles.Count == 0)
+            return Result<CreatePayrollRecordCommandResponse>.NotfoundFailure(
+                "برای این بازه پروفایل حقوقی کارمند یافت نشد.");
+
+        var calculationResult = await payrollCalculationService.CalculateAsync(
+            employee,
+            workshop,
+            salaryProfiles,
             period.StartPeriod,
             period.EndPeriod,
             request.Work,

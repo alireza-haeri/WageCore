@@ -3,7 +3,9 @@ namespace Application.Services;
 public interface IPayrollCalculationService
 {
     Task<Result<PayrollCalculationResult>> CalculateAsync(
-        Guid employeeId,
+        Employee employee,
+        Workshop workshop,
+        IReadOnlyList<EmployeeSalaryProfile> salaryProfiles,
         DateOnly periodStart,
         DateOnly periodEnd,
         PayrollWorkInputDto workInput,
