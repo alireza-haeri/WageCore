@@ -2,7 +2,7 @@ using Infrastructure.Persistence.Dapper;
 
 namespace Integration.Tests.Fixtures;
 
-public class ApiFixture : WebApplicationFactory<Program>
+public class ApiFixture : WebApplicationFactory<Program> , IAsyncLifetime
 {
     private static readonly MsSqlContainer SqlContainer = new MsSqlBuilder()
         .WithImage("mcr.microsoft.com/mssql/server:2025-latest")
@@ -11,8 +11,8 @@ public class ApiFixture : WebApplicationFactory<Program>
     private readonly string _dbName = $"WageCoreTestDb_{Guid.NewGuid():N}";
     private string _connectionString = null!;
     private Respawner _respawner = null!;
-
-    protected override async Task InitializeAsync()
+    
+    public async Task InitializeAsync()
     {
         if (SqlContainer.State != TestcontainersStates.Running)
         {
@@ -23,8 +23,6 @@ public class ApiFixture : WebApplicationFactory<Program>
         {
             InitialCatalog = _dbName
         }.ConnectionString;
-
-        await base.InitializeAsync();
 
         await using (var scope = Services.CreateAsyncScope())
         {
@@ -41,6 +39,7 @@ public class ApiFixture : WebApplicationFactory<Program>
         });
     }
 
+  
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Testing");
@@ -79,5 +78,10 @@ public class ApiFixture : WebApplicationFactory<Program>
     private sealed class TestSqlConnectionFactory(string connectionString) : IDbConnectionFactory
     {
         public IDbConnection CreateConnection() => new SqlConnection(connectionString);
+    }
+
+    public async Task DisposeAsync()
+    {
+        
     }
 }
