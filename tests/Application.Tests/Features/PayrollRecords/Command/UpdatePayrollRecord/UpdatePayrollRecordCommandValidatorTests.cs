@@ -94,7 +94,13 @@ public class UpdatePayrollRecordCommandValidatorTests
     [Fact]
     public void Validate_WithNullWork_ShouldHaveValidationError()
     {
-        var command = CreateValidCommand(work: null!);
+        var command = new UpdatePayrollRecordCommand(
+            ValidUserId,
+            ValidEmployeeId,
+            ValidPayrollRecordId,
+            ValidPersianYear,
+            ValidPersianMonth,
+            null!);
 
         var result = _validator.TestValidate(command);
 
