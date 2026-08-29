@@ -14,6 +14,7 @@ public static class DependencyInjection
         builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         builder.Services.AddScoped<IPayrollCalculationService, PayrollCalculationService>();
         builder.Services.AddScoped<IPayrollLimitsResolver, PayrollLimitsResolver>();
+        builder.Services.AddScoped<IFormulaEvaluator, FormulaEvaluator>();
 
         return builder;
     }

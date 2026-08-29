@@ -3,4 +3,7 @@
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\Shareds\Shared.Application\Shared.Application.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NCalcSync" />
+  </ItemGroup>
 </Project>
