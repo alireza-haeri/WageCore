@@ -3,6 +3,7 @@ namespace Application.Features.PayrollRecords;
 public class CreatePayrollRecordCommandHandler(
     IEmployeeRepository employeeRepository,
     IPersianCalendarService persianCalendarService,
+    IPayrollRecordQuery payrollRecordQuery,
     IPayrollCalculationService payrollCalculationService,
     IPayrollRecordRepository payrollRecordRepository)
     : IRequestHandler<CreatePayrollRecordCommand, Result<CreatePayrollRecordCommandResponse>>
@@ -19,6 +20,17 @@ public class CreatePayrollRecordCommandHandler(
         var employee = await employeeRepository.GetByIdAsync(request.UserId, request.EmployeeId, cancellationToken);
         if (employee is null)
             return Result<CreatePayrollRecordCommandResponse>.NotfoundFailure("کارمند مورد نظر یافت نشد.");
+
+        var hasOverlappingPeriod = await payrollRecordQuery.HasOverlappingPeriodAsync(
+            request.UserId,
+            request.EmployeeId,
+            period.StartPeriod,
+            period.EndPeriod,
+            null,
+            cancellationToken);
+        if (hasOverlappingPeriod)
+            return Result<CreatePayrollRecordCommandResponse>.GeneralFailure(
+                "برای این کارمند در این بازه فیش پرداختی دیگری ثبت شده است.");
 
         var calculationResult = await payrollCalculationService.CalculateAsync(
             request.EmployeeId,

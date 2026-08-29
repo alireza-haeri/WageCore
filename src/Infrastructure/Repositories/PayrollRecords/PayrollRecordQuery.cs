@@ -13,4 +13,17 @@ public class PayrollRecordQuery : IPayrollRecordQuery
         // Returning false for now so the employee salary profile flows are not blocked.
         return Task.FromResult(false);
     }
+
+    public Task<bool> HasOverlappingPeriodAsync(
+        Guid userId,
+        Guid employeeId,
+        DateOnly periodStart,
+        DateOnly periodEnd,
+        Guid? excludePayrollRecordId = null,
+        CancellationToken cancellationToken = default)
+    {
+        // TODO: Return true when another payroll record of the employee overlaps the period.
+        // Returning false for now so the payroll record flows are not blocked.
+        return Task.FromResult(false);
+    }
 }

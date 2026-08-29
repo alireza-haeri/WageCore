@@ -4,6 +4,7 @@ public class CreatePayrollRecordCommandHandlerTests
 {
     private readonly IEmployeeRepository _employeeRepository;
     private readonly IPersianCalendarService _persianCalendarService;
+    private readonly IPayrollRecordQuery _payrollRecordQuery;
     private readonly IPayrollCalculationService _payrollCalculationService;
     private readonly IPayrollRecordRepository _payrollRecordRepository;
     private readonly CreatePayrollRecordCommandHandler _handler;
@@ -22,11 +23,13 @@ public class CreatePayrollRecordCommandHandlerTests
     {
         _employeeRepository = Substitute.For<IEmployeeRepository>();
         _persianCalendarService = Substitute.For<IPersianCalendarService>();
+        _payrollRecordQuery = Substitute.For<IPayrollRecordQuery>();
         _payrollCalculationService = Substitute.For<IPayrollCalculationService>();
         _payrollRecordRepository = Substitute.For<IPayrollRecordRepository>();
         _handler = new CreatePayrollRecordCommandHandler(
             _employeeRepository,
             _persianCalendarService,
+            _payrollRecordQuery,
             _payrollCalculationService,
             _payrollRecordRepository);
     }
@@ -75,6 +78,14 @@ public class CreatePayrollRecordCommandHandlerTests
         var result = await _handler.Handle(CreateValidCommand(), CancellationToken.None);
 
         result.ShouldBeFailure("تاریخ شروع دوره نباید برای آینده باشد.", BadResultType.General);
+        await _payrollRecordQuery.DidNotReceive()
+            .HasOverlappingPeriodAsync(
+                Arg.Any<Guid>(),
+                Arg.Any<Guid>(),
+                Arg.Any<DateOnly>(),
+                Arg.Any<DateOnly>(),
+                Arg.Any<Guid?>(),
+                Arg.Any<CancellationToken>());
         await _employeeRepository.DidNotReceive()
             .GetByIdAsync(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>());
         await _payrollRecordRepository.DidNotReceive()
@@ -89,6 +100,14 @@ public class CreatePayrollRecordCommandHandlerTests
         var result = await _handler.Handle(CreateValidCommand(), CancellationToken.None);
 
         result.ShouldBeFailure("کارمند مورد نظر یافت نشد.", BadResultType.NotFound);
+        await _payrollRecordQuery.DidNotReceive()
+            .HasOverlappingPeriodAsync(
+                Arg.Any<Guid>(),
+                Arg.Any<Guid>(),
+                Arg.Any<DateOnly>(),
+                Arg.Any<DateOnly>(),
+                Arg.Any<Guid?>(),
+                Arg.Any<CancellationToken>());
         await _payrollCalculationService.DidNotReceive()
             .CalculateAsync(
                 Arg.Any<Guid>(),
@@ -96,6 +115,57 @@ public class CreatePayrollRecordCommandHandlerTests
                 Arg.Any<DateOnly>(),
                 Arg.Any<PayrollWorkInputDto>(),
                 Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_WhenAnotherPayrollRecordOverlapsThePeriod_ShouldReturnGeneralFailure()
+    {
+        SetupPeriod(PeriodStart, PeriodEnd);
+        SetupFoundEmployee();
+        _payrollRecordQuery
+            .HasOverlappingPeriodAsync(
+                ValidUserId,
+                ValidEmployeeId,
+                PeriodStart,
+                PeriodEnd,
+                null,
+                Arg.Any<CancellationToken>())
+            .Returns(true);
+
+        var result = await _handler.Handle(CreateValidCommand(), CancellationToken.None);
+
+        result.ShouldBeFailure("برای این کارمند در این بازه فیش پرداختی دیگری ثبت شده است.", BadResultType.General);
+        await _payrollCalculationService.DidNotReceive()
+            .CalculateAsync(
+                Arg.Any<Guid>(),
+                Arg.Any<DateOnly>(),
+                Arg.Any<DateOnly>(),
+                Arg.Any<PayrollWorkInputDto>(),
+                Arg.Any<CancellationToken>());
+        await _payrollRecordRepository.DidNotReceive()
+            .CreateAsync(Arg.Any<PayrollRecord>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_ShouldAskForOverlapsWithoutExcludingAnyRecord()
+    {
+        var createdId = Guid.NewGuid();
+        SetupPeriod(PeriodStart, PeriodEnd);
+        SetupFoundEmployee();
+        SetupCalculation(ValidCalculation());
+        _payrollRecordRepository
+            .CreateAsync(Arg.Any<PayrollRecord>(), Arg.Any<CancellationToken>())
+            .Returns(createdId);
+
+        await _handler.Handle(CreateValidCommand(), CancellationToken.None);
+
+        await _payrollRecordQuery.Received(1).HasOverlappingPeriodAsync(
+            ValidUserId,
+            ValidEmployeeId,
+            PeriodStart,
+            PeriodEnd,
+            null,
+            Arg.Any<CancellationToken>());
     }
 
     [Fact]
