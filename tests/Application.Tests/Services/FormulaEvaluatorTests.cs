@@ -11,9 +11,14 @@ public class FormulaEvaluatorTests
         _evaluator = new FormulaEvaluator(Substitute.For<ILogger<FormulaEvaluator>>());
     }
 
-    private record SalaryProfile(decimal BaseMonthlySalary, decimal MonthlyWorkingHours);
+    private record SalaryProfile(
+        decimal BaseMonthlySalary,
+        decimal MonthlyWorkingHours,
+        decimal MinimumMonthlyWage);
 
     private record WorkInput(decimal WorkedDaysCount);
+
+    private record WorkshopSettings(decimal MinimumMonthlyWage, decimal FridayAllowanceFactor);
 
     [Fact]
     public void Evaluate_WithConstantExpression_ShouldFollowOperatorsPrecedence()
@@ -34,11 +39,11 @@ public class FormulaEvaluatorTests
     [Fact]
     public void Evaluate_WithExpressionOverSeveralModels_ShouldBindEveryPropertyByName()
     {
-        var salary = new SalaryProfile(7_200_000m, 180m);
+        var salary = new SalaryProfile(7_200_000m, 180m, 4_000_000m);
         var work = new WorkInput(24m);
 
         var result = _evaluator.Evaluate(
-            "[BaseMonthlySalary] / [MonthlyWorkingHours] * [WorkedDaysCount]",
+            "[SalaryProfileBaseMonthlySalary] / [SalaryProfileMonthlyWorkingHours] * [WorkInputWorkedDaysCount]",
             salary,
             work);
 
@@ -50,15 +55,39 @@ public class FormulaEvaluatorTests
     {
         var work = new WorkInput(24m);
 
-        var result = _evaluator.Evaluate("[WorkedDaysCount] * 1.5", work);
+        var result = _evaluator.Evaluate("[WorkInputWorkedDaysCount] * 1.5", work);
 
         result.ShouldBeSuccess().Should().Be(36m);
     }
 
     [Fact]
+    public void Evaluate_WhenSeveralModelsShareAPropertyName_ShouldKeepBothParameters()
+    {
+        var salary = new SalaryProfile(7_200_000m, 180m, 5_000_000m);
+        var workshopSettings = new WorkshopSettings(4_500_000m, 1.25m);
+
+        var result = _evaluator.Evaluate(
+            "[SalaryProfileMinimumMonthlyWage] + [WorkshopSettingsMinimumMonthlyWage]",
+            salary,
+            workshopSettings);
+
+        result.ShouldBeSuccess().Should().Be(9_500_000m);
+    }
+
+    [Fact]
+    public void Evaluate_WhenTheSameModelIsPassedTwice_ShouldReturnFailure()
+    {
+        var salary = new SalaryProfile(7_200_000m, 180m, 5_000_000m);
+
+        var result = _evaluator.Evaluate("[SalaryProfileBaseMonthlySalary]", salary, salary);
+
+        result.ShouldBeFailure("نام پارامتر SalaryProfileBaseMonthlySalary در فرمول تکراری است.");
+    }
+
+    [Fact]
     public void Evaluate_WithNullModels_ShouldReturnFailure()
     {
-        var result = _evaluator.Evaluate("[BaseMonthlySalary]", null!);
+        var result = _evaluator.Evaluate("[SalaryProfileBaseMonthlySalary]", null!);
 
         result.ShouldBeFailure("خطا در محاسبه‌ی فرمول");
     }

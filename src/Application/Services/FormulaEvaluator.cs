@@ -13,12 +13,21 @@ public class FormulaEvaluator(ILogger<FormulaEvaluator> logger) : IFormulaEvalua
 
             foreach (var model in models)
             {
-                foreach (var property in model.GetType().GetProperties())
+                var modelType = model.GetType();
+
+                foreach (var property in modelType.GetProperties())
                 {
                     var value = property.GetValue(model);
 
-                    if (value is not null && IsSupportedType(value))
-                        expr.Parameters[property.Name] = value;
+                    if (value is null || !IsSupportedType(value))
+                        continue;
+
+                    var parameterName = $"{modelType.Name}{property.Name}";
+
+                    if (expr.Parameters.ContainsKey(parameterName))
+                        return FailureForDuplicatedParameter(expression, parameterName);
+
+                    expr.Parameters[parameterName] = value;
                 }
             }
 
@@ -29,6 +38,16 @@ public class FormulaEvaluator(ILogger<FormulaEvaluator> logger) : IFormulaEvalua
             logger.LogError(e, "The formula {Expression} could not be evaluated", expression);
             return DomainResult<decimal>.Failure($"خطا در محاسبه‌ی فرمول: {e.Message}");
         }
+    }
+
+    private DomainResult<decimal> FailureForDuplicatedParameter(string expression, string parameterName)
+    {
+        logger.LogError(
+            "The formula {Expression} received the parameter {Parameter} more than once",
+            expression,
+            parameterName);
+
+        return DomainResult<decimal>.Failure($"نام پارامتر {parameterName} در فرمول تکراری است.");
     }
 
     private static bool IsSupportedType(object value) =>
