@@ -93,15 +93,14 @@ public class CreatePayrollRecordCommandHandlerTests
 
     private void SetupCalculation(PayrollCalculationResult calculation) =>
         _payrollCalculationService
-            .CalculateAsync(
+            .Calculate(
                 Arg.Any<Employee>(),
                 Arg.Any<Workshop>(),
                 Arg.Any<IReadOnlyList<EmployeeSalaryProfile>>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<DateOnly>(),
-                Arg.Any<PayrollWorkInputDto>(),
-                Arg.Any<CancellationToken>())
-            .Returns(Result<PayrollCalculationResult>.Success(calculation));
+                Arg.Any<PayrollWorkInputDto>())
+            .Returns(calculation);
 
     private void SetupOverlappingPeriod() =>
         _payrollRecordQuery
@@ -124,16 +123,15 @@ public class CreatePayrollRecordCommandHandlerTests
                 Arg.Any<Guid?>(),
                 Arg.Any<CancellationToken>());
 
-    private Task DidNotReceiveCalculation() =>
+    private void DidNotReceiveCalculation() =>
         _payrollCalculationService.DidNotReceive()
-            .CalculateAsync(
+            .Calculate(
                 Arg.Any<Employee>(),
                 Arg.Any<Workshop>(),
                 Arg.Any<IReadOnlyList<EmployeeSalaryProfile>>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<DateOnly>(),
-                Arg.Any<PayrollWorkInputDto>(),
-                Arg.Any<CancellationToken>());
+                Arg.Any<PayrollWorkInputDto>());
 
     private Task DidNotReceiveSalaryProfiles() =>
         _employeeSalaryProfileQuery.DidNotReceive()
@@ -177,7 +175,7 @@ public class CreatePayrollRecordCommandHandlerTests
         result.ShouldBeFailure("کارمند مورد نظر یافت نشد.", BadResultType.NotFound);
         await DidNotReceiveOverlapCheck();
         await DidNotReceiveSalaryProfiles();
-        await DidNotReceiveCalculation();
+        DidNotReceiveCalculation();
     }
 
     [Fact]
@@ -191,7 +189,7 @@ public class CreatePayrollRecordCommandHandlerTests
         var result = await _handler.Handle(CreateValidCommand(), CancellationToken.None);
 
         result.ShouldBeFailure("کارگاه مورد نظر یافت نشد.", BadResultType.NotFound);
-        await DidNotReceiveCalculation();
+        DidNotReceiveCalculation();
         await _payrollRecordRepository.DidNotReceive()
             .CreateAsync(Arg.Any<PayrollRecord>(), Arg.Any<CancellationToken>());
     }
@@ -212,7 +210,7 @@ public class CreatePayrollRecordCommandHandlerTests
         var result = await _handler.Handle(CreateValidCommand(), CancellationToken.None);
 
         result.ShouldBeFailure("برای این بازه حکم حقوقی کارمند یافت نشد.", BadResultType.NotFound);
-        await DidNotReceiveCalculation();
+        DidNotReceiveCalculation();
         await _payrollRecordRepository.DidNotReceive()
             .CreateAsync(Arg.Any<PayrollRecord>(), Arg.Any<CancellationToken>());
     }
@@ -237,7 +235,7 @@ public class CreatePayrollRecordCommandHandlerTests
         await DidNotReceiveSalaryProfiles();
         await _workShopRepository.DidNotReceive()
             .GetByIdAsync(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>());
-        await DidNotReceiveCalculation();
+        DidNotReceiveCalculation();
     }
 
     [Fact]
@@ -260,7 +258,7 @@ public class CreatePayrollRecordCommandHandlerTests
 
         result.ShouldBeFailure("کارمند قبل از این بازه ترک کار کرده است.", BadResultType.General);
         await DidNotReceiveOverlapCheck();
-        await DidNotReceiveCalculation();
+        DidNotReceiveCalculation();
     }
 
     [Fact]
@@ -273,7 +271,7 @@ public class CreatePayrollRecordCommandHandlerTests
 
         result.ShouldBeFailure("برای این کارمند در این بازه فیش پرداختی دیگری ثبت شده است.", BadResultType.General);
         await DidNotReceiveSalaryProfiles();
-        await DidNotReceiveCalculation();
+        DidNotReceiveCalculation();
         await _payrollRecordRepository.DidNotReceive()
             .CreateAsync(Arg.Any<PayrollRecord>(), Arg.Any<CancellationToken>());
     }
@@ -310,28 +308,6 @@ public class CreatePayrollRecordCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_WhenCalculationFails_ShouldReturnTheCalculationErrors()
-    {
-        SetupPeriod(PeriodStart, PeriodEnd);
-        _payrollCalculationService
-            .CalculateAsync(
-                Arg.Any<Employee>(),
-                Arg.Any<Workshop>(),
-                Arg.Any<IReadOnlyList<EmployeeSalaryProfile>>(),
-                Arg.Any<DateOnly>(),
-                Arg.Any<DateOnly>(),
-                Arg.Any<PayrollWorkInputDto>(),
-                Arg.Any<CancellationToken>())
-            .Returns(Result<PayrollCalculationResult>.GeneralFailure("نرخ اضافه‌کاری یافت نشد."));
-
-        var result = await _handler.Handle(CreateValidCommand(), CancellationToken.None);
-
-        result.ShouldBeFailure("نرخ اضافه‌کاری یافت نشد.", BadResultType.Validation);
-        await _payrollRecordRepository.DidNotReceive()
-            .CreateAsync(Arg.Any<PayrollRecord>(), Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
     public async Task Handle_WithValidRequest_ShouldCreatePayrollRecordFromTheCalculation()
     {
         var createdId = Guid.NewGuid();
@@ -346,14 +322,13 @@ public class CreatePayrollRecordCommandHandlerTests
         var response = result.ShouldBeSuccess();
         response.PayrollRecordId.Should().Be(createdId);
 
-        await _payrollCalculationService.Received(1).CalculateAsync(
+        _payrollCalculationService.Received(1).Calculate(
             _employee,
             _workshop,
             _salaryProfiles,
             PeriodStart,
             PeriodEnd,
-            work,
-            Arg.Any<CancellationToken>());
+            work);
         await _payrollRecordRepository.Received(1).CreateAsync(
             Arg.Is<PayrollRecord>(x =>
                 x.EmployeeId == ValidEmployeeId &&
