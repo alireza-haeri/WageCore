@@ -10,4 +10,9 @@ public interface IPayrollRecordRepository
         CancellationToken cancellationToken = default);
 
     Task<bool> UpdateAsync(PayrollRecord payrollRecord, CancellationToken cancellationToken = default);
+
+    Task<bool> DeleteAsync(
+        Guid userId,
+        Guid payrollRecordId,
+        CancellationToken cancellationToken = default);
 }
