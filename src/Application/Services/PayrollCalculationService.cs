@@ -2,7 +2,7 @@ namespace Application.Services;
 
 public class PayrollCalculationService : IPayrollCalculationService
 {
-    public PayrollCalculationResult Calculate(
+    public Result<PayrollCalculationResult> Calculate(
         Employee employee,
         Workshop workshop,
         IReadOnlyList<EmployeeSalaryProfile> salaryProfiles,

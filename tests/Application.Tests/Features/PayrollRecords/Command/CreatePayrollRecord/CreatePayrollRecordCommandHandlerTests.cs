@@ -112,7 +112,18 @@ public class CreatePayrollRecordCommandHandlerTests
                 Arg.Any<DateOnly>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<PayrollWorkInputDto>())
-            .Returns(calculation);
+            .Returns(Result<PayrollCalculationResult>.Success(calculation));
+
+    private void SetupCalculationFailure(string message) =>
+        _payrollCalculationService
+            .Calculate(
+                Arg.Any<Employee>(),
+                Arg.Any<Workshop>(),
+                Arg.Any<IReadOnlyList<EmployeeSalaryProfile>>(),
+                Arg.Any<DateOnly>(),
+                Arg.Any<DateOnly>(),
+                Arg.Any<PayrollWorkInputDto>())
+            .Returns(Result<PayrollCalculationResult>.GeneralFailure(message));
 
     private void SetupOverlappingPeriod() =>
         _payrollRecordQuery
@@ -190,6 +201,19 @@ public class CreatePayrollRecordCommandHandlerTests
         await DidNotReceiveOverlapCheck();
         await DidNotReceiveSalaryProfiles();
         DidNotReceiveCalculation();
+        await _payrollRecordRepository.DidNotReceive()
+            .CreateAsync(Arg.Any<PayrollRecord>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_WhenTheCalculationFails_ShouldReturnTheCalculationErrors()
+    {
+        SetupPeriod(PeriodStart, PeriodEnd);
+        SetupCalculationFailure("خطا در محاسبه‌ی فرمول: [BaseMonthlySalary] یافت نشد.");
+
+        var result = await _handler.Handle(CreateValidCommand(), CancellationToken.None);
+
+        result.ShouldBeFailure("خطا در محاسبه‌ی فرمول: [BaseMonthlySalary] یافت نشد.", BadResultType.General);
         await _payrollRecordRepository.DidNotReceive()
             .CreateAsync(Arg.Any<PayrollRecord>(), Arg.Any<CancellationToken>());
     }

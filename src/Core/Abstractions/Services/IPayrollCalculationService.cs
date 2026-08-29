@@ -2,7 +2,7 @@ namespace Core.Abstractions.Services;
 
 public interface IPayrollCalculationService
 {
-    PayrollCalculationResult Calculate(
+    Result<PayrollCalculationResult> Calculate(
         Employee employee,
         Workshop workshop,
         IReadOnlyList<EmployeeSalaryProfile> salaryProfiles,

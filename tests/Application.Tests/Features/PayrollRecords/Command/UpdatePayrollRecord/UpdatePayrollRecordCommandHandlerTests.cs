@@ -127,7 +127,18 @@ public class UpdatePayrollRecordCommandHandlerTests
                 Arg.Any<DateOnly>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<PayrollWorkInputDto>())
-            .Returns(calculation);
+            .Returns(Result<PayrollCalculationResult>.Success(calculation));
+
+    private void SetupCalculationFailure(string message) =>
+        _payrollCalculationService
+            .Calculate(
+                Arg.Any<Employee>(),
+                Arg.Any<Workshop>(),
+                Arg.Any<IReadOnlyList<EmployeeSalaryProfile>>(),
+                Arg.Any<DateOnly>(),
+                Arg.Any<DateOnly>(),
+                Arg.Any<PayrollWorkInputDto>())
+            .Returns(Result<PayrollCalculationResult>.GeneralFailure(message));
 
     private void SetupRecord(PayrollRecord payrollRecord) =>
         _payrollRecordRepository
@@ -257,6 +268,18 @@ public class UpdatePayrollRecordCommandHandlerTests
         result.ShouldBeFailure("سقف ساعات اضافه‌کاری ماهانه یافت نشد.", BadResultType.Validation);
         await DidNotReceiveOverlapCheck();
         DidNotReceiveCalculation();
+        await DidNotReceiveUpdate();
+    }
+
+    [Fact]
+    public async Task Handle_WhenTheCalculationFails_ShouldReturnTheCalculationErrors()
+    {
+        SetupPeriod(PeriodStart, PeriodEnd);
+        SetupCalculationFailure("خطا در محاسبه‌ی فرمول: [BaseMonthlySalary] یافت نشد.");
+
+        var result = await _handler.Handle(CreateValidCommand(), CancellationToken.None);
+
+        result.ShouldBeFailure("خطا در محاسبه‌ی فرمول: [BaseMonthlySalary] یافت نشد.", BadResultType.General);
         await DidNotReceiveUpdate();
     }
 
