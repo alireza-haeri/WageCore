@@ -326,7 +326,7 @@ public class PayrollRecord
         return DomainResult.Success();
     }
 
-    private DomainResult EnsureCanModify() =>
+    public DomainResult EnsureCanModify() =>
         IsPaid
             ? DomainResult.Failure("فیش پرداختی پرداخت شده قابل ویرایش نیست.")
             : DomainResult.Success();
