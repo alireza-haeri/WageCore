@@ -12,6 +12,7 @@ public static class DependencyInjection
             .AddGlobalBehaviors();
 
         builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+        builder.Services.AddScoped<IPayrollCalculationService, PayrollCalculationService>();
 
         return builder;
     }

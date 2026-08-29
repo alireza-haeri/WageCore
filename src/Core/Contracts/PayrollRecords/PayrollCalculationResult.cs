@@ -1,4 +1,4 @@
-namespace Application.Services;
+namespace Core.Contracts.PayrollRecords;
 
 public record PayrollCalculationResult(
     decimal? MaxMonthlyOvertimeHours,

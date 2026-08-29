@@ -1,4 +1,4 @@
-namespace Application.Services;
+namespace Core.Abstractions.Services;
 
 public interface IPayrollCalculationService
 {
