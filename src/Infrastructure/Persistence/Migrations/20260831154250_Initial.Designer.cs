@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(WageCoreDbContext))]
-    [Migration("20260831112351_Initial")]
+    [Migration("20260831154250_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -199,20 +199,8 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<Guid>("EmployeeId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal?>("FoodAllowance")
-                        .HasPrecision(18)
-                        .HasColumnType("decimal(18,0)");
-
-                    b.Property<decimal?>("HousingAllowance")
-                        .HasPrecision(18)
-                        .HasColumnType("decimal(18,0)");
-
                     b.Property<bool>("IsTaxSubject")
                         .HasColumnType("bit");
-
-                    b.Property<decimal?>("KaranehAmountNet")
-                        .HasPrecision(18)
-                        .HasColumnType("decimal(18,0)");
 
                     b.Property<string>("MaritalStatus")
                         .IsRequired()
@@ -253,6 +241,11 @@ namespace Infrastructure.Persistence.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(1000)");
 
+                    b.Property<string>("EconomicCode")
+                        .HasMaxLength(20)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(20)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -272,6 +265,12 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.Property<DateOnly>("RegistrationDate")
                         .HasColumnType("date");
+
+                    b.Property<string>("SocialSecurityNumber")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(20)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -594,12 +593,6 @@ namespace Infrastructure.Persistence.Migrations
                                 .IsUnicode(true)
                                 .HasColumnType("nvarchar(100)")
                                 .HasColumnName("PositionInInsuranceList");
-
-                            b1.Property<string>("SocialSecurityContractRow")
-                                .HasMaxLength(20)
-                                .IsUnicode(false)
-                                .HasColumnType("varchar(20)")
-                                .HasColumnName("SocialSecurityContractRow");
 
                             b1.HasKey("SalaryDecreeId");
 

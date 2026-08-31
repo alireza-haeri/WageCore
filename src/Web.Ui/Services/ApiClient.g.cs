@@ -3926,13 +3926,15 @@ namespace Web.Ui.Services
     public partial record CreateWorkshopRequest
     {
         [Newtonsoft.Json.JsonConstructor]
-        public CreateWorkshopRequest(string @address, string @name, string @nationalId, string @postalCode, string @registrationDate)
+        public CreateWorkshopRequest(string @address, string @economicCode, string @name, string @nationalId, string @postalCode, string @registrationDate, string @socialSecurityNumber)
         {
             this.Name = @name;
             this.Address = @address;
             this.RegistrationDate = @registrationDate;
             this.NationalId = @nationalId;
+            this.SocialSecurityNumber = @socialSecurityNumber;
             this.PostalCode = @postalCode;
+            this.EconomicCode = @economicCode;
         }
 
         [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -3947,8 +3949,14 @@ namespace Web.Ui.Services
         [Newtonsoft.Json.JsonProperty("nationalId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string NationalId { get; init; }
 
+        [Newtonsoft.Json.JsonProperty("socialSecurityNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string SocialSecurityNumber { get; init; }
+
         [Newtonsoft.Json.JsonProperty("postalCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string PostalCode { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("economicCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string EconomicCode { get; init; }
 
     }
 
@@ -4058,10 +4066,9 @@ namespace Web.Ui.Services
     public partial record EmployeeInsuranceRequest
     {
         [Newtonsoft.Json.JsonConstructor]
-        public EmployeeInsuranceRequest(EmployeeInsuranceRequestInsuranceCalculationProfile @insuranceCalculationProfile, string @insuranceNumber, bool @isSubjectTo20PercentInsurance, bool @isSubjectTo3PercentInsurance, bool @isSubjectTo4PercentInsurance, bool @isSubjectTo7PercentInsurance, string @positionInInsuranceList, string @socialSecurityContractRow)
+        public EmployeeInsuranceRequest(EmployeeInsuranceRequestInsuranceCalculationProfile @insuranceCalculationProfile, string @insuranceNumber, bool @isSubjectTo20PercentInsurance, bool @isSubjectTo3PercentInsurance, bool @isSubjectTo4PercentInsurance, bool @isSubjectTo7PercentInsurance, string @positionInInsuranceList)
         {
             this.InsuranceNumber = @insuranceNumber;
-            this.SocialSecurityContractRow = @socialSecurityContractRow;
             this.PositionInInsuranceList = @positionInInsuranceList;
             this.IsSubjectTo7PercentInsurance = @isSubjectTo7PercentInsurance;
             this.IsSubjectTo20PercentInsurance = @isSubjectTo20PercentInsurance;
@@ -4072,9 +4079,6 @@ namespace Web.Ui.Services
 
         [Newtonsoft.Json.JsonProperty("insuranceNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string InsuranceNumber { get; init; }
-
-        [Newtonsoft.Json.JsonProperty("socialSecurityContractRow", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string SocialSecurityContractRow { get; init; }
 
         [Newtonsoft.Json.JsonProperty("positionInInsuranceList", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string PositionInInsuranceList { get; init; }
@@ -4488,7 +4492,7 @@ namespace Web.Ui.Services
     public partial record GetSalaryDecreeForEditResponse
     {
         [Newtonsoft.Json.JsonConstructor]
-        public GetSalaryDecreeForEditResponse(double? @attractionAllowance, double @baseDailySalary, int @childrenCount, GetSalaryDecreeForEditResponseContractType @contractType, string @effectiveFrom, System.Guid @employeeId, double? @foodAllowance, double? @housingAllowance, GetSalaryDecreeForEditResponseInsuranceCalculationProfile @insuranceCalculationProfile, string @insuranceNumber, bool @isSubjectTo20PercentInsurance, bool @isSubjectTo3PercentInsurance, bool @isSubjectTo4PercentInsurance, bool @isSubjectTo7PercentInsurance, bool @isTaxSubject, double? @karanehAmountNet, GetSalaryDecreeForEditResponseMaritalStatus @maritalStatus, string @positionInInsuranceList, System.Guid @salaryDecreeId, GetSalaryDecreeForEditResponseShiftType @shiftType, string @socialSecurityContractRow, double? @supervisionAllowance, double? @transportationAllowanceNet)
+        public GetSalaryDecreeForEditResponse(double? @attractionAllowance, double @baseDailySalary, int @childrenCount, GetSalaryDecreeForEditResponseContractType @contractType, string @effectiveFrom, System.Guid @employeeId, GetSalaryDecreeForEditResponseInsuranceCalculationProfile @insuranceCalculationProfile, string @insuranceNumber, bool @isSubjectTo20PercentInsurance, bool @isSubjectTo3PercentInsurance, bool @isSubjectTo4PercentInsurance, bool @isSubjectTo7PercentInsurance, bool @isTaxSubject, GetSalaryDecreeForEditResponseMaritalStatus @maritalStatus, string @positionInInsuranceList, System.Guid @salaryDecreeId, GetSalaryDecreeForEditResponseShiftType @shiftType, double? @supervisionAllowance, double? @transportationAllowanceNet)
         {
             this.SalaryDecreeId = @salaryDecreeId;
             this.EmployeeId = @employeeId;
@@ -4498,15 +4502,11 @@ namespace Web.Ui.Services
             this.SupervisionAllowance = @supervisionAllowance;
             this.ShiftType = @shiftType;
             this.ContractType = @contractType;
-            this.HousingAllowance = @housingAllowance;
-            this.FoodAllowance = @foodAllowance;
             this.TransportationAllowanceNet = @transportationAllowanceNet;
-            this.KaranehAmountNet = @karanehAmountNet;
             this.MaritalStatus = @maritalStatus;
             this.ChildrenCount = @childrenCount;
             this.IsTaxSubject = @isTaxSubject;
             this.InsuranceNumber = @insuranceNumber;
-            this.SocialSecurityContractRow = @socialSecurityContractRow;
             this.PositionInInsuranceList = @positionInInsuranceList;
             this.IsSubjectTo7PercentInsurance = @isSubjectTo7PercentInsurance;
             this.IsSubjectTo20PercentInsurance = @isSubjectTo20PercentInsurance;
@@ -4539,17 +4539,8 @@ namespace Web.Ui.Services
         [Newtonsoft.Json.JsonProperty("contractType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public GetSalaryDecreeForEditResponseContractType ContractType { get; init; }
 
-        [Newtonsoft.Json.JsonProperty("housingAllowance", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public double? HousingAllowance { get; init; }
-
-        [Newtonsoft.Json.JsonProperty("foodAllowance", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public double? FoodAllowance { get; init; }
-
         [Newtonsoft.Json.JsonProperty("transportationAllowanceNet", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double? TransportationAllowanceNet { get; init; }
-
-        [Newtonsoft.Json.JsonProperty("karanehAmountNet", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public double? KaranehAmountNet { get; init; }
 
         [Newtonsoft.Json.JsonProperty("maritalStatus", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public GetSalaryDecreeForEditResponseMaritalStatus MaritalStatus { get; init; }
@@ -4562,9 +4553,6 @@ namespace Web.Ui.Services
 
         [Newtonsoft.Json.JsonProperty("insuranceNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string InsuranceNumber { get; init; }
-
-        [Newtonsoft.Json.JsonProperty("socialSecurityContractRow", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string SocialSecurityContractRow { get; init; }
 
         [Newtonsoft.Json.JsonProperty("positionInInsuranceList", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string PositionInInsuranceList { get; init; }
@@ -5026,7 +5014,7 @@ namespace Web.Ui.Services
     public partial record GetUserWorkshopsResponse
     {
         [Newtonsoft.Json.JsonConstructor]
-        public GetUserWorkshopsResponse(string @address, int @departmentsCount, string @displayRegistrationDate, int @employeesCount, System.Guid @id, string @name, string @nationalId)
+        public GetUserWorkshopsResponse(string @address, int @departmentsCount, string @displayRegistrationDate, string @economicCode, int @employeesCount, System.Guid @id, string @name, string @nationalId, string @socialSecurityNumber)
         {
             this.Id = @id;
             this.Name = @name;
@@ -5035,6 +5023,8 @@ namespace Web.Ui.Services
             this.DisplayRegistrationDate = @displayRegistrationDate;
             this.EmployeesCount = @employeesCount;
             this.DepartmentsCount = @departmentsCount;
+            this.SocialSecurityNumber = @socialSecurityNumber;
+            this.EconomicCode = @economicCode;
         }
 
         [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -5057,6 +5047,12 @@ namespace Web.Ui.Services
 
         [Newtonsoft.Json.JsonProperty("departmentsCount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int DepartmentsCount { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("socialSecurityNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string SocialSecurityNumber { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("economicCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string EconomicCode { get; init; }
 
     }
 
@@ -5120,13 +5116,15 @@ namespace Web.Ui.Services
     public partial record GetWorkshopForEditResponse
     {
         [Newtonsoft.Json.JsonConstructor]
-        public GetWorkshopForEditResponse(string @address, string @name, string @nationalId, string @postalCode, string @registrationDate)
+        public GetWorkshopForEditResponse(string @address, string @economicCode, string @name, string @nationalId, string @postalCode, string @registrationDate, string @socialSecurityNumber)
         {
             this.Name = @name;
             this.Address = @address;
             this.RegistrationDate = @registrationDate;
             this.NationalId = @nationalId;
+            this.SocialSecurityNumber = @socialSecurityNumber;
             this.PostalCode = @postalCode;
+            this.EconomicCode = @economicCode;
         }
 
         [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -5141,8 +5139,14 @@ namespace Web.Ui.Services
         [Newtonsoft.Json.JsonProperty("nationalId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string NationalId { get; init; }
 
+        [Newtonsoft.Json.JsonProperty("socialSecurityNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string SocialSecurityNumber { get; init; }
+
         [Newtonsoft.Json.JsonProperty("postalCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string PostalCode { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("economicCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string EconomicCode { get; init; }
 
     }
 
@@ -5330,7 +5334,7 @@ namespace Web.Ui.Services
     public partial record SalaryDecreeRequest
     {
         [Newtonsoft.Json.JsonConstructor]
-        public SalaryDecreeRequest(double? @attractionAllowance, double @baseDailySalary, int @childrenCount, SalaryDecreeRequestContractType @contractType, string @effectiveFrom, double? @foodAllowance, double? @housingAllowance, EmployeeInsuranceRequest @insurance, bool @isTaxSubject, double? @karanehAmountNet, SalaryDecreeRequestMaritalStatus @maritalStatus, SalaryDecreeRequestShiftType @shiftType, double? @supervisionAllowance, double? @transportationAllowanceNet)
+        public SalaryDecreeRequest(double? @attractionAllowance, double @baseDailySalary, int @childrenCount, SalaryDecreeRequestContractType @contractType, string @effectiveFrom, EmployeeInsuranceRequest @insurance, bool @isTaxSubject, SalaryDecreeRequestMaritalStatus @maritalStatus, SalaryDecreeRequestShiftType @shiftType, double? @supervisionAllowance, double? @transportationAllowanceNet)
         {
             this.EffectiveFrom = @effectiveFrom;
             this.BaseDailySalary = @baseDailySalary;
@@ -5338,10 +5342,7 @@ namespace Web.Ui.Services
             this.SupervisionAllowance = @supervisionAllowance;
             this.ShiftType = @shiftType;
             this.ContractType = @contractType;
-            this.HousingAllowance = @housingAllowance;
-            this.FoodAllowance = @foodAllowance;
             this.TransportationAllowanceNet = @transportationAllowanceNet;
-            this.KaranehAmountNet = @karanehAmountNet;
             this.MaritalStatus = @maritalStatus;
             this.ChildrenCount = @childrenCount;
             this.IsTaxSubject = @isTaxSubject;
@@ -5366,17 +5367,8 @@ namespace Web.Ui.Services
         [Newtonsoft.Json.JsonProperty("contractType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public SalaryDecreeRequestContractType ContractType { get; init; }
 
-        [Newtonsoft.Json.JsonProperty("housingAllowance", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public double? HousingAllowance { get; init; }
-
-        [Newtonsoft.Json.JsonProperty("foodAllowance", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public double? FoodAllowance { get; init; }
-
         [Newtonsoft.Json.JsonProperty("transportationAllowanceNet", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double? TransportationAllowanceNet { get; init; }
-
-        [Newtonsoft.Json.JsonProperty("karanehAmountNet", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public double? KaranehAmountNet { get; init; }
 
         [Newtonsoft.Json.JsonProperty("maritalStatus", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public SalaryDecreeRequestMaritalStatus MaritalStatus { get; init; }
@@ -5504,13 +5496,15 @@ namespace Web.Ui.Services
     public partial record UpdateWorkshopRequest
     {
         [Newtonsoft.Json.JsonConstructor]
-        public UpdateWorkshopRequest(string @address, string @name, string @nationalId, string @postalCode, string @registrationDate)
+        public UpdateWorkshopRequest(string @address, string @economicCode, string @name, string @nationalId, string @postalCode, string @registrationDate, string @socialSecurityNumber)
         {
             this.Name = @name;
             this.Address = @address;
             this.RegistrationDate = @registrationDate;
             this.NationalId = @nationalId;
+            this.SocialSecurityNumber = @socialSecurityNumber;
             this.PostalCode = @postalCode;
+            this.EconomicCode = @economicCode;
         }
 
         [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -5525,8 +5519,14 @@ namespace Web.Ui.Services
         [Newtonsoft.Json.JsonProperty("nationalId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string NationalId { get; init; }
 
+        [Newtonsoft.Json.JsonProperty("socialSecurityNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string SocialSecurityNumber { get; init; }
+
         [Newtonsoft.Json.JsonProperty("postalCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string PostalCode { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("economicCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string EconomicCode { get; init; }
 
     }
 

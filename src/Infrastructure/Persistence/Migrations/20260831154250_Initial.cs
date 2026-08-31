@@ -195,7 +195,9 @@ namespace Infrastructure.Persistence.Migrations
                     Address = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
                     RegistrationDate = table.Column<DateOnly>(type: "date", nullable: false),
                     NationalId = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false),
-                    PostalCode = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true)
+                    PostalCode = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
+                    SocialSecurityNumber = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false),
+                    EconomicCode = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -295,15 +297,11 @@ namespace Infrastructure.Persistence.Migrations
                     SupervisionAllowance = table.Column<decimal>(type: "decimal(18,0)", precision: 18, scale: 0, nullable: true),
                     ShiftType = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
                     ContractType = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
-                    HousingAllowance = table.Column<decimal>(type: "decimal(18,0)", precision: 18, scale: 0, nullable: true),
-                    FoodAllowance = table.Column<decimal>(type: "decimal(18,0)", precision: 18, scale: 0, nullable: true),
                     TransportationAllowanceNet = table.Column<decimal>(type: "decimal(18,0)", precision: 18, scale: 0, nullable: true),
-                    KaranehAmountNet = table.Column<decimal>(type: "decimal(18,0)", precision: 18, scale: 0, nullable: true),
                     MaritalStatus = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
                     ChildrenCount = table.Column<int>(type: "int", nullable: false),
                     IsTaxSubject = table.Column<bool>(type: "bit", nullable: false),
                     InsuranceNumber = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false),
-                    SocialSecurityContractRow = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
                     PositionInInsuranceList = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     IsSubjectTo7PercentInsurance = table.Column<bool>(type: "bit", nullable: false),
                     IsSubjectTo20PercentInsurance = table.Column<bool>(type: "bit", nullable: false),
