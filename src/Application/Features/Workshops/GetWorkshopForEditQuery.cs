@@ -6,4 +6,6 @@ public record GetWorkshopForEditQueryResponse(
     string Address,
     DateOnly RegistrationDate,
     string NationalId,
-    string? PostalCode = null);
+    string? PostalCode = null,
+    string SocialSecurityNumber = null!,
+    string? EconomicCode = null);

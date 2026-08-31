@@ -31,7 +31,9 @@ public class UpdateWorkshopCommandHandler(IWorkShopRepository workShopRepository
             request.Address,
             request.RegistrationDate,
             request.NationalId,
-            request.PostalCode
+            request.SocialSecurityNumber,
+            request.PostalCode,
+            request.EconomicCode
         );
         if (!domainResult.IsSuccess)
             return Result<bool>.GeneralFailure(domainResult.ErrorMessage!);

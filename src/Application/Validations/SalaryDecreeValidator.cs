@@ -34,21 +34,9 @@ public class SalaryDecreeValidator : AbstractValidator<SalaryDecreeDto>
             .Must(x => x.HasValue && Enum.IsDefined(x.Value))
             .WithMessage("نوع قرارداد معتبر نیست.");
 
-        RuleFor(x => x.HousingAllowance)
-            .GreaterThan(0).WithMessage("حق مسکن در صورت وارد شدن باید بیشتر از صفر ریال باشد.")
-            .When(x => x.HousingAllowance.HasValue);
-
-        RuleFor(x => x.FoodAllowance)
-            .GreaterThan(0).WithMessage("حق بن خواربار در صورت وارد شدن باید بیشتر از صفر ریال باشد.")
-            .When(x => x.FoodAllowance.HasValue);
-
         RuleFor(x => x.TransportationAllowanceNet)
             .GreaterThan(0).WithMessage("حق ایاب و ذهاب خالص در صورت وارد شدن باید بیشتر از صفر ریال باشد.")
             .When(x => x.TransportationAllowanceNet.HasValue);
-
-        RuleFor(x => x.KaranehAmountNet)
-            .GreaterThan(0).WithMessage("مبلغ خالص کارانه در صورت وارد شدن باید بیشتر از صفر ریال باشد.")
-            .When(x => x.KaranehAmountNet.HasValue);
 
         RuleFor(x => x.MaritalStatus)
             .Cascade(CascadeMode.Stop)

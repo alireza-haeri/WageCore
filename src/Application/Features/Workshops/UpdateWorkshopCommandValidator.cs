@@ -32,9 +32,19 @@ public class UpdateWorkshopCommandValidator : AbstractValidator<UpdateWorkshopCo
             .Matches(RegexExtensions.ValidNationalIdRegex())
             .WithMessage("شناسه ملی کارگاه باید 10 رقم انگلیسی باشد.");
 
+        RuleFor(x => x.SocialSecurityNumber)
+            .NotEmpty().WithMessage("شماره بیمه تامین اجتماعی کارگاه اجباری است.")
+            .Matches(RegexExtensions.ValidSocialSecurityNumberRegex())
+            .WithMessage("شماره بیمه تامین اجتماعی کارگاه باید 1 تا 20 رقم انگلیسی باشد.");
+
         RuleFor(x => x.PostalCode)
             .Matches(RegexExtensions.ValidPostalCodeRegex())
             .WithMessage("کد پستی باید 10 رقم انگلیسی باشد.")
             .When(x => !string.IsNullOrWhiteSpace(x.PostalCode));
+
+        RuleFor(x => x.EconomicCode)
+            .Matches(RegexExtensions.ValidEconomicCodeRegex())
+            .WithMessage("شماره اقتصادی کارگاه باید 1 تا 20 رقم انگلیسی باشد.")
+            .When(x => !string.IsNullOrWhiteSpace(x.EconomicCode));
     }
 }

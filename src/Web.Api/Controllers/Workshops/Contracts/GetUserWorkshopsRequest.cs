@@ -12,4 +12,6 @@ public record GetUserWorkshopsResponse(
     string NationalId,
     string DisplayRegistrationDate,
     int EmployeesCount,
-    int DepartmentsCount);
+    int DepartmentsCount,
+    string SocialSecurityNumber,
+    string? EconomicCode = null);

@@ -3,7 +3,6 @@ namespace Core.Domain;
 public class Insurance
 {
     public string InsuranceNumber { get; private set; } = null!;
-    public string? SocialSecurityContractRow { get; private set; }
     public string PositionInInsuranceList { get; private set; } = null!;
     public bool IsSubjectTo7PercentInsurance { get; private set; }
     public bool IsSubjectTo20PercentInsurance { get; private set; }
@@ -20,7 +19,6 @@ public class Insurance
         return DomainResult<Insurance>.Success(new Insurance
         {
             InsuranceNumber = insurance!.InsuranceNumber,
-            SocialSecurityContractRow = NormalizeSocialSecurityContractRow(insurance.SocialSecurityContractRow),
             PositionInInsuranceList = insurance.PositionInInsuranceList,
             IsSubjectTo7PercentInsurance = insurance.IsSubjectTo7PercentInsurance,
             IsSubjectTo20PercentInsurance = insurance.IsSubjectTo20PercentInsurance,
@@ -37,7 +35,6 @@ public class Insurance
             return validationResult;
 
         InsuranceNumber = insurance!.InsuranceNumber;
-        SocialSecurityContractRow = NormalizeSocialSecurityContractRow(insurance.SocialSecurityContractRow);
         PositionInInsuranceList = insurance.PositionInInsuranceList;
         IsSubjectTo7PercentInsurance = insurance.IsSubjectTo7PercentInsurance;
         IsSubjectTo20PercentInsurance = insurance.IsSubjectTo20PercentInsurance;
@@ -59,10 +56,6 @@ public class Insurance
         if (insurance.InsuranceNumber.Length > 20)
             return DomainResult.Failure("شماره بیمه نمیتواند بیشتر از 20 حرف باشد.");
 
-        if (!string.IsNullOrWhiteSpace(insurance.SocialSecurityContractRow) &&
-            insurance.SocialSecurityContractRow.Length > 20)
-            return DomainResult.Failure("ردیف پیمان تامین اجتماعی نمیتواند بیشتر از 20 حرف باشد.");
-
         if (string.IsNullOrWhiteSpace(insurance.PositionInInsuranceList))
             return DomainResult.Failure("سمت در لیست بیمه نمیتواند خالی باشد.");
 
@@ -74,7 +67,4 @@ public class Insurance
 
         return DomainResult.Success();
     }
-
-    private static string? NormalizeSocialSecurityContractRow(string? socialSecurityContractRow) =>
-        string.IsNullOrWhiteSpace(socialSecurityContractRow) ? null : socialSecurityContractRow;
 }

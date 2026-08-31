@@ -12,12 +12,15 @@ public class Workshop
     public DateOnly RegistrationDate { get; private set; }
     public string NationalId { get; private set; } = null!;
     public string? PostalCode { get; private set; }
+    public string SocialSecurityNumber { get; private set; } = null!;
+    public string? EconomicCode { get; private set; }
 
     private readonly List<Department> _departments = [];
     public IReadOnlyCollection<Department> Departments => _departments.AsReadOnly();
 
     public static DomainResult<Workshop> Create(Guid workshopId, Guid userId, string name, string address,
-        DateOnly? registrationDate, string nationalId, string? postalCode = null)
+        DateOnly? registrationDate, string nationalId, string socialSecurityNumber,
+        string? postalCode = null, string? economicCode = null)
     {
         if (workshopId == Guid.Empty)
             return DomainResult<Workshop>.Failure("شناسه کارگاه نمیتواند خالی باشد.");
@@ -57,6 +60,20 @@ public class Workshop
         else
             postalCode = null;
 
+        if (string.IsNullOrWhiteSpace(socialSecurityNumber))
+            return DomainResult<Workshop>.Failure("شماره بیمه تامین اجتماعی کارگاه نمیتواند خالی باشد.");
+
+        if (!RegexExtensions.ValidSocialSecurityNumberRegex().IsMatch(socialSecurityNumber))
+            return DomainResult<Workshop>.Failure("شماره بیمه تامین اجتماعی کارگاه باید 1 تا 20 رقم انگلیسی باشد.");
+
+        if (!string.IsNullOrWhiteSpace(economicCode))
+        {
+            if (!RegexExtensions.ValidEconomicCodeRegex().IsMatch(economicCode))
+                return DomainResult<Workshop>.Failure("شماره اقتصادی کارگاه باید 1 تا 20 رقم انگلیسی باشد.");
+        }
+        else
+            economicCode = null;
+
         var workshop = new Workshop
         {
             Id = workshopId,
@@ -65,17 +82,22 @@ public class Workshop
             Address = address,
             RegistrationDate = registrationDate.Value,
             NationalId = nationalId,
-            PostalCode = postalCode
+            PostalCode = postalCode,
+            SocialSecurityNumber = socialSecurityNumber,
+            EconomicCode = economicCode
         };
         return DomainResult<Workshop>.Success(workshop);
     }
 
     public static DomainResult<Workshop> Create(Guid userId, string name, string address,
-        DateOnly? registrationDate, string nationalId, string? postalCode = null) =>
-        Create(Guid.NewGuid(), userId, name, address, registrationDate, nationalId, postalCode);
+        DateOnly? registrationDate, string nationalId, string socialSecurityNumber,
+        string? postalCode = null, string? economicCode = null) =>
+        Create(Guid.NewGuid(), userId, name, address, registrationDate, nationalId, socialSecurityNumber,
+            postalCode, economicCode);
 
     public DomainResult Update(string name, string address, DateOnly? registrationDate,
-        string nationalId, string? postalCode = null)
+        string nationalId, string socialSecurityNumber, string? postalCode = null,
+        string? economicCode = null)
     {
         if (string.IsNullOrWhiteSpace(name))
             return DomainResult.Failure("نام کارگاه نمیتواند خالی باشد.");
@@ -109,12 +131,28 @@ public class Workshop
         }
         else
             postalCode = null;
-        
+
+        if (string.IsNullOrWhiteSpace(socialSecurityNumber))
+            return DomainResult.Failure("شماره بیمه تامین اجتماعی کارگاه نمیتواند خالی باشد.");
+
+        if (!RegexExtensions.ValidSocialSecurityNumberRegex().IsMatch(socialSecurityNumber))
+            return DomainResult.Failure("شماره بیمه تامین اجتماعی کارگاه باید 1 تا 20 رقم انگلیسی باشد.");
+
+        if (!string.IsNullOrWhiteSpace(economicCode))
+        {
+            if (!RegexExtensions.ValidEconomicCodeRegex().IsMatch(economicCode))
+                return DomainResult.Failure("شماره اقتصادی کارگاه باید 1 تا 20 رقم انگلیسی باشد.");
+        }
+        else
+            economicCode = null;
+
         Name = name;
         Address = address;
         RegistrationDate = registrationDate.Value;
         NationalId = nationalId;
         PostalCode = postalCode;
+        SocialSecurityNumber = socialSecurityNumber;
+        EconomicCode = economicCode;
 
         return DomainResult.Success();
     }

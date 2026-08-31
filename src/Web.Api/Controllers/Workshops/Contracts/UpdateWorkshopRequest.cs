@@ -5,4 +5,6 @@ public record UpdateWorkshopRequest(
     string Address,
     PersianDate RegistrationDate,
     string NationalId,
-    string? PostalCode = null);
+    string SocialSecurityNumber,
+    string? PostalCode = null,
+    string? EconomicCode = null);

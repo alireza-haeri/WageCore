@@ -7,5 +7,7 @@ public record UpdateWorkshopCommand(
     string Address,
     DateOnly RegistrationDate,
     string NationalId,
-    string? PostalCode = null)
+    string SocialSecurityNumber,
+    string? PostalCode = null,
+    string? EconomicCode = null)
     : IRequest<Result<bool>>;

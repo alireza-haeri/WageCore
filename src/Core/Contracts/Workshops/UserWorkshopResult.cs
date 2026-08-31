@@ -7,4 +7,6 @@ public record UserWorkshopResult(
     string NationalId,
     DateOnly RegistrationDate,
     int EmployeesCount,
-    int DepartmentsCount);
+    int DepartmentsCount,
+    string SocialSecurityNumber = null!,
+    string? EconomicCode = null);

@@ -13,6 +13,8 @@ public class WorkshopQuery(IDbConnectionFactory dbConnectionFactory) : IWorkshop
                                  w.Name, 
                                  w.Address, 
                                  w.NationalId,
+                                 w.SocialSecurityNumber,
+                                 w.EconomicCode,
                                  w.RegistrationDate,
                                  (
                                      SELECT COUNT(*)
@@ -85,7 +87,9 @@ public class WorkshopQuery(IDbConnectionFactory dbConnectionFactory) : IWorkshop
                           Address AS Address,
                           RegistrationDate AS RegistrationDate,
                           NationalId AS NationalId,
-                          PostalCode AS PostalCode
+                          PostalCode AS PostalCode,
+                          SocialSecurityNumber AS SocialSecurityNumber,
+                          EconomicCode AS EconomicCode
                       FROM {Core.Domain.Workshop.TableName}
                       WHERE UserId = @UserId AND Id = @WorkshopId;
                       """;

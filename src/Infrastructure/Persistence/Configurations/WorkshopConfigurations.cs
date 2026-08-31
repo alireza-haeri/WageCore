@@ -36,6 +36,15 @@ public class WorkshopConfigurations : IEntityTypeConfiguration<Workshop>
             .IsUnicode(false)
             .HasMaxLength(20);
 
+        builder.Property(x => x.SocialSecurityNumber)
+            .IsRequired()
+            .IsUnicode(false)
+            .HasMaxLength(20);
+
+        builder.Property(x => x.EconomicCode)
+            .IsUnicode(false)
+            .HasMaxLength(20);
+
         builder
             .HasOne<ApplicationUser>()
             .WithMany()

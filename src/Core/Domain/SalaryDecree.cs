@@ -12,10 +12,7 @@ public class SalaryDecree
     public decimal? SupervisionAllowance { get; private set; }
     public ShiftType ShiftType { get; private set; }
     public ContractType ContractType { get; private set; }
-    public decimal? HousingAllowance { get; private set; }
-    public decimal? FoodAllowance { get; private set; }
     public decimal? TransportationAllowanceNet { get; private set; }
-    public decimal? KaranehAmountNet { get; private set; }
     public EmployeeMaritalStatus MaritalStatus { get; private set; }
     public int ChildrenCount { get; private set; }
     public bool IsTaxSubject { get; private set; }
@@ -54,10 +51,7 @@ public class SalaryDecree
             SupervisionAllowance = salaryProfile.SupervisionAllowance,
             ShiftType = salaryProfile.ShiftType!.Value,
             ContractType = salaryProfile.ContractType!.Value,
-            HousingAllowance = salaryProfile.HousingAllowance,
-            FoodAllowance = salaryProfile.FoodAllowance,
             TransportationAllowanceNet = salaryProfile.TransportationAllowanceNet,
-            KaranehAmountNet = salaryProfile.KaranehAmountNet,
             MaritalStatus = salaryProfile.MaritalStatus!.Value,
             ChildrenCount = salaryProfile.ChildrenCount!.Value,
             IsTaxSubject = salaryProfile.IsTaxSubject!.Value,
@@ -104,10 +98,7 @@ public class SalaryDecree
         SupervisionAllowance = salaryProfile.SupervisionAllowance;
         ShiftType = salaryProfile.ShiftType!.Value;
         ContractType = salaryProfile.ContractType!.Value;
-        HousingAllowance = salaryProfile.HousingAllowance;
-        FoodAllowance = salaryProfile.FoodAllowance;
         TransportationAllowanceNet = salaryProfile.TransportationAllowanceNet;
-        KaranehAmountNet = salaryProfile.KaranehAmountNet;
         MaritalStatus = salaryProfile.MaritalStatus!.Value;
         ChildrenCount = salaryProfile.ChildrenCount!.Value;
         IsTaxSubject = salaryProfile.IsTaxSubject!.Value;
@@ -187,19 +178,7 @@ public class SalaryDecree
         if (!Enum.IsDefined(typeof(ContractType), salaryProfile.ContractType.Value))
             return DomainResult.Failure("نوع قرارداد معتبر نیست.");
 
-        optionalAmountResult = ValidateOptionalAmount(salaryProfile.HousingAllowance, "حق مسکن");
-        if (!optionalAmountResult.IsSuccess)
-            return optionalAmountResult;
-
-        optionalAmountResult = ValidateOptionalAmount(salaryProfile.FoodAllowance, "حق بن خواربار");
-        if (!optionalAmountResult.IsSuccess)
-            return optionalAmountResult;
-
         optionalAmountResult = ValidateOptionalAmount(salaryProfile.TransportationAllowanceNet, "حق ایاب و ذهاب خالص");
-        if (!optionalAmountResult.IsSuccess)
-            return optionalAmountResult;
-
-        optionalAmountResult = ValidateOptionalAmount(salaryProfile.KaranehAmountNet, "مبلغ خالص کارانه");
         if (!optionalAmountResult.IsSuccess)
             return optionalAmountResult;
 

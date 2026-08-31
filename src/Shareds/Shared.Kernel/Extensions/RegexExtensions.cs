@@ -14,6 +14,12 @@ public static partial class RegexExtensions
     [GeneratedRegex(@"^[0-9]{10}$")]
     public static partial Regex ValidPostalCodeRegex();
 
+    [GeneratedRegex(@"^[0-9]{1,20}$")]
+    public static partial Regex ValidSocialSecurityNumberRegex();
+
+    [GeneratedRegex(@"^[0-9]{1,20}$")]
+    public static partial Regex ValidEconomicCodeRegex();
+
     [GeneratedRegex(@"^[a-zA-Z0-9]{1,20}$")]
     public static partial Regex ValidEmployeePersonalCodeRegex();
 

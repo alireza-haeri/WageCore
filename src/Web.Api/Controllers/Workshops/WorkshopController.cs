@@ -20,7 +20,9 @@ public class WorkshopController(IMediator mediator) : BaseController
             Address: request.Address,
             RegistrationDate: request.RegistrationDate.ToDateOnly(),
             NationalId: request.NationalId,
-            PostalCode: request.PostalCode
+            SocialSecurityNumber: request.SocialSecurityNumber,
+            PostalCode: request.PostalCode,
+            EconomicCode: request.EconomicCode
         ), cancellationToken);
 
         return Result(result);
@@ -40,7 +42,9 @@ public class WorkshopController(IMediator mediator) : BaseController
             Address: request.Address,
             RegistrationDate: request.RegistrationDate.ToDateOnly(),
             NationalId: request.NationalId,
-            PostalCode: request.PostalCode
+            SocialSecurityNumber: request.SocialSecurityNumber,
+            PostalCode: request.PostalCode,
+            EconomicCode: request.EconomicCode
         ), cancellationToken);
 
         return Result(result);
@@ -82,7 +86,9 @@ public class WorkshopController(IMediator mediator) : BaseController
                         w.NationalId,
                         PersianDate.FromDateOnly(w.RegistrationDate).ToDisplay(UserPersianDateFormat),
                         w.EmployeesCount,
-                        w.DepartmentsCount
+                        w.DepartmentsCount,
+                        w.SocialSecurityNumber,
+                        w.EconomicCode
                     )
                 )
             );
@@ -118,7 +124,9 @@ public class WorkshopController(IMediator mediator) : BaseController
             w.Address,
             PersianDate.ToRawValue(w.RegistrationDate),
             w.NationalId,
-            w.PostalCode
+            w.PostalCode,
+            w.SocialSecurityNumber,
+            w.EconomicCode
         ));
         
         return Result(response);

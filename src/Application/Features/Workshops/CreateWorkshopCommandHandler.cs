@@ -30,7 +30,9 @@ public class CreateWorkshopCommandHandler(IWorkShopRepository workShopRepository
             request.Address,
             request.RegistrationDate,
             request.NationalId,
-            request.PostalCode);
+            request.SocialSecurityNumber,
+            request.PostalCode,
+            request.EconomicCode);
 
         if (!workshop.IsSuccess)
             return Result<CreateWorkshopCommandResponse>.GeneralFailure(workshop.ErrorMessage!);

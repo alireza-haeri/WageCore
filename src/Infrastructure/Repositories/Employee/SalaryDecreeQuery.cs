@@ -172,15 +172,11 @@ public class SalaryDecreeQuery(IDbConnectionFactory dbConnectionFactory) : ISala
                           sp.SupervisionAllowance,
                           sp.ShiftType,
                           sp.ContractType,
-                          sp.HousingAllowance,
-                          sp.FoodAllowance,
                           sp.TransportationAllowanceNet,
-                          sp.KaranehAmountNet,
                           sp.MaritalStatus,
                           sp.ChildrenCount,
                           sp.IsTaxSubject,
                           sp.InsuranceNumber AS InsuranceNumber,
-                          sp.SocialSecurityContractRow AS SocialSecurityContractRow,
                           sp.PositionInInsuranceList AS PositionInInsuranceList,
                           sp.IsSubjectTo7PercentInsurance AS IsSubjectTo7PercentInsurance,
                           sp.IsSubjectTo20PercentInsurance AS IsSubjectTo20PercentInsurance,
@@ -213,15 +209,11 @@ public class SalaryDecreeQuery(IDbConnectionFactory dbConnectionFactory) : ISala
             salaryProfile.SupervisionAllowance,
             Enum.Parse<ShiftType>(salaryProfile.ShiftType),
             Enum.Parse<ContractType>(salaryProfile.ContractType),
-            salaryProfile.HousingAllowance,
-            salaryProfile.FoodAllowance,
             salaryProfile.TransportationAllowanceNet,
-            salaryProfile.KaranehAmountNet,
             Enum.Parse<EmployeeMaritalStatus>(salaryProfile.MaritalStatus),
             salaryProfile.ChildrenCount,
             salaryProfile.IsTaxSubject,
             salaryProfile.InsuranceNumber,
-            salaryProfile.SocialSecurityContractRow,
             salaryProfile.PositionInInsuranceList,
             salaryProfile.IsSubjectTo7PercentInsurance,
             salaryProfile.IsSubjectTo20PercentInsurance,
@@ -239,15 +231,11 @@ public class SalaryDecreeQuery(IDbConnectionFactory dbConnectionFactory) : ISala
         public decimal? SupervisionAllowance { get; set; }
         public string ShiftType { get; set; } = null!;
         public string ContractType { get; set; } = null!;
-        public decimal? HousingAllowance { get; set; }
-        public decimal? FoodAllowance { get; set; }
         public decimal? TransportationAllowanceNet { get; set; }
-        public decimal? KaranehAmountNet { get; set; }
         public string MaritalStatus { get; set; } = null!;
         public int ChildrenCount { get; set; }
         public bool IsTaxSubject { get; set; }
         public string InsuranceNumber { get; set; } = null!;
-        public string? SocialSecurityContractRow { get; set; }
         public string PositionInInsuranceList { get; set; } = null!;
         public bool IsSubjectTo7PercentInsurance { get; set; }
         public bool IsSubjectTo20PercentInsurance { get; set; }

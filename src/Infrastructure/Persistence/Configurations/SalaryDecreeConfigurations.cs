@@ -40,16 +40,7 @@ public class SalaryDecreeConfigurations : IEntityTypeConfiguration<SalaryDecree>
             .HasConversion<string>()
             .HasMaxLength(100);
 
-        builder.Property(x => x.HousingAllowance)
-            .HasPrecision(18, 0);
-
-        builder.Property(x => x.FoodAllowance)
-            .HasPrecision(18, 0);
-
         builder.Property(x => x.TransportationAllowanceNet)
-            .HasPrecision(18, 0);
-
-        builder.Property(x => x.KaranehAmountNet)
             .HasPrecision(18, 0);
 
         builder.Property(x => x.MaritalStatus)
@@ -69,11 +60,6 @@ public class SalaryDecreeConfigurations : IEntityTypeConfiguration<SalaryDecree>
             insuranceBuilder.Property(x => x.InsuranceNumber)
                 .HasColumnName(nameof(Insurance.InsuranceNumber))
                 .IsRequired()
-                .IsUnicode(false)
-                .HasMaxLength(20);
-
-            insuranceBuilder.Property(x => x.SocialSecurityContractRow)
-                .HasColumnName(nameof(Insurance.SocialSecurityContractRow))
                 .IsUnicode(false)
                 .HasMaxLength(20);
 
