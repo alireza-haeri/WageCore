@@ -31,7 +31,6 @@ public class UpdateSalaryDecreeTests
             .WithChildrenCount(2)
             .WithIsTaxSubject(false)
             .WithInsuranceNumber("INS-777")
-            .WithSocialSecurityContractRow("CTR-22")
             .WithPositionInInsuranceList("مدیر")
             .WithIsSubjectTo7PercentInsurance(false)
             .WithIsSubjectTo20PercentInsurance(true)
@@ -51,7 +50,6 @@ public class UpdateSalaryDecreeTests
             profile.ChildrenCount.Should().Be(2);
             profile.IsTaxSubject.Should().BeFalse();
             profile.Insurance.InsuranceNumber.Should().Be("INS-777");
-            profile.Insurance.SocialSecurityContractRow.Should().Be("CTR-22");
             profile.Insurance.PositionInInsuranceList.Should().Be("مدیر");
             profile.Insurance.IsSubjectTo7PercentInsurance.Should().BeFalse();
             profile.Insurance.IsSubjectTo20PercentInsurance.Should().BeTrue();
@@ -69,7 +67,6 @@ public class UpdateSalaryDecreeTests
         {
             Insurance = new EmployeeInsuranceDto(
                 "INS-777",
-                "CTR-22",
                 "",
                 false,
                 true,
@@ -181,20 +178,6 @@ public class UpdateSalaryDecreeTests
 
         result.ShouldBeFailure("حقوق پایه روزانه نمیتواند کمتر از حداقل حقوق ماهانه باشد.");
     }
-
-    [Theory]
-    [InlineData(0)]
-    [InlineData(-1)]
-    public void Update_WithHousingAllowanceLessThanOrEqualToZero_ShouldFail(decimal amount)
-    {
-        var profile = CreateValidSalaryProfile();
-        var dto = BuildValidDto() with { HousingAllowance = amount };
-
-        var result = profile.Update(ValidHireDate, null, 10_000_000m, dto);
-
-        result.ShouldBeFailure("حق مسکن");
-    }
-
     [Fact]
     public void Update_WhenFailed_ShouldNotChangeValues()
     {

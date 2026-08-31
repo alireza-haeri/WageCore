@@ -7,7 +7,6 @@ public class ControlInsuranceTests
     {
         var insuranceDto = new EmployeeInsuranceDto(
             "INS-888",
-            null,
             "کارشناس اداری",
             false,
             true,
@@ -21,7 +20,6 @@ public class ControlInsuranceTests
         using (new AssertionScope())
         {
             result.Response!.InsuranceNumber.Should().Be("INS-888");
-            result.Response.SocialSecurityContractRow.Should().BeNull();
             result.Response.PositionInInsuranceList.Should().Be("کارشناس اداری");
             result.Response.IsSubjectTo7PercentInsurance.Should().BeFalse();
             result.Response.IsSubjectTo20PercentInsurance.Should().BeTrue();
@@ -36,7 +34,6 @@ public class ControlInsuranceTests
     {
         var insurance = Insurance.Create(new EmployeeInsuranceDto(
             "INS-001",
-            "CTR-10",
             "اپراتور",
             true,
             true,
@@ -46,7 +43,6 @@ public class ControlInsuranceTests
 
         var result = insurance.Update(new EmployeeInsuranceDto(
             "INS-888",
-            null,
             "کارشناس اداری",
             false,
             true,
@@ -58,7 +54,6 @@ public class ControlInsuranceTests
         using (new AssertionScope())
         {
             insurance.InsuranceNumber.Should().Be("INS-888");
-            insurance.SocialSecurityContractRow.Should().BeNull();
             insurance.PositionInInsuranceList.Should().Be("کارشناس اداری");
             insurance.IsSubjectTo7PercentInsurance.Should().BeFalse();
             insurance.IsSubjectTo20PercentInsurance.Should().BeTrue();

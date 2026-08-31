@@ -121,11 +121,11 @@ public class WorkshopRepositoryTests(WageCoreDbContextFixture fixture)
             .ShouldBeSuccess();
         await repository.CreateAsync(workshop);
 
-        var updateResult = workshop.Update(
-            "کارگاه جدید",
+        var updateResult = workshop.Update("کارگاه جدید",
             "آدرس جدید، خیابان اصلی، پلاک ۲۰",
             DateOnly.FromDateTime(DateTime.Today.AddDays(-1)),
             "9876543210",
+            "1234567890",
             "0987654321");
 
         updateResult.ShouldBeSuccess();
@@ -157,11 +157,11 @@ public class WorkshopRepositoryTests(WageCoreDbContextFixture fixture)
             .ShouldBeSuccess();
         await repository.CreateAsync(workshop);
 
-        var updateResult = workshop.Update(
-            "کارگاه جدید",
+        var updateResult = workshop.Update("کارگاه جدید",
             "آدرس جدید، خیابان اصلی، پلاک ۲۰",
             DateOnly.FromDateTime(DateTime.Today.AddDays(-1)),
             "9876543210",
+            "1234567890",
             null);
 
         updateResult.ShouldBeSuccess();

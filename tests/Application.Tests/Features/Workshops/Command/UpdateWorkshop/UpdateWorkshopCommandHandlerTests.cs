@@ -40,13 +40,13 @@ public class UpdateWorkshopCommandHandlerTests
 
     private UpdateWorkshopCommand CreateValidCommand(string? name = null, string? nationalId = null)
     {
-        return new UpdateWorkshopCommand(
-            ValidUserId,
+        return new UpdateWorkshopCommand(ValidUserId,
             ValidWorkshopId,
             name ?? ValidName,
             ValidAddress,
             ValidRegistrationDate,
             nationalId ?? ValidNationalId,
+            "1234567890",
             ValidPostalCode);
     }
 

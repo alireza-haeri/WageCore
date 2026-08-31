@@ -66,7 +66,7 @@ public class SalaryDecreeRepositoryTests(WageCoreDbContextFixture fixture)
     }
 
     private SalaryDecree CreateSalaryProfile(Core.Domain.Employee employee,
-        DateOnly effectiveFrom, decimal baseDailySalary, decimal? housingAllowance = null)
+        DateOnly effectiveFrom, decimal baseDailySalary)
     {
         return _salaryProfileBuilder
             .WithId(Guid.NewGuid())
@@ -75,7 +75,6 @@ public class SalaryDecreeRepositoryTests(WageCoreDbContextFixture fixture)
             .WithMinimumMonthlySalary(10_000_000m)
             .WithEffectiveFrom(effectiveFrom)
             .WithBaseDailySalary(baseDailySalary)
-            .WithHousingAllowance(housingAllowance)
             .CreateResult()
             .ShouldBeSuccess();
     }
@@ -91,7 +90,7 @@ public class SalaryDecreeRepositoryTests(WageCoreDbContextFixture fixture)
         var employee = await CreateEmployeeAsync(scope, workshop.Id, departmentId);
 
         var effectiveFrom = employee.HireDate.AddDays(1);
-        var salaryProfile = CreateSalaryProfile(employee, effectiveFrom, 20_000_000m, 1_400_000m);
+        var salaryProfile = CreateSalaryProfile(employee, effectiveFrom, 20_000_000m);
 
         var result = await repository.CreateAsync(salaryProfile);
 
@@ -104,7 +103,6 @@ public class SalaryDecreeRepositoryTests(WageCoreDbContextFixture fixture)
         stored.BaseDailySalary.Should().Be(20_000_000m);
         stored.ShiftType.Should().Be(ShiftType.None);
         stored.ContractType.Should().Be(ContractType.Permanent);
-        stored.HousingAllowance.Should().Be(1_400_000m);
         stored.MaritalStatus.Should().Be(EmployeeMaritalStatus.Single);
         stored.ChildrenCount.Should().Be(0);
         stored.IsTaxSubject.Should().BeTrue();
@@ -171,7 +169,6 @@ public class SalaryDecreeRepositoryTests(WageCoreDbContextFixture fixture)
         var updateDto = new SalaryDecreeBuilder()
             .WithEffectiveFrom(newEffectiveFrom)
             .WithBaseDailySalary(newBaseDailySalary)
-            .WithHousingAllowance(null)
             .BuildDto();
 
         stored!.Update(employee.HireDate, null, 10_000_000m, updateDto).ShouldBeSuccess();

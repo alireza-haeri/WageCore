@@ -19,6 +19,8 @@ public class CreateWorkshopTests
             response.RegistrationDate.Should().Be(DateOnly.FromDateTime(DateTime.Now));
             response.NationalId.Should().Be("1234567890");
             response.PostalCode.Should().Be("1234567890");
+            response.SocialSecurityNumber.Should().Be("1234567890");
+            response.EconomicCode.Should().BeNull();
         }
     }
 
@@ -32,6 +34,8 @@ public class CreateWorkshopTests
         var registrationDate = new DateOnly(1404, 1, 1);
         var nationalId = "9876543210";
         var postalCode = "0987654321";
+        var socialSecurityNumber = "12345678901";
+        var economicCode = "987654321";
 
         var result = _builder
             .WithId(id)
@@ -41,6 +45,8 @@ public class CreateWorkshopTests
             .WithRegistrationDate(registrationDate)
             .WithNationalId(nationalId)
             .WithPostalCode(postalCode)
+            .WithSocialSecurityNumber(socialSecurityNumber)
+            .WithEconomicCode(economicCode)
             .CreateResult();
 
         var response = result.ShouldBeSuccess();
@@ -53,6 +59,8 @@ public class CreateWorkshopTests
             response.RegistrationDate.Should().Be(registrationDate);
             response.NationalId.Should().Be(nationalId);
             response.PostalCode.Should().Be(postalCode);
+            response.SocialSecurityNumber.Should().Be(socialSecurityNumber);
+            response.EconomicCode.Should().Be(economicCode);
         }
     }
 

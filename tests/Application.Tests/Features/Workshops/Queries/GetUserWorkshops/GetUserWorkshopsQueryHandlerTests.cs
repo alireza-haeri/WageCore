@@ -26,8 +26,8 @@ public class GetUserWorkshopsQueryHandlerTests
 
         var results = new List<UserWorkshopResult>
         {
-            new(Guid.NewGuid(), "کارگاه اول", "آدرس ۱", "11111111111", DateOnly.FromDateTime(DateTime.Now), 5, 3),
-            new(Guid.NewGuid(), "کارگاه دوم", "آدرس ۲", "22222222222", DateOnly.FromDateTime(DateTime.Now), 10, 4)
+            new(Guid.NewGuid(), "کارگاه اول", "آدرس ۱", "11111111111", DateOnly.FromDateTime(DateTime.Now), 5, 3, "1112223334"),
+            new(Guid.NewGuid(), "کارگاه دوم", "آدرس ۲", "22222222222", DateOnly.FromDateTime(DateTime.Now), 10, 4, "5556667778")
         };
         var pagedResult = new PagedResult<UserWorkshopResult>(results, 2, 1, 10);
 
@@ -56,6 +56,8 @@ public class GetUserWorkshopsQueryHandlerTests
         firstItem.NationalId.Should().Be("11111111111");
         firstItem.EmployeesCount.Should().Be(5);
         firstItem.DepartmentsCount.Should().Be(3);
+        firstItem.SocialSecurityNumber.Should().Be("1112223334");
+        firstItem.EconomicCode.Should().BeNull();
 
         var secondItem = response.Items[1];
         secondItem.Id.Should().Be(results[1].WorkshopId);
@@ -64,6 +66,8 @@ public class GetUserWorkshopsQueryHandlerTests
         secondItem.NationalId.Should().Be("22222222222");
         secondItem.EmployeesCount.Should().Be(10);
         secondItem.DepartmentsCount.Should().Be(4);
+        secondItem.SocialSecurityNumber.Should().Be("5556667778");
+        secondItem.EconomicCode.Should().BeNull();
     }
 
     [Fact]

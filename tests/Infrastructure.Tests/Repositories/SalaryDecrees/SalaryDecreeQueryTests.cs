@@ -376,15 +376,11 @@ public class SalaryDecreeQueryTests(WageCoreDbContextFixture fixture)
             .WithSupervisionAllowance(2_000_000m)
             .WithShiftType(ShiftType.MorningEvening)
             .WithContractType(ContractType.FixedTerm)
-            .WithHousingAllowance(1_400_000m)
-            .WithFoodAllowance(2_200_000m)
             .WithTransportationAllowanceNet(500_000m)
-            .WithKaranehAmountNet(300_000m)
             .WithMaritalStatus(EmployeeMaritalStatus.Married)
             .WithChildrenCount(2)
             .WithIsTaxSubject(true)
             .WithInsuranceNumber("INS-777")
-            .WithSocialSecurityContractRow("CTR-22")
             .WithPositionInInsuranceList("مدیر")
             .WithIsSubjectTo7PercentInsurance(false)
             .WithIsSubjectTo20PercentInsurance(true)
@@ -406,15 +402,11 @@ public class SalaryDecreeQueryTests(WageCoreDbContextFixture fixture)
         result.SupervisionAllowance.Should().Be(2_000_000m);
         result.ShiftType.Should().Be(ShiftType.MorningEvening);
         result.ContractType.Should().Be(ContractType.FixedTerm);
-        result.HousingAllowance.Should().Be(1_400_000m);
-        result.FoodAllowance.Should().Be(2_200_000m);
         result.TransportationAllowanceNet.Should().Be(500_000m);
-        result.KaranehAmountNet.Should().Be(300_000m);
         result.MaritalStatus.Should().Be(EmployeeMaritalStatus.Married);
         result.ChildrenCount.Should().Be(2);
         result.IsTaxSubject.Should().BeTrue();
         result.InsuranceNumber.Should().Be("INS-777");
-        result.SocialSecurityContractRow.Should().Be("CTR-22");
         result.PositionInInsuranceList.Should().Be("مدیر");
         result.IsSubjectTo7PercentInsurance.Should().BeFalse();
         result.IsSubjectTo20PercentInsurance.Should().BeTrue();
@@ -445,10 +437,7 @@ public class SalaryDecreeQueryTests(WageCoreDbContextFixture fixture)
         result.SupervisionAllowance.Should().BeNull();
         result.ShiftType.Should().Be(ShiftType.None);
         result.ContractType.Should().Be(ContractType.Permanent);
-        result.HousingAllowance.Should().BeNull();
-        result.FoodAllowance.Should().BeNull();
         result.TransportationAllowanceNet.Should().BeNull();
-        result.KaranehAmountNet.Should().BeNull();
         result.MaritalStatus.Should().Be(EmployeeMaritalStatus.Single);
         result.ChildrenCount.Should().Be(0);
         result.IsTaxSubject.Should().BeTrue();

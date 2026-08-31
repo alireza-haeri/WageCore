@@ -15,13 +15,13 @@ public class UpdateWorkshopCommandValidatorTests
     [Fact]
     public void Validate_WithValidCommand_ShouldNotHaveAnyErrors()
     {
-        var command = new UpdateWorkshopCommand(
-            ValidUserId,
+        var command = new UpdateWorkshopCommand(ValidUserId,
             ValidWorkshopId,
             ValidName,
             ValidAddress,
             ValidRegistrationDate,
             ValidNationalId,
+            "1234567890",
             ValidPostalCode);
 
         var result = _validator.TestValidate(command);
@@ -32,13 +32,13 @@ public class UpdateWorkshopCommandValidatorTests
     [Fact]
     public void Validate_WithValidCommandAndNullPostalCode_ShouldNotHaveAnyErrors()
     {
-        var command = new UpdateWorkshopCommand(
-            ValidUserId,
+        var command = new UpdateWorkshopCommand(ValidUserId,
             ValidWorkshopId,
             ValidName,
             ValidAddress,
             ValidRegistrationDate,
             ValidNationalId,
+            "1234567890",
             null);
 
         var result = _validator.TestValidate(command);
@@ -49,13 +49,13 @@ public class UpdateWorkshopCommandValidatorTests
     [Fact]
     public void Validate_WithValidCommandAndEmptyPostalCode_ShouldNotHaveAnyErrors()
     {
-        var command = new UpdateWorkshopCommand(
-            ValidUserId,
+        var command = new UpdateWorkshopCommand(ValidUserId,
             ValidWorkshopId,
             ValidName,
             ValidAddress,
             ValidRegistrationDate,
             ValidNationalId,
+            "1234567890",
             "");
 
         var result = _validator.TestValidate(command);
@@ -66,13 +66,13 @@ public class UpdateWorkshopCommandValidatorTests
     [Fact]
     public void Validate_WithNameExactly2Characters_ShouldNotHaveErrors()
     {
-        var command = new UpdateWorkshopCommand(
-            ValidUserId,
+        var command = new UpdateWorkshopCommand(ValidUserId,
             ValidWorkshopId,
             "اب",
             ValidAddress,
             ValidRegistrationDate,
             ValidNationalId,
+            "1234567890",
             ValidPostalCode);
 
         var result = _validator.TestValidate(command);
@@ -84,13 +84,13 @@ public class UpdateWorkshopCommandValidatorTests
     public void Validate_WithNameExactly200Characters_ShouldNotHaveErrors()
     {
         var name = new string('a', 200);
-        var command = new UpdateWorkshopCommand(
-            ValidUserId,
+        var command = new UpdateWorkshopCommand(ValidUserId,
             ValidWorkshopId,
             name,
             ValidAddress,
             ValidRegistrationDate,
             ValidNationalId,
+            "1234567890",
             ValidPostalCode);
 
         var result = _validator.TestValidate(command);
@@ -102,13 +102,13 @@ public class UpdateWorkshopCommandValidatorTests
     public void Validate_WithAddressExactly10Characters_ShouldNotHaveErrors()
     {
         var address = new string('a', 10);
-        var command = new UpdateWorkshopCommand(
-            ValidUserId,
+        var command = new UpdateWorkshopCommand(ValidUserId,
             ValidWorkshopId,
             ValidName,
             address,
             ValidRegistrationDate,
             ValidNationalId,
+            "1234567890",
             ValidPostalCode);
 
         var result = _validator.TestValidate(command);
@@ -120,13 +120,13 @@ public class UpdateWorkshopCommandValidatorTests
     public void Validate_WithAddressExactly1000Characters_ShouldNotHaveErrors()
     {
         var address = new string('a', 1000);
-        var command = new UpdateWorkshopCommand(
-            ValidUserId,
+        var command = new UpdateWorkshopCommand(ValidUserId,
             ValidWorkshopId,
             ValidName,
             address,
             ValidRegistrationDate,
             ValidNationalId,
+            "1234567890",
             ValidPostalCode);
 
         var result = _validator.TestValidate(command);
@@ -138,13 +138,13 @@ public class UpdateWorkshopCommandValidatorTests
     public void Validate_WithRegistrationDateToday_ShouldNotHaveErrors()
     {
         var today = DateOnly.FromDateTime(DateTime.Now);
-        var command = new UpdateWorkshopCommand(
-            ValidUserId,
+        var command = new UpdateWorkshopCommand(ValidUserId,
             ValidWorkshopId,
             ValidName,
             ValidAddress,
             today,
             ValidNationalId,
+            "1234567890",
             ValidPostalCode);
 
         var result = _validator.TestValidate(command);
@@ -156,13 +156,13 @@ public class UpdateWorkshopCommandValidatorTests
     public void Validate_WithRegistrationDatePast_ShouldNotHaveErrors()
     {
         var pastDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-1));
-        var command = new UpdateWorkshopCommand(
-            ValidUserId,
+        var command = new UpdateWorkshopCommand(ValidUserId,
             ValidWorkshopId,
             ValidName,
             ValidAddress,
             pastDate,
             ValidNationalId,
+            "1234567890",
             ValidPostalCode);
 
         var result = _validator.TestValidate(command);
@@ -173,13 +173,13 @@ public class UpdateWorkshopCommandValidatorTests
     [Fact]
     public void Validate_WithEmptyUserId_ShouldHaveValidationError()
     {
-        var command = new UpdateWorkshopCommand(
-            Guid.Empty,
+        var command = new UpdateWorkshopCommand(Guid.Empty,
             ValidWorkshopId,
             ValidName,
             ValidAddress,
             ValidRegistrationDate,
             ValidNationalId,
+            "1234567890",
             ValidPostalCode);
 
         var result = _validator.TestValidate(command);
@@ -190,13 +190,13 @@ public class UpdateWorkshopCommandValidatorTests
     [Fact]
     public void Validate_WithEmptyWorkshopId_ShouldHaveValidationError()
     {
-        var command = new UpdateWorkshopCommand(
-            ValidUserId,
+        var command = new UpdateWorkshopCommand(ValidUserId,
             Guid.Empty,
             ValidName,
             ValidAddress,
             ValidRegistrationDate,
             ValidNationalId,
+            "1234567890",
             ValidPostalCode);
 
         var result = _validator.TestValidate(command);
@@ -208,13 +208,13 @@ public class UpdateWorkshopCommandValidatorTests
     [MemberData(nameof(StringTestData.NullOrWhiteSpace), MemberType = typeof(StringTestData))]
     public void Validate_WithNullOrWhiteSpaceName_ShouldHaveValidationError(string? name)
     {
-        var command = new UpdateWorkshopCommand(
-            ValidUserId,
+        var command = new UpdateWorkshopCommand(ValidUserId,
             ValidWorkshopId,
             name!,
             ValidAddress,
             ValidRegistrationDate,
             ValidNationalId,
+            "1234567890",
             ValidPostalCode);
 
         var result = _validator.TestValidate(command);
@@ -226,13 +226,13 @@ public class UpdateWorkshopCommandValidatorTests
     [InlineData("ا")]
     public void Validate_WithNameLessThan2Characters_ShouldHaveValidationError(string name)
     {
-        var command = new UpdateWorkshopCommand(
-            ValidUserId,
+        var command = new UpdateWorkshopCommand(ValidUserId,
             ValidWorkshopId,
             name,
             ValidAddress,
             ValidRegistrationDate,
             ValidNationalId,
+            "1234567890",
             ValidPostalCode);
 
         var result = _validator.TestValidate(command);
@@ -244,13 +244,13 @@ public class UpdateWorkshopCommandValidatorTests
     public void Validate_WithNameMoreThan200Characters_ShouldHaveValidationError()
     {
         var name = new string('a', 201);
-        var command = new UpdateWorkshopCommand(
-            ValidUserId,
+        var command = new UpdateWorkshopCommand(ValidUserId,
             ValidWorkshopId,
             name,
             ValidAddress,
             ValidRegistrationDate,
             ValidNationalId,
+            "1234567890",
             ValidPostalCode);
 
         var result = _validator.TestValidate(command);
@@ -262,13 +262,13 @@ public class UpdateWorkshopCommandValidatorTests
     [MemberData(nameof(StringTestData.NullOrWhiteSpace), MemberType = typeof(StringTestData))]
     public void Validate_WithNullOrWhiteSpaceAddress_ShouldHaveValidationError(string? address)
     {
-        var command = new UpdateWorkshopCommand(
-            ValidUserId,
+        var command = new UpdateWorkshopCommand(ValidUserId,
             ValidWorkshopId,
             ValidName,
             address!,
             ValidRegistrationDate,
             ValidNationalId,
+            "1234567890",
             ValidPostalCode);
 
         var result = _validator.TestValidate(command);
@@ -280,13 +280,13 @@ public class UpdateWorkshopCommandValidatorTests
     [InlineData("123456789")]
     public void Validate_WithAddressLessThan10Characters_ShouldHaveValidationError(string address)
     {
-        var command = new UpdateWorkshopCommand(
-            ValidUserId,
+        var command = new UpdateWorkshopCommand(ValidUserId,
             ValidWorkshopId,
             ValidName,
             address,
             ValidRegistrationDate,
             ValidNationalId,
+            "1234567890",
             ValidPostalCode);
 
         var result = _validator.TestValidate(command);
@@ -298,13 +298,13 @@ public class UpdateWorkshopCommandValidatorTests
     public void Validate_WithAddressMoreThan1000Characters_ShouldHaveValidationError()
     {
         var address = new string('a', 1001);
-        var command = new UpdateWorkshopCommand(
-            ValidUserId,
+        var command = new UpdateWorkshopCommand(ValidUserId,
             ValidWorkshopId,
             ValidName,
             address,
             ValidRegistrationDate,
             ValidNationalId,
+            "1234567890",
             ValidPostalCode);
 
         var result = _validator.TestValidate(command);
@@ -316,13 +316,13 @@ public class UpdateWorkshopCommandValidatorTests
     public void Validate_WithRegistrationDateInFuture_ShouldHaveValidationError()
     {
         var futureDate = DateOnly.FromDateTime(DateTime.Now.AddDays(1));
-        var command = new UpdateWorkshopCommand(
-            ValidUserId,
+        var command = new UpdateWorkshopCommand(ValidUserId,
             ValidWorkshopId,
             ValidName,
             ValidAddress,
             futureDate,
             ValidNationalId,
+            "1234567890",
             ValidPostalCode);
 
         var result = _validator.TestValidate(command);
@@ -334,13 +334,13 @@ public class UpdateWorkshopCommandValidatorTests
     [MemberData(nameof(StringTestData.NullOrWhiteSpace), MemberType = typeof(StringTestData))]
     public void Validate_WithNullOrWhiteSpaceNationalId_ShouldHaveValidationError(string? nationalId)
     {
-        var command = new UpdateWorkshopCommand(
-            ValidUserId,
+        var command = new UpdateWorkshopCommand(ValidUserId,
             ValidWorkshopId,
             ValidName,
             ValidAddress,
             ValidRegistrationDate,
             nationalId!,
+            "1234567890",
             ValidPostalCode);
 
         var result = _validator.TestValidate(command);
@@ -355,13 +355,13 @@ public class UpdateWorkshopCommandValidatorTests
     [InlineData("۱۲۳۴۵۶۷۸۹۰")]
     public void Validate_WithInvalidNationalId_ShouldHaveValidationError(string nationalId)
     {
-        var command = new UpdateWorkshopCommand(
-            ValidUserId,
+        var command = new UpdateWorkshopCommand(ValidUserId,
             ValidWorkshopId,
             ValidName,
             ValidAddress,
             ValidRegistrationDate,
             nationalId,
+            "1234567890",
             ValidPostalCode);
 
         var result = _validator.TestValidate(command);
@@ -376,13 +376,13 @@ public class UpdateWorkshopCommandValidatorTests
     [InlineData("۱۲۳۴۵۶۷۸۹۰")]
     public void Validate_WithInvalidPostalCode_ShouldHaveValidationError(string postalCode)
     {
-        var command = new UpdateWorkshopCommand(
-            ValidUserId,
+        var command = new UpdateWorkshopCommand(ValidUserId,
             ValidWorkshopId,
             ValidName,
             ValidAddress,
             ValidRegistrationDate,
             ValidNationalId,
+            "1234567890",
             postalCode);
 
         var result = _validator.TestValidate(command);

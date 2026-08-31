@@ -19,10 +19,7 @@ public class CreateSalaryDecreeTests
             response.SupervisionAllowance.Should().BeNull();
             response.ShiftType.Should().Be(ShiftType.None);
             response.ContractType.Should().Be(ContractType.Permanent);
-            response.HousingAllowance.Should().BeNull();
-            response.FoodAllowance.Should().BeNull();
             response.TransportationAllowanceNet.Should().BeNull();
-            response.KaranehAmountNet.Should().BeNull();
             response.MaritalStatus.Should().Be(EmployeeMaritalStatus.Single);
             response.ChildrenCount.Should().Be(0);
             response.IsTaxSubject.Should().BeTrue();
@@ -53,15 +50,11 @@ public class CreateSalaryDecreeTests
             .WithSupervisionAllowance(2_000_000m)
             .WithShiftType(ShiftType.MorningEveningNight)
             .WithContractType(ContractType.FixedTerm)
-            .WithHousingAllowance(3_000_000m)
-            .WithFoodAllowance(4_000_000m)
             .WithTransportationAllowanceNet(800_000m)
-            .WithKaranehAmountNet(1_200_000m)
             .WithMaritalStatus(EmployeeMaritalStatus.Married)
             .WithChildrenCount(2)
             .WithIsTaxSubject(false)
             .WithInsuranceNumber("INS-777")
-            .WithSocialSecurityContractRow("CTR-22")
             .WithPositionInInsuranceList("مدیر")
             .WithIsSubjectTo7PercentInsurance(false)
             .WithIsSubjectTo20PercentInsurance(true)
@@ -81,15 +74,11 @@ public class CreateSalaryDecreeTests
             response.SupervisionAllowance.Should().Be(2_000_000m);
             response.ShiftType.Should().Be(ShiftType.MorningEveningNight);
             response.ContractType.Should().Be(ContractType.FixedTerm);
-            response.HousingAllowance.Should().Be(3_000_000m);
-            response.FoodAllowance.Should().Be(4_000_000m);
             response.TransportationAllowanceNet.Should().Be(800_000m);
-            response.KaranehAmountNet.Should().Be(1_200_000m);
             response.MaritalStatus.Should().Be(EmployeeMaritalStatus.Married);
             response.ChildrenCount.Should().Be(2);
             response.IsTaxSubject.Should().BeFalse();
             response.Insurance.InsuranceNumber.Should().Be("INS-777");
-            response.Insurance.SocialSecurityContractRow.Should().Be("CTR-22");
             response.Insurance.PositionInInsuranceList.Should().Be("مدیر");
             response.Insurance.IsSubjectTo7PercentInsurance.Should().BeFalse();
             response.Insurance.IsSubjectTo20PercentInsurance.Should().BeTrue();
@@ -289,43 +278,12 @@ public class CreateSalaryDecreeTests
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
-    public void Create_WithHousingAllowanceLessThanOrEqualToZero_ShouldFail(decimal amount)
-    {
-        var result = _builder.WithHousingAllowance(amount).CreateResult();
-
-        result.ShouldBeFailure("حق مسکن");
-    }
-
-    [Theory]
-    [InlineData(0)]
-    [InlineData(-1)]
-    public void Create_WithFoodAllowanceLessThanOrEqualToZero_ShouldFail(decimal amount)
-    {
-        var result = _builder.WithFoodAllowance(amount).CreateResult();
-
-        result.ShouldBeFailure("حق بن خواربار");
-    }
-
-    [Theory]
-    [InlineData(0)]
-    [InlineData(-1)]
     public void Create_WithTransportationAllowanceNetLessThanOrEqualToZero_ShouldFail(decimal amount)
     {
         var result = _builder.WithTransportationAllowanceNet(amount).CreateResult();
 
         result.ShouldBeFailure("حق ایاب و ذهاب خالص");
     }
-
-    [Theory]
-    [InlineData(0)]
-    [InlineData(-1)]
-    public void Create_WithKaranehAmountNetLessThanOrEqualToZero_ShouldFail(decimal amount)
-    {
-        var result = _builder.WithKaranehAmountNet(amount).CreateResult();
-
-        result.ShouldBeFailure("مبلغ خالص کارانه");
-    }
-
     [Fact]
     public void Create_WithNullMaritalStatus_ShouldFail()
     {

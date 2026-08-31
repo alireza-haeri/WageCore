@@ -28,15 +28,11 @@ public class GetSalaryDecreeForEditQueryHandlerTests
             2_000_000m,
             ShiftType.MorningEveningNight,
             ContractType.FixedTerm,
-            3_000_000m,
-            4_000_000m,
             800_000m,
-            1_200_000m,
             EmployeeMaritalStatus.Married,
             2,
             true,
             "INS-001",
-            "CTR-10",
             "اپراتور",
             true,
             true,
@@ -61,15 +57,11 @@ public class GetSalaryDecreeForEditQueryHandlerTests
             response.SupervisionAllowance.Should().Be(2_000_000m);
             response.ShiftType.Should().Be(ShiftType.MorningEveningNight);
             response.ContractType.Should().Be(ContractType.FixedTerm);
-            response.HousingAllowance.Should().Be(3_000_000m);
-            response.FoodAllowance.Should().Be(4_000_000m);
             response.TransportationAllowanceNet.Should().Be(800_000m);
-            response.KaranehAmountNet.Should().Be(1_200_000m);
             response.MaritalStatus.Should().Be(EmployeeMaritalStatus.Married);
             response.ChildrenCount.Should().Be(2);
             response.IsTaxSubject.Should().BeTrue();
             response.InsuranceNumber.Should().Be("INS-001");
-            response.SocialSecurityContractRow.Should().Be("CTR-10");
             response.PositionInInsuranceList.Should().Be("اپراتور");
             response.IsSubjectTo7PercentInsurance.Should().BeTrue();
             response.IsSubjectTo20PercentInsurance.Should().BeTrue();

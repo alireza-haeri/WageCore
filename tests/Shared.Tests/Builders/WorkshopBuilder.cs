@@ -10,6 +10,8 @@ public class WorkshopBuilder
     private DateOnly? _registrationDate = DateOnly.FromDateTime(DateTime.Now);
     private string _nationalId = "1234567890";
     private string? _postalCode = "1234567890";
+    private string _socialSecurityNumber = "1234567890";
+    private string? _economicCode;
 
     public WorkshopBuilder WithId(Guid id)
     {
@@ -53,8 +55,29 @@ public class WorkshopBuilder
         return this;
     }
 
+    public WorkshopBuilder WithSocialSecurityNumber(string socialSecurityNumber)
+    {
+        _socialSecurityNumber = socialSecurityNumber;
+        return this;
+    }
+
+    public WorkshopBuilder WithEconomicCode(string? economicCode)
+    {
+        _economicCode = economicCode;
+        return this;
+    }
+
     public DomainResult<Workshop> CreateResult()
     {
-        return Workshop.Create(_id, _userId, _name, _address, _registrationDate, _nationalId, _postalCode);
+        return Workshop.Create(
+            _id,
+            _userId,
+            _name,
+            _address,
+            _registrationDate,
+            _nationalId,
+            _socialSecurityNumber,
+            _postalCode,
+            _economicCode);
     }
 }

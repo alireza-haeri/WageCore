@@ -77,30 +77,6 @@ public class SalaryDecreeValidatorTests
         result.ShouldHaveValidationErrorFor(x => x.ShiftType);
     }
 
-    [Theory]
-    [InlineData(0)]
-    [InlineData(-1)]
-    public void Validate_WithHousingAllowanceLessThanOrEqualToZero_ShouldHaveValidationError(decimal amount)
-    {
-        var dto = _builder.BuildDto() with { HousingAllowance = amount };
-
-        var result = _validator.TestValidate(dto);
-
-        result.ShouldHaveValidationErrorFor(x => x.HousingAllowance);
-    }
-
-    [Theory]
-    [InlineData(0)]
-    [InlineData(-1)]
-    public void Validate_WithKaranehAmountNetLessThanOrEqualToZero_ShouldHaveValidationError(decimal amount)
-    {
-        var dto = _builder.BuildDto() with { KaranehAmountNet = amount };
-
-        var result = _validator.TestValidate(dto);
-
-        result.ShouldHaveValidationErrorFor(x => x.KaranehAmountNet);
-    }
-
     [Fact]
     public void Validate_WithNullMaritalStatus_ShouldHaveValidationError()
     {

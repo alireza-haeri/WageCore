@@ -13,15 +13,11 @@ public class SalaryDecreeBuilder
     private decimal? _supervisionAllowance;
     private ShiftType? _shiftType = ShiftType.None;
     private ContractType? _contractType = ContractType.Permanent;
-    private decimal? _housingAllowance;
-    private decimal? _foodAllowance;
     private decimal? _transportationAllowanceNet;
-    private decimal? _karanehAmountNet;
     private EmployeeMaritalStatus? _maritalStatus = EmployeeMaritalStatus.Single;
     private int? _childrenCount = 0;
     private bool? _isTaxSubject = true;
     private string _insuranceNumber = "INS-001";
-    private string? _socialSecurityContractRow;
     private string _positionInInsuranceList = "اپراتور";
     private bool _isSubjectTo7PercentInsurance = true;
     private bool _isSubjectTo20PercentInsurance = true;
@@ -95,27 +91,9 @@ public class SalaryDecreeBuilder
         return this;
     }
 
-    public SalaryDecreeBuilder WithHousingAllowance(decimal? housingAllowance)
-    {
-        _housingAllowance = housingAllowance;
-        return this;
-    }
-
-    public SalaryDecreeBuilder WithFoodAllowance(decimal? foodAllowance)
-    {
-        _foodAllowance = foodAllowance;
-        return this;
-    }
-
     public SalaryDecreeBuilder WithTransportationAllowanceNet(decimal? transportationAllowanceNet)
     {
         _transportationAllowanceNet = transportationAllowanceNet;
-        return this;
-    }
-
-    public SalaryDecreeBuilder WithKaranehAmountNet(decimal? karanehAmountNet)
-    {
-        _karanehAmountNet = karanehAmountNet;
         return this;
     }
 
@@ -140,12 +118,6 @@ public class SalaryDecreeBuilder
     public SalaryDecreeBuilder WithInsuranceNumber(string insuranceNumber)
     {
         _insuranceNumber = insuranceNumber;
-        return this;
-    }
-
-    public SalaryDecreeBuilder WithSocialSecurityContractRow(string? socialSecurityContractRow)
-    {
-        _socialSecurityContractRow = socialSecurityContractRow;
         return this;
     }
 
@@ -189,7 +161,6 @@ public class SalaryDecreeBuilder
     public EmployeeInsuranceDto BuildInsuranceDto() =>
         new(
             _insuranceNumber,
-            _socialSecurityContractRow,
             _positionInInsuranceList,
             _isSubjectTo7PercentInsurance,
             _isSubjectTo20PercentInsurance,
@@ -205,10 +176,7 @@ public class SalaryDecreeBuilder
             _supervisionAllowance,
             _shiftType,
             _contractType,
-            _housingAllowance,
-            _foodAllowance,
             _transportationAllowanceNet,
-            _karanehAmountNet,
             _maritalStatus,
             _childrenCount,
             _isTaxSubject,

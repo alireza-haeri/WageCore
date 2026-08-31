@@ -16,7 +16,6 @@ public class EmployeeBuilder
     private string? _jobTitle = "حسابدار";
     private Region? _region = Region.Normal;
     private string _insuranceNumber = "INS-001";
-    private string? _socialSecurityContractRow = "CTR-10";
     private string _positionInInsuranceList = "اپراتور";
     private bool _isSubjectTo7PercentInsurance = true;
     private bool _isSubjectTo20PercentInsurance = true;
@@ -113,12 +112,6 @@ public class EmployeeBuilder
         return this;
     }
 
-    public EmployeeBuilder WithSocialSecurityContractRow(string? socialSecurityContractRow)
-    {
-        _socialSecurityContractRow = socialSecurityContractRow;
-        return this;
-    }
-
     public EmployeeBuilder WithPositionInInsuranceList(string positionInInsuranceList)
     {
         _positionInInsuranceList = positionInInsuranceList;
@@ -201,7 +194,6 @@ public class EmployeeBuilder
     public EmployeeInsuranceDto BuildInsuranceDto() =>
         new(
             _insuranceNumber,
-            _socialSecurityContractRow,
             _positionInInsuranceList,
             _isSubjectTo7PercentInsurance,
             _isSubjectTo20PercentInsurance,

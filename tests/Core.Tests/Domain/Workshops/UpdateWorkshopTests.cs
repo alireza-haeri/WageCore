@@ -15,7 +15,12 @@ public class UpdateWorkshopTests
         var newNationalId = "9876543210";
         var newPostalCode = "0987654321";
 
-        var result = workshop.Update(newName, newAddress, newRegistrationDate, newNationalId, newPostalCode);
+        var result = workshop.Update(newName,
+            newAddress,
+            newRegistrationDate,
+            newNationalId,
+            "1234567890",
+            newPostalCode);
 
         result.ShouldBeSuccess();
         using (new AssertionScope())
@@ -33,11 +38,11 @@ public class UpdateWorkshopTests
     {
         var workshop = _builder.CreateResult().ShouldBeSuccess();
 
-        var result = workshop.Update(
-            "کارگاه جدید",
+        var result = workshop.Update("کارگاه جدید",
             "شیراز، خیابان جدید، پلاک ۱۰۰",
             DateOnly.FromDateTime(DateTime.Now.AddDays(-5)),
             "9876543210",
+            "1234567890",
             null);
 
         result.ShouldBeSuccess();
@@ -49,11 +54,11 @@ public class UpdateWorkshopTests
     {
         var workshop = _builder.CreateResult().ShouldBeSuccess();
 
-        var result = workshop.Update(
-            "کارگاه جدید",
+        var result = workshop.Update("کارگاه جدید",
             "شیراز، خیابان جدید، پلاک ۱۰۰",
             DateOnly.FromDateTime(DateTime.Now.AddDays(-5)),
             "9876543210",
+            "1234567890",
             "");
 
         result.ShouldBeSuccess();
@@ -66,10 +71,10 @@ public class UpdateWorkshopTests
     {
         var workshop = _builder.CreateResult().ShouldBeSuccess();
 
-        var result = workshop.Update(
-            name!,
+        var result = workshop.Update(name!,
             "تهران، خیابان نمونه، پلاک ۱۲۳",
             DateOnly.FromDateTime(DateTime.Now),
+            "1234567890",
             "1234567890",
             "1234567890");
 
@@ -83,10 +88,10 @@ public class UpdateWorkshopTests
     {
         var workshop = _builder.CreateResult().ShouldBeSuccess();
 
-        var result = workshop.Update(
-            name,
+        var result = workshop.Update(name,
             "تهران، خیابان نمونه، پلاک ۱۲۳",
             DateOnly.FromDateTime(DateTime.Now),
+            "1234567890",
             "1234567890",
             "1234567890");
 
@@ -99,10 +104,10 @@ public class UpdateWorkshopTests
         var workshop = _builder.CreateResult().ShouldBeSuccess();
         var name = new string('a', 201);
 
-        var result = workshop.Update(
-            name,
+        var result = workshop.Update(name,
             "تهران، خیابان نمونه، پلاک ۱۲۳",
             DateOnly.FromDateTime(DateTime.Now),
+            "1234567890",
             "1234567890",
             "1234567890");
 
@@ -114,10 +119,10 @@ public class UpdateWorkshopTests
     {
         var workshop = _builder.CreateResult().ShouldBeSuccess();
 
-        var result = workshop.Update(
-            "اب",
+        var result = workshop.Update("اب",
             "تهران، خیابان نمونه، پلاک ۱۲۳",
             DateOnly.FromDateTime(DateTime.Now),
+            "1234567890",
             "1234567890",
             "1234567890");
 
@@ -131,10 +136,10 @@ public class UpdateWorkshopTests
         var workshop = _builder.CreateResult().ShouldBeSuccess();
         var name = new string('a', 200);
 
-        var result = workshop.Update(
-            name,
+        var result = workshop.Update(name,
             "تهران، خیابان نمونه، پلاک ۱۲۳",
             DateOnly.FromDateTime(DateTime.Now),
+            "1234567890",
             "1234567890",
             "1234567890");
 
@@ -148,10 +153,10 @@ public class UpdateWorkshopTests
     {
         var workshop = _builder.CreateResult().ShouldBeSuccess();
 
-        var result = workshop.Update(
-            "کارگاه نمونه",
+        var result = workshop.Update("کارگاه نمونه",
             address!,
             DateOnly.FromDateTime(DateTime.Now),
+            "1234567890",
             "1234567890",
             "1234567890");
 
@@ -165,10 +170,10 @@ public class UpdateWorkshopTests
     {
         var workshop = _builder.CreateResult().ShouldBeSuccess();
 
-        var result = workshop.Update(
-            "کارگاه نمونه",
+        var result = workshop.Update("کارگاه نمونه",
             address,
             DateOnly.FromDateTime(DateTime.Now),
+            "1234567890",
             "1234567890",
             "1234567890");
 
@@ -181,10 +186,10 @@ public class UpdateWorkshopTests
         var workshop = _builder.CreateResult().ShouldBeSuccess();
         var address = new string('a', 1001);
 
-        var result = workshop.Update(
-            "کارگاه نمونه",
+        var result = workshop.Update("کارگاه نمونه",
             address,
             DateOnly.FromDateTime(DateTime.Now),
+            "1234567890",
             "1234567890",
             "1234567890");
 
@@ -196,10 +201,10 @@ public class UpdateWorkshopTests
     {
         var workshop = _builder.CreateResult().ShouldBeSuccess();
 
-        var result = workshop.Update(
-            "کارگاه نمونه",
+        var result = workshop.Update("کارگاه نمونه",
             "1234567890",
             DateOnly.FromDateTime(DateTime.Now),
+            "1234567890",
             "1234567890",
             "1234567890");
 
@@ -213,10 +218,10 @@ public class UpdateWorkshopTests
         var workshop = _builder.CreateResult().ShouldBeSuccess();
         var address = new string('a', 1000);
 
-        var result = workshop.Update(
-            "کارگاه نمونه",
+        var result = workshop.Update("کارگاه نمونه",
             address,
             DateOnly.FromDateTime(DateTime.Now),
+            "1234567890",
             "1234567890",
             "1234567890");
 
@@ -229,10 +234,10 @@ public class UpdateWorkshopTests
     {
         var workshop = _builder.CreateResult().ShouldBeSuccess();
 
-        var result = workshop.Update(
-            "کارگاه نمونه",
+        var result = workshop.Update("کارگاه نمونه",
             "تهران، خیابان نمونه، پلاک ۱۲۳",
             null,
+            "1234567890",
             "1234567890",
             "1234567890");
 
@@ -245,10 +250,10 @@ public class UpdateWorkshopTests
         var workshop = _builder.CreateResult().ShouldBeSuccess();
         var futureDate = DateOnly.FromDateTime(DateTime.Now.AddDays(1));
 
-        var result = workshop.Update(
-            "کارگاه نمونه",
+        var result = workshop.Update("کارگاه نمونه",
             "تهران، خیابان نمونه، پلاک ۱۲۳",
             futureDate,
+            "1234567890",
             "1234567890",
             "1234567890");
 
@@ -261,10 +266,10 @@ public class UpdateWorkshopTests
         var workshop = _builder.CreateResult().ShouldBeSuccess();
         var today = DateOnly.FromDateTime(DateTime.Now);
 
-        var result = workshop.Update(
-            "کارگاه نمونه",
+        var result = workshop.Update("کارگاه نمونه",
             "تهران، خیابان نمونه، پلاک ۱۲۳",
             today,
+            "1234567890",
             "1234567890",
             "1234567890");
 
@@ -278,10 +283,10 @@ public class UpdateWorkshopTests
         var workshop = _builder.CreateResult().ShouldBeSuccess();
         var pastDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-1));
 
-        var result = workshop.Update(
-            "کارگاه نمونه",
+        var result = workshop.Update("کارگاه نمونه",
             "تهران، خیابان نمونه، پلاک ۱۲۳",
             pastDate,
+            "1234567890",
             "1234567890",
             "1234567890");
 
@@ -295,11 +300,11 @@ public class UpdateWorkshopTests
     {
         var workshop = _builder.CreateResult().ShouldBeSuccess();
 
-        var result = workshop.Update(
-            "کارگاه نمونه",
+        var result = workshop.Update("کارگاه نمونه",
             "تهران، خیابان نمونه، پلاک ۱۲۳",
             DateOnly.FromDateTime(DateTime.Now),
             nationalId!,
+            "1234567890",
             "1234567890");
 
         result.ShouldBeFailure("شناسه ملی کارگاه");
@@ -314,11 +319,11 @@ public class UpdateWorkshopTests
     {
         var workshop = _builder.CreateResult().ShouldBeSuccess();
 
-        var result = workshop.Update(
-            "کارگاه نمونه",
+        var result = workshop.Update("کارگاه نمونه",
             "تهران، خیابان نمونه، پلاک ۱۲۳",
             DateOnly.FromDateTime(DateTime.Now),
             nationalId,
+            "1234567890",
             "1234567890");
 
         result.ShouldBeFailure("شناسه ملی کارگاه باید 10 رقم انگلیسی باشد.");
@@ -330,11 +335,11 @@ public class UpdateWorkshopTests
         var workshop = _builder.CreateResult().ShouldBeSuccess();
         var newNationalId = "9876543210";
 
-        var result = workshop.Update(
-            "کارگاه نمونه",
+        var result = workshop.Update("کارگاه نمونه",
             "تهران، خیابان نمونه، پلاک ۱۲۳",
             DateOnly.FromDateTime(DateTime.Now),
             newNationalId,
+            "1234567890",
             "1234567890");
 
         result.ShouldBeSuccess();
@@ -350,10 +355,10 @@ public class UpdateWorkshopTests
     {
         var workshop = _builder.CreateResult().ShouldBeSuccess();
 
-        var result = workshop.Update(
-            "کارگاه نمونه",
+        var result = workshop.Update("کارگاه نمونه",
             "تهران، خیابان نمونه، پلاک ۱۲۳",
             DateOnly.FromDateTime(DateTime.Now),
+            "1234567890",
             "1234567890",
             postalCode);
 
@@ -366,10 +371,10 @@ public class UpdateWorkshopTests
         var workshop = _builder.CreateResult().ShouldBeSuccess();
         var newPostalCode = "0987654321";
 
-        var result = workshop.Update(
-            "کارگاه نمونه",
+        var result = workshop.Update("کارگاه نمونه",
             "تهران، خیابان نمونه، پلاک ۱۲۳",
             DateOnly.FromDateTime(DateTime.Now),
+            "1234567890",
             "1234567890",
             newPostalCode);
 
@@ -382,10 +387,10 @@ public class UpdateWorkshopTests
     {
         var workshop = _builder.CreateResult().ShouldBeSuccess();
 
-        var result = workshop.Update(
-            "کارگاه نمونه",
+        var result = workshop.Update("کارگاه نمونه",
             "تهران، خیابان نمونه، پلاک ۱۲۳",
             DateOnly.FromDateTime(DateTime.Now),
+            "1234567890",
             "1234567890",
             null);
 
@@ -398,10 +403,10 @@ public class UpdateWorkshopTests
     {
         var workshop = _builder.CreateResult().ShouldBeSuccess();
 
-        var result = workshop.Update(
-            "کارگاه نمونه",
+        var result = workshop.Update("کارگاه نمونه",
             "تهران، خیابان نمونه، پلاک ۱۲۳",
             DateOnly.FromDateTime(DateTime.Now),
+            "1234567890",
             "1234567890",
             "");
 
