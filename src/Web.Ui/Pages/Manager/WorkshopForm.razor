@@ -41,25 +41,6 @@
                 </div>
 
                 <div class="col-md-5 field">
-                    <label class="f-label" for="w-region"><span class="req-s">*</span>نوع منطقه</label>
-                    <InputSelect @bind-Value="_formHelper.Model.Region" class="in" id="w-region">
-                        <option value="">انتخاب کنید...</option>
-                        <option value="@CreateWorkshopRequestRegion.Normal">عادی</option>
-                        <option value="@CreateWorkshopRequestRegion.LessDeveloped">کمتر توسعه‌یافته</option>
-                    </InputSelect>
-                    <ValidationMessage TValue="CreateWorkshopRequestRegion" For="() => _formHelper.Model.Region"
-                                       class="f-help text-danger"/>
-                </div>
-
-                <div class="col-12 field">
-                    <label class="f-label" for="w-addr"><span class="req-s">*</span>آدرس</label>
-                    <InputText @bind-Value="_formHelper.Model.Address" class="in" id="w-addr"
-                               placeholder="حداقل ۱۰ نویسه"/>
-                    <ValidationMessage TValue="string" For="() => _formHelper.Model.Address"
-                                       class="f-help text-danger"/>
-                </div>
-                
-                <div class="col-md-4 field">
                     <label class="f-label" for="w-regdate"><span class="req-s">*</span>تاریخ ثبت</label>
                     <InputText @bind-Value="_formHelper.Model.RegistrationDate" class="in num" id="w-regdate"
                                inputmode="numeric" placeholder="۱۴۰۵/۰۵/۱۷"/>
@@ -77,7 +58,7 @@
                     <div class="f-help">شخص حقوقی: شناسهٔ ملی ۱۱ رقمی · کارگاه انفرادی: کد ملی ۱۰ رقمی مؤسس.</div>
                 </div>
 
-                <div class="col-md-4 field">
+                <div class="col-md-3 field">
                     <label class="f-label" for="w-postal">کد پستی <span class="f-badge fb-gold">اختیاری</span></label>
                     <InputText @bind-Value="_formHelper.Model.PostalCode" class="in in-ltr" id="w-postal"
                                inputmode="numeric" maxlength="10" placeholder="10 رقم"/>
@@ -133,7 +114,6 @@
                     _formHelper.Model = new WorkshopFormModel
                     {
                         Name = workshop.Name,
-                        Region = (CreateWorkshopRequestRegion)workshop.Region,
                         Address = workshop.Address,
                         RegistrationDate = workshop.RegistrationDate,
                         NationalId = workshop.NationalId,
@@ -172,12 +152,11 @@
         {
             var result = await ApiService.SendAsync(
                 apiCall: () => ApiClient.UpdateWorkshopAsync(Id!.Value, new UpdateWorkshopRequest(
-                    model.Address,
-                    model.Name,
-                    model.NationalId,
-                    model.PostalCode,
-                    (UpdateWorkshopRequestRegion)model.Region,
-                    model.RegistrationDate
+                    address: model.Address,
+                    name: model.Name,
+                    nationalId: model.NationalId,
+                    postalCode: model.PostalCode,
+                    registrationDate: model.RegistrationDate
                 )),
                 successMessage: "کارگاه با موفقیت ویرایش شد.",
                 showErrorToastValidation: false
@@ -208,7 +187,6 @@
                     name: model.Name,
                     nationalId: model.NationalId,
                     postalCode: model.PostalCode,
-                    region: model.Region,
                     registrationDate: model.RegistrationDate
                 )),
                 successMessage: "کارگاه با موفقیت ثبت شد.",
@@ -235,10 +213,6 @@
         [StringLength(200, MinimumLength = 2, ErrorMessage = "نام کارگاه باید بین ۲ تا ۲۰۰ نویسه باشد.")]
         [Display(Name = "نام کارگاه")]
         public string Name { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "نوع منطقه اجباری است.")]
-        [Display(Name = "نوع منطقه")]
-        public CreateWorkshopRequestRegion Region { get; set; }
 
         [Required(ErrorMessage = "آدرس اجباری است.")]
         [MinLength(10, ErrorMessage = "آدرس باید حداقل ۱۰ نویسه باشد.")]
