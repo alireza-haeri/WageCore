@@ -59,7 +59,6 @@ public class WorkshopQueryTests(WageCoreDbContextFixture fixture)
             .WithUserId(userId)
             .WithName("کارگاه دوم")
             .WithNationalId("2222222222")
-            .WithRegion(WorkshopRegion.LessDeveloped)
             .CreateResult()
             .ShouldBeSuccess();
 
@@ -112,45 +111,6 @@ public class WorkshopQueryTests(WageCoreDbContextFixture fixture)
         result.Items.Should().ContainSingle();
         result.Items.First().Name.Should().Be("کارگاه آریا");
         result.Items.First().NationalId.Should().Be("1234567890");
-    }
-
-    [Fact]
-    public async Task GetUserWorkshopsAsync_WithRegionFilter_ShouldReturnFilteredResults()
-    {
-        await using var scope = fixture.CreateScope();
-        var repository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
-        var query = scope.ServiceProvider.GetRequiredService<IWorkshopQuery>();
-        var userId = await CreateUserAsync(scope);
-
-        var workshop1 = _workshopBuilder
-            .WithId(Guid.NewGuid())
-            .WithUserId(userId)
-            .WithName("کارگاه عادی")
-            .WithNationalId("1234567890")
-            .WithRegion(WorkshopRegion.Normal)
-            .CreateResult()
-            .ShouldBeSuccess();
-
-        var workshop2 = _workshopBuilder
-            .WithId(Guid.NewGuid())
-            .WithUserId(userId)
-            .WithName("کارگاه محروم")
-            .WithNationalId("9876543210")
-            .WithRegion(WorkshopRegion.LessDeveloped)
-            .CreateResult()
-            .ShouldBeSuccess();
-
-        await repository.CreateAsync(workshop1);
-        await repository.CreateAsync(workshop2);
-
-        var pagination = new PaginationDto(1, 10);
-        var result = await query.GetUserWorkshopsAsync(userId, pagination, region: WorkshopRegion.LessDeveloped);
-
-        result.Should().NotBeNull();
-        result.TotalCount.Should().Be(1);
-        result.Items.Should().ContainSingle();
-        result.Items.First().Name.Should().Be("کارگاه محروم");
-        result.Items.First().NationalId.Should().Be("9876543210");
     }
 
     [Fact]
@@ -234,7 +194,7 @@ public class WorkshopQueryTests(WageCoreDbContextFixture fixture)
     }
 
     [Fact]
-    public async Task GetUserWorkshopsAsync_WithCombinedFilters_ShouldReturnCorrectResults()
+    public async Task GetUserWorkshopsAsync_WithSearchName_ShouldReturnAllMatchingResults()
     {
         await using var scope = fixture.CreateScope();
         var repository = scope.ServiceProvider.GetRequiredService<WorkshopRepository>();
@@ -246,7 +206,6 @@ public class WorkshopQueryTests(WageCoreDbContextFixture fixture)
             .WithUserId(userId)
             .WithName("کارگاه آریا")
             .WithNationalId("1111111111")
-            .WithRegion(WorkshopRegion.Normal)
             .CreateResult()
             .ShouldBeSuccess();
 
@@ -255,7 +214,6 @@ public class WorkshopQueryTests(WageCoreDbContextFixture fixture)
             .WithUserId(userId)
             .WithName("آریا تراش")
             .WithNationalId("2222222222")
-            .WithRegion(WorkshopRegion.LessDeveloped)
             .CreateResult()
             .ShouldBeSuccess();
 
@@ -264,7 +222,6 @@ public class WorkshopQueryTests(WageCoreDbContextFixture fixture)
             .WithUserId(userId)
             .WithName("کارگاه نوین")
             .WithNationalId("3333333333")
-            .WithRegion(WorkshopRegion.Normal)
             .CreateResult()
             .ShouldBeSuccess();
 
@@ -274,13 +231,13 @@ public class WorkshopQueryTests(WageCoreDbContextFixture fixture)
 
         var pagination = new PaginationDto(1, 10);
         var result = await query.GetUserWorkshopsAsync(
-            userId, pagination, searchName: "آریا", region: WorkshopRegion.Normal);
+            userId, pagination, searchName: "آریا");
 
         result.Should().NotBeNull();
-        result.TotalCount.Should().Be(1);
-        result.Items.Should().ContainSingle();
-        result.Items.First().Name.Should().Be("کارگاه آریا");
-        result.Items.First().NationalId.Should().Be("1111111111");
+        result.TotalCount.Should().Be(2);
+        result.Items.Should().HaveCount(2);
+        result.Items.Should().Contain(w => w.Name == "کارگاه آریا" && w.NationalId == "1111111111");
+        result.Items.Should().Contain(w => w.Name == "آریا تراش" && w.NationalId == "2222222222");
     }
 
     [Fact]
@@ -478,7 +435,6 @@ public class WorkshopQueryTests(WageCoreDbContextFixture fixture)
             .WithUserId(userId)
             .WithName("کارگاه آریا")
             .WithAddress("تهران، خیابان اصلی، پلاک ۱۰")
-            .WithRegion(WorkshopRegion.LessDeveloped)
             .WithNationalId("1234567890")
             .WithPostalCode("0987654321")
             .CreateResult()
@@ -491,7 +447,6 @@ public class WorkshopQueryTests(WageCoreDbContextFixture fixture)
         result.Should().NotBeNull();
         result!.Name.Should().Be("کارگاه آریا");
         result.Address.Should().Be("تهران، خیابان اصلی، پلاک ۱۰");
-        result.Region.Should().Be(WorkshopRegion.LessDeveloped);
         result.RegistrationDate.Should().Be(workshop.RegistrationDate);
         result.NationalId.Should().Be("1234567890");
         result.PostalCode.Should().Be("0987654321");

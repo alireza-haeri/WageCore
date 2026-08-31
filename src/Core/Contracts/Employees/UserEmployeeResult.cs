@@ -9,4 +9,5 @@ public record UserEmployeeResult(
     string NationalCode,
     DateOnly HireDate,
     string? JobTitle,
-    EmployeeStatus Status);
+    EmployeeStatus Status,
+    Region Region);

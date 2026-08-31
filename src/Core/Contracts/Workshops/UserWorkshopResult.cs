@@ -5,7 +5,6 @@ public record UserWorkshopResult(
     string Name,
     string Address,
     string NationalId,
-    WorkshopRegion Region,
     DateOnly RegistrationDate,
     int EmployeesCount,
     int DepartmentsCount);

@@ -8,6 +8,7 @@ public class Insurance
     public bool IsSubjectTo7PercentInsurance { get; private set; }
     public bool IsSubjectTo20PercentInsurance { get; private set; }
     public bool IsSubjectTo3PercentInsurance { get; private set; }
+    public bool IsSubjectTo4PercentInsurance { get; private set; }
     public InsuranceCalculationProfile InsuranceCalculationProfile { get; private set; }
 
     public static DomainResult<Insurance> Create(EmployeeInsuranceDto? insurance)
@@ -24,6 +25,7 @@ public class Insurance
             IsSubjectTo7PercentInsurance = insurance.IsSubjectTo7PercentInsurance,
             IsSubjectTo20PercentInsurance = insurance.IsSubjectTo20PercentInsurance,
             IsSubjectTo3PercentInsurance = insurance.IsSubjectTo3PercentInsurance,
+            IsSubjectTo4PercentInsurance = insurance.IsSubjectTo4PercentInsurance,
             InsuranceCalculationProfile = insurance.InsuranceCalculationProfile!.Value
         });
     }
@@ -40,6 +42,7 @@ public class Insurance
         IsSubjectTo7PercentInsurance = insurance.IsSubjectTo7PercentInsurance;
         IsSubjectTo20PercentInsurance = insurance.IsSubjectTo20PercentInsurance;
         IsSubjectTo3PercentInsurance = insurance.IsSubjectTo3PercentInsurance;
+        IsSubjectTo4PercentInsurance = insurance.IsSubjectTo4PercentInsurance;
         InsuranceCalculationProfile = insurance.InsuranceCalculationProfile!.Value;
 
         return DomainResult.Success();

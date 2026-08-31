@@ -19,22 +19,12 @@ public class GetUserEmployeeForEditQueryHandler(IEmployeeQuery employeeQuery)
                 employee.PersonalCode,
                 employee.FullName,
                 employee.NationalCode,
-                employee.BirthCertificateNumber,
                 employee.FatherName,
                 employee.Gender,
-                employee.MaritalStatus,
-                employee.ChildrenCount,
                 employee.HireDate,
                 employee.PhoneNumber,
                 employee.JobTitle,
-                employee.IsTaxSubject,
-                employee.InsuranceNumber,
-                employee.SocialSecurityContractRow,
-                employee.PositionInInsuranceList,
-                employee.IsSubjectTo7PercentInsurance,
-                employee.IsSubjectTo20PercentInsurance,
-                employee.IsSubjectTo3PercentInsurance,
-                employee.InsuranceCalculationProfile,
+                employee.Region,
                 employee.BankAccounts
             )
         );

@@ -37,11 +37,6 @@ public class EmployeeConfigurations : IEntityTypeConfiguration<Employee>
             .IsUnicode(false)
             .HasMaxLength(10);
 
-        builder.Property(x => x.BirthCertificateNumber)
-            .IsRequired()
-            .IsUnicode(false)
-            .HasMaxLength(20);
-
         builder.Property(x => x.FatherName)
             .IsRequired()
             .IsUnicode()
@@ -51,14 +46,6 @@ public class EmployeeConfigurations : IEntityTypeConfiguration<Employee>
             .IsRequired()
             .IsUnicode(false)
             .HasConversion<string>();
-
-        builder.Property(x => x.MaritalStatus)
-            .IsRequired()
-            .IsUnicode(false)
-            .HasConversion<string>();
-
-        builder.Property(x => x.ChildrenCount)
-            .IsRequired();
 
         builder.Property(x => x.HireDate)
             .IsRequired()
@@ -76,8 +63,10 @@ public class EmployeeConfigurations : IEntityTypeConfiguration<Employee>
             .IsUnicode()
             .HasMaxLength(100);
 
-        builder.Property(x => x.IsTaxSubject)
-            .IsRequired();
+        builder.Property(x => x.Region)
+            .IsRequired()
+            .IsUnicode(false)
+            .HasConversion<string>();
 
         builder.HasOne<Workshop>()
             .WithMany()
@@ -88,44 +77,6 @@ public class EmployeeConfigurations : IEntityTypeConfiguration<Employee>
             .WithMany()
             .HasForeignKey(x => x.DepartmentId)
             .OnDelete(DeleteBehavior.Cascade);
-
-        builder.OwnsOne(x => x.Insurance, insuranceBuilder =>
-        {
-            insuranceBuilder.Property(x => x.InsuranceNumber)
-                .HasColumnName(nameof(Insurance.InsuranceNumber))
-                .IsRequired()
-                .IsUnicode(false)
-                .HasMaxLength(20);
-
-            insuranceBuilder.Property(x => x.SocialSecurityContractRow)
-                .HasColumnName(nameof(Insurance.SocialSecurityContractRow))
-                .IsUnicode(false)
-                .HasMaxLength(20);
-
-            insuranceBuilder.Property(x => x.PositionInInsuranceList)
-                .HasColumnName(nameof(Insurance.PositionInInsuranceList))
-                .IsRequired()
-                .IsUnicode()
-                .HasMaxLength(100);
-
-            insuranceBuilder.Property(x => x.IsSubjectTo7PercentInsurance)
-                .HasColumnName(nameof(Insurance.IsSubjectTo7PercentInsurance))
-                .IsRequired();
-
-            insuranceBuilder.Property(x => x.IsSubjectTo20PercentInsurance)
-                .HasColumnName(nameof(Insurance.IsSubjectTo20PercentInsurance))
-                .IsRequired();
-
-            insuranceBuilder.Property(x => x.IsSubjectTo3PercentInsurance)
-                .HasColumnName(nameof(Insurance.IsSubjectTo3PercentInsurance))
-                .IsRequired();
-
-            insuranceBuilder.Property(x => x.InsuranceCalculationProfile)
-                .HasColumnName(nameof(Insurance.InsuranceCalculationProfile))
-                .IsRequired()
-                .IsUnicode(false)
-                .HasConversion<string>();
-        });
 
         builder.OwnsMany(x => x.BankAccounts, bankAccountBuilder =>
         {
@@ -142,7 +93,11 @@ public class EmployeeConfigurations : IEntityTypeConfiguration<Employee>
             bankAccountBuilder.Property<Guid>(employeeIdColumnName)
                 .IsRequired();
 
-            bankAccountBuilder.Property(x => x.Title)
+            bankAccountBuilder.Property(x => x.BankName)
+                .IsUnicode()
+                .HasMaxLength(100);
+
+            bankAccountBuilder.Property(x => x.BranchCode)
                 .IsUnicode()
                 .HasMaxLength(100);
 

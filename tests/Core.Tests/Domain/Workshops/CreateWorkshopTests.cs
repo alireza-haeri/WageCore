@@ -16,7 +16,6 @@ public class CreateWorkshopTests
             response.UserId.Should().NotBeEmpty();
             response.Name.Should().Be("کارگاه نمونه");
             response.Address.Should().Be("تهران، خیابان نمونه، پلاک ۱۲۳");
-            response.Region.Should().Be(WorkshopRegion.Normal);
             response.RegistrationDate.Should().Be(DateOnly.FromDateTime(DateTime.Now));
             response.NationalId.Should().Be("1234567890");
             response.PostalCode.Should().Be("1234567890");
@@ -30,7 +29,6 @@ public class CreateWorkshopTests
         var userId = Guid.NewGuid();
         var name = "کارگاه نساجی";
         var address = "اصفهان، خیابان صنعت، پلاک ۵";
-        var region = WorkshopRegion.LessDeveloped;
         var registrationDate = new DateOnly(1404, 1, 1);
         var nationalId = "9876543210";
         var postalCode = "0987654321";
@@ -40,7 +38,6 @@ public class CreateWorkshopTests
             .WithUserId(userId)
             .WithName(name)
             .WithAddress(address)
-            .WithRegion(region)
             .WithRegistrationDate(registrationDate)
             .WithNationalId(nationalId)
             .WithPostalCode(postalCode)
@@ -53,7 +50,6 @@ public class CreateWorkshopTests
             response.UserId.Should().Be(userId);
             response.Name.Should().Be(name);
             response.Address.Should().Be(address);
-            response.Region.Should().Be(region);
             response.RegistrationDate.Should().Be(registrationDate);
             response.NationalId.Should().Be(nationalId);
             response.PostalCode.Should().Be(postalCode);
@@ -152,29 +148,6 @@ public class CreateWorkshopTests
         var address = new string('a', 1000);
         var result = _builder.WithAddress(address).CreateResult();
         result.ShouldBeSuccess();
-    }
-
-    [Fact]
-    public void Create_WithNullRegion_ShouldFail()
-    {
-        var result = _builder.WithRegion(null).CreateResult();
-        result.ShouldBeFailure("منطقه کارگاه");
-    }
-
-    [Fact]
-    public void Create_WithNormalRegion_ShouldReturnSuccess()
-    {
-        var result = _builder.WithRegion(WorkshopRegion.Normal).CreateResult();
-        var response = result.ShouldBeSuccess();
-        response.Region.Should().Be(WorkshopRegion.Normal);
-    }
-
-    [Fact]
-    public void Create_WithLessDevelopedRegion_ShouldReturnSuccess()
-    {
-        var result = _builder.WithRegion(WorkshopRegion.LessDeveloped).CreateResult();
-        var response = result.ShouldBeSuccess();
-        response.Region.Should().Be(WorkshopRegion.LessDeveloped);
     }
 
     [Fact]

@@ -13,12 +13,11 @@ public class GetUserWorkshopsQueryHandler(IWorkshopQuery workshopQuery)
             request.UserId,
             request.Pagination,
             request.SearchName,
-            request.Region,
             cancellationToken);
 
         var response = userWorkshopsPaged.Map(x =>
             new GetUserWorkshopsQueryResponse(
-                x.WorkshopId, x.Name, x.Address, x.NationalId,x.Region,
+                x.WorkshopId, x.Name, x.Address, x.NationalId,
                 x.RegistrationDate, x.EmployeesCount, x.DepartmentsCount)
         );
 

@@ -9,7 +9,7 @@ public class CascadeDeleteTests(WageCoreDbContextFixture fixture)
 
     private readonly WorkshopBuilder _workshopBuilder = new();
     private readonly EmployeeBuilder _employeeBuilder = new();
-    private readonly EmployeeSalaryProfileBuilder _salaryProfileBuilder = new();
+    private readonly SalaryDecreeBuilder _salaryProfileBuilder = new();
 
     public async Task InitializeAsync() => await fixture.ResetDatabaseAsync();
     public Task DisposeAsync() => Task.CompletedTask;
@@ -92,10 +92,10 @@ public class CascadeDeleteTests(WageCoreDbContextFixture fixture)
             .CountAsync();
     }
 
-    private async Task<EmployeeSalaryProfile> CreateSalaryProfileAsync(AsyncServiceScope scope,
+    private async Task<SalaryDecree> CreateSalaryProfileAsync(AsyncServiceScope scope,
         Core.Domain.Employee employee, DateOnly effectiveFrom)
     {
-        var repository = scope.ServiceProvider.GetRequiredService<IEmployeeSalaryProfileRepository>();
+        var repository = scope.ServiceProvider.GetRequiredService<ISalaryDecreeRepository>();
 
         var salaryProfile = _salaryProfileBuilder
             .WithId(Guid.NewGuid())
@@ -103,7 +103,7 @@ public class CascadeDeleteTests(WageCoreDbContextFixture fixture)
             .WithEmployeeHireDate(employee.HireDate)
             .WithMinimumMonthlySalary(10_000_000m)
             .WithEffectiveFrom(effectiveFrom)
-            .WithBaseMonthlySalary(20_000_000m)
+            .WithBaseDailySalary(20_000_000m)
             .CreateResult()
             .ShouldBeSuccess();
 
@@ -115,7 +115,7 @@ public class CascadeDeleteTests(WageCoreDbContextFixture fixture)
     private static async Task<int> CountSalaryProfilesAsync(AsyncServiceScope scope, Guid employeeId)
     {
         var context = scope.ServiceProvider.GetRequiredService<WageCoreDbContext>();
-        return await context.Set<EmployeeSalaryProfile>().CountAsync(x => x.EmployeeId == employeeId);
+        return await context.Set<SalaryDecree>().CountAsync(x => x.EmployeeId == employeeId);
     }
 
     #region Delete Workshop
@@ -187,8 +187,8 @@ public class CascadeDeleteTests(WageCoreDbContextFixture fixture)
         var employee = await CreateEmployeeAsync(scope, workshop.Id, departmentId, "EMP001", "1234567890");
 
         employee.ReplaceBankAccounts([
-            new EmployeeBankAccountDto("حساب اول", "IR111111111111111111111111"),
-            new EmployeeBankAccountDto("حساب دوم", "IR222222222222222222222222")
+            new EmployeeBankAccountDto("بانک ملی", "۱۰۲", "IR111111111111111111111111"),
+            new EmployeeBankAccountDto("بانک صادرات", "۳۰۳", "IR222222222222222222222222")
         ]).ShouldBeSuccess();
         (await employeeRepository.UpdateAsync(employee)).Should().BeTrue();
 
@@ -307,8 +307,8 @@ public class CascadeDeleteTests(WageCoreDbContextFixture fixture)
         var employee = await CreateEmployeeAsync(scope, workshop.Id, departmentId, "EMP001", "1234567890");
 
         employee.ReplaceBankAccounts([
-            new EmployeeBankAccountDto("حساب اول", "IR111111111111111111111111"),
-            new EmployeeBankAccountDto("حساب دوم", "IR222222222222222222222222")
+            new EmployeeBankAccountDto("بانک ملی", "۱۰۲", "IR111111111111111111111111"),
+            new EmployeeBankAccountDto("بانک صادرات", "۳۰۳", "IR222222222222222222222222")
         ]).ShouldBeSuccess();
         (await employeeRepository.UpdateAsync(employee)).Should().BeTrue();
 

@@ -17,4 +17,5 @@ public record GetUserEmployeesResponse(
     string NationalCode,
     string DisplayHireDate,
     string? JobTitle,
-    EmployeeStatus Status);
+    EmployeeStatus Status,
+    Region Region);

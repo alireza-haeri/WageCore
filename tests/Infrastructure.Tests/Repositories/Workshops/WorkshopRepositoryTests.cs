@@ -74,7 +74,6 @@ public class WorkshopRepositoryTests(WageCoreDbContextFixture fixture)
         result.UserId.Should().Be(workshop.UserId);
         result.Name.Should().Be(workshop.Name);
         result.Address.Should().Be(workshop.Address);
-        result.Region.Should().Be(workshop.Region);
         result.RegistrationDate.Should().Be(workshop.RegistrationDate);
         result.NationalId.Should().Be(workshop.NationalId);
         result.PostalCode.Should().Be(workshop.PostalCode);
@@ -125,7 +124,6 @@ public class WorkshopRepositoryTests(WageCoreDbContextFixture fixture)
         var updateResult = workshop.Update(
             "کارگاه جدید",
             "آدرس جدید، خیابان اصلی، پلاک ۲۰",
-            WorkshopRegion.LessDeveloped,
             DateOnly.FromDateTime(DateTime.Today.AddDays(-1)),
             "9876543210",
             "0987654321");
@@ -140,7 +138,6 @@ public class WorkshopRepositoryTests(WageCoreDbContextFixture fixture)
         updatedWorkshop.Should().NotBeNull();
         updatedWorkshop!.Name.Should().Be("کارگاه جدید");
         updatedWorkshop.Address.Should().Be("آدرس جدید، خیابان اصلی، پلاک ۲۰");
-        updatedWorkshop.Region.Should().Be(WorkshopRegion.LessDeveloped);
         updatedWorkshop.RegistrationDate.Should().Be(DateOnly.FromDateTime(DateTime.Today.AddDays(-1)));
         updatedWorkshop.NationalId.Should().Be("9876543210");
         updatedWorkshop.PostalCode.Should().Be("0987654321");
@@ -163,7 +160,6 @@ public class WorkshopRepositoryTests(WageCoreDbContextFixture fixture)
         var updateResult = workshop.Update(
             "کارگاه جدید",
             "آدرس جدید، خیابان اصلی، پلاک ۲۰",
-            WorkshopRegion.LessDeveloped,
             DateOnly.FromDateTime(DateTime.Today.AddDays(-1)),
             "9876543210",
             null);

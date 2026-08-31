@@ -4,7 +4,6 @@ public record CreateWorkshopCommand(
     Guid UserId,
     string Name,
     string Address,
-    WorkshopRegion Region,
     DateOnly RegistrationDate,
     string NationalId,
     string? PostalCode = null)

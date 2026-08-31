@@ -28,25 +28,15 @@ public class GetUserEmployeeForEditQueryHandlerTests
             "EMP001",
             "علی رضایی",
             "1234567890",
-            "12345",
             "محمد",
             EmployeeGender.Man,
-            EmployeeMaritalStatus.Married,
-            2,
             DateOnly.FromDateTime(DateTime.Today),
             "09123456789",
             "حسابدار",
-            true,
-            "INS-001",
-            "CTR-10",
-            "اپراتور",
-            true,
-            true,
-            false,
-            InsuranceCalculationProfile.FullLegal,
+            Region.Normal,
             [
-                new EmployeeBankAccountDto("حساب حقوق", "123456789012345678901234", ValidBankAccountId),
-                new EmployeeBankAccountDto("حساب دوم", "999999999999999999999999", Guid.NewGuid())
+                new EmployeeBankAccountDto("بانک ملی", "۱۰۲", "123456789012345678901234", ValidBankAccountId),
+                new EmployeeBankAccountDto("بانک صادرات", "۳۰۳", "999999999999999999999999", Guid.NewGuid())
             ]);
 
         _employeeQuery.GetUserEmployeeByIdAsync(ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
@@ -60,24 +50,14 @@ public class GetUserEmployeeForEditQueryHandlerTests
         response.PersonalCode.Should().Be("EMP001");
         response.FullName.Should().Be("علی رضایی");
         response.NationalCode.Should().Be("1234567890");
-        response.BirthCertificateNumber.Should().Be("12345");
         response.FatherName.Should().Be("محمد");
         response.Gender.Should().Be(EmployeeGender.Man);
-        response.MaritalStatus.Should().Be(EmployeeMaritalStatus.Married);
-        response.ChildrenCount.Should().Be(2);
         response.HireDate.Should().Be(DateOnly.FromDateTime(DateTime.Today));
         response.PhoneNumber.Should().Be("09123456789");
         response.JobTitle.Should().Be("حسابدار");
-        response.IsTaxSubject.Should().BeTrue();
-        response.InsuranceNumber.Should().Be("INS-001");
-        response.SocialSecurityContractRow.Should().Be("CTR-10");
-        response.PositionInInsuranceList.Should().Be("اپراتور");
-        response.IsSubjectTo7PercentInsurance.Should().BeTrue();
-        response.IsSubjectTo20PercentInsurance.Should().BeTrue();
-        response.IsSubjectTo3PercentInsurance.Should().BeFalse();
-        response.InsuranceCalculationProfile.Should().Be(InsuranceCalculationProfile.FullLegal);
+        response.Region.Should().Be(Region.Normal);
         response.BankAccounts.Should().HaveCount(2);
-        response.BankAccounts.Should().Contain(x => x.Id == ValidBankAccountId && x.Title == "حساب حقوق" && x.Iban == "123456789012345678901234");
+        response.BankAccounts.Should().Contain(x => x.Id == ValidBankAccountId && x.BankName == "بانک ملی" && x.BranchCode == "۱۰۲" && x.Iban == "123456789012345678901234");
     }
 
     [Fact]
@@ -91,22 +71,12 @@ public class GetUserEmployeeForEditQueryHandlerTests
             "EMP001",
             "علی رضایی",
             "1234567890",
-            "12345",
             "محمد",
             EmployeeGender.Man,
-            EmployeeMaritalStatus.Single,
-            0,
             DateOnly.FromDateTime(DateTime.Today),
             "09123456789",
             "حسابدار",
-            true,
-            "INS-001",
-            null,
-            "اپراتور",
-            true,
-            true,
-            false,
-            InsuranceCalculationProfile.FullLegal,
+            Region.Normal,
             []);
 
         _employeeQuery.GetUserEmployeeByIdAsync(ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())

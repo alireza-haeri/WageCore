@@ -1,3 +1,5 @@
+using Application.Validations;
+
 namespace Application.Features.Employees;
 
 public class UpdateEmployeeCommandValidator : AbstractValidator<UpdateEmployeeCommand>
@@ -13,10 +15,6 @@ public class UpdateEmployeeCommandValidator : AbstractValidator<UpdateEmployeeCo
         RuleFor(x => x.Employee)
             .NotNull().WithMessage("اطلاعات کارمند اجباری است.")
             .SetValidator(new EmployeeInformationValidator());
-
-        RuleFor(x => x.Insurance)
-            .NotNull().WithMessage("اطلاعات بیمه اجباری است.")
-            .SetValidator(new EmployeeInsuranceValidator());
 
         RuleFor(x => x.BankAccounts)
             .NotNull().WithMessage("اطلاعات حساب‌های بانکی اجباری است.")

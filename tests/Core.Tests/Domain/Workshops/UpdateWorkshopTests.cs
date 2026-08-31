@@ -11,19 +11,17 @@ public class UpdateWorkshopTests
 
         var newName = "کارگاه جدید";
         var newAddress = "شیراز، خیابان جدید، پلاک ۱۰۰";
-        var newRegion = WorkshopRegion.LessDeveloped;
         var newRegistrationDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-5));
         var newNationalId = "9876543210";
         var newPostalCode = "0987654321";
 
-        var result = workshop.Update(newName, newAddress, newRegion, newRegistrationDate, newNationalId, newPostalCode);
+        var result = workshop.Update(newName, newAddress, newRegistrationDate, newNationalId, newPostalCode);
 
         result.ShouldBeSuccess();
         using (new AssertionScope())
         {
             workshop.Name.Should().Be(newName);
             workshop.Address.Should().Be(newAddress);
-            workshop.Region.Should().Be(newRegion);
             workshop.RegistrationDate.Should().Be(newRegistrationDate);
             workshop.NationalId.Should().Be(newNationalId);
             workshop.PostalCode.Should().Be(newPostalCode);
@@ -38,7 +36,6 @@ public class UpdateWorkshopTests
         var result = workshop.Update(
             "کارگاه جدید",
             "شیراز، خیابان جدید، پلاک ۱۰۰",
-            WorkshopRegion.LessDeveloped,
             DateOnly.FromDateTime(DateTime.Now.AddDays(-5)),
             "9876543210",
             null);
@@ -55,7 +52,6 @@ public class UpdateWorkshopTests
         var result = workshop.Update(
             "کارگاه جدید",
             "شیراز، خیابان جدید، پلاک ۱۰۰",
-            WorkshopRegion.LessDeveloped,
             DateOnly.FromDateTime(DateTime.Now.AddDays(-5)),
             "9876543210",
             "");
@@ -73,7 +69,6 @@ public class UpdateWorkshopTests
         var result = workshop.Update(
             name!,
             "تهران، خیابان نمونه، پلاک ۱۲۳",
-            WorkshopRegion.Normal,
             DateOnly.FromDateTime(DateTime.Now),
             "1234567890",
             "1234567890");
@@ -91,7 +86,6 @@ public class UpdateWorkshopTests
         var result = workshop.Update(
             name,
             "تهران، خیابان نمونه، پلاک ۱۲۳",
-            WorkshopRegion.Normal,
             DateOnly.FromDateTime(DateTime.Now),
             "1234567890",
             "1234567890");
@@ -108,7 +102,6 @@ public class UpdateWorkshopTests
         var result = workshop.Update(
             name,
             "تهران، خیابان نمونه، پلاک ۱۲۳",
-            WorkshopRegion.Normal,
             DateOnly.FromDateTime(DateTime.Now),
             "1234567890",
             "1234567890");
@@ -124,7 +117,6 @@ public class UpdateWorkshopTests
         var result = workshop.Update(
             "اب",
             "تهران، خیابان نمونه، پلاک ۱۲۳",
-            WorkshopRegion.Normal,
             DateOnly.FromDateTime(DateTime.Now),
             "1234567890",
             "1234567890");
@@ -142,7 +134,6 @@ public class UpdateWorkshopTests
         var result = workshop.Update(
             name,
             "تهران، خیابان نمونه، پلاک ۱۲۳",
-            WorkshopRegion.Normal,
             DateOnly.FromDateTime(DateTime.Now),
             "1234567890",
             "1234567890");
@@ -160,7 +151,6 @@ public class UpdateWorkshopTests
         var result = workshop.Update(
             "کارگاه نمونه",
             address!,
-            WorkshopRegion.Normal,
             DateOnly.FromDateTime(DateTime.Now),
             "1234567890",
             "1234567890");
@@ -178,7 +168,6 @@ public class UpdateWorkshopTests
         var result = workshop.Update(
             "کارگاه نمونه",
             address,
-            WorkshopRegion.Normal,
             DateOnly.FromDateTime(DateTime.Now),
             "1234567890",
             "1234567890");
@@ -195,7 +184,6 @@ public class UpdateWorkshopTests
         var result = workshop.Update(
             "کارگاه نمونه",
             address,
-            WorkshopRegion.Normal,
             DateOnly.FromDateTime(DateTime.Now),
             "1234567890",
             "1234567890");
@@ -211,7 +199,6 @@ public class UpdateWorkshopTests
         var result = workshop.Update(
             "کارگاه نمونه",
             "1234567890",
-            WorkshopRegion.Normal,
             DateOnly.FromDateTime(DateTime.Now),
             "1234567890",
             "1234567890");
@@ -229,63 +216,12 @@ public class UpdateWorkshopTests
         var result = workshop.Update(
             "کارگاه نمونه",
             address,
-            WorkshopRegion.Normal,
             DateOnly.FromDateTime(DateTime.Now),
             "1234567890",
             "1234567890");
 
         result.ShouldBeSuccess();
         workshop.Address.Should().Be(address);
-    }
-
-    [Fact]
-    public void Update_WithNullRegion_ShouldFail()
-    {
-        var workshop = _builder.CreateResult().ShouldBeSuccess();
-
-        var result = workshop.Update(
-            "کارگاه نمونه",
-            "تهران، خیابان نمونه، پلاک ۱۲۳",
-            null,
-            DateOnly.FromDateTime(DateTime.Now),
-            "1234567890",
-            "1234567890");
-
-        result.ShouldBeFailure("منطقه کارگاه");
-    }
-
-    [Fact]
-    public void Update_WithNormalRegion_ShouldReturnSuccess()
-    {
-        var workshop = _builder.CreateResult().ShouldBeSuccess();
-
-        var result = workshop.Update(
-            "کارگاه نمونه",
-            "تهران، خیابان نمونه، پلاک ۱۲۳",
-            WorkshopRegion.Normal,
-            DateOnly.FromDateTime(DateTime.Now),
-            "1234567890",
-            "1234567890");
-
-        result.ShouldBeSuccess();
-        workshop.Region.Should().Be(WorkshopRegion.Normal);
-    }
-
-    [Fact]
-    public void Update_WithLessDevelopedRegion_ShouldReturnSuccess()
-    {
-        var workshop = _builder.CreateResult().ShouldBeSuccess();
-
-        var result = workshop.Update(
-            "کارگاه نمونه",
-            "تهران، خیابان نمونه، پلاک ۱۲۳",
-            WorkshopRegion.LessDeveloped,
-            DateOnly.FromDateTime(DateTime.Now),
-            "1234567890",
-            "1234567890");
-
-        result.ShouldBeSuccess();
-        workshop.Region.Should().Be(WorkshopRegion.LessDeveloped);
     }
 
     [Fact]
@@ -296,7 +232,6 @@ public class UpdateWorkshopTests
         var result = workshop.Update(
             "کارگاه نمونه",
             "تهران، خیابان نمونه، پلاک ۱۲۳",
-            WorkshopRegion.Normal,
             null,
             "1234567890",
             "1234567890");
@@ -313,7 +248,6 @@ public class UpdateWorkshopTests
         var result = workshop.Update(
             "کارگاه نمونه",
             "تهران، خیابان نمونه، پلاک ۱۲۳",
-            WorkshopRegion.Normal,
             futureDate,
             "1234567890",
             "1234567890");
@@ -330,7 +264,6 @@ public class UpdateWorkshopTests
         var result = workshop.Update(
             "کارگاه نمونه",
             "تهران، خیابان نمونه، پلاک ۱۲۳",
-            WorkshopRegion.Normal,
             today,
             "1234567890",
             "1234567890");
@@ -348,7 +281,6 @@ public class UpdateWorkshopTests
         var result = workshop.Update(
             "کارگاه نمونه",
             "تهران، خیابان نمونه، پلاک ۱۲۳",
-            WorkshopRegion.Normal,
             pastDate,
             "1234567890",
             "1234567890");
@@ -366,7 +298,6 @@ public class UpdateWorkshopTests
         var result = workshop.Update(
             "کارگاه نمونه",
             "تهران، خیابان نمونه، پلاک ۱۲۳",
-            WorkshopRegion.Normal,
             DateOnly.FromDateTime(DateTime.Now),
             nationalId!,
             "1234567890");
@@ -386,7 +317,6 @@ public class UpdateWorkshopTests
         var result = workshop.Update(
             "کارگاه نمونه",
             "تهران، خیابان نمونه، پلاک ۱۲۳",
-            WorkshopRegion.Normal,
             DateOnly.FromDateTime(DateTime.Now),
             nationalId,
             "1234567890");
@@ -403,7 +333,6 @@ public class UpdateWorkshopTests
         var result = workshop.Update(
             "کارگاه نمونه",
             "تهران، خیابان نمونه، پلاک ۱۲۳",
-            WorkshopRegion.Normal,
             DateOnly.FromDateTime(DateTime.Now),
             newNationalId,
             "1234567890");
@@ -424,7 +353,6 @@ public class UpdateWorkshopTests
         var result = workshop.Update(
             "کارگاه نمونه",
             "تهران، خیابان نمونه، پلاک ۱۲۳",
-            WorkshopRegion.Normal,
             DateOnly.FromDateTime(DateTime.Now),
             "1234567890",
             postalCode);
@@ -441,7 +369,6 @@ public class UpdateWorkshopTests
         var result = workshop.Update(
             "کارگاه نمونه",
             "تهران، خیابان نمونه، پلاک ۱۲۳",
-            WorkshopRegion.Normal,
             DateOnly.FromDateTime(DateTime.Now),
             "1234567890",
             newPostalCode);
@@ -458,7 +385,6 @@ public class UpdateWorkshopTests
         var result = workshop.Update(
             "کارگاه نمونه",
             "تهران، خیابان نمونه، پلاک ۱۲۳",
-            WorkshopRegion.Normal,
             DateOnly.FromDateTime(DateTime.Now),
             "1234567890",
             null);
@@ -475,7 +401,6 @@ public class UpdateWorkshopTests
         var result = workshop.Update(
             "کارگاه نمونه",
             "تهران، خیابان نمونه، پلاک ۱۲۳",
-            WorkshopRegion.Normal,
             DateOnly.FromDateTime(DateTime.Now),
             "1234567890",
             "");

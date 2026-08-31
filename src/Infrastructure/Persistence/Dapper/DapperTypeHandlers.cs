@@ -7,7 +7,7 @@ public static class DapperTypeHandlers
     public static void Register()
     {
         SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
-        SqlMapper.AddTypeHandler(new WorkshopRegionTypeHandler());
+        SqlMapper.AddTypeHandler(new RegionTypeHandler());
         SqlMapper.AddTypeHandler(new LaborLawRuleKeyTypeHandler());
         SqlMapper.AddTypeHandler(new FormulaKeyTypeHandler());
     }

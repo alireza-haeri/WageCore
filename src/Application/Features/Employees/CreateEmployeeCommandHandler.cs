@@ -51,8 +51,7 @@ public class CreateEmployeeCommandHandler(
         var employee = Employee.Create(
             request.WorkshopId,
             workshop.RegistrationDate,
-            request.Employee,
-            request.Insurance);
+            request.Employee);
 
         if (!employee.IsSuccess)
             return Result<CreateEmployeeCommandResponse>.GeneralFailure(employee.ErrorMessage!);

@@ -27,7 +27,8 @@ public class GetUserEmployeesQueryHandler(IEmployeeQuery employeeQuery)
                 x.NationalCode,
                 x.HireDate,
                 x.JobTitle,
-                x.Status)
+                x.Status,
+                x.Region)
         );
 
         return Result<PagedResult<GetUserEmployeesQueryResponse>>.Success(response);

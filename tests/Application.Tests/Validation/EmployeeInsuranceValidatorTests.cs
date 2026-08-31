@@ -98,6 +98,17 @@ public class EmployeeInsuranceValidatorTests
     }
 
     [Fact]
+    public void Validate_With4PercentInsuranceFlag_ShouldNotHaveAnyErrors()
+    {
+        var dto = _employeeBuilder.BuildInsuranceDto() with { IsSubjectTo4PercentInsurance = true };
+
+        var result = _validator.TestValidate(dto);
+
+        result.ShouldNotHaveAnyValidationErrors();
+        result.ShouldNotHaveValidationErrorFor(x => x.IsSubjectTo4PercentInsurance);
+    }
+
+    [Fact]
     public void Validate_WithNullInsuranceCalculationProfile_ShouldHaveValidationError()
     {
         var dto = _employeeBuilder.BuildInsuranceDto() with { InsuranceCalculationProfile = null };

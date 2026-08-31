@@ -28,7 +28,6 @@ public class CreateWorkshopCommandHandler(IWorkShopRepository workShopRepository
             request.UserId,
             request.Name,
             request.Address,
-            request.Region,
             request.RegistrationDate,
             request.NationalId,
             request.PostalCode);

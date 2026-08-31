@@ -9,7 +9,6 @@ public class Workshop
     public Guid UserId { get; private init; }
     public string Name { get; private set; } = null!;
     public string Address { get; private set; } = null!;
-    public WorkshopRegion Region { get; private set; }
     public DateOnly RegistrationDate { get; private set; }
     public string NationalId { get; private set; } = null!;
     public string? PostalCode { get; private set; }
@@ -18,7 +17,6 @@ public class Workshop
     public IReadOnlyCollection<Department> Departments => _departments.AsReadOnly();
 
     public static DomainResult<Workshop> Create(Guid workshopId, Guid userId, string name, string address,
-        WorkshopRegion? region,
         DateOnly? registrationDate, string nationalId, string? postalCode = null)
     {
         if (workshopId == Guid.Empty)
@@ -38,9 +36,6 @@ public class Workshop
 
         if (address.Length < 10 || address.Length > 1000)
             return DomainResult<Workshop>.Failure("آدرس کارگاه باید بین 10 تا 1000 حرف باشد.");
-
-        if (region is null)
-            return DomainResult<Workshop>.Failure("منطقه کارگاه نمیتواند خالی باشد.");
 
         if (registrationDate is null)
             return DomainResult<Workshop>.Failure("تاریخ ثبت کارگاه نمیتواند خالی باشد.");
@@ -68,7 +63,6 @@ public class Workshop
             UserId = userId,
             Name = name,
             Address = address,
-            Region = region.Value,
             RegistrationDate = registrationDate.Value,
             NationalId = nationalId,
             PostalCode = postalCode
@@ -76,11 +70,11 @@ public class Workshop
         return DomainResult<Workshop>.Success(workshop);
     }
 
-    public static DomainResult<Workshop> Create(Guid userId, string name, string address, WorkshopRegion? region,
+    public static DomainResult<Workshop> Create(Guid userId, string name, string address,
         DateOnly? registrationDate, string nationalId, string? postalCode = null) =>
-        Create(Guid.NewGuid(), userId, name, address, region, registrationDate, nationalId, postalCode);
+        Create(Guid.NewGuid(), userId, name, address, registrationDate, nationalId, postalCode);
 
-    public DomainResult Update(string name, string address, WorkshopRegion? region, DateOnly? registrationDate,
+    public DomainResult Update(string name, string address, DateOnly? registrationDate,
         string nationalId, string? postalCode = null)
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -95,8 +89,6 @@ public class Workshop
         if (address.Length < 10 || address.Length > 1000)
             return DomainResult.Failure("آدرس کارگاه باید بین 10 تا 1000 حرف باشد.");
 
-        if (region is null)
-            return DomainResult.Failure("منطقه کارگاه نمیتواند خالی باشد.");
 
         if (registrationDate is null)
             return DomainResult.Failure("تاریخ ثبت کارگاه نمیتواند خالی باشد.");
@@ -120,7 +112,6 @@ public class Workshop
         
         Name = name;
         Address = address;
-        Region = region.Value;
         RegistrationDate = registrationDate.Value;
         NationalId = nationalId;
         PostalCode = postalCode;

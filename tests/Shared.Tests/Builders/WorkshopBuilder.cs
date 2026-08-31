@@ -7,7 +7,6 @@ public class WorkshopBuilder
     private Guid _userId = Guid.NewGuid();
     private string _name = "کارگاه نمونه";
     private string _address = "تهران، خیابان نمونه، پلاک ۱۲۳";
-    private WorkshopRegion? _region = WorkshopRegion.Normal;
     private DateOnly? _registrationDate = DateOnly.FromDateTime(DateTime.Now);
     private string _nationalId = "1234567890";
     private string? _postalCode = "1234567890";
@@ -36,12 +35,6 @@ public class WorkshopBuilder
         return this;
     }
 
-    public WorkshopBuilder WithRegion(WorkshopRegion? region)
-    {
-        _region = region;
-        return this;
-    }
-
     public WorkshopBuilder WithRegistrationDate(DateOnly? registrationDate)
     {
         _registrationDate = registrationDate;
@@ -62,6 +55,6 @@ public class WorkshopBuilder
 
     public DomainResult<Workshop> CreateResult()
     {
-        return Workshop.Create(_id, _userId, _name, _address, _region, _registrationDate, _nationalId, _postalCode);
+        return Workshop.Create(_id, _userId, _name, _address, _registrationDate, _nationalId, _postalCode);
     }
 }

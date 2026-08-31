@@ -17,7 +17,7 @@ global using Core.Abstractions.Repositories.Workshops;
 global using Core.Abstractions.Repositories.Departments;
 global using Application.Validations;
 global using Application.Features.Employees;
-global using Application.Features.EmployeeSalaryProfiles;
+global using Application.Features.SalaryDecrees;
 global using Application.Features.LaborLawRules;
 global using Application.Features.CalculationFormulas;
 global using Application.Features.PayrollRecords;

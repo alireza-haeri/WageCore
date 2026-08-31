@@ -21,7 +21,8 @@ public class EmployeeQuery(IDbConnectionFactory dbConnectionFactory) : IEmployee
                                  CASE 
                                      WHEN e.TerminationDate IS NULL THEN {(int)EmployeeStatus.Employed}
                                      ELSE {(int)EmployeeStatus.Unemployed}
-                                 END AS Status
+                                 END AS Status,
+                                 e.Region AS Region
                              FROM {Core.Domain.Employee.TableName} e
                              INNER JOIN {Core.Domain.Workshop.TableName} w ON w.Id = e.WorkshopId
                              INNER JOIN {Core.Domain.Department.TableName} d ON d.Id = e.DepartmentId AND d.WorkshopId = e.WorkshopId
@@ -92,29 +93,20 @@ public class EmployeeQuery(IDbConnectionFactory dbConnectionFactory) : IEmployee
                           e.PersonalCode AS PersonalCode,
                           e.FullName AS FullName,
                           e.NationalCode AS NationalCode,
-                          e.BirthCertificateNumber AS BirthCertificateNumber,
                           e.FatherName AS FatherName,
                           e.Gender AS Gender,
-                          e.MaritalStatus AS MaritalStatus,
-                          e.ChildrenCount AS ChildrenCount,
                           e.HireDate AS HireDate,
                           e.PhoneNumber AS PhoneNumber,
                           e.JobTitle AS JobTitle,
-                          e.IsTaxSubject AS IsTaxSubject,
-                          e.InsuranceNumber AS InsuranceNumber,
-                          e.SocialSecurityContractRow AS SocialSecurityContractRow,
-                          e.PositionInInsuranceList AS PositionInInsuranceList,
-                          e.IsSubjectTo7PercentInsurance AS IsSubjectTo7PercentInsurance,
-                          e.IsSubjectTo20PercentInsurance AS IsSubjectTo20PercentInsurance,
-                          e.IsSubjectTo3PercentInsurance AS IsSubjectTo3PercentInsurance,
-                          e.InsuranceCalculationProfile AS InsuranceCalculationProfile
+                          e.Region AS Region
                       FROM {Core.Domain.Employee.TableName} e
                       INNER JOIN {Core.Domain.Workshop.TableName} w ON w.Id = e.WorkshopId
                       WHERE w.UserId = @UserId AND e.Id = @EmployeeId;
 
                       SELECT
                           ba.Id AS Id,
-                          ba.Title AS Title,
+                          ba.BankName AS BankName,
+                          ba.BranchCode AS BranchCode,
                           ba.Iban AS Iban
                       FROM {BankAccount.TableName} ba
                       INNER JOIN {Core.Domain.Employee.TableName} e ON e.Id = ba.EmployeeId
@@ -134,7 +126,7 @@ public class EmployeeQuery(IDbConnectionFactory dbConnectionFactory) : IEmployee
             return null;
 
         var bankAccounts = (await multi.ReadAsync<EmployeeBankAccountDbResult>())
-            .Select(x => new EmployeeBankAccountDto(x.Title, x.Iban, x.Id))
+            .Select(x => new EmployeeBankAccountDto(x.BankName, x.BranchCode, x.Iban, x.Id))
             .ToList();
 
         return new UserEmployeeByIdResult(
@@ -143,29 +135,20 @@ public class EmployeeQuery(IDbConnectionFactory dbConnectionFactory) : IEmployee
             employee.PersonalCode,
             employee.FullName,
             employee.NationalCode,
-            employee.BirthCertificateNumber,
             employee.FatherName,
             Enum.Parse<EmployeeGender>(employee.Gender),
-            Enum.Parse<EmployeeMaritalStatus>(employee.MaritalStatus),
-            employee.ChildrenCount,
             DateOnly.FromDateTime(employee.HireDate),
             employee.PhoneNumber,
             employee.JobTitle,
-            employee.IsTaxSubject,
-            employee.InsuranceNumber,
-            employee.SocialSecurityContractRow,
-            employee.PositionInInsuranceList,
-            employee.IsSubjectTo7PercentInsurance,
-            employee.IsSubjectTo20PercentInsurance,
-            employee.IsSubjectTo3PercentInsurance,
-            Enum.Parse<InsuranceCalculationProfile>(employee.InsuranceCalculationProfile),
+            Enum.Parse<Region>(employee.Region),
             bankAccounts);
     }
 
     private sealed class EmployeeBankAccountDbResult
     {
         public Guid? Id { get; set; }
-        public string? Title { get; set; }
+        public string? BankName { get; set; }
+        public string? BranchCode { get; set; }
         public string Iban { get; set; } = null!;
     }
 
@@ -176,22 +159,12 @@ public class EmployeeQuery(IDbConnectionFactory dbConnectionFactory) : IEmployee
         public string PersonalCode { get; set; } = null!;
         public string FullName { get; set; } = null!;
         public string NationalCode { get; set; } = null!;
-        public string BirthCertificateNumber { get; set; } = null!;
         public string FatherName { get; set; } = null!;
         public string Gender { get; set; } = null!;
-        public string MaritalStatus { get; set; } = null!;
         public DateTime HireDate { get; set; }
-        public int ChildrenCount { get; set; }
         public string PhoneNumber { get; set; } = null!;
         public string? JobTitle { get; set; }
-        public bool IsTaxSubject { get; set; }
-        public string InsuranceNumber { get; set; } = null!;
-        public string? SocialSecurityContractRow { get; set; }
-        public string PositionInInsuranceList { get; set; } = null!;
-        public bool IsSubjectTo7PercentInsurance { get; set; }
-        public bool IsSubjectTo20PercentInsurance { get; set; }
-        public bool IsSubjectTo3PercentInsurance { get; set; }
-        public string InsuranceCalculationProfile { get; set; } = null!;
+        public string Region { get; set; } = null!;
     }
 
     public async Task<bool> IsExistEmployeePersonalCode(Guid userId, string personalCode, Guid? excludeEmployeeId = null,

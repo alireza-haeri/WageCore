@@ -8,24 +8,23 @@ public class EmployeeBuilder
     private string _personalCode = "EMP001";
     private string _fullName = "کارمند نمونه";
     private string _nationalCode = "1234567890";
-    private string _birthCertificateNumber = "12345";
     private string _fatherName = "محمد";
     private EmployeeGender? _gender = EmployeeGender.Man;
-    private EmployeeMaritalStatus? _maritalStatus = EmployeeMaritalStatus.Single;
-    private int? _childrenCount = 0;
     private DateOnly? _workshopRegistrationDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-30));
     private DateOnly? _hireDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-5));
     private string _phoneNumber = "09123456789";
     private string? _jobTitle = "حسابدار";
-    private bool _isTaxSubject = true;
+    private Region? _region = Region.Normal;
     private string _insuranceNumber = "INS-001";
     private string? _socialSecurityContractRow = "CTR-10";
     private string _positionInInsuranceList = "اپراتور";
     private bool _isSubjectTo7PercentInsurance = true;
     private bool _isSubjectTo20PercentInsurance = true;
     private bool _isSubjectTo3PercentInsurance = false;
+    private bool _isSubjectTo4PercentInsurance = false;
     private InsuranceCalculationProfile? _insuranceCalculationProfile = InsuranceCalculationProfile.FullLegal;
-    private string? _bankAccountTitle = "حساب حقوق";
+    private string? _bankName = "بانک ملی";
+    private string? _branchCode = "۱۰۲";
     private string _iban = "IR123456789012345678901234";
     private bool _isPersonalCodeUniqueForUser = true;
     private bool _isNationalCodeUniqueForUser = true;
@@ -66,12 +65,6 @@ public class EmployeeBuilder
         return this;
     }
 
-    public EmployeeBuilder WithBirthCertificateNumber(string birthCertificateNumber)
-    {
-        _birthCertificateNumber = birthCertificateNumber;
-        return this;
-    }
-
     public EmployeeBuilder WithFatherName(string fatherName)
     {
         _fatherName = fatherName;
@@ -81,18 +74,6 @@ public class EmployeeBuilder
     public EmployeeBuilder WithGender(EmployeeGender? gender)
     {
         _gender = gender;
-        return this;
-    }
-
-    public EmployeeBuilder WithMaritalStatus(EmployeeMaritalStatus? maritalStatus)
-    {
-        _maritalStatus = maritalStatus;
-        return this;
-    }
-
-    public EmployeeBuilder WithChildrenCount(int? childrenCount)
-    {
-        _childrenCount = childrenCount;
         return this;
     }
 
@@ -120,9 +101,9 @@ public class EmployeeBuilder
         return this;
     }
 
-    public EmployeeBuilder WithIsTaxSubject(bool isTaxSubject)
+    public EmployeeBuilder WithRegion(Region? region)
     {
-        _isTaxSubject = isTaxSubject;
+        _region = region;
         return this;
     }
 
@@ -162,15 +143,27 @@ public class EmployeeBuilder
         return this;
     }
 
+    public EmployeeBuilder WithIsSubjectTo4PercentInsurance(bool isSubjectTo4PercentInsurance)
+    {
+        _isSubjectTo4PercentInsurance = isSubjectTo4PercentInsurance;
+        return this;
+    }
+
     public EmployeeBuilder WithInsuranceCalculationProfile(InsuranceCalculationProfile? insuranceCalculationProfile)
     {
         _insuranceCalculationProfile = insuranceCalculationProfile;
         return this;
     }
 
-    public EmployeeBuilder WithBankAccountTitle(string? bankAccountTitle)
+    public EmployeeBuilder WithBankName(string? bankName)
     {
-        _bankAccountTitle = bankAccountTitle;
+        _bankName = bankName;
+        return this;
+    }
+
+    public EmployeeBuilder WithBranchCode(string? branchCode)
+    {
+        _branchCode = branchCode;
         return this;
     }
 
@@ -198,15 +191,12 @@ public class EmployeeBuilder
             _personalCode,
             _fullName,
             _nationalCode,
-            _birthCertificateNumber,
             _fatherName,
             _gender,
-            _maritalStatus,
-            _childrenCount,
             _hireDate,
             _phoneNumber,
             _jobTitle,
-            _isTaxSubject);
+            _region);
 
     public EmployeeInsuranceDto BuildInsuranceDto() =>
         new(
@@ -216,10 +206,11 @@ public class EmployeeBuilder
             _isSubjectTo7PercentInsurance,
             _isSubjectTo20PercentInsurance,
             _isSubjectTo3PercentInsurance,
+            _isSubjectTo4PercentInsurance,
             _insuranceCalculationProfile);
 
     public EmployeeBankAccountDto BuildBankAccountDto() =>
-        new(_bankAccountTitle, _iban);
+        new(_bankName, _branchCode, _iban);
 
     public DomainResult<Employee> CreateResult()
     {
@@ -228,7 +219,6 @@ public class EmployeeBuilder
             _workshopId,
             _workshopRegistrationDate,
             BuildEmployeeDto(),
-            BuildInsuranceDto(),
             _isPersonalCodeUniqueForUser,
             _isNationalCodeUniqueForUser);
     }

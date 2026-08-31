@@ -27,7 +27,9 @@ public class ApiFixture : WebApplicationFactory<Program> , IAsyncLifetime
         await using (var scope = Services.CreateAsyncScope())
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<WageCoreDbContext>();
-            await dbContext.Database.MigrateAsync();
+            // Migrations are intentionally left untouched for this domain change, so tests
+            // create the schema directly from the current model.
+            await dbContext.Database.EnsureCreatedAsync();
         }
 
         await using var connection = new SqlConnection(_connectionString);

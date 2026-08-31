@@ -1416,7 +1416,7 @@
 
 
             <!-- ════════════ فرم حکم (view: profile-form) — کامل مطابق بخش ۰۵ سند ════════════ -->
-            <section class="view" id="v-profile-form" data-title="فرم حکم حقوقی" data-sub="EmployeeSalaryProfile — تاریخ‌دار" hidden>
+            <section class="view" id="v-profile-form" data-title="فرم حکم حقوقی" data-sub="SalaryDecree — تاریخ‌دار" hidden>
                 <div class="page-head">
                     <div class="ph-t">
                         <div class="crumb">پنل<svg class="ic"><use href="#i-chl"/></svg><a href="#profiles" data-go="profiles">احکام حقوقی</a><svg class="ic"><use href="#i-chl"/></svg>حکم جدید</div>
@@ -1452,10 +1452,10 @@
                             </div>
                         </div>
 
-                        <div class="sec"><svg class="ic"><use href="#i-coins"/></svg>پایه و مزایای ماهانه <small>مبالغ به ریال</small></div>
+                        <div class="sec"><svg class="ic"><use href="#i-coins"/></svg>پایه و مزایای روزانه <small>مبالغ به ریال</small></div>
                         <div class="row g-3">
                             <div class="col-md-4 field">
-                                <label class="f-label" for="p-base"><span class="req-s">*</span>حقوق پایهٔ ماهانه (۳۰ روزه) <span class="f-badge fb-grn">BaseMonthlySalary</span></label>
+                                <label class="f-label" for="p-base"><span class="req-s">*</span>حقوق پایهٔ روزانه <span class="f-badge fb-grn">BaseDailySalary</span></label>
                                 <div class="amount"><input class="in" id="p-base" value="1280000000" inputmode="numeric"><span class="unit">ریال</span></div>
                                 <div class="f-help">کف: حداقل قانونی منطقه در سال شروع حکم.</div>
                             </div>
@@ -1469,23 +1469,6 @@
                             </div>
                         </div>
 
-                        <div class="sec"><svg class="ic"><use href="#i-clock"/></svg>سنوات</div>
-                        <div class="row g-3">
-                            <div class="col-md-4 field">
-                                <label class="f-label" for="p-senmode"><span class="req-s">*</span>نحوهٔ اعمال پایه سنوات <span class="f-badge fb-grn">SeniorityBaseApplicationMode</span></label>
-                                <select class="in" id="p-senmode"><option value="fixed">ثابت (مقدار دستی)</option><option value="auto">خودکار (سیستم حساب می‌کند)</option></select>
-                            </div>
-                            <div class="col-md-4 field dis" id="fld-senmethod">
-                                <label class="f-label" for="p-senmethod">روش محاسبهٔ پایه سنوات <span class="f-badge fb-blu">وابسته</span></label>
-                                <select class="in" id="p-senmethod" disabled><option value="">انتخاب کنید…</option><option>روزانه</option><option>تجمیعی خودکار</option></select>
-                                <div class="f-help">فقط وقتی «نحوهٔ اعمال» خودکار باشد پر می‌شود.</div>
-                            </div>
-                            <div class="col-md-4 field">
-                                <label class="f-label" for="p-yearend"><span class="req-s">*</span>نحوهٔ سنوات پایان سال <span class="f-badge fb-grn">YearEndSeniorityMode</span></label>
-                                <select class="in" id="p-yearend"><option>محاسبه ماهانه (تعهدی)</option><option>محاسبه سالانه (یکجا)</option><option>بدون محاسبه</option></select>
-                            </div>
-                        </div>
-
                         <div class="sec"><svg class="ic"><use href="#i-scale"/></svg>شیفت و مزایای مصوب</div>
                         <div class="row g-3">
                             <div class="col-md-4 field">
@@ -1495,7 +1478,14 @@
                                     <option>عصر‌شب (۲۲٫۵٪)</option><option>صبح‌عصر‌شب (۱۵٪)</option>
                                 </select>
                                 <div class="f-help">درصدها ثابت قانونی‌اند و در بخشنامه‌ها نگهداری می‌شوند.</div>
+                            </div>                            <div class="col-md-4 field">
+                                <label class="f-label" for="p-contract"><span class="req-s">*</span>نوع قرارداد <span class="f-badge fb-grn">ContractType</span></label>
+                                <select class="in" id="p-contract">
+                                    <option>دائم</option><option>موقت</option><option>مدت معین</option>
+                                </select>
+                                <div class="f-help">نوع رابطهٔ استخدامی از نگاه قانون کار.</div>
                             </div>
+
                             <div class="col-md-4 field">
                                 <label class="f-label" for="p-house">حق مسکن <span class="f-badge fb-gold">HousingAllowance</span></label>
                                 <div class="amount"><input class="in" id="p-house" value="140000000" inputmode="numeric"><span class="unit">ریال</span></div>
@@ -1505,11 +1495,7 @@
                                 <label class="f-label" for="p-food">خواربار و بن <span class="f-badge fb-gold">FoodAllowance</span></label>
                                 <div class="amount"><input class="in" id="p-food" value="220000000" inputmode="numeric"><span class="unit">ریال</span></div>
                             </div>
-                            <div class="col-md-4 field">
-                                <label class="f-label" for="p-child">حق اولاد هر فرزند <span class="f-badge fb-gold">ChildAllowancePerChild</span></label>
-                                <div class="amount"><input class="in" id="p-child" value="104468664" inputmode="numeric"><span class="unit">ریال</span></div>
-                                <div class="f-help">پرداختی ماهانه = این مبلغ × تعداد فرزندان پرونده.</div>
-                            </div>
+
                             <div class="col-md-4 field">
                                 <label class="f-label" for="p-trans">ایاب‌وذهاب (خالص) <span class="f-badge fb-blu">خالص</span></label>
                                 <div class="amount"><input class="in" id="p-trans" value="0" inputmode="numeric"><span class="unit">ریال</span></div>
@@ -1527,7 +1513,7 @@
                             </div>
                         </div>
 
-                        <div class="note n-gold"><svg class="ic"><use href="#i-info"/></svg><div>حقوق پایه مبلغ توافقی است، فقط نباید از حداقل قانونی منطقه کمتر باشد. حق اولاد عمداً اینجاست چون «مبلغ دلبخواه مدیر» است؛ سقف قانونی آن (در صورت اعلام) به بخشنامه‌ها می‌رود.</div></div>
+                        <div class="note n-gold"><svg class="ic"><use href="#i-info"/></svg><div>حقوق پایه مبلغ توافقی است، فقط نباید از حداقل قانونی منطقه کمتر باشد.</div></div>
                         <div class="form-foot">
                             <button type="button" class="btn btn-g" data-demo="حکم به‌عنوان پیش‌نویس ذخیره شد (نمایشی).">ذخیره پیش‌نویس</button>
                             <button type="button" class="btn btn-p" data-demo="حکم به‌صورت نمایشی صادر شد."><svg class="ic"><use href="#i-check"/></svg>صدور حکم</button>
@@ -1748,7 +1734,7 @@
                 </div>
                 <div class="slip-sec">درآمدها</div>
                 <table class="slip-tbl">
-                    <tr><td>حقوق پایهٔ ماهانه (۳۰ روزه)</td><td class="amt">۱٬۲۸۰٬۰۰۰٬۰۰۰</td></tr>
+                    <tr><td>حقوق پایهٔ روزانه</td><td class="amt">۱٬۲۸۰٬۰۰۰٬۰۰۰</td></tr>
                     <tr><td>اضافه‌کاری ×۱٫۴ (۲۴ ساعت)</td><td class="amt">۱۹۵٬۴۹۰٬۹۰۰</td></tr>
                     <tr><td>مازاد شب‌کاری ۳۵٪ (۱۸ ساعت)</td><td class="amt">۳۶٬۶۵۴٬۵۰۰</td></tr>
                     <tr><td>فوق‌العادهٔ جمعه‌کاری ۴۰٪ (۸ ساعت)</td><td class="amt">۱۸٬۶۱۸٬۲۰۰</td></tr>
@@ -1916,16 +1902,6 @@
             window.scrollTo({ top: 0, behavior: "smooth" });
         }));
 
-        /* ── وابستگی «نحوهٔ اعمال پایه سنوات» ← «روش محاسبه» (مطابق سند دامنه) ── */
-        const senmode = $("#p-senmode");
-        if (senmode) senmode.addEventListener("change", () => {
-            const auto = senmode.value === "auto";
-            const method = $("#p-senmethod"), fld = $("#fld-senmethod");
-            method.disabled = !auto;
-            fld.classList.toggle("dis", !auto);
-            if (!auto) method.value = "";
-        });
-
         /* ── نمایش/مخفی‌سازی گذرواژه ── */
         $$(".pw-eye").forEach(btn => btn.addEventListener("click", () => {
             const inp = document.getElementById(btn.dataset.for);
@@ -1938,4 +1914,3 @@
 </script>
 </body>
 </html>
-

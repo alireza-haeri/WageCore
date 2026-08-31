@@ -6,7 +6,6 @@ public class UpdateWorkshopCommandValidatorTests
 
     private const string ValidName = "کارگاه نمونه";
     private const string ValidAddress = "تهران، خیابان نمونه، پلاک ۱۲۳";
-    private const WorkshopRegion ValidRegion = WorkshopRegion.Normal;
     private static readonly DateOnly ValidRegistrationDate = DateOnly.FromDateTime(DateTime.Now);
     private const string ValidNationalId = "1234567890";
     private const string ValidPostalCode = "1234567890";
@@ -21,7 +20,6 @@ public class UpdateWorkshopCommandValidatorTests
             ValidWorkshopId,
             ValidName,
             ValidAddress,
-            ValidRegion,
             ValidRegistrationDate,
             ValidNationalId,
             ValidPostalCode);
@@ -39,7 +37,6 @@ public class UpdateWorkshopCommandValidatorTests
             ValidWorkshopId,
             ValidName,
             ValidAddress,
-            ValidRegion,
             ValidRegistrationDate,
             ValidNationalId,
             null);
@@ -57,7 +54,6 @@ public class UpdateWorkshopCommandValidatorTests
             ValidWorkshopId,
             ValidName,
             ValidAddress,
-            ValidRegion,
             ValidRegistrationDate,
             ValidNationalId,
             "");
@@ -75,7 +71,6 @@ public class UpdateWorkshopCommandValidatorTests
             ValidWorkshopId,
             "اب",
             ValidAddress,
-            ValidRegion,
             ValidRegistrationDate,
             ValidNationalId,
             ValidPostalCode);
@@ -94,7 +89,6 @@ public class UpdateWorkshopCommandValidatorTests
             ValidWorkshopId,
             name,
             ValidAddress,
-            ValidRegion,
             ValidRegistrationDate,
             ValidNationalId,
             ValidPostalCode);
@@ -113,7 +107,6 @@ public class UpdateWorkshopCommandValidatorTests
             ValidWorkshopId,
             ValidName,
             address,
-            ValidRegion,
             ValidRegistrationDate,
             ValidNationalId,
             ValidPostalCode);
@@ -132,7 +125,6 @@ public class UpdateWorkshopCommandValidatorTests
             ValidWorkshopId,
             ValidName,
             address,
-            ValidRegion,
             ValidRegistrationDate,
             ValidNationalId,
             ValidPostalCode);
@@ -151,7 +143,6 @@ public class UpdateWorkshopCommandValidatorTests
             ValidWorkshopId,
             ValidName,
             ValidAddress,
-            ValidRegion,
             today,
             ValidNationalId,
             ValidPostalCode);
@@ -170,7 +161,6 @@ public class UpdateWorkshopCommandValidatorTests
             ValidWorkshopId,
             ValidName,
             ValidAddress,
-            ValidRegion,
             pastDate,
             ValidNationalId,
             ValidPostalCode);
@@ -188,7 +178,6 @@ public class UpdateWorkshopCommandValidatorTests
             ValidWorkshopId,
             ValidName,
             ValidAddress,
-            ValidRegion,
             ValidRegistrationDate,
             ValidNationalId,
             ValidPostalCode);
@@ -206,7 +195,6 @@ public class UpdateWorkshopCommandValidatorTests
             Guid.Empty,
             ValidName,
             ValidAddress,
-            ValidRegion,
             ValidRegistrationDate,
             ValidNationalId,
             ValidPostalCode);
@@ -225,7 +213,6 @@ public class UpdateWorkshopCommandValidatorTests
             ValidWorkshopId,
             name!,
             ValidAddress,
-            ValidRegion,
             ValidRegistrationDate,
             ValidNationalId,
             ValidPostalCode);
@@ -244,7 +231,6 @@ public class UpdateWorkshopCommandValidatorTests
             ValidWorkshopId,
             name,
             ValidAddress,
-            ValidRegion,
             ValidRegistrationDate,
             ValidNationalId,
             ValidPostalCode);
@@ -263,7 +249,6 @@ public class UpdateWorkshopCommandValidatorTests
             ValidWorkshopId,
             name,
             ValidAddress,
-            ValidRegion,
             ValidRegistrationDate,
             ValidNationalId,
             ValidPostalCode);
@@ -282,7 +267,6 @@ public class UpdateWorkshopCommandValidatorTests
             ValidWorkshopId,
             ValidName,
             address!,
-            ValidRegion,
             ValidRegistrationDate,
             ValidNationalId,
             ValidPostalCode);
@@ -301,7 +285,6 @@ public class UpdateWorkshopCommandValidatorTests
             ValidWorkshopId,
             ValidName,
             address,
-            ValidRegion,
             ValidRegistrationDate,
             ValidNationalId,
             ValidPostalCode);
@@ -320,7 +303,6 @@ public class UpdateWorkshopCommandValidatorTests
             ValidWorkshopId,
             ValidName,
             address,
-            ValidRegion,
             ValidRegistrationDate,
             ValidNationalId,
             ValidPostalCode);
@@ -331,22 +313,6 @@ public class UpdateWorkshopCommandValidatorTests
     }
 
     [Fact]
-    public void Validate_WithInvalidRegion_ShouldHaveValidationError()
-    {
-        var command = new UpdateWorkshopCommand(
-            ValidUserId,
-            ValidWorkshopId,
-            ValidName,
-            ValidAddress,
-            (WorkshopRegion)999,
-            ValidRegistrationDate,
-            ValidNationalId,
-            ValidPostalCode);
-
-        var result = _validator.TestValidate(command);
-
-        result.ShouldHaveValidationErrorFor(x => x.Region);
-    }
 
     [Fact]
     public void Validate_WithRegistrationDateInFuture_ShouldHaveValidationError()
@@ -357,7 +323,6 @@ public class UpdateWorkshopCommandValidatorTests
             ValidWorkshopId,
             ValidName,
             ValidAddress,
-            ValidRegion,
             futureDate,
             ValidNationalId,
             ValidPostalCode);
@@ -376,7 +341,6 @@ public class UpdateWorkshopCommandValidatorTests
             ValidWorkshopId,
             ValidName,
             ValidAddress,
-            ValidRegion,
             ValidRegistrationDate,
             nationalId!,
             ValidPostalCode);
@@ -398,7 +362,6 @@ public class UpdateWorkshopCommandValidatorTests
             ValidWorkshopId,
             ValidName,
             ValidAddress,
-            ValidRegion,
             ValidRegistrationDate,
             nationalId,
             ValidPostalCode);
@@ -420,7 +383,6 @@ public class UpdateWorkshopCommandValidatorTests
             ValidWorkshopId,
             ValidName,
             ValidAddress,
-            ValidRegion,
             ValidRegistrationDate,
             ValidNationalId,
             postalCode);

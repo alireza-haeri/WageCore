@@ -2,8 +2,7 @@ namespace Web.Api.Controllers.Workshops.Contracts;
 
 public record GetUserWorkshopsRequest(
     PaginationDto Pagination,
-    string? SearchName = null,
-    WorkshopRegion? Region = null
+    string? SearchName = null
 );
 
 public record GetUserWorkshopsResponse(
@@ -11,7 +10,6 @@ public record GetUserWorkshopsResponse(
     string Name,
     string Address,
     string NationalId,
-    WorkshopRegion Region,
     string DisplayRegistrationDate,
     int EmployeesCount,
     int DepartmentsCount);

@@ -19,9 +19,6 @@ public class CreateWorkshopCommandValidator : AbstractValidator<CreateWorkshopCo
             .MaximumLength(1000).WithMessage("آدرس کارگاه نمیتواند بیشتر از 1000 کاراکتر باشد.")
             .WithName("آدرس کارگاه");
 
-        RuleFor(x => x.Region)
-            .IsInEnum().WithMessage("منطقه کارگاه معتبر نیست.");
-
         RuleFor(x => x.RegistrationDate)
             .NotEmpty().WithMessage("تاریخ ثبت کارگاه اجباری است.")
             .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.Now))

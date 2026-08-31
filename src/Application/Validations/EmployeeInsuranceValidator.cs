@@ -18,6 +18,9 @@ public class EmployeeInsuranceValidator : AbstractValidator<EmployeeInsuranceDto
             .NotEmpty().WithMessage("سمت در لیست بیمه اجباری است.")
             .MaximumLength(100).WithMessage("سمت در لیست بیمه نمیتواند بیشتر از 100 کاراکتر باشد.");
 
+        RuleFor(x => x.IsSubjectTo4PercentInsurance)
+            .NotNull().WithMessage("مشمول بیمه ۴ درصد اجباری است.");
+
         RuleFor(x => x.InsuranceCalculationProfile)
             .Cascade(CascadeMode.Stop)
             .NotNull().WithMessage("پروفایل محاسبه بیمه اجباری است.")

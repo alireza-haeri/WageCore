@@ -5,8 +5,7 @@ namespace Infrastructure.Repositories.Workshop;
 public class WorkshopQuery(IDbConnectionFactory dbConnectionFactory) : IWorkshopQuery
 {
     public async Task<PagedResult<UserWorkshopResult>> GetUserWorkshopsAsync(Guid userId, PaginationDto pagination,
-        string? searchName = null,
-        WorkshopRegion? region = null, CancellationToken cancellationToken = default)
+        string? searchName = null, CancellationToken cancellationToken = default)
     {
         string sql = $"""
                              SELECT 
@@ -14,7 +13,6 @@ public class WorkshopQuery(IDbConnectionFactory dbConnectionFactory) : IWorkshop
                                  w.Name, 
                                  w.Address, 
                                  w.NationalId,
-                                 w.Region, 
                                  w.RegistrationDate,
                                  (
                                      SELECT COUNT(*)
@@ -29,22 +27,19 @@ public class WorkshopQuery(IDbConnectionFactory dbConnectionFactory) : IWorkshop
                              FROM {Core.Domain.Workshop.TableName} w
                              WHERE w.UserId = @UserId
                              AND (@SearchName IS NULL OR w.Name LIKE '%' + @SearchName + '%')
-                             AND (@Region IS NULL OR w.Region = @Region)
                              ORDER BY w.RegistrationDate DESC, w.Id DESC
                              OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
 
                              SELECT COUNT(*)
                              FROM {Core.Domain.Workshop.TableName} w
                              WHERE w.UserId = @UserId
-                             AND (@SearchName IS NULL OR w.Name LIKE '%' + @SearchName + '%')
-                             AND (@Region IS NULL OR w.Region = @Region);
+                             AND (@SearchName IS NULL OR w.Name LIKE '%' + @SearchName + '%');
                              """;
 
         var command = new CommandDefinition(sql, new
         {
             UserId = userId,
             SearchName = searchName,
-            Region = region?.ToString(),
             Offset = pagination.Offset,
             PageSize = pagination.PageSize
         }, cancellationToken: cancellationToken);
@@ -88,7 +83,6 @@ public class WorkshopQuery(IDbConnectionFactory dbConnectionFactory) : IWorkshop
                       SELECT 
                           Name AS Name,
                           Address AS Address,
-                          Region AS Region,
                           RegistrationDate AS RegistrationDate,
                           NationalId AS NationalId,
                           PostalCode AS PostalCode

@@ -116,28 +116,6 @@ public class EmployeeInformationValidatorTests
     }
 
     [Theory]
-    [InlineData("12345A")]
-    [InlineData("۱۲۳۴۵")]
-    public void Validate_WithInvalidBirthCertificateNumber_ShouldHaveValidationError(string birthCertificateNumber)
-    {
-        var dto = _employeeBuilder.BuildEmployeeDto() with { BirthCertificateNumber = birthCertificateNumber };
-
-        var result = _validator.TestValidate(dto);
-
-        result.ShouldHaveValidationErrorFor(x => x.BirthCertificateNumber);
-    }
-
-    [Fact]
-    public void Validate_WithBirthCertificateNumberExactly20Characters_ShouldNotHaveAnyErrors()
-    {
-        var dto = _employeeBuilder.BuildEmployeeDto() with { BirthCertificateNumber = "12345678901234567890" };
-
-        var result = _validator.TestValidate(dto);
-
-        result.ShouldNotHaveValidationErrorFor(x => x.BirthCertificateNumber);
-    }
-
-    [Theory]
     [MemberData(nameof(StringTestData.NullOrWhiteSpace), MemberType = typeof(StringTestData))]
     [InlineData("آب")]
     public void Validate_WithInvalidFatherName_ShouldHaveValidationError(string fatherName)
@@ -190,71 +168,23 @@ public class EmployeeInformationValidatorTests
     }
 
     [Fact]
-    public void Validate_WithNullMaritalStatus_ShouldHaveValidationError()
+    public void Validate_WithNullRegion_ShouldHaveValidationError()
     {
-        var dto = _employeeBuilder.BuildEmployeeDto() with { MaritalStatus = null };
+        var dto = _employeeBuilder.BuildEmployeeDto() with { Region = null };
 
         var result = _validator.TestValidate(dto);
 
-        result.ShouldHaveValidationErrorFor(x => x.MaritalStatus);
+        result.ShouldHaveValidationErrorFor(x => x.Region);
     }
 
     [Fact]
-    public void Validate_WithInvalidMaritalStatus_ShouldHaveValidationError()
+    public void Validate_WithInvalidRegion_ShouldHaveValidationError()
     {
-        var dto = _employeeBuilder.BuildEmployeeDto() with { MaritalStatus = (EmployeeMaritalStatus)999 };
+        var dto = _employeeBuilder.BuildEmployeeDto() with { Region = (Region)999 };
 
         var result = _validator.TestValidate(dto);
 
-        result.ShouldHaveValidationErrorFor(x => x.MaritalStatus);
-    }
-
-    [Fact]
-    public void Validate_WithNullChildrenCount_ShouldHaveValidationError()
-    {
-        var dto = _employeeBuilder.BuildEmployeeDto() with { ChildrenCount = null };
-
-        var result = _validator.TestValidate(dto);
-
-        result.ShouldHaveValidationErrorFor(x => x.ChildrenCount);
-    }
-
-    [Theory]
-    [InlineData(-1)]
-    [InlineData(21)]
-    public void Validate_WithChildrenCountOutOfRange_ShouldHaveValidationError(int childrenCount)
-    {
-        var dto = _employeeBuilder.BuildEmployeeDto() with { ChildrenCount = childrenCount };
-
-        var result = _validator.TestValidate(dto);
-
-        result.ShouldHaveValidationErrorFor(x => x.ChildrenCount);
-    }
-
-    [Theory]
-    [InlineData(0)]
-    [InlineData(20)]
-    public void Validate_WithChildrenCountBoundary_ShouldNotHaveAnyErrors(int childrenCount)
-    {
-        var dto = _employeeBuilder.WithMaritalStatus(EmployeeMaritalStatus.Married).BuildEmployeeDto() with { ChildrenCount = childrenCount };
-
-        var result = _validator.TestValidate(dto);
-
-        result.ShouldNotHaveValidationErrorFor(x => x.ChildrenCount);
-    }
-
-    [Fact]
-    public void Validate_WithSingleMaritalStatusAndChildrenCountMoreThanZero_ShouldHaveValidationError()
-    {
-        var dto = _employeeBuilder.BuildEmployeeDto() with
-        {
-            MaritalStatus = EmployeeMaritalStatus.Single,
-            ChildrenCount = 1
-        };
-
-        var result = _validator.TestValidate(dto);
-
-        result.ShouldHaveValidationErrorFor(x => x.ChildrenCount);
+        result.ShouldHaveValidationErrorFor(x => x.Region);
     }
 
     [Fact]

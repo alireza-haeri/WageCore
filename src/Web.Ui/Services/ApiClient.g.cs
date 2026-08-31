@@ -182,43 +182,43 @@ namespace Web.Ui.Services
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// CreateEmployeeSalaryProfile
+        /// CreateSalaryDecree
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<CreateEmployeeSalaryProfileCommandResponseResult> CreateEmployeeSalaryProfileAsync(CreateEmployeeSalaryProfileRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<CreateSalaryDecreeCommandResponseResult> CreateSalaryDecreeAsync(CreateSalaryDecreeRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// GetEmployeeSalaryProfiles
+        /// GetSalaryDecrees
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetEmployeeSalaryProfilesResponsePagedResultResult> GetEmployeeSalaryProfilesAsync(int? pagination_PageNumber = null, int? pagination_PageSize = null, int? pagination_Offset = null, System.Guid? employeeId = null, string search = null, Status2? status = null, System.Guid? workshopId = null, System.Guid? departmentId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<GetSalaryDecreesResponsePagedResultResult> GetSalaryDecreesAsync(int? pagination_PageNumber = null, int? pagination_PageSize = null, int? pagination_Offset = null, System.Guid? employeeId = null, string search = null, Status2? status = null, System.Guid? workshopId = null, System.Guid? departmentId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// UpdateEmployeeSalaryProfile
+        /// UpdateSalaryDecree
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BooleanResult> UpdateEmployeeSalaryProfileAsync(System.Guid employeeSalaryProfileId, UpdateEmployeeSalaryProfileRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<BooleanResult> UpdateSalaryDecreeAsync(System.Guid salaryDecreeId, UpdateSalaryDecreeRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// DeleteEmployeeSalaryProfile
+        /// DeleteSalaryDecree
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BooleanResult> DeleteEmployeeSalaryProfileAsync(System.Guid employeeSalaryProfileId, System.Guid? employeeId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<BooleanResult> DeleteSalaryDecreeAsync(System.Guid salaryDecreeId, System.Guid? employeeId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// GetEmployeeSalaryProfileForEdit
+        /// GetSalaryDecreeForEdit
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetEmployeeSalaryProfileForEditResponseResult> GetEmployeeSalaryProfileForEditAsync(System.Guid employeeSalaryProfileId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<GetSalaryDecreeForEditResponseResult> GetSalaryDecreeForEditAsync(System.Guid salaryDecreeId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -1915,11 +1915,11 @@ namespace Web.Ui.Services
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// CreateEmployeeSalaryProfile
+        /// CreateSalaryDecree
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<CreateEmployeeSalaryProfileCommandResponseResult> CreateEmployeeSalaryProfileAsync(CreateEmployeeSalaryProfileRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<CreateSalaryDecreeCommandResponseResult> CreateSalaryDecreeAsync(CreateSalaryDecreeRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1936,8 +1936,8 @@ namespace Web.Ui.Services
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/v1/employee-salary-profiles"
-                    urlBuilder_.Append("api/v1/employee-salary-profiles");
+                    // Operation Path: "api/v1/salary-decrees"
+                    urlBuilder_.Append("api/v1/salary-decrees");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -1964,7 +1964,7 @@ namespace Web.Ui.Services
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<CreateEmployeeSalaryProfileCommandResponseResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<CreateSalaryDecreeCommandResponseResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -1993,11 +1993,11 @@ namespace Web.Ui.Services
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// GetEmployeeSalaryProfiles
+        /// GetSalaryDecrees
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<GetEmployeeSalaryProfilesResponsePagedResultResult> GetEmployeeSalaryProfilesAsync(int? pagination_PageNumber = null, int? pagination_PageSize = null, int? pagination_Offset = null, System.Guid? employeeId = null, string search = null, Status2? status = null, System.Guid? workshopId = null, System.Guid? departmentId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<GetSalaryDecreesResponsePagedResultResult> GetSalaryDecreesAsync(int? pagination_PageNumber = null, int? pagination_PageSize = null, int? pagination_Offset = null, System.Guid? employeeId = null, string search = null, Status2? status = null, System.Guid? workshopId = null, System.Guid? departmentId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -2010,8 +2010,8 @@ namespace Web.Ui.Services
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/v1/employee-salary-profiles"
-                    urlBuilder_.Append("api/v1/employee-salary-profiles");
+                    // Operation Path: "api/v1/salary-decrees"
+                    urlBuilder_.Append("api/v1/salary-decrees");
                     urlBuilder_.Append('?');
                     if (pagination_PageNumber != null)
                     {
@@ -2072,7 +2072,7 @@ namespace Web.Ui.Services
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<GetEmployeeSalaryProfilesResponsePagedResultResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<GetSalaryDecreesResponsePagedResultResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -2101,14 +2101,14 @@ namespace Web.Ui.Services
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// UpdateEmployeeSalaryProfile
+        /// UpdateSalaryDecree
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<BooleanResult> UpdateEmployeeSalaryProfileAsync(System.Guid employeeSalaryProfileId, UpdateEmployeeSalaryProfileRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<BooleanResult> UpdateSalaryDecreeAsync(System.Guid salaryDecreeId, UpdateSalaryDecreeRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
-            if (employeeSalaryProfileId == null)
-                throw new System.ArgumentNullException("employeeSalaryProfileId");
+            if (salaryDecreeId == null)
+                throw new System.ArgumentNullException("salaryDecreeId");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -2125,9 +2125,9 @@ namespace Web.Ui.Services
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/v1/employee-salary-profiles/{employeeSalaryProfileId}"
-                    urlBuilder_.Append("api/v1/employee-salary-profiles/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(employeeSalaryProfileId, System.Globalization.CultureInfo.InvariantCulture)));
+                    // Operation Path: "api/v1/salary-decrees/{salaryDecreeId}"
+                    urlBuilder_.Append("api/v1/salary-decrees/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(salaryDecreeId, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -2183,14 +2183,14 @@ namespace Web.Ui.Services
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// DeleteEmployeeSalaryProfile
+        /// DeleteSalaryDecree
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<BooleanResult> DeleteEmployeeSalaryProfileAsync(System.Guid employeeSalaryProfileId, System.Guid? employeeId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<BooleanResult> DeleteSalaryDecreeAsync(System.Guid salaryDecreeId, System.Guid? employeeId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
-            if (employeeSalaryProfileId == null)
-                throw new System.ArgumentNullException("employeeSalaryProfileId");
+            if (salaryDecreeId == null)
+                throw new System.ArgumentNullException("salaryDecreeId");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -2203,9 +2203,9 @@ namespace Web.Ui.Services
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/v1/employee-salary-profiles/{employeeSalaryProfileId}"
-                    urlBuilder_.Append("api/v1/employee-salary-profiles/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(employeeSalaryProfileId, System.Globalization.CultureInfo.InvariantCulture)));
+                    // Operation Path: "api/v1/salary-decrees/{salaryDecreeId}"
+                    urlBuilder_.Append("api/v1/salary-decrees/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(salaryDecreeId, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append('?');
                     if (employeeId != null)
                     {
@@ -2267,14 +2267,14 @@ namespace Web.Ui.Services
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// GetEmployeeSalaryProfileForEdit
+        /// GetSalaryDecreeForEdit
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<GetEmployeeSalaryProfileForEditResponseResult> GetEmployeeSalaryProfileForEditAsync(System.Guid employeeSalaryProfileId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<GetSalaryDecreeForEditResponseResult> GetSalaryDecreeForEditAsync(System.Guid salaryDecreeId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
-            if (employeeSalaryProfileId == null)
-                throw new System.ArgumentNullException("employeeSalaryProfileId");
+            if (salaryDecreeId == null)
+                throw new System.ArgumentNullException("salaryDecreeId");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -2287,9 +2287,9 @@ namespace Web.Ui.Services
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/v1/employee-salary-profiles/{employeeSalaryProfileId}/edit"
-                    urlBuilder_.Append("api/v1/employee-salary-profiles/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(employeeSalaryProfileId, System.Globalization.CultureInfo.InvariantCulture)));
+                    // Operation Path: "api/v1/salary-decrees/{salaryDecreeId}/edit"
+                    urlBuilder_.Append("api/v1/salary-decrees/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(salaryDecreeId, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append("/edit");
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -2317,7 +2317,7 @@ namespace Web.Ui.Services
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<GetEmployeeSalaryProfileForEditResponseResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<GetSalaryDecreeForEditResponseResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -3771,24 +3771,24 @@ namespace Web.Ui.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial record CreateEmployeeSalaryProfileCommandResponse
+    public partial record CreateSalaryDecreeCommandResponse
     {
         [Newtonsoft.Json.JsonConstructor]
-        public CreateEmployeeSalaryProfileCommandResponse(System.Guid @employeeSalaryProfileId)
+        public CreateSalaryDecreeCommandResponse(System.Guid @salaryDecreeId)
         {
-            this.EmployeeSalaryProfileId = @employeeSalaryProfileId;
+            this.SalaryDecreeId = @salaryDecreeId;
         }
 
-        [Newtonsoft.Json.JsonProperty("employeeSalaryProfileId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Guid EmployeeSalaryProfileId { get; init; }
+        [Newtonsoft.Json.JsonProperty("salaryDecreeId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid SalaryDecreeId { get; init; }
 
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial record CreateEmployeeSalaryProfileCommandResponseResult
+    public partial record CreateSalaryDecreeCommandResponseResult
     {
         [Newtonsoft.Json.JsonConstructor]
-        public CreateEmployeeSalaryProfileCommandResponseResult(CreateEmployeeSalaryProfileCommandResponseResultBadResultType? @badResultType, System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<string>> @errors, bool @isSuccess, CreateEmployeeSalaryProfileCommandResponse @response)
+        public CreateSalaryDecreeCommandResponseResult(CreateSalaryDecreeCommandResponseResultBadResultType? @badResultType, System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<string>> @errors, bool @isSuccess, CreateSalaryDecreeCommandResponse @response)
         {
             this.IsSuccess = @isSuccess;
             this.BadResultType = @badResultType;
@@ -3800,10 +3800,10 @@ namespace Web.Ui.Services
         public bool IsSuccess { get; init; }
 
         [Newtonsoft.Json.JsonProperty("badResultType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public CreateEmployeeSalaryProfileCommandResponseResultBadResultType? BadResultType { get; init; }
+        public CreateSalaryDecreeCommandResponseResultBadResultType? BadResultType { get; init; }
 
         [Newtonsoft.Json.JsonProperty("response", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public CreateEmployeeSalaryProfileCommandResponse Response { get; init; }
+        public CreateSalaryDecreeCommandResponse Response { get; init; }
 
         [Newtonsoft.Json.JsonProperty("errors", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<string>> Errors { get; init; }
@@ -3811,10 +3811,10 @@ namespace Web.Ui.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial record CreateEmployeeSalaryProfileRequest
+    public partial record CreateSalaryDecreeRequest
     {
         [Newtonsoft.Json.JsonConstructor]
-        public CreateEmployeeSalaryProfileRequest(System.Guid @employeeId, EmployeeSalaryProfileRequest @salaryProfile)
+        public CreateSalaryDecreeRequest(System.Guid @employeeId, SalaryDecreeRequest @salaryProfile)
         {
             this.EmployeeId = @employeeId;
             this.SalaryProfile = @salaryProfile;
@@ -3824,7 +3824,7 @@ namespace Web.Ui.Services
         public System.Guid EmployeeId { get; init; }
 
         [Newtonsoft.Json.JsonProperty("salaryProfile", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public EmployeeSalaryProfileRequest SalaryProfile { get; init; }
+        public SalaryDecreeRequest SalaryProfile { get; init; }
 
     }
 
@@ -4109,22 +4109,19 @@ namespace Web.Ui.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial record EmployeeSalaryProfileRequest
+    public partial record SalaryDecreeRequest
     {
         [Newtonsoft.Json.JsonConstructor]
-        public EmployeeSalaryProfileRequest(double? @attractionAllowance, double @baseMonthlySalary, double? @childAllowancePerChild, string @effectiveFrom, double? @foodAllowance, double? @housingAllowance, double? @karanehAmountNet, EmployeeSalaryProfileRequestSeniorityBaseApplicationMode @seniorityBaseApplicationMode, EmployeeSalaryProfileRequestSeniorityBaseCalculationMethod? @seniorityBaseCalculationMethod, EmployeeSalaryProfileRequestShiftType @shiftType, double? @supervisionAllowance, double? @transportationAllowanceNet, EmployeeSalaryProfileRequestYearEndSeniorityMode @yearEndSeniorityMode)
+        public SalaryDecreeRequest(double? @attractionAllowance, double @baseDailySalary, string @effectiveFrom, double? @foodAllowance, double? @housingAllowance, double? @karanehAmountNet, SalaryDecreeRequestShiftType @shiftType, SalaryDecreeRequestContractType @contractType, double? @supervisionAllowance, double? @transportationAllowanceNet)
         {
             this.EffectiveFrom = @effectiveFrom;
-            this.BaseMonthlySalary = @baseMonthlySalary;
+            this.BaseDailySalary = @baseDailySalary;
             this.AttractionAllowance = @attractionAllowance;
             this.SupervisionAllowance = @supervisionAllowance;
-            this.SeniorityBaseApplicationMode = @seniorityBaseApplicationMode;
-            this.SeniorityBaseCalculationMethod = @seniorityBaseCalculationMethod;
-            this.YearEndSeniorityMode = @yearEndSeniorityMode;
             this.ShiftType = @shiftType;
+            this.ContractType = @contractType;
             this.HousingAllowance = @housingAllowance;
             this.FoodAllowance = @foodAllowance;
-            this.ChildAllowancePerChild = @childAllowancePerChild;
             this.TransportationAllowanceNet = @transportationAllowanceNet;
             this.KaranehAmountNet = @karanehAmountNet;
         }
@@ -4132,8 +4129,8 @@ namespace Web.Ui.Services
         [Newtonsoft.Json.JsonProperty("effectiveFrom", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string EffectiveFrom { get; init; }
 
-        [Newtonsoft.Json.JsonProperty("baseMonthlySalary", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public double BaseMonthlySalary { get; init; }
+        [Newtonsoft.Json.JsonProperty("baseDailySalary", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double BaseDailySalary { get; init; }
 
         [Newtonsoft.Json.JsonProperty("attractionAllowance", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double? AttractionAllowance { get; init; }
@@ -4141,26 +4138,17 @@ namespace Web.Ui.Services
         [Newtonsoft.Json.JsonProperty("supervisionAllowance", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double? SupervisionAllowance { get; init; }
 
-        [Newtonsoft.Json.JsonProperty("seniorityBaseApplicationMode", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public EmployeeSalaryProfileRequestSeniorityBaseApplicationMode SeniorityBaseApplicationMode { get; init; }
-
-        [Newtonsoft.Json.JsonProperty("seniorityBaseCalculationMethod", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public EmployeeSalaryProfileRequestSeniorityBaseCalculationMethod? SeniorityBaseCalculationMethod { get; init; }
-
-        [Newtonsoft.Json.JsonProperty("yearEndSeniorityMode", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public EmployeeSalaryProfileRequestYearEndSeniorityMode YearEndSeniorityMode { get; init; }
-
         [Newtonsoft.Json.JsonProperty("shiftType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public EmployeeSalaryProfileRequestShiftType ShiftType { get; init; }
+        public SalaryDecreeRequestShiftType ShiftType { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("contractType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public SalaryDecreeRequestContractType ContractType { get; init; }
 
         [Newtonsoft.Json.JsonProperty("housingAllowance", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double? HousingAllowance { get; init; }
 
         [Newtonsoft.Json.JsonProperty("foodAllowance", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double? FoodAllowance { get; init; }
-
-        [Newtonsoft.Json.JsonProperty("childAllowancePerChild", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public double? ChildAllowancePerChild { get; init; }
 
         [Newtonsoft.Json.JsonProperty("transportationAllowanceNet", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double? TransportationAllowanceNet { get; init; }
@@ -4469,30 +4457,27 @@ namespace Web.Ui.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial record GetEmployeeSalaryProfileForEditResponse
+    public partial record GetSalaryDecreeForEditResponse
     {
         [Newtonsoft.Json.JsonConstructor]
-        public GetEmployeeSalaryProfileForEditResponse(double? @attractionAllowance, double @baseMonthlySalary, double? @childAllowancePerChild, string @effectiveFrom, System.Guid @employeeId, System.Guid @employeeSalaryProfileId, double? @foodAllowance, double? @housingAllowance, double? @karanehAmountNet, GetEmployeeSalaryProfileForEditResponseSeniorityBaseApplicationMode @seniorityBaseApplicationMode, GetEmployeeSalaryProfileForEditResponseSeniorityBaseCalculationMethod? @seniorityBaseCalculationMethod, GetEmployeeSalaryProfileForEditResponseShiftType @shiftType, double? @supervisionAllowance, double? @transportationAllowanceNet, GetEmployeeSalaryProfileForEditResponseYearEndSeniorityMode @yearEndSeniorityMode)
+        public GetSalaryDecreeForEditResponse(double? @attractionAllowance, double @baseDailySalary, string @effectiveFrom, System.Guid @employeeId, System.Guid @salaryDecreeId, double? @foodAllowance, double? @housingAllowance, double? @karanehAmountNet, GetSalaryDecreeForEditResponseShiftType @shiftType, GetSalaryDecreeForEditResponseContractType @contractType, double? @supervisionAllowance, double? @transportationAllowanceNet)
         {
-            this.EmployeeSalaryProfileId = @employeeSalaryProfileId;
+            this.SalaryDecreeId = @salaryDecreeId;
             this.EmployeeId = @employeeId;
             this.EffectiveFrom = @effectiveFrom;
-            this.BaseMonthlySalary = @baseMonthlySalary;
+            this.BaseDailySalary = @baseDailySalary;
             this.AttractionAllowance = @attractionAllowance;
             this.SupervisionAllowance = @supervisionAllowance;
-            this.SeniorityBaseApplicationMode = @seniorityBaseApplicationMode;
-            this.SeniorityBaseCalculationMethod = @seniorityBaseCalculationMethod;
-            this.YearEndSeniorityMode = @yearEndSeniorityMode;
             this.ShiftType = @shiftType;
+            this.ContractType = @contractType;
             this.HousingAllowance = @housingAllowance;
             this.FoodAllowance = @foodAllowance;
-            this.ChildAllowancePerChild = @childAllowancePerChild;
             this.TransportationAllowanceNet = @transportationAllowanceNet;
             this.KaranehAmountNet = @karanehAmountNet;
         }
 
-        [Newtonsoft.Json.JsonProperty("employeeSalaryProfileId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Guid EmployeeSalaryProfileId { get; init; }
+        [Newtonsoft.Json.JsonProperty("salaryDecreeId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid SalaryDecreeId { get; init; }
 
         [Newtonsoft.Json.JsonProperty("employeeId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Guid EmployeeId { get; init; }
@@ -4500,8 +4485,8 @@ namespace Web.Ui.Services
         [Newtonsoft.Json.JsonProperty("effectiveFrom", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string EffectiveFrom { get; init; }
 
-        [Newtonsoft.Json.JsonProperty("baseMonthlySalary", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public double BaseMonthlySalary { get; init; }
+        [Newtonsoft.Json.JsonProperty("baseDailySalary", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double BaseDailySalary { get; init; }
 
         [Newtonsoft.Json.JsonProperty("attractionAllowance", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double? AttractionAllowance { get; init; }
@@ -4509,26 +4494,17 @@ namespace Web.Ui.Services
         [Newtonsoft.Json.JsonProperty("supervisionAllowance", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double? SupervisionAllowance { get; init; }
 
-        [Newtonsoft.Json.JsonProperty("seniorityBaseApplicationMode", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public GetEmployeeSalaryProfileForEditResponseSeniorityBaseApplicationMode SeniorityBaseApplicationMode { get; init; }
-
-        [Newtonsoft.Json.JsonProperty("seniorityBaseCalculationMethod", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public GetEmployeeSalaryProfileForEditResponseSeniorityBaseCalculationMethod? SeniorityBaseCalculationMethod { get; init; }
-
-        [Newtonsoft.Json.JsonProperty("yearEndSeniorityMode", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public GetEmployeeSalaryProfileForEditResponseYearEndSeniorityMode YearEndSeniorityMode { get; init; }
-
         [Newtonsoft.Json.JsonProperty("shiftType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public GetEmployeeSalaryProfileForEditResponseShiftType ShiftType { get; init; }
+        public GetSalaryDecreeForEditResponseShiftType ShiftType { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("contractType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public GetSalaryDecreeForEditResponseContractType ContractType { get; init; }
 
         [Newtonsoft.Json.JsonProperty("housingAllowance", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double? HousingAllowance { get; init; }
 
         [Newtonsoft.Json.JsonProperty("foodAllowance", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double? FoodAllowance { get; init; }
-
-        [Newtonsoft.Json.JsonProperty("childAllowancePerChild", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public double? ChildAllowancePerChild { get; init; }
 
         [Newtonsoft.Json.JsonProperty("transportationAllowanceNet", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double? TransportationAllowanceNet { get; init; }
@@ -4539,10 +4515,10 @@ namespace Web.Ui.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial record GetEmployeeSalaryProfileForEditResponseResult
+    public partial record GetSalaryDecreeForEditResponseResult
     {
         [Newtonsoft.Json.JsonConstructor]
-        public GetEmployeeSalaryProfileForEditResponseResult(GetEmployeeSalaryProfileForEditResponseResultBadResultType? @badResultType, System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<string>> @errors, bool @isSuccess, GetEmployeeSalaryProfileForEditResponse @response)
+        public GetSalaryDecreeForEditResponseResult(GetSalaryDecreeForEditResponseResultBadResultType? @badResultType, System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<string>> @errors, bool @isSuccess, GetSalaryDecreeForEditResponse @response)
         {
             this.IsSuccess = @isSuccess;
             this.BadResultType = @badResultType;
@@ -4554,10 +4530,10 @@ namespace Web.Ui.Services
         public bool IsSuccess { get; init; }
 
         [Newtonsoft.Json.JsonProperty("badResultType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public GetEmployeeSalaryProfileForEditResponseResultBadResultType? BadResultType { get; init; }
+        public GetSalaryDecreeForEditResponseResultBadResultType? BadResultType { get; init; }
 
         [Newtonsoft.Json.JsonProperty("response", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public GetEmployeeSalaryProfileForEditResponse Response { get; init; }
+        public GetSalaryDecreeForEditResponse Response { get; init; }
 
         [Newtonsoft.Json.JsonProperty("errors", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<string>> Errors { get; init; }
@@ -4565,24 +4541,24 @@ namespace Web.Ui.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial record GetEmployeeSalaryProfilesResponse
+    public partial record GetSalaryDecreesResponse
     {
         [Newtonsoft.Json.JsonConstructor]
-        public GetEmployeeSalaryProfilesResponse(double @baseMonthlySalary, string @departmentName, string @displayEffectiveFrom, System.Guid @employeeId, string @employeeName, System.Guid @employeeSalaryProfileId, string @personalCode, GetEmployeeSalaryProfilesResponseStatus @status, string @workshopName)
+        public GetSalaryDecreesResponse(double @baseDailySalary, string @departmentName, string @displayEffectiveFrom, System.Guid @employeeId, string @employeeName, System.Guid @salaryDecreeId, string @personalCode, GetSalaryDecreesResponseStatus @status, string @workshopName)
         {
-            this.EmployeeSalaryProfileId = @employeeSalaryProfileId;
+            this.SalaryDecreeId = @salaryDecreeId;
             this.EmployeeId = @employeeId;
             this.EmployeeName = @employeeName;
             this.PersonalCode = @personalCode;
             this.WorkshopName = @workshopName;
             this.DepartmentName = @departmentName;
             this.DisplayEffectiveFrom = @displayEffectiveFrom;
-            this.BaseMonthlySalary = @baseMonthlySalary;
+            this.BaseDailySalary = @baseDailySalary;
             this.Status = @status;
         }
 
-        [Newtonsoft.Json.JsonProperty("employeeSalaryProfileId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Guid EmployeeSalaryProfileId { get; init; }
+        [Newtonsoft.Json.JsonProperty("salaryDecreeId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid SalaryDecreeId { get; init; }
 
         [Newtonsoft.Json.JsonProperty("employeeId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Guid EmployeeId { get; init; }
@@ -4602,19 +4578,19 @@ namespace Web.Ui.Services
         [Newtonsoft.Json.JsonProperty("displayEffectiveFrom", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string DisplayEffectiveFrom { get; init; }
 
-        [Newtonsoft.Json.JsonProperty("baseMonthlySalary", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public double BaseMonthlySalary { get; init; }
+        [Newtonsoft.Json.JsonProperty("baseDailySalary", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double BaseDailySalary { get; init; }
 
         [Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public GetEmployeeSalaryProfilesResponseStatus Status { get; init; }
+        public GetSalaryDecreesResponseStatus Status { get; init; }
 
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial record GetEmployeeSalaryProfilesResponsePagedResult
+    public partial record GetSalaryDecreesResponsePagedResult
     {
         [Newtonsoft.Json.JsonConstructor]
-        public GetEmployeeSalaryProfilesResponsePagedResult(System.Collections.Generic.ICollection<GetEmployeeSalaryProfilesResponse> @items, int @pageNumber, int @pageSize, int @totalCount, int @totalPages)
+        public GetSalaryDecreesResponsePagedResult(System.Collections.Generic.ICollection<GetSalaryDecreesResponse> @items, int @pageNumber, int @pageSize, int @totalCount, int @totalPages)
         {
             this.Items = @items;
             this.TotalCount = @totalCount;
@@ -4624,7 +4600,7 @@ namespace Web.Ui.Services
         }
 
         [Newtonsoft.Json.JsonProperty("items", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.ICollection<GetEmployeeSalaryProfilesResponse> Items { get; init; }
+        public System.Collections.Generic.ICollection<GetSalaryDecreesResponse> Items { get; init; }
 
         [Newtonsoft.Json.JsonProperty("totalCount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int TotalCount { get; init; }
@@ -4641,10 +4617,10 @@ namespace Web.Ui.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial record GetEmployeeSalaryProfilesResponsePagedResultResult
+    public partial record GetSalaryDecreesResponsePagedResultResult
     {
         [Newtonsoft.Json.JsonConstructor]
-        public GetEmployeeSalaryProfilesResponsePagedResultResult(GetEmployeeSalaryProfilesResponsePagedResultResultBadResultType? @badResultType, System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<string>> @errors, bool @isSuccess, GetEmployeeSalaryProfilesResponsePagedResult @response)
+        public GetSalaryDecreesResponsePagedResultResult(GetSalaryDecreesResponsePagedResultResultBadResultType? @badResultType, System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<string>> @errors, bool @isSuccess, GetSalaryDecreesResponsePagedResult @response)
         {
             this.IsSuccess = @isSuccess;
             this.BadResultType = @badResultType;
@@ -4656,10 +4632,10 @@ namespace Web.Ui.Services
         public bool IsSuccess { get; init; }
 
         [Newtonsoft.Json.JsonProperty("badResultType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public GetEmployeeSalaryProfilesResponsePagedResultResultBadResultType? BadResultType { get; init; }
+        public GetSalaryDecreesResponsePagedResultResultBadResultType? BadResultType { get; init; }
 
         [Newtonsoft.Json.JsonProperty("response", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public GetEmployeeSalaryProfilesResponsePagedResult Response { get; init; }
+        public GetSalaryDecreesResponsePagedResult Response { get; init; }
 
         [Newtonsoft.Json.JsonProperty("errors", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<string>> Errors { get; init; }
@@ -5485,10 +5461,10 @@ namespace Web.Ui.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial record UpdateEmployeeSalaryProfileRequest
+    public partial record UpdateSalaryDecreeRequest
     {
         [Newtonsoft.Json.JsonConstructor]
-        public UpdateEmployeeSalaryProfileRequest(System.Guid @employeeId, EmployeeSalaryProfileRequest @salaryProfile)
+        public UpdateSalaryDecreeRequest(System.Guid @employeeId, SalaryDecreeRequest @salaryProfile)
         {
             this.EmployeeId = @employeeId;
             this.SalaryProfile = @salaryProfile;
@@ -5498,7 +5474,7 @@ namespace Web.Ui.Services
         public System.Guid EmployeeId { get; init; }
 
         [Newtonsoft.Json.JsonProperty("salaryProfile", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public EmployeeSalaryProfileRequest SalaryProfile { get; init; }
+        public SalaryDecreeRequest SalaryProfile { get; init; }
 
     }
 
@@ -5669,7 +5645,7 @@ namespace Web.Ui.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum CreateEmployeeSalaryProfileCommandResponseResultBadResultType
+    public enum CreateSalaryDecreeCommandResponseResultBadResultType
     {
 
         NotFound = 0,
@@ -5763,27 +5739,7 @@ namespace Web.Ui.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum EmployeeSalaryProfileRequestSeniorityBaseApplicationMode
-    {
-
-        Manual = 0,
-
-        Automatic = 1,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum EmployeeSalaryProfileRequestSeniorityBaseCalculationMethod
-    {
-
-        Daily = 0,
-
-        CumulativeAuto = 1,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum EmployeeSalaryProfileRequestShiftType
+    public enum SalaryDecreeRequestShiftType
     {
 
         None = 0,
@@ -5799,14 +5755,14 @@ namespace Web.Ui.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum EmployeeSalaryProfileRequestYearEndSeniorityMode
+    public enum SalaryDecreeRequestContractType
     {
 
-        MonthlyAccrual = 0,
+        Permanent = 1,
 
-        AnnualLumpSum = 1,
+        Temporary = 2,
 
-        NotCalculation = 2,
+        FixedTerm = 3,
 
     }
 
@@ -5917,27 +5873,7 @@ namespace Web.Ui.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum GetEmployeeSalaryProfileForEditResponseSeniorityBaseApplicationMode
-    {
-
-        Manual = 0,
-
-        Automatic = 1,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum GetEmployeeSalaryProfileForEditResponseSeniorityBaseCalculationMethod
-    {
-
-        Daily = 0,
-
-        CumulativeAuto = 1,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum GetEmployeeSalaryProfileForEditResponseShiftType
+    public enum GetSalaryDecreeForEditResponseShiftType
     {
 
         None = 0,
@@ -5953,19 +5889,19 @@ namespace Web.Ui.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum GetEmployeeSalaryProfileForEditResponseYearEndSeniorityMode
+    public enum GetSalaryDecreeForEditResponseContractType
     {
 
-        MonthlyAccrual = 0,
+        Permanent = 1,
 
-        AnnualLumpSum = 1,
+        Temporary = 2,
 
-        NotCalculation = 2,
+        FixedTerm = 3,
 
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum GetEmployeeSalaryProfileForEditResponseResultBadResultType
+    public enum GetSalaryDecreeForEditResponseResultBadResultType
     {
 
         NotFound = 0,
@@ -5979,7 +5915,7 @@ namespace Web.Ui.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum GetEmployeeSalaryProfilesResponseStatus
+    public enum GetSalaryDecreesResponseStatus
     {
 
         Active = 0,
@@ -5989,7 +5925,7 @@ namespace Web.Ui.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum GetEmployeeSalaryProfilesResponsePagedResultResultBadResultType
+    public enum GetSalaryDecreesResponsePagedResultResultBadResultType
     {
 
         NotFound = 0,

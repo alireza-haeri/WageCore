@@ -1108,20 +1108,20 @@
         }
       }
     },
-    "/api/v1/employee-salary-profiles": {
+    "/api/v1/salary-decrees": {
       "post": {
         "tags": [
-          "EmployeeSalaryProfile"
+          "SalaryDecree"
         ],
-        "summary": "CreateEmployeeSalaryProfile",
-        "operationId": "CreateEmployeeSalaryProfile",
+        "summary": "CreateSalaryDecree",
+        "operationId": "CreateSalaryDecree",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
                 "allOf": [
                   {
-                    "$ref": "#/components/schemas/CreateEmployeeSalaryProfileRequest"
+                    "$ref": "#/components/schemas/CreateSalaryDecreeRequest"
                   }
                 ]
               }
@@ -1130,7 +1130,7 @@
               "schema": {
                 "allOf": [
                   {
-                    "$ref": "#/components/schemas/CreateEmployeeSalaryProfileRequest"
+                    "$ref": "#/components/schemas/CreateSalaryDecreeRequest"
                   }
                 ]
               }
@@ -1139,7 +1139,7 @@
               "schema": {
                 "allOf": [
                   {
-                    "$ref": "#/components/schemas/CreateEmployeeSalaryProfileRequest"
+                    "$ref": "#/components/schemas/CreateSalaryDecreeRequest"
                   }
                 ]
               }
@@ -1152,17 +1152,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateEmployeeSalaryProfileCommandResponseResult"
+                  "$ref": "#/components/schemas/CreateSalaryDecreeCommandResponseResult"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateEmployeeSalaryProfileCommandResponseResult"
+                  "$ref": "#/components/schemas/CreateSalaryDecreeCommandResponseResult"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateEmployeeSalaryProfileCommandResponseResult"
+                  "$ref": "#/components/schemas/CreateSalaryDecreeCommandResponseResult"
                 }
               }
             }
@@ -1171,10 +1171,10 @@
       },
       "get": {
         "tags": [
-          "EmployeeSalaryProfile"
+          "SalaryDecree"
         ],
-        "summary": "GetEmployeeSalaryProfiles",
-        "operationId": "GetEmployeeSalaryProfiles",
+        "summary": "GetSalaryDecrees",
+        "operationId": "GetSalaryDecrees",
         "parameters": [
           {
             "name": "Pagination.PageNumber",
@@ -1254,17 +1254,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetEmployeeSalaryProfilesResponsePagedResultResult"
+                  "$ref": "#/components/schemas/GetSalaryDecreesResponsePagedResultResult"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetEmployeeSalaryProfilesResponsePagedResultResult"
+                  "$ref": "#/components/schemas/GetSalaryDecreesResponsePagedResultResult"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetEmployeeSalaryProfilesResponsePagedResultResult"
+                  "$ref": "#/components/schemas/GetSalaryDecreesResponsePagedResultResult"
                 }
               }
             }
@@ -1272,16 +1272,16 @@
         }
       }
     },
-    "/api/v1/employee-salary-profiles/{employeeSalaryProfileId}": {
+    "/api/v1/salary-decrees/{salaryDecreeId}": {
       "put": {
         "tags": [
-          "EmployeeSalaryProfile"
+          "SalaryDecree"
         ],
-        "summary": "UpdateEmployeeSalaryProfile",
-        "operationId": "UpdateEmployeeSalaryProfile",
+        "summary": "UpdateSalaryDecree",
+        "operationId": "UpdateSalaryDecree",
         "parameters": [
           {
-            "name": "employeeSalaryProfileId",
+            "name": "salaryDecreeId",
             "in": "path",
             "required": true,
             "schema": {
@@ -1296,7 +1296,7 @@
               "schema": {
                 "allOf": [
                   {
-                    "$ref": "#/components/schemas/UpdateEmployeeSalaryProfileRequest"
+                    "$ref": "#/components/schemas/UpdateSalaryDecreeRequest"
                   }
                 ]
               }
@@ -1305,7 +1305,7 @@
               "schema": {
                 "allOf": [
                   {
-                    "$ref": "#/components/schemas/UpdateEmployeeSalaryProfileRequest"
+                    "$ref": "#/components/schemas/UpdateSalaryDecreeRequest"
                   }
                 ]
               }
@@ -1314,7 +1314,7 @@
               "schema": {
                 "allOf": [
                   {
-                    "$ref": "#/components/schemas/UpdateEmployeeSalaryProfileRequest"
+                    "$ref": "#/components/schemas/UpdateSalaryDecreeRequest"
                   }
                 ]
               }
@@ -1346,10 +1346,10 @@
       },
       "delete": {
         "tags": [
-          "EmployeeSalaryProfile"
+          "SalaryDecree"
         ],
-        "summary": "DeleteEmployeeSalaryProfile",
-        "operationId": "DeleteEmployeeSalaryProfile",
+        "summary": "DeleteSalaryDecree",
+        "operationId": "DeleteSalaryDecree",
         "parameters": [
           {
             "name": "employeeId",
@@ -1360,7 +1360,7 @@
             }
           },
           {
-            "name": "employeeSalaryProfileId",
+            "name": "salaryDecreeId",
             "in": "path",
             "required": true,
             "schema": {
@@ -1393,16 +1393,16 @@
         }
       }
     },
-    "/api/v1/employee-salary-profiles/{employeeSalaryProfileId}/edit": {
+    "/api/v1/salary-decrees/{salaryDecreeId}/edit": {
       "get": {
         "tags": [
-          "EmployeeSalaryProfile"
+          "SalaryDecree"
         ],
-        "summary": "GetEmployeeSalaryProfileForEdit",
-        "operationId": "GetEmployeeSalaryProfileForEdit",
+        "summary": "GetSalaryDecreeForEdit",
+        "operationId": "GetSalaryDecreeForEdit",
         "parameters": [
           {
-            "name": "employeeSalaryProfileId",
+            "name": "salaryDecreeId",
             "in": "path",
             "required": true,
             "schema": {
@@ -1417,17 +1417,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetEmployeeSalaryProfileForEditResponseResult"
+                  "$ref": "#/components/schemas/GetSalaryDecreeForEditResponseResult"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetEmployeeSalaryProfileForEditResponseResult"
+                  "$ref": "#/components/schemas/GetSalaryDecreeForEditResponseResult"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetEmployeeSalaryProfileForEditResponseResult"
+                  "$ref": "#/components/schemas/GetSalaryDecreeForEditResponseResult"
                 }
               }
             }
@@ -2471,17 +2471,17 @@
           }
         }
       },
-      "CreateEmployeeSalaryProfileCommandResponse": {
+      "CreateSalaryDecreeCommandResponse": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "employeeSalaryProfileId": {
+          "salaryDecreeId": {
             "type": "string",
             "format": "uuid"
           }
         }
       },
-      "CreateEmployeeSalaryProfileCommandResponseResult": {
+      "CreateSalaryDecreeCommandResponseResult": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -2509,7 +2509,7 @@
             "nullable": true,
             "allOf": [
               {
-                "$ref": "#/components/schemas/CreateEmployeeSalaryProfileCommandResponse"
+                "$ref": "#/components/schemas/CreateSalaryDecreeCommandResponse"
               }
             ]
           },
@@ -2525,7 +2525,7 @@
           }
         }
       },
-      "CreateEmployeeSalaryProfileRequest": {
+      "CreateSalaryDecreeRequest": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -2537,7 +2537,7 @@
             "nullable": true,
             "allOf": [
               {
-                "$ref": "#/components/schemas/EmployeeSalaryProfileRequest"
+                "$ref": "#/components/schemas/SalaryDecreeRequest"
               }
             ]
           }
@@ -2864,14 +2864,14 @@
           }
         }
       },
-      "EmployeeSalaryProfileRequest": {
+      "SalaryDecreeRequest": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
           "effectiveFrom": {
             "type": "string"
           },
-          "baseMonthlySalary": {
+          "baseDailySalary": {
             "type": "number",
             "format": "double"
           },
@@ -2884,45 +2884,6 @@
             "type": "number",
             "format": "double",
             "nullable": true
-          },
-          "seniorityBaseApplicationMode": {
-            "type": "integer",
-            "format": "int32",
-            "x-enumNames": [
-              "Manual",
-              "Automatic"
-            ],
-            "enum": [
-              0,
-              1
-            ]
-          },
-          "seniorityBaseCalculationMethod": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true,
-            "x-enumNames": [
-              "Daily",
-              "CumulativeAuto"
-            ],
-            "enum": [
-              0,
-              1
-            ]
-          },
-          "yearEndSeniorityMode": {
-            "type": "integer",
-            "format": "int32",
-            "x-enumNames": [
-              "MonthlyAccrual",
-              "AnnualLumpSum",
-              "NotCalculation"
-            ],
-            "enum": [
-              0,
-              1,
-              2
-            ]
           },
           "shiftType": {
             "type": "integer",
@@ -2942,17 +2903,26 @@
               4
             ]
           },
+          "contractType": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "Permanent",
+              "Temporary",
+              "FixedTerm"
+            ],
+            "enum": [
+              1,
+              2,
+              3
+            ]
+          },
           "housingAllowance": {
             "type": "number",
             "format": "double",
             "nullable": true
           },
           "foodAllowance": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "childAllowancePerChild": {
             "type": "number",
             "format": "double",
             "nullable": true
@@ -3362,11 +3332,11 @@
           }
         }
       },
-      "GetEmployeeSalaryProfileForEditResponse": {
+      "GetSalaryDecreeForEditResponse": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "employeeSalaryProfileId": {
+          "salaryDecreeId": {
             "type": "string",
             "format": "uuid"
           },
@@ -3378,7 +3348,7 @@
             "type": "string",
             "nullable": true
           },
-          "baseMonthlySalary": {
+          "baseDailySalary": {
             "type": "number",
             "format": "double"
           },
@@ -3391,45 +3361,6 @@
             "type": "number",
             "format": "double",
             "nullable": true
-          },
-          "seniorityBaseApplicationMode": {
-            "type": "integer",
-            "format": "int32",
-            "x-enumNames": [
-              "Manual",
-              "Automatic"
-            ],
-            "enum": [
-              0,
-              1
-            ]
-          },
-          "seniorityBaseCalculationMethod": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true,
-            "x-enumNames": [
-              "Daily",
-              "CumulativeAuto"
-            ],
-            "enum": [
-              0,
-              1
-            ]
-          },
-          "yearEndSeniorityMode": {
-            "type": "integer",
-            "format": "int32",
-            "x-enumNames": [
-              "MonthlyAccrual",
-              "AnnualLumpSum",
-              "NotCalculation"
-            ],
-            "enum": [
-              0,
-              1,
-              2
-            ]
           },
           "shiftType": {
             "type": "integer",
@@ -3449,17 +3380,26 @@
               4
             ]
           },
+          "contractType": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "Permanent",
+              "Temporary",
+              "FixedTerm"
+            ],
+            "enum": [
+              1,
+              2,
+              3
+            ]
+          },
           "housingAllowance": {
             "type": "number",
             "format": "double",
             "nullable": true
           },
           "foodAllowance": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "childAllowancePerChild": {
             "type": "number",
             "format": "double",
             "nullable": true
@@ -3476,7 +3416,7 @@
           }
         }
       },
-      "GetEmployeeSalaryProfileForEditResponseResult": {
+      "GetSalaryDecreeForEditResponseResult": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -3504,7 +3444,7 @@
             "nullable": true,
             "allOf": [
               {
-                "$ref": "#/components/schemas/GetEmployeeSalaryProfileForEditResponse"
+                "$ref": "#/components/schemas/GetSalaryDecreeForEditResponse"
               }
             ]
           },
@@ -3520,11 +3460,11 @@
           }
         }
       },
-      "GetEmployeeSalaryProfilesResponse": {
+      "GetSalaryDecreesResponse": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "employeeSalaryProfileId": {
+          "salaryDecreeId": {
             "type": "string",
             "format": "uuid"
           },
@@ -3552,7 +3492,7 @@
             "type": "string",
             "nullable": true
           },
-          "baseMonthlySalary": {
+          "baseDailySalary": {
             "type": "number",
             "format": "double"
           },
@@ -3570,7 +3510,7 @@
           }
         }
       },
-      "GetEmployeeSalaryProfilesResponsePagedResult": {
+      "GetSalaryDecreesResponsePagedResult": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -3578,7 +3518,7 @@
             "type": "array",
             "nullable": true,
             "items": {
-              "$ref": "#/components/schemas/GetEmployeeSalaryProfilesResponse"
+              "$ref": "#/components/schemas/GetSalaryDecreesResponse"
             }
           },
           "totalCount": {
@@ -3600,7 +3540,7 @@
           }
         }
       },
-      "GetEmployeeSalaryProfilesResponsePagedResultResult": {
+      "GetSalaryDecreesResponsePagedResultResult": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -3628,7 +3568,7 @@
             "nullable": true,
             "allOf": [
               {
-                "$ref": "#/components/schemas/GetEmployeeSalaryProfilesResponsePagedResult"
+                "$ref": "#/components/schemas/GetSalaryDecreesResponsePagedResult"
               }
             ]
           },
@@ -4622,7 +4562,7 @@
           }
         }
       },
-      "UpdateEmployeeSalaryProfileRequest": {
+      "UpdateSalaryDecreeRequest": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -4634,7 +4574,7 @@
             "nullable": true,
             "allOf": [
               {
-                "$ref": "#/components/schemas/EmployeeSalaryProfileRequest"
+                "$ref": "#/components/schemas/SalaryDecreeRequest"
               }
             ]
           }
@@ -4729,7 +4669,7 @@
       "name": "Employee"
     },
     {
-      "name": "EmployeeSalaryProfile"
+      "name": "SalaryDecree"
     },
     {
       "name": "Identity"

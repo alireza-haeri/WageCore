@@ -94,7 +94,7 @@ public class EmployeeRepositoryTests(WageCoreDbContextFixture fixture)
     }
 
     [Fact]
-    public async Task GetByIdAsync_WhenEmployeeExists_ShouldReturnEmployeeWithInsuranceAndBankAccounts()
+    public async Task GetByIdAsync_WhenEmployeeExists_ShouldReturnEmployeeWithBankAccounts()
     {
         await using var scope = fixture.CreateScope();
         var repository = scope.ServiceProvider.GetRequiredService<EmployeeRepository>();
@@ -105,7 +105,7 @@ public class EmployeeRepositoryTests(WageCoreDbContextFixture fixture)
         var employee = await CreateEmployeeAsync(scope, workshop.Id, departmentId);
 
         employee.ReplaceBankAccounts([
-            new EmployeeBankAccountDto("حقوق", "IR123456789012345678901234")
+            new EmployeeBankAccountDto("بانک ملی", "۱۰۲", "IR123456789012345678901234")
         ]).ShouldBeSuccess();
         await repository.UpdateAsync(employee);
 
@@ -113,11 +113,9 @@ public class EmployeeRepositoryTests(WageCoreDbContextFixture fixture)
 
         result.Should().NotBeNull();
         result!.Id.Should().Be(employee.Id);
-        result.Insurance.Should().NotBeNull();
-        result.Insurance.InsuranceNumber.Should().Be("INS-001");
-        result.Insurance.PositionInInsuranceList.Should().Be("اپراتور");
         result.BankAccounts.Should().ContainSingle();
-        result.BankAccounts.First().Title.Should().Be("حقوق");
+        result.BankAccounts.First().BankName.Should().Be("بانک ملی");
+        result.BankAccounts.First().BranchCode.Should().Be("۱۰۲");
         result.BankAccounts.First().Iban.Should().Be("123456789012345678901234");
     }
 
@@ -153,25 +151,14 @@ public class EmployeeRepositoryTests(WageCoreDbContextFixture fixture)
             "EMP999",
             "رضا محمدی",
             "1111122222",
-            employee.BirthCertificateNumber,
             employee.FatherName,
             employee.Gender,
-            employee.MaritalStatus,
-            employee.ChildrenCount,
             employee.HireDate,
             employee.PhoneNumber,
             "مدیر مالی",
-            false);
+            employee.Region);
 
         employee.Update(updateDto, workshop.RegistrationDate).ShouldBeSuccess();
-        employee.UpdateInsurance(new EmployeeInsuranceDto(
-            "INS-999",
-            "CTR-99",
-            "مدیر مالی",
-            true,
-            false,
-            false,
-            InsuranceCalculationProfile.MinimumLaborLaw)).ShouldBeSuccess();
 
         var updateResult = await repository.UpdateAsync(employee);
 
@@ -183,10 +170,7 @@ public class EmployeeRepositoryTests(WageCoreDbContextFixture fixture)
         storedEmployee.FullName.Should().Be("رضا محمدی");
         storedEmployee.NationalCode.Should().Be("1111122222");
         storedEmployee.JobTitle.Should().Be("مدیر مالی");
-        storedEmployee.IsTaxSubject.Should().BeFalse();
-        storedEmployee.Insurance.InsuranceNumber.Should().Be("INS-999");
-        storedEmployee.Insurance.PositionInInsuranceList.Should().Be("مدیر مالی");
-        storedEmployee.Insurance.InsuranceCalculationProfile.Should().Be(InsuranceCalculationProfile.MinimumLaborLaw);
+        storedEmployee.Region.Should().Be(employee.Region);
     }
 
     [Fact]

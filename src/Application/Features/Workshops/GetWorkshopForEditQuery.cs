@@ -4,7 +4,6 @@ public record GetWorkshopForEditQuery(Guid UserId, Guid WorkshopId) : IRequest<R
 public record GetWorkshopForEditQueryResponse(
     string Name,
     string Address,
-    WorkshopRegion Region,
     DateOnly RegistrationDate,
     string NationalId,
     string? PostalCode = null);

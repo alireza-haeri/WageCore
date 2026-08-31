@@ -154,22 +154,27 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("Employees", (string)null);
                 });
 
-            modelBuilder.Entity("Core.Domain.EmployeeSalaryProfile", b =>
+            modelBuilder.Entity("Core.Domain.SalaryDecree", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal?>("AttractionAllowance")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(18, 0)
+                        .HasColumnType("decimal(18,0)");
 
-                    b.Property<decimal>("BaseMonthlySalary")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<decimal>("BaseDailySalary")
+                        .HasPrecision(18, 0)
+                        .HasColumnType("decimal(18,0)");
 
-                    b.Property<decimal?>("ChildAllowancePerChild")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("ChildrenCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ContractType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateOnly>("EffectiveFrom")
                         .HasColumnType("date");
@@ -178,24 +183,22 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal?>("FoodAllowance")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(18, 0)
+                        .HasColumnType("decimal(18,0)");
 
                     b.Property<decimal?>("HousingAllowance")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(18, 0)
+                        .HasColumnType("decimal(18,0)");
+
+                    b.Property<bool>("IsTaxSubject")
+                        .HasColumnType("bit");
 
                     b.Property<decimal?>("KaranehAmountNet")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(18, 0)
+                        .HasColumnType("decimal(18,0)");
 
-                    b.Property<string>("SeniorityBaseApplicationMode")
+                    b.Property<string>("MaritalStatus")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<string>("SeniorityBaseCalculationMethod")
                         .HasMaxLength(100)
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
@@ -207,25 +210,74 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("varchar(100)");
 
                     b.Property<decimal?>("SupervisionAllowance")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(18, 0)
+                        .HasColumnType("decimal(18,0)");
 
                     b.Property<decimal?>("TransportationAllowanceNet")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(18, 0)
+                        .HasColumnType("decimal(18,0)");
 
-                    b.Property<string>("YearEndSeniorityMode")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(100)");
+                    b.OwnsOne("Core.Domain.Insurance", "Insurance", b1 =>
+                        {
+                            b1.Property<string>("InsuranceCalculationProfile")
+                                .IsRequired()
+                                .IsUnicode(false)
+                                .HasColumnType("varchar(max)")
+                                .HasColumnName("InsuranceCalculationProfile");
+
+                            b1.Property<string>("InsuranceNumber")
+                                .IsRequired()
+                                .HasMaxLength(20)
+                                .IsUnicode(false)
+                                .HasColumnType("varchar(20)")
+                                .HasColumnName("InsuranceNumber");
+
+                            b1.Property<bool>("IsSubjectTo20PercentInsurance")
+                                .HasColumnType("bit")
+                                .HasColumnName("IsSubjectTo20PercentInsurance");
+
+                            b1.Property<bool>("IsSubjectTo3PercentInsurance")
+                                .HasColumnType("bit")
+                                .HasColumnName("IsSubjectTo3PercentInsurance");
+
+                            b1.Property<bool>("IsSubjectTo4PercentInsurance")
+                                .HasColumnType("bit")
+                                .HasColumnName("IsSubjectTo4PercentInsurance");
+
+                            b1.Property<bool>("IsSubjectTo7PercentInsurance")
+                                .HasColumnType("bit")
+                                .HasColumnName("IsSubjectTo7PercentInsurance");
+
+                            b1.Property<string>("PositionInInsuranceList")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .IsUnicode(true)
+                                .HasColumnType("nvarchar(100)")
+                                .HasColumnName("PositionInInsuranceList");
+
+                            b1.Property<string>("SocialSecurityContractRow")
+                                .HasMaxLength(20)
+                                .IsUnicode(false)
+                                .HasColumnType("varchar(20)")
+                                .HasColumnName("SocialSecurityContractRow");
+
+                            b1.HasKey("EmployeeId");
+
+                            b1.ToTable("SalaryDecrees");
+
+                            b1.WithOwner()
+                                .HasForeignKey("EmployeeId");
+                        });
+
+                    b.Navigation("Insurance")
+                        .IsRequired();
 
                     b.HasKey("Id");
 
                     b.HasIndex("EmployeeId", "EffectiveFrom")
                         .IsUnique();
 
-                    b.ToTable("EmployeeSalaryProfiles", (string)null);
+                    b.ToTable("SalaryDecrees", (string)null);
                 });
 
             modelBuilder.Entity("Core.Domain.LaborLawRuleItem", b =>
@@ -612,7 +664,7 @@ namespace Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Core.Domain.EmployeeSalaryProfile", b =>
+            modelBuilder.Entity("Core.Domain.SalaryDecree", b =>
                 {
                     b.HasOne("Core.Domain.Employee", null)
                         .WithMany()

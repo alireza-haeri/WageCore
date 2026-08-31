@@ -29,7 +29,6 @@ public class UpdateWorkshopCommandHandler(IWorkShopRepository workShopRepository
         var domainResult = workshop.Update(
             request.Name,
             request.Address,
-            request.Region,
             request.RegistrationDate,
             request.NationalId,
             request.PostalCode

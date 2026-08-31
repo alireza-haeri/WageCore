@@ -12,7 +12,7 @@ public class FormulaEvaluatorTests
     }
 
     private record SalaryProfile(
-        decimal BaseMonthlySalary,
+        decimal BaseDailySalary,
         decimal MonthlyWorkingHours,
         decimal MinimumMonthlyWage);
 
@@ -45,7 +45,7 @@ public class FormulaEvaluatorTests
         var work = new WorkInput(24m);
 
         var result = _evaluator.Evaluate(
-            "[SalaryProfileBaseMonthlySalary] / [SalaryProfileMonthlyWorkingHours] * [WorkInputWorkedDaysCount]",
+            "[SalaryProfileBaseDailySalary] / [SalaryProfileMonthlyWorkingHours] * [WorkInputWorkedDaysCount]",
             salary,
             work);
 
@@ -140,9 +140,9 @@ public class FormulaEvaluatorTests
     {
         var salary = new SalaryProfile(7_200_000m, 180m, 5_000_000m);
 
-        var result = _evaluator.Evaluate("[SalaryProfileBaseMonthlySalary]", salary, salary);
+        var result = _evaluator.Evaluate("[SalaryProfileBaseDailySalary]", salary, salary);
 
-        result.ShouldBeFailure("نام پارامتر SalaryProfileBaseMonthlySalary در فرمول تکراری است.");
+        result.ShouldBeFailure("نام پارامتر SalaryProfileBaseDailySalary در فرمول تکراری است.");
     }
 
     [Fact]
@@ -151,17 +151,17 @@ public class FormulaEvaluatorTests
         var salary = new SalaryProfile(7_200_000m, 180m, 5_000_000m);
 
         var result = _evaluator.Evaluate(
-            "[SalaryProfileBaseMonthlySalary]",
+            "[SalaryProfileBaseDailySalary]",
             salary,
-            new FormulaVariable("SalaryProfileBaseMonthlySalary", 1m));
+            new FormulaVariable("SalaryProfileBaseDailySalary", 1m));
 
-        result.ShouldBeFailure("نام پارامتر SalaryProfileBaseMonthlySalary در فرمول تکراری است.");
+        result.ShouldBeFailure("نام پارامتر SalaryProfileBaseDailySalary در فرمول تکراری است.");
     }
 
     [Fact]
     public void Evaluate_WithNullModelsAndVariables_ShouldReturnFailure()
     {
-        var result = _evaluator.Evaluate("[SalaryProfileBaseMonthlySalary]", null!);
+        var result = _evaluator.Evaluate("[SalaryProfileBaseDailySalary]", null!);
 
         result.ShouldBeFailure("خطا در محاسبه‌ی فرمول");
     }

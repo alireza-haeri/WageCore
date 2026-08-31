@@ -9,7 +9,6 @@ public class UpdateWorkshopCommandHandlerTests
 
     private const string ValidName = "کارگاه نمونه";
     private const string ValidAddress = "تهران، خیابان نمونه، پلاک ۱۲۳";
-    private const WorkshopRegion ValidRegion = WorkshopRegion.Normal;
     private static readonly DateOnly ValidRegistrationDate = DateOnly.FromDateTime(DateTime.Now);
     private const string ValidNationalId = "1234567890";
     private const string ValidPostalCode = "1234567890";
@@ -32,7 +31,6 @@ public class UpdateWorkshopCommandHandlerTests
             .WithUserId(ValidUserId)
             .WithName(ValidName)
             .WithAddress(ValidAddress)
-            .WithRegion(ValidRegion)
             .WithRegistrationDate(ValidRegistrationDate)
             .WithNationalId(ValidNationalId)
             .WithPostalCode(ValidPostalCode)
@@ -47,7 +45,6 @@ public class UpdateWorkshopCommandHandlerTests
             ValidWorkshopId,
             name ?? ValidName,
             ValidAddress,
-            ValidRegion,
             ValidRegistrationDate,
             nationalId ?? ValidNationalId,
             ValidPostalCode);

@@ -13,7 +13,6 @@ public class GetWorkshopForEditQueryHandler(IWorkshopQuery workshopQuery)
             new GetWorkshopForEditQueryResponse(
                 workshop.Name,
                 workshop.Address,
-                workshop.Region,
                 workshop.RegistrationDate,
                 workshop.NationalId,
                 workshop.PostalCode

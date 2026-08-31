@@ -2,12 +2,9 @@ namespace Core.Tests.Domain.Employees;
 
 public class ControlInsuranceTests
 {
-    private readonly EmployeeBuilder _builder = new();
-
     [Fact]
-    public void UpdateInsurance_WithValidData_ShouldReturnSuccess()
+    public void Create_WithValidData_ShouldReturnSuccess()
     {
-        var employee = _builder.CreateResult().ShouldBeSuccess();
         var insuranceDto = new EmployeeInsuranceDto(
             "INS-888",
             null,
@@ -15,39 +12,59 @@ public class ControlInsuranceTests
             false,
             true,
             true,
+            false,
             InsuranceCalculationProfile.MinimumLaborLaw);
 
-        var result = employee.UpdateInsurance(insuranceDto);
+        var result = Insurance.Create(insuranceDto);
 
         result.ShouldBeSuccess();
         using (new AssertionScope())
         {
-            employee.Insurance.InsuranceNumber.Should().Be("INS-888");
-            employee.Insurance.SocialSecurityContractRow.Should().BeNull();
-            employee.Insurance.PositionInInsuranceList.Should().Be("کارشناس اداری");
-            employee.Insurance.IsSubjectTo7PercentInsurance.Should().BeFalse();
-            employee.Insurance.IsSubjectTo20PercentInsurance.Should().BeTrue();
-            employee.Insurance.IsSubjectTo3PercentInsurance.Should().BeTrue();
-            employee.Insurance.InsuranceCalculationProfile.Should().Be(InsuranceCalculationProfile.MinimumLaborLaw);
+            result.Response!.InsuranceNumber.Should().Be("INS-888");
+            result.Response.SocialSecurityContractRow.Should().BeNull();
+            result.Response.PositionInInsuranceList.Should().Be("کارشناس اداری");
+            result.Response.IsSubjectTo7PercentInsurance.Should().BeFalse();
+            result.Response.IsSubjectTo20PercentInsurance.Should().BeTrue();
+            result.Response.IsSubjectTo3PercentInsurance.Should().BeTrue();
+            result.Response.IsSubjectTo4PercentInsurance.Should().BeFalse();
+            result.Response.InsuranceCalculationProfile.Should().Be(InsuranceCalculationProfile.MinimumLaborLaw);
         }
     }
 
     [Fact]
-    public void UpdateInsurance_WhenEmployeeIsTerminated_ShouldFail()
+    public void Update_WithValidData_ShouldReturnSuccess()
     {
-        var employee = _builder.CreateResult().ShouldBeSuccess();
-        employee.Terminate(DateOnly.FromDateTime(DateTime.Now)).ShouldBeSuccess();
-        var insuranceDto = new EmployeeInsuranceDto(
+        var insurance = Insurance.Create(new EmployeeInsuranceDto(
+            "INS-001",
+            "CTR-10",
+            "اپراتور",
+            true,
+            true,
+            false,
+            false,
+            InsuranceCalculationProfile.FullLegal)).ShouldBeSuccess();
+
+        var result = insurance.Update(new EmployeeInsuranceDto(
             "INS-888",
             null,
             "کارشناس اداری",
             false,
             true,
             true,
-            InsuranceCalculationProfile.MinimumLaborLaw);
+            true,
+            InsuranceCalculationProfile.MinimumLaborLaw));
 
-        var result = employee.UpdateInsurance(insuranceDto);
-
-        result.ShouldBeFailure("کارمند ترک کار شده است");
+        result.ShouldBeSuccess();
+        using (new AssertionScope())
+        {
+            insurance.InsuranceNumber.Should().Be("INS-888");
+            insurance.SocialSecurityContractRow.Should().BeNull();
+            insurance.PositionInInsuranceList.Should().Be("کارشناس اداری");
+            insurance.IsSubjectTo7PercentInsurance.Should().BeFalse();
+            insurance.IsSubjectTo20PercentInsurance.Should().BeTrue();
+            insurance.IsSubjectTo3PercentInsurance.Should().BeTrue();
+            insurance.IsSubjectTo4PercentInsurance.Should().BeTrue();
+            insurance.InsuranceCalculationProfile.Should().Be(InsuranceCalculationProfile.MinimumLaborLaw);
+        }
     }
 }

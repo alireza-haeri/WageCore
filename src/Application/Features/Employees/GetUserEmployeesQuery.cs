@@ -20,4 +20,5 @@ public record GetUserEmployeesQueryResponse(
     string NationalCode,
     DateOnly HireDate,
     string? JobTitle,
-    EmployeeStatus Status);
+    EmployeeStatus Status,
+    Region Region);

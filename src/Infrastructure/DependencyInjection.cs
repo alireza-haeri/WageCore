@@ -38,8 +38,8 @@ public static class DependencyInjection
         builder.Services.AddScoped<IDepartmentQuery, DepartmentQuery>();
         builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
         builder.Services.AddScoped<IEmployeeQuery, EmployeeQuery>();
-        builder.Services.AddScoped<IEmployeeSalaryProfileRepository, EmployeeSalaryProfileRepository>();
-        builder.Services.AddScoped<IEmployeeSalaryProfileQuery, EmployeeSalaryProfileQuery>();
+        builder.Services.AddScoped<ISalaryDecreeRepository, SalaryDecreeRepository>();
+        builder.Services.AddScoped<ISalaryDecreeQuery, SalaryDecreeQuery>();
         builder.Services.AddScoped<IPayrollRecordQuery, PayrollRecordQuery>();
         builder.Services.AddScoped<ILaborLawRuleRepository, LaborLawRuleRepository>();
         builder.Services.AddScoped<ILaborLawRuleQuery, LaborLawRuleQuery>();
