@@ -78,4 +78,74 @@ public class EmploymentLifecycleTests
 
         result.ShouldBeFailure("تنها کارمند ترک کار شده را میتوان دوباره استخدام کرد.");
     }
+
+    [Fact]
+    public void EnsureEmployedDuring_WhenHiredAfterThePeriod_ShouldFail()
+    {
+        var periodStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-25));
+        var employee = _builder
+            .WithHireDate(periodStart.AddDays(25))
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        var result = employee.EnsureEmployedDuring(periodStart, periodStart.AddDays(24));
+
+        result.ShouldBeFailure("کارمند در این بازه استخدام نشده بود.");
+    }
+
+    [Fact]
+    public void EnsureEmployedDuring_WhenTerminatedBeforeThePeriod_ShouldFail()
+    {
+        var periodStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-25));
+        var employee = _builder
+            .WithWorkshopRegistrationDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-90)))
+            .WithHireDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-60)))
+            .CreateResult()
+            .ShouldBeSuccess();
+        employee.Terminate(periodStart.AddDays(-3)).ShouldBeSuccess();
+
+        var result = employee.EnsureEmployedDuring(periodStart, periodStart.AddDays(24));
+
+        result.ShouldBeFailure("کارمند قبل از این بازه ترک کار کرده است.");
+    }
+
+    [Fact]
+    public void EnsureEmployedDuring_WhenHiredMidPeriod_ShouldSucceed()
+    {
+        var periodStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-25));
+        var employee = _builder
+            .WithHireDate(periodStart.AddDays(10))
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        employee.EnsureEmployedDuring(periodStart, periodStart.AddDays(24)).ShouldBeSuccess();
+    }
+
+    [Fact]
+    public void EnsureEmployedDuring_WhenTerminatedMidPeriod_ShouldSucceed()
+    {
+        var periodStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-25));
+        var employee = _builder
+            .WithWorkshopRegistrationDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-90)))
+            .WithHireDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-60)))
+            .CreateResult()
+            .ShouldBeSuccess();
+        employee.Terminate(periodStart.AddDays(10)).ShouldBeSuccess();
+
+        employee.EnsureEmployedDuring(periodStart, periodStart.AddDays(24)).ShouldBeSuccess();
+    }
+
+    [Fact]
+    public void EnsureEmployedDuring_WhenTerminatedOnThePeriodStart_ShouldSucceed()
+    {
+        var periodStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-25));
+        var employee = _builder
+            .WithWorkshopRegistrationDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-90)))
+            .WithHireDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-60)))
+            .CreateResult()
+            .ShouldBeSuccess();
+        employee.Terminate(periodStart).ShouldBeSuccess();
+
+        employee.EnsureEmployedDuring(periodStart, periodStart.AddDays(24)).ShouldBeSuccess();
+    }
 }

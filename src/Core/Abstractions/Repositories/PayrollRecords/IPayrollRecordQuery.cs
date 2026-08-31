@@ -1,7 +1,7 @@
 namespace Core.Abstractions.Repositories.PayrollRecords;
 
 /// <summary>
-/// Read-only access to the PayrollRecord domain (the domain itself is not created yet).
+/// Read-only access to the PayrollRecord domain.
 /// </summary>
 public interface IPayrollRecordQuery
 {
@@ -14,5 +14,13 @@ public interface IPayrollRecordQuery
         Guid userId,
         Guid employeeId,
         DateOnly effectiveFrom,
+        CancellationToken cancellationToken = default);
+
+    Task<bool> HasOverlappingPeriodAsync(
+        Guid userId,
+        Guid employeeId,
+        DateOnly periodStart,
+        DateOnly periodEnd,
+        Guid? excludePayrollRecordId = null,
         CancellationToken cancellationToken = default);
 }

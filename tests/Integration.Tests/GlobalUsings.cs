@@ -17,3 +17,8 @@ global using System.Net;
 global using Integration.Tests.Controllers;
 global using Shared.Tests.Helpers;
 global using Shared.Web.DateTimeHandling.CustomTypes;
+global using System.Data;
+global using Microsoft.Data.SqlClient;
+global using Testcontainers.MsSql;
+global using DotNet.Testcontainers.Containers;
+global using Respawn;

@@ -8,6 +8,13 @@ public interface IEmployeeSalaryProfileQuery
         Guid? excludeSalaryProfileId = null,
         CancellationToken cancellationToken = default);
 
+    Task<IReadOnlyList<EmployeeSalaryProfile>> GetEmployeeSalaryProfilesAffectingPeriodAsync(
+        Guid userId,
+        Guid employeeId,
+        DateOnly periodStart,
+        DateOnly periodEnd,
+        CancellationToken cancellationToken = default);
+
     Task<PagedResult<EmployeeSalaryProfileResult>> GetEmployeeSalaryProfilesAsync(
         Guid userId,
         PaginationDto pagination,

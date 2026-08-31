@@ -7,4 +7,5 @@ global using Core.Contracts.Departments;
 global using Core.Contracts.Employees;
 global using Core.Contracts.LaborLaw;
 global using Core.Contracts.CalculationFormulas;
+global using Core.Contracts.PayrollRecords;
 global using Core.Domain.Enums;

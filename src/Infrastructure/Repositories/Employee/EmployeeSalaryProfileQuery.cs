@@ -34,6 +34,16 @@ public class EmployeeSalaryProfileQuery(IDbConnectionFactory dbConnectionFactory
         return latestEffectiveFrom is null ? null : DateOnly.FromDateTime(latestEffectiveFrom.Value);
     }
 
+    public Task<IReadOnlyList<EmployeeSalaryProfile>> GetEmployeeSalaryProfilesAffectingPeriodAsync(
+        Guid userId,
+        Guid employeeId,
+        DateOnly periodStart,
+        DateOnly periodEnd,
+        CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<PagedResult<EmployeeSalaryProfileResult>> GetEmployeeSalaryProfilesAsync(
         Guid userId,
         PaginationDto pagination,

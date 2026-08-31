@@ -27,6 +27,8 @@
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
     <!-- MediatR -->
     <PackageVersion Include="MediatR" Version="12.0.0" />
+    <!-- Formula evaluation -->
+    <PackageVersion Include="NCalcSync" Version="7.1.0" />
   </ItemGroup>
   <ItemGroup>
     <!-- Testing -->
