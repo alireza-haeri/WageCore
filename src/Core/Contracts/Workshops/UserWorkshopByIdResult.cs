@@ -6,5 +6,5 @@ public record UserWorkshopByIdResult(
     DateOnly RegistrationDate,
     string NationalId,
     string? PostalCode = null,
-    string SocialSecurityNumber = null!,
+    string SocialSecurityNumber,
     string? EconomicCode = null);

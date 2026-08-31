@@ -8,5 +8,5 @@ public record UserWorkshopResult(
     DateOnly RegistrationDate,
     int EmployeesCount,
     int DepartmentsCount,
-    string SocialSecurityNumber = null!,
+    string SocialSecurityNumber,
     string? EconomicCode = null);
