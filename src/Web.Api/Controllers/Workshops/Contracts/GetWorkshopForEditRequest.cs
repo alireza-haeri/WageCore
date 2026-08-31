@@ -5,6 +5,6 @@ public record GetWorkshopForEditResponse(
     string Address,
     string RegistrationDate,
     string NationalId,
-    string? PostalCode = null,
     string SocialSecurityNumber,
+    string? PostalCode = null,
     string? EconomicCode = null);

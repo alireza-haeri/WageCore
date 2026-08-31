@@ -124,8 +124,8 @@ public class WorkshopController(IMediator mediator) : BaseController
             w.Address,
             PersianDate.ToRawValue(w.RegistrationDate),
             w.NationalId,
-            w.PostalCode,
             w.SocialSecurityNumber,
+            w.PostalCode,
             w.EconomicCode
         ));
         

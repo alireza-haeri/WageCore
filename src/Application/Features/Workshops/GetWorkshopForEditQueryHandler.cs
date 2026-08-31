@@ -15,8 +15,8 @@ public class GetWorkshopForEditQueryHandler(IWorkshopQuery workshopQuery)
                 workshop.Address,
                 workshop.RegistrationDate,
                 workshop.NationalId,
-                workshop.PostalCode,
                 workshop.SocialSecurityNumber,
+                workshop.PostalCode,
                 workshop.EconomicCode
             )
         );
