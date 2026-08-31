@@ -173,6 +173,112 @@
                 </div>
             </div>
 
+            <div class="sec mt-4">
+                <svg class="ic"><use href="assets/img/icons.svg#i-user"/></svg>
+                خانواده و مالیات
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-4 field">
+                    <label class="f-label" for="p-maritalStatus"><span class="req-s">*</span>وضعیت تأهل</label>
+                    <InputSelect @bind-Value="_formHelper.Model.MaritalStatus" @bind-Value:after="OnMaritalStatusChanged" class="in" id="p-maritalStatus">
+                        <option value="">انتخاب کنید...</option>
+                        <option value="@SalaryDecreeRequestMaritalStatus.Single">مجرد</option>
+                        <option value="@SalaryDecreeRequestMaritalStatus.Married">متأهل</option>
+                        <option value="@SalaryDecreeRequestMaritalStatus.Divorced">مطلقه</option>
+                        <option value="@SalaryDecreeRequestMaritalStatus.Widowed">همسر فوت‌شده</option>
+                    </InputSelect>
+                    <ValidationMessage TValue="SalaryDecreeRequestMaritalStatus?"
+                                       For="() => _formHelper.Model.MaritalStatus"
+                                       class="f-help text-danger"/>
+                </div>
+
+                @if (_formHelper.Model.MaritalStatus != SalaryDecreeRequestMaritalStatus.Single)
+                {
+                    <div class="col-md-4 field">
+                        <label class="f-label" for="p-childrenCount"><span class="req-s">*</span>تعداد فرزندان</label>
+                        <InputNumber @bind-Value="_formHelper.Model.ChildrenCount" class="in num" id="p-childrenCount" min="0" max="20"/>
+                        <ValidationMessage TValue="int?" For="() => _formHelper.Model.ChildrenCount"
+                                           class="f-help text-danger"/>
+                    </div>
+                }
+
+                <label class="col-md-4">
+                    <div class="sw-card">
+                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsTaxSubject"/><i></i></span>
+                        <span class="swt">مشمول مالیات حقوق است؟<span class="swd">در محاسبهٔ فیش لحاظ می‌شود.</span></span>
+                    </div>
+                </label>
+            </div>
+
+            <div class="sec mt-4">
+                <svg class="ic"><use href="assets/img/icons.svg#i-shield"/></svg>
+                بیمه
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-3 field">
+                    <label class="f-label" for="p-insuranceNumber"><span class="req-s">*</span>شماره بیمه</label>
+                    <InputText @bind-Value="_formHelper.Model.InsuranceNumber" class="in in-ltr" id="p-insuranceNumber" maxlength="20"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.InsuranceNumber"
+                                       class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-3 field">
+                    <label class="f-label" for="p-socialSecurityContractRow">ردیف پیمان بیمه <span class="f-badge fb-gold">اختیاری</span></label>
+                    <InputText @bind-Value="_formHelper.Model.SocialSecurityContractRow" class="in in-ltr" id="p-socialSecurityContractRow" maxlength="20"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.SocialSecurityContractRow"
+                                       class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-3 field">
+                    <label class="f-label" for="p-positionInInsuranceList"><span class="req-s">*</span>سمت در لیست بیمه</label>
+                    <InputText @bind-Value="_formHelper.Model.PositionInInsuranceList" class="in" id="p-positionInInsuranceList" maxlength="100"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.PositionInInsuranceList"
+                                       class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-3 field">
+                    <label class="f-label" for="p-insuranceCalculationProfile"><span class="req-s">*</span>پروفایل محاسبه بیمه</label>
+                    <InputSelect @bind-Value="_formHelper.Model.InsuranceCalculationProfile" class="in" id="p-insuranceCalculationProfile">
+                        <option value="">انتخاب کنید...</option>
+                        <option value="@EmployeeInsuranceRequestInsuranceCalculationProfile.FullLegal">کامل و قانونی</option>
+                        <option value="@EmployeeInsuranceRequestInsuranceCalculationProfile.MinimumLaborLaw">حداقل قانون کار</option>
+                    </InputSelect>
+                    <ValidationMessage TValue="EmployeeInsuranceRequestInsuranceCalculationProfile?"
+                                       For="() => _formHelper.Model.InsuranceCalculationProfile"
+                                       class="f-help text-danger"/>
+                </div>
+
+                <label class="col-md-3">
+                    <div class="sw-card">
+                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo7PercentInsurance"/><i></i></span>
+                        <span class="swt">مشمول بیمهٔ ۷٪</span>
+                    </div>
+                </label>
+
+                <label class="col-md-3">
+                    <div class="sw-card">
+                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo20PercentInsurance"/><i></i></span>
+                        <span class="swt">مشمول بیمهٔ ۲۰٪</span>
+                    </div>
+                </label>
+
+                <label class="col-md-3">
+                    <div class="sw-card">
+                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo3PercentInsurance"/><i></i></span>
+                        <span class="swt">مشمول بیمهٔ ۳٪</span>
+                    </div>
+                </label>
+
+                <label class="col-md-3">
+                    <div class="sw-card">
+                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo4PercentInsurance"/><i></i></span>
+                        <span class="swt">مشمول بیمهٔ ۴٪</span>
+                    </div>
+                </label>
+            </div>
+
             <div class="note n-gold">
                 <svg class="ic"><use href="assets/img/icons.svg#i-info"/></svg>
                 <div>حقوق پایه مبلغ توافقی است، فقط نباید از حداقل قانونی منطقه کمتر باشد.</div>
@@ -232,9 +338,21 @@
                         HousingAllowance = FormatOptionalAmount(profile.HousingAllowance),
                         FoodAllowance = FormatOptionalAmount(profile.FoodAllowance),
                         TransportationAllowanceNet = FormatOptionalAmount(profile.TransportationAllowanceNet),
-                        KaranehAmountNet = FormatOptionalAmount(profile.KaranehAmountNet)
+                        KaranehAmountNet = FormatOptionalAmount(profile.KaranehAmountNet),
+                        MaritalStatus = (SalaryDecreeRequestMaritalStatus)profile.MaritalStatus,
+                        ChildrenCount = profile.ChildrenCount,
+                        IsTaxSubject = profile.IsTaxSubject,
+                        InsuranceNumber = profile.InsuranceNumber,
+                        SocialSecurityContractRow = profile.SocialSecurityContractRow,
+                        PositionInInsuranceList = profile.PositionInInsuranceList,
+                        IsSubjectTo7PercentInsurance = profile.IsSubjectTo7PercentInsurance,
+                        IsSubjectTo20PercentInsurance = profile.IsSubjectTo20PercentInsurance,
+                        IsSubjectTo3PercentInsurance = profile.IsSubjectTo3PercentInsurance,
+                        IsSubjectTo4PercentInsurance = profile.IsSubjectTo4PercentInsurance,
+                        InsuranceCalculationProfile = (EmployeeInsuranceRequestInsuranceCalculationProfile)profile.InsuranceCalculationProfile
                     };
 
+                    OnMaritalStatusChanged();
                     _formHelper.RebuildEditContext();
                 }
                 else
@@ -257,6 +375,12 @@
         {
             _userEmployees = result.Response.Items.ToList();
         }
+    }
+
+    private void OnMaritalStatusChanged()
+    {
+        if (_formHelper.Model.MaritalStatus == SalaryDecreeRequestMaritalStatus.Single)
+            _formHelper.Model.ChildrenCount = 0;
     }
 
     private async Task HandleSubmit()
@@ -284,15 +408,33 @@
             return;
         }
 
+        var childrenCount = model.MaritalStatus == SalaryDecreeRequestMaritalStatus.Single
+            ? 0
+            : model.ChildrenCount ?? 0;
+
+        var insuranceRequest = new EmployeeInsuranceRequest(
+            insuranceCalculationProfile: model.InsuranceCalculationProfile ?? EmployeeInsuranceRequestInsuranceCalculationProfile.FullLegal,
+            insuranceNumber: model.InsuranceNumber,
+            isSubjectTo20PercentInsurance: model.IsSubjectTo20PercentInsurance,
+            isSubjectTo3PercentInsurance: model.IsSubjectTo3PercentInsurance,
+            isSubjectTo4PercentInsurance: model.IsSubjectTo4PercentInsurance,
+            isSubjectTo7PercentInsurance: model.IsSubjectTo7PercentInsurance,
+            positionInInsuranceList: model.PositionInInsuranceList,
+            socialSecurityContractRow: model.SocialSecurityContractRow);
+
         var salaryProfile = new SalaryDecreeRequest(
             attractionAllowance: ParseOptionalAmount(model.AttractionAllowance),
             baseDailySalary: baseDailySalary,
+            childrenCount: childrenCount,
+            contractType: model.ContractType ?? SalaryDecreeRequestContractType.Permanent,
             effectiveFrom: model.EffectiveFrom,
             foodAllowance: ParseOptionalAmount(model.FoodAllowance),
             housingAllowance: ParseOptionalAmount(model.HousingAllowance),
+            insurance: insuranceRequest,
+            isTaxSubject: model.IsTaxSubject,
             karanehAmountNet: ParseOptionalAmount(model.KaranehAmountNet),
+            maritalStatus: model.MaritalStatus ?? SalaryDecreeRequestMaritalStatus.Single,
             shiftType: model.ShiftType ?? SalaryDecreeRequestShiftType.None,
-            contractType: model.ContractType ?? SalaryDecreeRequestContractType.Permanent,
             supervisionAllowance: ParseOptionalAmount(model.SupervisionAllowance),
             transportationAllowanceNet: ParseOptionalAmount(model.TransportationAllowanceNet));
 
@@ -375,7 +517,21 @@
         ["TransportationAllowanceNet"] = nameof(SalaryProfileFormModel.TransportationAllowanceNet),
         ["SalaryProfile.TransportationAllowanceNet"] = nameof(SalaryProfileFormModel.TransportationAllowanceNet),
         ["KaranehAmountNet"] = nameof(SalaryProfileFormModel.KaranehAmountNet),
-        ["SalaryProfile.KaranehAmountNet"] = nameof(SalaryProfileFormModel.KaranehAmountNet)
+        ["SalaryProfile.KaranehAmountNet"] = nameof(SalaryProfileFormModel.KaranehAmountNet),
+        ["MaritalStatus"] = nameof(SalaryProfileFormModel.MaritalStatus),
+        ["SalaryProfile.MaritalStatus"] = nameof(SalaryProfileFormModel.MaritalStatus),
+        ["ChildrenCount"] = nameof(SalaryProfileFormModel.ChildrenCount),
+        ["SalaryProfile.ChildrenCount"] = nameof(SalaryProfileFormModel.ChildrenCount),
+        ["IsTaxSubject"] = nameof(SalaryProfileFormModel.IsTaxSubject),
+        ["SalaryProfile.IsTaxSubject"] = nameof(SalaryProfileFormModel.IsTaxSubject),
+        ["InsuranceNumber"] = nameof(SalaryProfileFormModel.InsuranceNumber),
+        ["SalaryProfile.Insurance.InsuranceNumber"] = nameof(SalaryProfileFormModel.InsuranceNumber),
+        ["SocialSecurityContractRow"] = nameof(SalaryProfileFormModel.SocialSecurityContractRow),
+        ["SalaryProfile.Insurance.SocialSecurityContractRow"] = nameof(SalaryProfileFormModel.SocialSecurityContractRow),
+        ["PositionInInsuranceList"] = nameof(SalaryProfileFormModel.PositionInInsuranceList),
+        ["SalaryProfile.Insurance.PositionInInsuranceList"] = nameof(SalaryProfileFormModel.PositionInInsuranceList),
+        ["InsuranceCalculationProfile"] = nameof(SalaryProfileFormModel.InsuranceCalculationProfile),
+        ["SalaryProfile.Insurance.InsuranceCalculationProfile"] = nameof(SalaryProfileFormModel.InsuranceCalculationProfile)
     };
 
     public class SalaryProfileFormModel : BaseModel
@@ -425,5 +581,35 @@
         [RegularExpression(@"^(\d+)?$", ErrorMessage = "مبلغ خالص کارانه باید عدد صحیح ریال باشد.")]
         [Display(Name = "کارانه")]
         public string? KaranehAmountNet { get; set; }
+
+        [Required(ErrorMessage = "وضعیت تأهل اجباری است.")]
+        [Display(Name = "وضعیت تأهل")]
+        public SalaryDecreeRequestMaritalStatus? MaritalStatus { get; set; }
+
+        [Required(ErrorMessage = "تعداد فرزندان اجباری است.")]
+        [Range(0, 20, ErrorMessage = "تعداد فرزندان باید بین ۰ تا ۲۰ باشد.")]
+        [Display(Name = "تعداد فرزندان")]
+        public int? ChildrenCount { get; set; } = 0;
+
+        public bool IsTaxSubject { get; set; } = true;
+
+        [Required(ErrorMessage = "شماره بیمه اجباری است.")]
+        [StringLength(20, ErrorMessage = "شماره بیمه نمی‌تواند بیش از ۲۰ نویسه باشد.")]
+        public string InsuranceNumber { get; set; } = string.Empty;
+
+        [StringLength(20, ErrorMessage = "ردیف پیمان بیمه نمی‌تواند بیش از ۲۰ نویسه باشد.")]
+        public string? SocialSecurityContractRow { get; set; }
+
+        [Required(ErrorMessage = "سمت در لیست بیمه اجباری است.")]
+        [StringLength(100, ErrorMessage = "سمت در لیست بیمه نمی‌تواند بیش از ۱۰۰ نویسه باشد.")]
+        public string PositionInInsuranceList { get; set; } = string.Empty;
+
+        public bool IsSubjectTo7PercentInsurance { get; set; } = true;
+        public bool IsSubjectTo20PercentInsurance { get; set; } = true;
+        public bool IsSubjectTo3PercentInsurance { get; set; }
+        public bool IsSubjectTo4PercentInsurance { get; set; }
+
+        [Required(ErrorMessage = "پروفایل محاسبه بیمه اجباری است.")]
+        public EmployeeInsuranceRequestInsuranceCalculationProfile? InsuranceCalculationProfile { get; set; }
     }
 }
