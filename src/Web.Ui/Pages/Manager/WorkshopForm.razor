@@ -41,6 +41,16 @@
                 </div>
 
                 <div class="col-md-5 field">
+                    <label class="f-label" for="w-addr"><span class="req-s">*</span>آدرس</label>
+                    <InputText @bind-Value="_formHelper.Model.Address" class="in" id="w-addr"
+                               placeholder="حداقل ۱۰ نویسه"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.Address"
+                                       class="f-help text-danger"/>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-5 field">
                     <label class="f-label" for="w-regdate"><span class="req-s">*</span>تاریخ ثبت</label>
                     <InputText @bind-Value="_formHelper.Model.RegistrationDate" class="in num" id="w-regdate"
                                inputmode="numeric" placeholder="۱۴۰۵/۰۵/۱۷"/>
