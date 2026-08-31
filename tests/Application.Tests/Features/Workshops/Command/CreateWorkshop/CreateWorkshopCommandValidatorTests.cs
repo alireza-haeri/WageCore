@@ -279,8 +279,6 @@ public class CreateWorkshopCommandValidatorTests
     }
 
     [Fact]
-
-    [Fact]
     public void Validate_WithRegistrationDateInFuture_ShouldHaveValidationError()
     {
         var futureDate = DateOnly.FromDateTime(DateTime.Now.AddDays(1));

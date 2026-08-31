@@ -31,6 +31,7 @@ public static class DependencyInjection
         builder.Services.AddScoped<IDbConnectionFactory, SqlConnectionFactory>();
         
         builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+        builder.Services.AddScoped<IPersianCalendarService, PersianCalendarService>();
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         
         builder.Services.AddScoped<IWorkShopRepository, WorkshopRepository>();
@@ -41,6 +42,7 @@ public static class DependencyInjection
         builder.Services.AddScoped<ISalaryDecreeRepository, SalaryDecreeRepository>();
         builder.Services.AddScoped<ISalaryDecreeQuery, SalaryDecreeQuery>();
         builder.Services.AddScoped<IPayrollRecordQuery, PayrollRecordQuery>();
+        builder.Services.AddScoped<IPayrollRecordRepository, PayrollRecordRepository>();
         builder.Services.AddScoped<ILaborLawRuleRepository, LaborLawRuleRepository>();
         builder.Services.AddScoped<ILaborLawRuleQuery, LaborLawRuleQuery>();
         builder.Services.AddScoped<ICalculationFormulaRepository, CalculationFormulaRepository>();

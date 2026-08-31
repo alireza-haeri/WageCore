@@ -1108,6 +1108,422 @@
         }
       }
     },
+    "/api/v1/users/register": {
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "RegisterUser",
+        "operationId": "RegisterUser",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/RegisterUserRequest"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/RegisterUserRequest"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/RegisterUserRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterUserCommandResponseResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterUserCommandResponseResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterUserCommandResponseResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users/login": {
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "summary": "LoginUser",
+        "operationId": "LoginUser",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/LoginUserRequest"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/LoginUserRequest"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/LoginUserRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginUserCommandResponseResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginUserCommandResponseResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginUserCommandResponseResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/labor-law-rules": {
+      "post": {
+        "tags": [
+          "LaborLawRule"
+        ],
+        "summary": "CreateLaborLawRule",
+        "operationId": "CreateLaborLawRule",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateLaborLawRuleRequest"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateLaborLawRuleRequest"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateLaborLawRuleRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateLaborLawRuleCommandResponseResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateLaborLawRuleCommandResponseResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateLaborLawRuleCommandResponseResult"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "LaborLawRule"
+        ],
+        "summary": "GetLaborLawRules",
+        "operationId": "GetLaborLawRules",
+        "parameters": [
+          {
+            "name": "Pagination.PageNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Pagination.PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Pagination.Offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "LaborLawRuleKey",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "x-enumNames": [
+                "MinimumMonthlySalary",
+                "DailyWorkingHours",
+                "MaximumOvertimeHoursPerDay",
+                "MaximumNightShiftHoursPerDay"
+              ],
+              "enum": [
+                0,
+                1,
+                2,
+                3
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLaborLawRulesResponsePagedResultResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLaborLawRulesResponsePagedResultResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLaborLawRulesResponsePagedResultResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/labor-law-rules/{laborLawRuleId}": {
+      "put": {
+        "tags": [
+          "LaborLawRule"
+        ],
+        "summary": "UpdateLaborLawRule",
+        "operationId": "UpdateLaborLawRule",
+        "parameters": [
+          {
+            "name": "laborLawRuleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdateLaborLawRuleRequest"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdateLaborLawRuleRequest"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdateLaborLawRuleRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "LaborLawRule"
+        ],
+        "summary": "DeleteLaborLawRule",
+        "operationId": "DeleteLaborLawRule",
+        "parameters": [
+          {
+            "name": "laborLawRuleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/labor-law-rules/{laborLawRuleId}/edit": {
+      "get": {
+        "tags": [
+          "LaborLawRule"
+        ],
+        "summary": "GetLaborLawRuleForEdit",
+        "operationId": "GetLaborLawRuleForEdit",
+        "parameters": [
+          {
+            "name": "laborLawRuleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLaborLawRuleForEditResponseResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLaborLawRuleForEditResponseResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLaborLawRuleForEditResponseResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/salary-decrees": {
       "post": {
         "tags": [
@@ -1435,416 +1851,6 @@
         }
       }
     },
-    "/api/v1/users/register": {
-      "post": {
-        "tags": [
-          "Identity"
-        ],
-        "summary": "RegisterUser",
-        "operationId": "RegisterUser",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/RegisterUserRequest"
-                  }
-                ]
-              }
-            },
-            "text/json": {
-              "schema": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/RegisterUserRequest"
-                  }
-                ]
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/RegisterUserRequest"
-                  }
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/RegisterUserCommandResponseResult"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RegisterUserCommandResponseResult"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RegisterUserCommandResponseResult"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/users/login": {
-      "post": {
-        "tags": [
-          "Identity"
-        ],
-        "summary": "LoginUser",
-        "operationId": "LoginUser",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/LoginUserRequest"
-                  }
-                ]
-              }
-            },
-            "text/json": {
-              "schema": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/LoginUserRequest"
-                  }
-                ]
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/LoginUserRequest"
-                  }
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/LoginUserCommandResponseResult"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LoginUserCommandResponseResult"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LoginUserCommandResponseResult"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/labor-law-rules": {
-      "post": {
-        "tags": [
-          "LaborLawRule"
-        ],
-        "summary": "CreateLaborLawRule",
-        "operationId": "CreateLaborLawRule",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/CreateLaborLawRuleRequest"
-                  }
-                ]
-              }
-            },
-            "text/json": {
-              "schema": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/CreateLaborLawRuleRequest"
-                  }
-                ]
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/CreateLaborLawRuleRequest"
-                  }
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateLaborLawRuleCommandResponseResult"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateLaborLawRuleCommandResponseResult"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateLaborLawRuleCommandResponseResult"
-                }
-              }
-            }
-          }
-        }
-      },
-      "get": {
-        "tags": [
-          "LaborLawRule"
-        ],
-        "summary": "GetLaborLawRules",
-        "operationId": "GetLaborLawRules",
-        "parameters": [
-          {
-            "name": "Pagination.PageNumber",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "Pagination.PageSize",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "Pagination.Offset",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "LaborLawRuleKey",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "x-enumNames": [
-                "MinimumMonthlySalary"
-              ],
-              "enum": [
-                0
-              ]
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetLaborLawRulesResponsePagedResultResult"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetLaborLawRulesResponsePagedResultResult"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetLaborLawRulesResponsePagedResultResult"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/labor-law-rules/{laborLawRuleId}": {
-      "put": {
-        "tags": [
-          "LaborLawRule"
-        ],
-        "summary": "UpdateLaborLawRule",
-        "operationId": "UpdateLaborLawRule",
-        "parameters": [
-          {
-            "name": "laborLawRuleId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/UpdateLaborLawRuleRequest"
-                  }
-                ]
-              }
-            },
-            "text/json": {
-              "schema": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/UpdateLaborLawRuleRequest"
-                  }
-                ]
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/UpdateLaborLawRuleRequest"
-                  }
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/BooleanResult"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BooleanResult"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BooleanResult"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "LaborLawRule"
-        ],
-        "summary": "DeleteLaborLawRule",
-        "operationId": "DeleteLaborLawRule",
-        "parameters": [
-          {
-            "name": "laborLawRuleId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/BooleanResult"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BooleanResult"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BooleanResult"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/labor-law-rules/{laborLawRuleId}/edit": {
-      "get": {
-        "tags": [
-          "LaborLawRule"
-        ],
-        "summary": "GetLaborLawRuleForEdit",
-        "operationId": "GetLaborLawRuleForEdit",
-        "parameters": [
-          {
-            "name": "laborLawRuleId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetLaborLawRuleForEditResponseResult"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetLaborLawRuleForEditResponseResult"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetLaborLawRuleForEditResponseResult"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v1/workshops": {
       "post": {
         "tags": [
@@ -1942,22 +1948,6 @@
             "in": "query",
             "schema": {
               "type": "string"
-            }
-          },
-          {
-            "name": "Region",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "x-enumNames": [
-                "Normal",
-                "LessDeveloped"
-              ],
-              "enum": [
-                0,
-                1
-              ]
             }
           }
         ],
@@ -2454,20 +2444,95 @@
               }
             ]
           },
-          "insurance": {
-            "nullable": true,
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/EmployeeInsuranceRequest"
-              }
-            ]
-          },
           "bankAccounts": {
             "type": "array",
             "nullable": true,
             "items": {
               "$ref": "#/components/schemas/EmployeeBankAccountRequest"
             }
+          }
+        }
+      },
+      "CreateLaborLawRuleCommandResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "laborLawRuleId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "CreateLaborLawRuleCommandResponseResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreateLaborLawRuleCommandResponse"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "CreateLaborLawRuleRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "laborLawRuleKey": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "MinimumMonthlySalary",
+              "DailyWorkingHours",
+              "MaximumOvertimeHoursPerDay",
+              "MaximumNightShiftHoursPerDay"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "value": {
+            "type": "number",
+            "format": "double"
+          },
+          "effectiveFrom": {
+            "type": "string"
           }
         }
       },
@@ -2543,83 +2608,6 @@
           }
         }
       },
-      "CreateLaborLawRuleCommandResponse": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "laborLawRuleId": {
-            "type": "string",
-            "format": "uuid"
-          }
-        }
-      },
-      "CreateLaborLawRuleCommandResponseResult": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "isSuccess": {
-            "type": "boolean"
-          },
-          "badResultType": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true,
-            "x-enumNames": [
-              "NotFound",
-              "Validation",
-              "General",
-              "Unauthorized"
-            ],
-            "enum": [
-              0,
-              1,
-              2,
-              3
-            ]
-          },
-          "response": {
-            "nullable": true,
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/CreateLaborLawRuleCommandResponse"
-              }
-            ]
-          },
-          "errors": {
-            "type": "object",
-            "nullable": true,
-            "additionalProperties": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        }
-      },
-      "CreateLaborLawRuleRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "laborLawRuleKey": {
-            "type": "integer",
-            "format": "int32",
-            "x-enumNames": [
-              "MinimumMonthlySalary"
-            ],
-            "enum": [
-              0
-            ]
-          },
-          "value": {
-            "type": "number",
-            "format": "double"
-          },
-          "effectiveFrom": {
-            "type": "string"
-          }
-        }
-      },
       "CreateWorkshopCommandResponse": {
         "type": "object",
         "additionalProperties": false,
@@ -2686,18 +2674,6 @@
             "type": "string",
             "nullable": true
           },
-          "region": {
-            "type": "integer",
-            "format": "int32",
-            "x-enumNames": [
-              "Normal",
-              "LessDeveloped"
-            ],
-            "enum": [
-              0,
-              1
-            ]
-          },
           "registrationDate": {
             "type": "string"
           },
@@ -2715,7 +2691,11 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "title": {
+          "bankName": {
+            "type": "string",
+            "nullable": true
+          },
+          "branchCode": {
             "type": "string",
             "nullable": true
           },
@@ -2734,7 +2714,11 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "title": {
+          "bankName": {
+            "type": "string",
+            "nullable": true
+          },
+          "branchCode": {
             "type": "string",
             "nullable": true
           },
@@ -2769,10 +2753,6 @@
             "type": "string",
             "nullable": true
           },
-          "birthCertificateNumber": {
-            "type": "string",
-            "nullable": true
-          },
           "fatherName": {
             "type": "string",
             "nullable": true
@@ -2789,26 +2769,6 @@
               1
             ]
           },
-          "maritalStatus": {
-            "type": "integer",
-            "format": "int32",
-            "x-enumNames": [
-              "Single",
-              "Married",
-              "Divorced",
-              "Widowed"
-            ],
-            "enum": [
-              0,
-              1,
-              2,
-              3
-            ]
-          },
-          "childrenCount": {
-            "type": "integer",
-            "format": "int32"
-          },
           "hireDate": {
             "type": "string"
           },
@@ -2820,8 +2780,17 @@
             "type": "string",
             "nullable": true
           },
-          "isTaxSubject": {
-            "type": "boolean"
+          "region": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "Normal",
+              "LessDeveloped"
+            ],
+            "enum": [
+              0,
+              1
+            ]
           }
         }
       },
@@ -2850,6 +2819,9 @@
           "isSubjectTo3PercentInsurance": {
             "type": "boolean"
           },
+          "isSubjectTo4PercentInsurance": {
+            "type": "boolean"
+          },
           "insuranceCalculationProfile": {
             "type": "integer",
             "format": "int32",
@@ -2861,81 +2833,6 @@
               0,
               1
             ]
-          }
-        }
-      },
-      "SalaryDecreeRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "effectiveFrom": {
-            "type": "string"
-          },
-          "baseDailySalary": {
-            "type": "number",
-            "format": "double"
-          },
-          "attractionAllowance": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "supervisionAllowance": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "shiftType": {
-            "type": "integer",
-            "format": "int32",
-            "x-enumNames": [
-              "None",
-              "MorningEvening",
-              "MorningNight",
-              "EveningNight",
-              "MorningEveningNight"
-            ],
-            "enum": [
-              0,
-              1,
-              2,
-              3,
-              4
-            ]
-          },
-          "contractType": {
-            "type": "integer",
-            "format": "int32",
-            "x-enumNames": [
-              "Permanent",
-              "Temporary",
-              "FixedTerm"
-            ],
-            "enum": [
-              1,
-              2,
-              3
-            ]
-          },
-          "housingAllowance": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "foodAllowance": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "transportationAllowanceNet": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "karanehAmountNet": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
           }
         }
       },
@@ -3191,10 +3088,6 @@
             "type": "string",
             "nullable": true
           },
-          "birthCertificateNumber": {
-            "type": "string",
-            "nullable": true
-          },
           "fatherName": {
             "type": "string",
             "nullable": true
@@ -3211,26 +3104,6 @@
               1
             ]
           },
-          "maritalStatus": {
-            "type": "integer",
-            "format": "int32",
-            "x-enumNames": [
-              "Single",
-              "Married",
-              "Divorced",
-              "Widowed"
-            ],
-            "enum": [
-              0,
-              1,
-              2,
-              3
-            ]
-          },
-          "childrenCount": {
-            "type": "integer",
-            "format": "int32"
-          },
           "hireDate": {
             "type": "string",
             "nullable": true
@@ -3243,36 +3116,12 @@
             "type": "string",
             "nullable": true
           },
-          "isTaxSubject": {
-            "type": "boolean"
-          },
-          "insuranceNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "socialSecurityContractRow": {
-            "type": "string",
-            "nullable": true
-          },
-          "positionInInsuranceList": {
-            "type": "string",
-            "nullable": true
-          },
-          "isSubjectTo7PercentInsurance": {
-            "type": "boolean"
-          },
-          "isSubjectTo20PercentInsurance": {
-            "type": "boolean"
-          },
-          "isSubjectTo3PercentInsurance": {
-            "type": "boolean"
-          },
-          "insuranceCalculationProfile": {
+          "region": {
             "type": "integer",
             "format": "int32",
             "x-enumNames": [
-              "FullLegal",
-              "MinimumLaborLaw"
+              "Normal",
+              "LessDeveloped"
             ],
             "enum": [
               0,
@@ -3317,6 +3166,188 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/GetEmployeeForEditResponse"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "GetLaborLawRuleForEditResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "MinimumMonthlySalary",
+              "DailyWorkingHours",
+              "MaximumOvertimeHoursPerDay",
+              "MaximumNightShiftHoursPerDay"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "value": {
+            "type": "number",
+            "format": "double"
+          },
+          "effectiveFrom": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "GetLaborLawRuleForEditResponseResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GetLaborLawRuleForEditResponse"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "GetLaborLawRulesResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "key": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "MinimumMonthlySalary",
+              "DailyWorkingHours",
+              "MaximumOvertimeHoursPerDay",
+              "MaximumNightShiftHoursPerDay"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "value": {
+            "type": "number",
+            "format": "double"
+          },
+          "displayEffectiveFrom": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "GetLaborLawRulesResponsePagedResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/GetLaborLawRulesResponse"
+            }
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "readOnly": true,
+            "format": "int32"
+          }
+        }
+      },
+      "GetLaborLawRulesResponsePagedResultResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GetLaborLawRulesResponsePagedResult"
               }
             ]
           },
@@ -3413,6 +3444,65 @@
             "type": "number",
             "format": "double",
             "nullable": true
+          },
+          "maritalStatus": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "Single",
+              "Married",
+              "Divorced",
+              "Widowed"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "childrenCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isTaxSubject": {
+            "type": "boolean"
+          },
+          "insuranceNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "socialSecurityContractRow": {
+            "type": "string",
+            "nullable": true
+          },
+          "positionInInsuranceList": {
+            "type": "string",
+            "nullable": true
+          },
+          "isSubjectTo7PercentInsurance": {
+            "type": "boolean"
+          },
+          "isSubjectTo20PercentInsurance": {
+            "type": "boolean"
+          },
+          "isSubjectTo3PercentInsurance": {
+            "type": "boolean"
+          },
+          "isSubjectTo4PercentInsurance": {
+            "type": "boolean"
+          },
+          "insuranceCalculationProfile": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "FullLegal",
+              "MinimumLaborLaw"
+            ],
+            "enum": [
+              0,
+              1
+            ]
           }
         }
       },
@@ -3569,176 +3659,6 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/GetSalaryDecreesResponsePagedResult"
-              }
-            ]
-          },
-          "errors": {
-            "type": "object",
-            "nullable": true,
-            "additionalProperties": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        }
-      },
-      "GetLaborLawRuleForEditResponse": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "key": {
-            "type": "integer",
-            "format": "int32",
-            "x-enumNames": [
-              "MinimumMonthlySalary"
-            ],
-            "enum": [
-              0
-            ]
-          },
-          "value": {
-            "type": "number",
-            "format": "double"
-          },
-          "effectiveFrom": {
-            "type": "string",
-            "nullable": true
-          }
-        }
-      },
-      "GetLaborLawRuleForEditResponseResult": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "isSuccess": {
-            "type": "boolean"
-          },
-          "badResultType": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true,
-            "x-enumNames": [
-              "NotFound",
-              "Validation",
-              "General",
-              "Unauthorized"
-            ],
-            "enum": [
-              0,
-              1,
-              2,
-              3
-            ]
-          },
-          "response": {
-            "nullable": true,
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/GetLaborLawRuleForEditResponse"
-              }
-            ]
-          },
-          "errors": {
-            "type": "object",
-            "nullable": true,
-            "additionalProperties": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        }
-      },
-      "GetLaborLawRulesResponse": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "key": {
-            "type": "integer",
-            "format": "int32",
-            "x-enumNames": [
-              "MinimumMonthlySalary"
-            ],
-            "enum": [
-              0
-            ]
-          },
-          "value": {
-            "type": "number",
-            "format": "double"
-          },
-          "displayEffectiveFrom": {
-            "type": "string",
-            "nullable": true
-          }
-        }
-      },
-      "GetLaborLawRulesResponsePagedResult": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "items": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/GetLaborLawRulesResponse"
-            }
-          },
-          "totalCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "pageNumber": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "pageSize": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalPages": {
-            "type": "integer",
-            "readOnly": true,
-            "format": "int32"
-          }
-        }
-      },
-      "GetLaborLawRulesResponsePagedResultResult": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "isSuccess": {
-            "type": "boolean"
-          },
-          "badResultType": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true,
-            "x-enumNames": [
-              "NotFound",
-              "Validation",
-              "General",
-              "Unauthorized"
-            ],
-            "enum": [
-              0,
-              1,
-              2,
-              3
-            ]
-          },
-          "response": {
-            "nullable": true,
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/GetLaborLawRulesResponsePagedResult"
               }
             ]
           },
@@ -3972,6 +3892,18 @@
               0,
               1
             ]
+          },
+          "region": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "Normal",
+              "LessDeveloped"
+            ],
+            "enum": [
+              0,
+              1
+            ]
           }
         }
       },
@@ -4140,18 +4072,6 @@
             "type": "string",
             "nullable": true
           },
-          "region": {
-            "type": "integer",
-            "format": "int32",
-            "x-enumNames": [
-              "Normal",
-              "LessDeveloped"
-            ],
-            "enum": [
-              0,
-              1
-            ]
-          },
           "displayRegistrationDate": {
             "type": "string",
             "nullable": true
@@ -4251,18 +4171,6 @@
           "address": {
             "type": "string",
             "nullable": true
-          },
-          "region": {
-            "type": "integer",
-            "format": "int32",
-            "x-enumNames": [
-              "Normal",
-              "LessDeveloped"
-            ],
-            "enum": [
-              0,
-              1
-            ]
           },
           "registrationDate": {
             "type": "string",
@@ -4491,6 +4399,112 @@
           }
         }
       },
+      "SalaryDecreeRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "effectiveFrom": {
+            "type": "string"
+          },
+          "baseDailySalary": {
+            "type": "number",
+            "format": "double"
+          },
+          "attractionAllowance": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "supervisionAllowance": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "shiftType": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "None",
+              "MorningEvening",
+              "MorningNight",
+              "EveningNight",
+              "MorningEveningNight"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3,
+              4
+            ]
+          },
+          "contractType": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "Permanent",
+              "Temporary",
+              "FixedTerm"
+            ],
+            "enum": [
+              1,
+              2,
+              3
+            ]
+          },
+          "housingAllowance": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "foodAllowance": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "transportationAllowanceNet": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "karanehAmountNet": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "maritalStatus": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "Single",
+              "Married",
+              "Divorced",
+              "Widowed"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "childrenCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isTaxSubject": {
+            "type": "boolean"
+          },
+          "insurance": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EmployeeInsuranceRequest"
+              }
+            ]
+          }
+        }
+      },
       "TerminateEmployeeRequest": {
         "type": "object",
         "additionalProperties": false,
@@ -4545,20 +4559,41 @@
               }
             ]
           },
-          "insurance": {
-            "nullable": true,
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/EmployeeInsuranceRequest"
-              }
-            ]
-          },
           "bankAccounts": {
             "type": "array",
             "nullable": true,
             "items": {
               "$ref": "#/components/schemas/EmployeeBankAccountRequest"
             }
+          }
+        }
+      },
+      "UpdateLaborLawRuleRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "laborLawRuleKey": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "MinimumMonthlySalary",
+              "DailyWorkingHours",
+              "MaximumOvertimeHoursPerDay",
+              "MaximumNightShiftHoursPerDay"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "value": {
+            "type": "number",
+            "format": "double"
+          },
+          "effectiveFrom": {
+            "type": "string"
           }
         }
       },
@@ -4580,29 +4615,6 @@
           }
         }
       },
-      "UpdateLaborLawRuleRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "laborLawRuleKey": {
-            "type": "integer",
-            "format": "int32",
-            "x-enumNames": [
-              "MinimumMonthlySalary"
-            ],
-            "enum": [
-              0
-            ]
-          },
-          "value": {
-            "type": "number",
-            "format": "double"
-          },
-          "effectiveFrom": {
-            "type": "string"
-          }
-        }
-      },
       "UpdateWorkshopRequest": {
         "type": "object",
         "additionalProperties": false,
@@ -4614,18 +4626,6 @@
           "address": {
             "type": "string",
             "nullable": true
-          },
-          "region": {
-            "type": "integer",
-            "format": "int32",
-            "x-enumNames": [
-              "Normal",
-              "LessDeveloped"
-            ],
-            "enum": [
-              0,
-              1
-            ]
           },
           "registrationDate": {
             "type": "string"
@@ -4669,13 +4669,13 @@
       "name": "Employee"
     },
     {
-      "name": "SalaryDecree"
-    },
-    {
       "name": "Identity"
     },
     {
       "name": "LaborLawRule"
+    },
+    {
+      "name": "SalaryDecree"
     },
     {
       "name": "Workshop"

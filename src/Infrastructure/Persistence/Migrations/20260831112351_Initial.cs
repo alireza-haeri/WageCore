@@ -26,6 +26,34 @@ namespace Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CalculationFormulas",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Key = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
+                    Expression = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
+                    EffectiveFrom = table.Column<DateOnly>(type: "date", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CalculationFormulas", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LaborLawRuleItems",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Key = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
+                    Value = table.Column<decimal>(type: "decimal(18,0)", precision: 18, scale: 0, nullable: false),
+                    EffectiveFrom = table.Column<DateOnly>(type: "date", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LaborLawRuleItems", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -165,7 +193,6 @@ namespace Infrastructure.Persistence.Migrations
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Address = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
-                    Region = table.Column<string>(type: "varchar(max)", unicode: false, nullable: false),
                     RegistrationDate = table.Column<DateOnly>(type: "date", nullable: false),
                     NationalId = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false),
                     PostalCode = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true)
@@ -210,23 +237,13 @@ namespace Infrastructure.Persistence.Migrations
                     PersonalCode = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false),
                     FullName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NationalCode = table.Column<string>(type: "varchar(10)", unicode: false, maxLength: 10, nullable: false),
-                    BirthCertificateNumber = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false),
                     FatherName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Gender = table.Column<string>(type: "varchar(max)", unicode: false, nullable: false),
-                    MaritalStatus = table.Column<string>(type: "varchar(max)", unicode: false, nullable: false),
-                    ChildrenCount = table.Column<int>(type: "int", nullable: false),
                     HireDate = table.Column<DateOnly>(type: "date", nullable: false),
                     TerminationDate = table.Column<DateOnly>(type: "date", nullable: true),
                     PhoneNumber = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false),
                     JobTitle = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    IsTaxSubject = table.Column<bool>(type: "bit", nullable: false),
-                    InsuranceNumber = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false),
-                    SocialSecurityContractRow = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
-                    PositionInInsuranceList = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    IsSubjectTo7PercentInsurance = table.Column<bool>(type: "bit", nullable: false),
-                    IsSubjectTo20PercentInsurance = table.Column<bool>(type: "bit", nullable: false),
-                    IsSubjectTo3PercentInsurance = table.Column<bool>(type: "bit", nullable: false),
-                    InsuranceCalculationProfile = table.Column<string>(type: "varchar(max)", unicode: false, nullable: false)
+                    Region = table.Column<string>(type: "varchar(max)", unicode: false, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -250,7 +267,8 @@ namespace Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    BankName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    BranchCode = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Iban = table.Column<string>(type: "varchar(24)", unicode: false, maxLength: 24, nullable: false),
                     EmployeeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
@@ -259,6 +277,45 @@ namespace Infrastructure.Persistence.Migrations
                     table.PrimaryKey("PK_EmployeeBankAccounts", x => x.Id);
                     table.ForeignKey(
                         name: "FK_EmployeeBankAccounts_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SalaryDecrees",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EmployeeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EffectiveFrom = table.Column<DateOnly>(type: "date", nullable: false),
+                    BaseDailySalary = table.Column<decimal>(type: "decimal(18,0)", precision: 18, scale: 0, nullable: false),
+                    AttractionAllowance = table.Column<decimal>(type: "decimal(18,0)", precision: 18, scale: 0, nullable: true),
+                    SupervisionAllowance = table.Column<decimal>(type: "decimal(18,0)", precision: 18, scale: 0, nullable: true),
+                    ShiftType = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
+                    ContractType = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
+                    HousingAllowance = table.Column<decimal>(type: "decimal(18,0)", precision: 18, scale: 0, nullable: true),
+                    FoodAllowance = table.Column<decimal>(type: "decimal(18,0)", precision: 18, scale: 0, nullable: true),
+                    TransportationAllowanceNet = table.Column<decimal>(type: "decimal(18,0)", precision: 18, scale: 0, nullable: true),
+                    KaranehAmountNet = table.Column<decimal>(type: "decimal(18,0)", precision: 18, scale: 0, nullable: true),
+                    MaritalStatus = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
+                    ChildrenCount = table.Column<int>(type: "int", nullable: false),
+                    IsTaxSubject = table.Column<bool>(type: "bit", nullable: false),
+                    InsuranceNumber = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false),
+                    SocialSecurityContractRow = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
+                    PositionInInsuranceList = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    IsSubjectTo7PercentInsurance = table.Column<bool>(type: "bit", nullable: false),
+                    IsSubjectTo20PercentInsurance = table.Column<bool>(type: "bit", nullable: false),
+                    IsSubjectTo3PercentInsurance = table.Column<bool>(type: "bit", nullable: false),
+                    IsSubjectTo4PercentInsurance = table.Column<bool>(type: "bit", nullable: false),
+                    InsuranceCalculationProfile = table.Column<string>(type: "varchar(max)", unicode: false, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SalaryDecrees", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SalaryDecrees_Employees_EmployeeId",
                         column: x => x.EmployeeId,
                         principalTable: "Employees",
                         principalColumn: "Id",
@@ -293,6 +350,12 @@ namespace Infrastructure.Persistence.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CalculationFormulas_EffectiveFrom",
+                table: "CalculationFormulas",
+                column: "EffectiveFrom",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Departments_WorkshopId",
                 table: "Departments",
                 column: "WorkshopId");
@@ -311,6 +374,18 @@ namespace Infrastructure.Persistence.Migrations
                 name: "IX_Employees_WorkshopId_Id",
                 table: "Employees",
                 columns: new[] { "WorkshopId", "Id" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LaborLawRuleItems_EffectiveFrom",
+                table: "LaborLawRuleItems",
+                column: "EffectiveFrom",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SalaryDecrees_EmployeeId_EffectiveFrom",
+                table: "SalaryDecrees",
+                columns: new[] { "EmployeeId", "EffectiveFrom" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
@@ -349,7 +424,16 @@ namespace Infrastructure.Persistence.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "CalculationFormulas");
+
+            migrationBuilder.DropTable(
                 name: "EmployeeBankAccounts");
+
+            migrationBuilder.DropTable(
+                name: "LaborLawRuleItems");
+
+            migrationBuilder.DropTable(
+                name: "SalaryDecrees");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
