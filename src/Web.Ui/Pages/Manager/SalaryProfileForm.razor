@@ -217,28 +217,21 @@
             </div>
 
             <div class="row g-3">
-                <div class="col-md-3 field">
+                <div class="col-md-4 field">
                     <label class="f-label" for="p-insuranceNumber"><span class="req-s">*</span>شماره بیمه</label>
                     <InputText @bind-Value="_formHelper.Model.InsuranceNumber" class="in in-ltr" id="p-insuranceNumber" maxlength="20"/>
                     <ValidationMessage TValue="string" For="() => _formHelper.Model.InsuranceNumber"
                                        class="f-help text-danger"/>
                 </div>
 
-                <div class="col-md-3 field">
-                    <label class="f-label" for="p-socialSecurityContractRow">ردیف پیمان بیمه <span class="f-badge fb-gold">اختیاری</span></label>
-                    <InputText @bind-Value="_formHelper.Model.SocialSecurityContractRow" class="in in-ltr" id="p-socialSecurityContractRow" maxlength="20"/>
-                    <ValidationMessage TValue="string" For="() => _formHelper.Model.SocialSecurityContractRow"
-                                       class="f-help text-danger"/>
-                </div>
-
-                <div class="col-md-3 field">
+                <div class="col-md-4 field">
                     <label class="f-label" for="p-positionInInsuranceList"><span class="req-s">*</span>سمت در لیست بیمه</label>
                     <InputText @bind-Value="_formHelper.Model.PositionInInsuranceList" class="in" id="p-positionInInsuranceList" maxlength="100"/>
                     <ValidationMessage TValue="string" For="() => _formHelper.Model.PositionInInsuranceList"
                                        class="f-help text-danger"/>
                 </div>
 
-                <div class="col-md-3 field">
+                <div class="col-md-4 field">
                     <label class="f-label" for="p-insuranceCalculationProfile"><span class="req-s">*</span>پروفایل محاسبه بیمه</label>
                     <InputSelect @bind-Value="_formHelper.Model.InsuranceCalculationProfile" class="in" id="p-insuranceCalculationProfile">
                         <option value="">انتخاب کنید...</option>
@@ -343,7 +336,6 @@
                         ChildrenCount = profile.ChildrenCount,
                         IsTaxSubject = profile.IsTaxSubject,
                         InsuranceNumber = profile.InsuranceNumber,
-                        SocialSecurityContractRow = profile.SocialSecurityContractRow,
                         PositionInInsuranceList = profile.PositionInInsuranceList,
                         IsSubjectTo7PercentInsurance = profile.IsSubjectTo7PercentInsurance,
                         IsSubjectTo20PercentInsurance = profile.IsSubjectTo20PercentInsurance,
@@ -420,7 +412,7 @@
             isSubjectTo4PercentInsurance: model.IsSubjectTo4PercentInsurance,
             isSubjectTo7PercentInsurance: model.IsSubjectTo7PercentInsurance,
             positionInInsuranceList: model.PositionInInsuranceList,
-            socialSecurityContractRow: model.SocialSecurityContractRow);
+            socialSecurityContractRow: string.Empty);
 
         var salaryProfile = new SalaryDecreeRequest(
             attractionAllowance: ParseOptionalAmount(model.AttractionAllowance),
@@ -526,8 +518,6 @@
         ["SalaryProfile.IsTaxSubject"] = nameof(SalaryProfileFormModel.IsTaxSubject),
         ["InsuranceNumber"] = nameof(SalaryProfileFormModel.InsuranceNumber),
         ["SalaryProfile.Insurance.InsuranceNumber"] = nameof(SalaryProfileFormModel.InsuranceNumber),
-        ["SocialSecurityContractRow"] = nameof(SalaryProfileFormModel.SocialSecurityContractRow),
-        ["SalaryProfile.Insurance.SocialSecurityContractRow"] = nameof(SalaryProfileFormModel.SocialSecurityContractRow),
         ["PositionInInsuranceList"] = nameof(SalaryProfileFormModel.PositionInInsuranceList),
         ["SalaryProfile.Insurance.PositionInInsuranceList"] = nameof(SalaryProfileFormModel.PositionInInsuranceList),
         ["InsuranceCalculationProfile"] = nameof(SalaryProfileFormModel.InsuranceCalculationProfile),
@@ -596,9 +586,6 @@
         [Required(ErrorMessage = "شماره بیمه اجباری است.")]
         [StringLength(20, ErrorMessage = "شماره بیمه نمی‌تواند بیش از ۲۰ نویسه باشد.")]
         public string InsuranceNumber { get; set; } = string.Empty;
-
-        [StringLength(20, ErrorMessage = "ردیف پیمان بیمه نمی‌تواند بیش از ۲۰ نویسه باشد.")]
-        public string? SocialSecurityContractRow { get; set; }
 
         [Required(ErrorMessage = "سمت در لیست بیمه اجباری است.")]
         [StringLength(100, ErrorMessage = "سمت در لیست بیمه نمی‌تواند بیش از ۱۰۰ نویسه باشد.")]
