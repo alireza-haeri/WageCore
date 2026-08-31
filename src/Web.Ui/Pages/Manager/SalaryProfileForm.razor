@@ -131,26 +131,6 @@
                                        class="f-help text-danger"/>
                 </div>
                 <div class="col-md-4 field">
-                    <label class="f-label" for="p-house">حق مسکن <span class="f-badge fb-gold">اختیاری</span></label>
-                    <div class="amount">
-                        <InputText @bind-Value="_formHelper.Model.HousingAllowance" class="in in-ltr" id="p-house"
-                                   inputmode="numeric" placeholder="140000000"/>
-                        <span class="unit">ریال</span>
-                    </div>
-                    <ValidationMessage TValue="string" For="() => _formHelper.Model.HousingAllowance"
-                                       class="f-help text-danger"/>
-                </div>
-                <div class="col-md-4 field">
-                    <label class="f-label" for="p-food">خواربار و بن <span class="f-badge fb-gold">اختیاری</span></label>
-                    <div class="amount">
-                        <InputText @bind-Value="_formHelper.Model.FoodAllowance" class="in in-ltr" id="p-food"
-                                   inputmode="numeric" placeholder="220000000"/>
-                        <span class="unit">ریال</span>
-                    </div>
-                    <ValidationMessage TValue="string" For="() => _formHelper.Model.FoodAllowance"
-                                       class="f-help text-danger"/>
-                </div>
-                <div class="col-md-4 field">
                     <label class="f-label" for="p-trans">ایاب‌وذهاب (خالص) <span class="f-badge fb-gold">اختیاری</span></label>
                     <div class="amount">
                         <InputText @bind-Value="_formHelper.Model.TransportationAllowanceNet" class="in in-ltr" id="p-trans"
@@ -160,16 +140,6 @@
                     <ValidationMessage TValue="string" For="() => _formHelper.Model.TransportationAllowanceNet"
                                        class="f-help text-danger"/>
                     <div class="f-help">کسورات به آن اعمال نمی‌شود.</div>
-                </div>
-                <div class="col-md-4 field">
-                    <label class="f-label" for="p-kar">کارانه (خالص) <span class="f-badge fb-gold">اختیاری</span></label>
-                    <div class="amount">
-                        <InputText @bind-Value="_formHelper.Model.KaranehAmountNet" class="in in-ltr" id="p-kar"
-                                   inputmode="numeric" placeholder="0"/>
-                        <span class="unit">ریال</span>
-                    </div>
-                    <ValidationMessage TValue="string" For="() => _formHelper.Model.KaranehAmountNet"
-                                       class="f-help text-danger"/>
                 </div>
             </div>
 
@@ -328,10 +298,7 @@
                         SupervisionAllowance = FormatOptionalAmount(profile.SupervisionAllowance),
                         ShiftType = (SalaryDecreeRequestShiftType)profile.ShiftType,
                         ContractType = (SalaryDecreeRequestContractType)profile.ContractType,
-                        HousingAllowance = FormatOptionalAmount(profile.HousingAllowance),
-                        FoodAllowance = FormatOptionalAmount(profile.FoodAllowance),
                         TransportationAllowanceNet = FormatOptionalAmount(profile.TransportationAllowanceNet),
-                        KaranehAmountNet = FormatOptionalAmount(profile.KaranehAmountNet),
                         MaritalStatus = (SalaryDecreeRequestMaritalStatus)profile.MaritalStatus,
                         ChildrenCount = profile.ChildrenCount,
                         IsTaxSubject = profile.IsTaxSubject,
@@ -411,8 +378,7 @@
             isSubjectTo3PercentInsurance: model.IsSubjectTo3PercentInsurance,
             isSubjectTo4PercentInsurance: model.IsSubjectTo4PercentInsurance,
             isSubjectTo7PercentInsurance: model.IsSubjectTo7PercentInsurance,
-            positionInInsuranceList: model.PositionInInsuranceList,
-            socialSecurityContractRow: string.Empty);
+            positionInInsuranceList: model.PositionInInsuranceList);
 
         var salaryProfile = new SalaryDecreeRequest(
             attractionAllowance: ParseOptionalAmount(model.AttractionAllowance),
@@ -420,11 +386,8 @@
             childrenCount: childrenCount,
             contractType: model.ContractType ?? SalaryDecreeRequestContractType.Permanent,
             effectiveFrom: model.EffectiveFrom,
-            foodAllowance: ParseOptionalAmount(model.FoodAllowance),
-            housingAllowance: ParseOptionalAmount(model.HousingAllowance),
             insurance: insuranceRequest,
             isTaxSubject: model.IsTaxSubject,
-            karanehAmountNet: ParseOptionalAmount(model.KaranehAmountNet),
             maritalStatus: model.MaritalStatus ?? SalaryDecreeRequestMaritalStatus.Single,
             shiftType: model.ShiftType ?? SalaryDecreeRequestShiftType.None,
             supervisionAllowance: ParseOptionalAmount(model.SupervisionAllowance),
@@ -502,14 +465,8 @@
         ["SalaryProfile.ShiftType"] = nameof(SalaryProfileFormModel.ShiftType),
         ["ContractType"] = nameof(SalaryProfileFormModel.ContractType),
         ["SalaryProfile.ContractType"] = nameof(SalaryProfileFormModel.ContractType),
-        ["HousingAllowance"] = nameof(SalaryProfileFormModel.HousingAllowance),
-        ["SalaryProfile.HousingAllowance"] = nameof(SalaryProfileFormModel.HousingAllowance),
-        ["FoodAllowance"] = nameof(SalaryProfileFormModel.FoodAllowance),
-        ["SalaryProfile.FoodAllowance"] = nameof(SalaryProfileFormModel.FoodAllowance),
         ["TransportationAllowanceNet"] = nameof(SalaryProfileFormModel.TransportationAllowanceNet),
         ["SalaryProfile.TransportationAllowanceNet"] = nameof(SalaryProfileFormModel.TransportationAllowanceNet),
-        ["KaranehAmountNet"] = nameof(SalaryProfileFormModel.KaranehAmountNet),
-        ["SalaryProfile.KaranehAmountNet"] = nameof(SalaryProfileFormModel.KaranehAmountNet),
         ["MaritalStatus"] = nameof(SalaryProfileFormModel.MaritalStatus),
         ["SalaryProfile.MaritalStatus"] = nameof(SalaryProfileFormModel.MaritalStatus),
         ["ChildrenCount"] = nameof(SalaryProfileFormModel.ChildrenCount),
@@ -556,21 +513,9 @@
         [Display(Name = "نوع قرارداد")]
         public SalaryDecreeRequestContractType? ContractType { get; set; }
 
-        [RegularExpression(@"^(\d+)?$", ErrorMessage = "حق مسکن باید عدد صحیح ریال باشد.")]
-        [Display(Name = "حق مسکن")]
-        public string? HousingAllowance { get; set; }
-
-        [RegularExpression(@"^(\d+)?$", ErrorMessage = "حق بن خواربار باید عدد صحیح ریال باشد.")]
-        [Display(Name = "خواربار و بن")]
-        public string? FoodAllowance { get; set; }
-
         [RegularExpression(@"^(\d+)?$", ErrorMessage = "حق ایاب و ذهاب خالص باید عدد صحیح ریال باشد.")]
         [Display(Name = "ایاب و ذهاب")]
         public string? TransportationAllowanceNet { get; set; }
-
-        [RegularExpression(@"^(\d+)?$", ErrorMessage = "مبلغ خالص کارانه باید عدد صحیح ریال باشد.")]
-        [Display(Name = "کارانه")]
-        public string? KaranehAmountNet { get; set; }
 
         [Required(ErrorMessage = "وضعیت تأهل اجباری است.")]
         [Display(Name = "وضعیت تأهل")]

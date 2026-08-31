@@ -50,7 +50,7 @@
             </div>
 
             <div class="row g-3">
-                <div class="col-md-5 field">
+                <div class="col-md-4 field">
                     <label class="f-label" for="w-regdate"><span class="req-s">*</span>تاریخ ثبت</label>
                     <InputText @bind-Value="_formHelper.Model.RegistrationDate" class="in num" id="w-regdate"
                                inputmode="numeric" placeholder="۱۴۰۵/۰۵/۱۷"/>
@@ -68,7 +68,27 @@
                     <div class="f-help">شخص حقوقی: شناسهٔ ملی ۱۱ رقمی · کارگاه انفرادی: کد ملی ۱۰ رقمی مؤسس.</div>
                 </div>
 
-                <div class="col-md-3 field">
+                <div class="col-md-4 field">
+                    <label class="f-label" for="w-ssn"><span class="req-s">*</span>شماره بیمهٔ تأمین اجتماعی</label>
+                    <InputText @bind-Value="_formHelper.Model.SocialSecurityNumber" class="in in-ltr" id="w-ssn"
+                               inputmode="numeric" maxlength="20" placeholder="۱ تا ۲۰ رقم"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.SocialSecurityNumber"
+                                       class="f-help text-danger"/>
+                    <div class="f-help">شماره بیمهٔ تأمین اجتماعی کارگاه؛ ۱ تا ۲۰ رقم انگلیسی.</div>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-4 field">
+                    <label class="f-label" for="w-econ">شمارهٔ اقتصادی ادارهٔ مالیات <span class="f-badge fb-gold">اختیاری</span></label>
+                    <InputText @bind-Value="_formHelper.Model.EconomicCode" class="in in-ltr" id="w-econ"
+                               inputmode="numeric" maxlength="20" placeholder="۱ تا ۲۰ رقم"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.EconomicCode"
+                                       class="f-help text-danger"/>
+                    <div class="f-help">در صورت وجود؛ ۱ تا ۲۰ رقم انگلیسی.</div>
+                </div>
+
+                <div class="col-md-4 field">
                     <label class="f-label" for="w-postal">کد پستی <span class="f-badge fb-gold">اختیاری</span></label>
                     <InputText @bind-Value="_formHelper.Model.PostalCode" class="in in-ltr" id="w-postal"
                                inputmode="numeric" maxlength="10" placeholder="10 رقم"/>
@@ -127,7 +147,9 @@
                         Address = workshop.Address,
                         RegistrationDate = workshop.RegistrationDate,
                         NationalId = workshop.NationalId,
-                        PostalCode = workshop.PostalCode
+                        SocialSecurityNumber = workshop.SocialSecurityNumber,
+                        PostalCode = workshop.PostalCode,
+                        EconomicCode = workshop.EconomicCode
                     };
 
                     _formHelper.RebuildEditContext();
@@ -165,7 +187,9 @@
                     address: model.Address,
                     name: model.Name,
                     nationalId: model.NationalId,
-                    postalCode: model.PostalCode,
+                    postalCode: model.PostalCode ?? string.Empty,
+                    socialSecurityNumber: model.SocialSecurityNumber,
+                    economicCode: model.EconomicCode ?? string.Empty,
                     registrationDate: model.RegistrationDate
                 )),
                 successMessage: "کارگاه با موفقیت ویرایش شد.",
@@ -196,7 +220,9 @@
                     address: model.Address,
                     name: model.Name,
                     nationalId: model.NationalId,
-                    postalCode: model.PostalCode,
+                    postalCode: model.PostalCode ?? string.Empty,
+                    socialSecurityNumber: model.SocialSecurityNumber,
+                    economicCode: model.EconomicCode ?? string.Empty,
                     registrationDate: model.RegistrationDate
                 )),
                 successMessage: "کارگاه با موفقیت ثبت شد.",
@@ -239,6 +265,15 @@
         [RegularExpression(@"^\d{10,11}$", ErrorMessage = "شناسهٔ ملی باید ۱۰ یا ۱۱ رقم باشد.")]
         [Display(Name = "شناسهٔ ملی")]
         public string NationalId { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "شماره بیمهٔ تأمین اجتماعی اجباری است.")]
+        [RegularExpression(@"^\d{1,20}$", ErrorMessage = "شماره بیمهٔ تأمین اجتماعی باید ۱ تا ۲۰ رقم باشد.")]
+        [Display(Name = "شماره بیمهٔ تأمین اجتماعی")]
+        public string SocialSecurityNumber { get; set; } = string.Empty;
+
+        [Display(Name = "شماره اقتصادی ادارهٔ مالیات")]
+        [RegularExpression(@"^\d{1,20}$", ErrorMessage = "شماره اقتصادی باید ۱ تا ۲۰ رقم انگلیسی باشد.")]
+        public string? EconomicCode { get; set; }
 
         [Display(Name = "کد پستی")]
         [RegularExpression(@"^\d{10}$", ErrorMessage = "کد پستی باید ۱۰ رقم باشد.")]
