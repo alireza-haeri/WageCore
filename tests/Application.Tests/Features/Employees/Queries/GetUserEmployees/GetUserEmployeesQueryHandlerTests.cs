@@ -40,7 +40,8 @@ public class GetUserEmployeesQueryHandlerTests
                 "1234567890",
                 DateOnly.FromDateTime(DateTime.Now.AddDays(-10)),
                 "حسابدار",
-                EmployeeStatus.Employed),
+                EmployeeStatus.Employed,
+                Region.Normal),
             new(
                 Guid.NewGuid(),
                 "EMP002",
@@ -50,7 +51,8 @@ public class GetUserEmployeesQueryHandlerTests
                 "0987654321",
                 DateOnly.FromDateTime(DateTime.Now.AddDays(-20)),
                 null,
-                EmployeeStatus.Unemployed)
+                EmployeeStatus.Unemployed,
+                Region.Normal)
         };
         var pagedResult = new PagedResult<UserEmployeeResult>(results, 2, 1, 10);
 

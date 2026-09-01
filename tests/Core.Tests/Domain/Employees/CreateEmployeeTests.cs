@@ -18,23 +18,13 @@ public class CreateEmployeeTests
             response.PersonalCode.Should().Be("EMP001");
             response.FullName.Should().Be("کارمند نمونه");
             response.NationalCode.Should().Be("1234567890");
-            response.BirthCertificateNumber.Should().Be("12345");
             response.FatherName.Should().Be("محمد");
             response.Gender.Should().Be(EmployeeGender.Man);
-            response.MaritalStatus.Should().Be(EmployeeMaritalStatus.Single);
-            response.ChildrenCount.Should().Be(0);
             response.PhoneNumber.Should().Be("09123456789");
             response.JobTitle.Should().Be("حسابدار");
-            response.IsTaxSubject.Should().BeTrue();
+            response.Region.Should().Be(Region.Normal);
             response.TerminationDate.Should().BeNull();
             response.BankAccounts.Should().BeEmpty();
-            response.Insurance.InsuranceNumber.Should().Be("INS-001");
-            response.Insurance.SocialSecurityContractRow.Should().Be("CTR-10");
-            response.Insurance.PositionInInsuranceList.Should().Be("اپراتور");
-            response.Insurance.IsSubjectTo7PercentInsurance.Should().BeTrue();
-            response.Insurance.IsSubjectTo20PercentInsurance.Should().BeTrue();
-            response.Insurance.IsSubjectTo3PercentInsurance.Should().BeFalse();
-            response.Insurance.InsuranceCalculationProfile.Should().Be(InsuranceCalculationProfile.FullLegal);
         }
     }
 
@@ -54,23 +44,13 @@ public class CreateEmployeeTests
             .WithPersonalCode("A123456")
             .WithFullName("علی رضایی")
             .WithNationalCode("0987654321")
-            .WithBirthCertificateNumber("67890")
             .WithFatherName("حسین")
             .WithGender(EmployeeGender.Woman)
-            .WithMaritalStatus(EmployeeMaritalStatus.Married)
-            .WithChildrenCount(2)
             .WithWorkshopRegistrationDate(workshopRegistrationDate)
             .WithHireDate(hireDate)
             .WithPhoneNumber("09987654321")
             .WithJobTitle("سرپرست")
-            .WithIsTaxSubject(false)
-            .WithInsuranceNumber("INS-999")
-            .WithSocialSecurityContractRow(null)
-            .WithPositionInInsuranceList("مدیر تولید")
-            .WithIsSubjectTo7PercentInsurance(false)
-            .WithIsSubjectTo20PercentInsurance(true)
-            .WithIsSubjectTo3PercentInsurance(true)
-            .WithInsuranceCalculationProfile(InsuranceCalculationProfile.MinimumLaborLaw)
+            .WithRegion(Region.Normal)
             .CreateResult();
 
         var response = result.ShouldBeSuccess();
@@ -82,22 +62,12 @@ public class CreateEmployeeTests
             response.PersonalCode.Should().Be("A123456");
             response.FullName.Should().Be("علی رضایی");
             response.NationalCode.Should().Be("0987654321");
-            response.BirthCertificateNumber.Should().Be("67890");
             response.FatherName.Should().Be("حسین");
             response.Gender.Should().Be(EmployeeGender.Woman);
-            response.MaritalStatus.Should().Be(EmployeeMaritalStatus.Married);
-            response.ChildrenCount.Should().Be(2);
             response.HireDate.Should().Be(hireDate);
             response.PhoneNumber.Should().Be("09987654321");
             response.JobTitle.Should().Be("سرپرست");
-            response.IsTaxSubject.Should().BeFalse();
-            response.Insurance.InsuranceNumber.Should().Be("INS-999");
-            response.Insurance.SocialSecurityContractRow.Should().BeNull();
-            response.Insurance.PositionInInsuranceList.Should().Be("مدیر تولید");
-            response.Insurance.IsSubjectTo7PercentInsurance.Should().BeFalse();
-            response.Insurance.IsSubjectTo20PercentInsurance.Should().BeTrue();
-            response.Insurance.IsSubjectTo3PercentInsurance.Should().BeTrue();
-            response.Insurance.InsuranceCalculationProfile.Should().Be(InsuranceCalculationProfile.MinimumLaborLaw);
+            response.Region.Should().Be(Region.Normal);
         }
     }
 
@@ -184,16 +154,6 @@ public class CreateEmployeeTests
     }
 
     [Theory]
-    [InlineData("12345A")]
-    [InlineData("۱۲۳۴۵")]
-    public void Create_WithInvalidBirthCertificateNumber_ShouldFail(string birthCertificateNumber)
-    {
-        var result = _builder.WithBirthCertificateNumber(birthCertificateNumber).CreateResult();
-
-        result.ShouldBeFailure("شماره شناسنامه باید بین 1 تا 20 رقم انگلیسی باشد.");
-    }
-
-    [Theory]
     [InlineData("ab")]
     [InlineData("آب")]
     public void Create_WithFatherNameLessThan3Characters_ShouldFail(string fatherName)
@@ -212,32 +172,19 @@ public class CreateEmployeeTests
     }
 
     [Fact]
-    public void Create_WithNullMaritalStatus_ShouldFail()
+    public void Create_WithNullRegion_ShouldFail()
     {
-        var result = _builder.WithMaritalStatus(null).CreateResult();
+        var result = _builder.WithRegion(null).CreateResult();
 
-        result.ShouldBeFailure("وضعیت تاهل");
-    }
-
-    [Theory]
-    [InlineData(-1)]
-    [InlineData(21)]
-    public void Create_WithChildrenCountOutOfRange_ShouldFail(int childrenCount)
-    {
-        var result = _builder.WithChildrenCount(childrenCount).CreateResult();
-
-        result.ShouldBeFailure("تعداد فرزندان باید بین 0 تا 20 باشد.");
+        result.ShouldBeFailure("منطقه کارمند");
     }
 
     [Fact]
-    public void Create_WithSingleMaritalStatusAndChildrenCountMoreThanZero_ShouldFail()
+    public void Create_WithInvalidRegion_ShouldFail()
     {
-        var result = _builder
-            .WithMaritalStatus(EmployeeMaritalStatus.Single)
-            .WithChildrenCount(1)
-            .CreateResult();
+        var result = _builder.WithRegion((Region)999).CreateResult();
 
-        result.ShouldBeFailure("برای کارمند مجرد، تعداد فرزندان باید صفر باشد.");
+        result.ShouldBeFailure("منطقه کارمند معتبر نیست.");
     }
 
     [Fact]
@@ -284,13 +231,5 @@ public class CreateEmployeeTests
         var result = _builder.WithJobTitle(new string('a', 101)).CreateResult();
 
         result.ShouldBeFailure("عنوان شغلی نمیتواند بیشتر از 100 حرف باشد.");
-    }
-
-    [Fact]
-    public void Create_WithInvalidInsurance_ShouldFail()
-    {
-        var result = _builder.WithInsuranceNumber("").CreateResult();
-
-        result.ShouldBeFailure("شماره بیمه");
     }
 }

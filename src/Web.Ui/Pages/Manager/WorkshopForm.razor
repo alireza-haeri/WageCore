@@ -41,24 +41,15 @@
                 </div>
 
                 <div class="col-md-5 field">
-                    <label class="f-label" for="w-region"><span class="req-s">*</span>نوع منطقه</label>
-                    <InputSelect @bind-Value="_formHelper.Model.Region" class="in" id="w-region">
-                        <option value="">انتخاب کنید...</option>
-                        <option value="@CreateWorkshopRequestRegion.Normal">عادی</option>
-                        <option value="@CreateWorkshopRequestRegion.LessDeveloped">کمتر توسعه‌یافته</option>
-                    </InputSelect>
-                    <ValidationMessage TValue="CreateWorkshopRequestRegion" For="() => _formHelper.Model.Region"
-                                       class="f-help text-danger"/>
-                </div>
-
-                <div class="col-12 field">
                     <label class="f-label" for="w-addr"><span class="req-s">*</span>آدرس</label>
                     <InputText @bind-Value="_formHelper.Model.Address" class="in" id="w-addr"
                                placeholder="حداقل ۱۰ نویسه"/>
                     <ValidationMessage TValue="string" For="() => _formHelper.Model.Address"
                                        class="f-help text-danger"/>
                 </div>
-                
+            </div>
+
+            <div class="row g-3">
                 <div class="col-md-4 field">
                     <label class="f-label" for="w-regdate"><span class="req-s">*</span>تاریخ ثبت</label>
                     <InputText @bind-Value="_formHelper.Model.RegistrationDate" class="in num" id="w-regdate"
@@ -75,6 +66,26 @@
                     <ValidationMessage TValue="string" For="() => _formHelper.Model.NationalId"
                                        class="f-help text-danger"/>
                     <div class="f-help">شخص حقوقی: شناسهٔ ملی ۱۱ رقمی · کارگاه انفرادی: کد ملی ۱۰ رقمی مؤسس.</div>
+                </div>
+
+                <div class="col-md-4 field">
+                    <label class="f-label" for="w-ssn"><span class="req-s">*</span>شماره بیمهٔ تأمین اجتماعی</label>
+                    <InputText @bind-Value="_formHelper.Model.SocialSecurityNumber" class="in in-ltr" id="w-ssn"
+                               inputmode="numeric" maxlength="20" placeholder="۱ تا ۲۰ رقم"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.SocialSecurityNumber"
+                                       class="f-help text-danger"/>
+                    <div class="f-help">شماره بیمهٔ تأمین اجتماعی کارگاه؛ ۱ تا ۲۰ رقم انگلیسی.</div>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-4 field">
+                    <label class="f-label" for="w-econ">شمارهٔ اقتصادی ادارهٔ مالیات <span class="f-badge fb-gold">اختیاری</span></label>
+                    <InputText @bind-Value="_formHelper.Model.EconomicCode" class="in in-ltr" id="w-econ"
+                               inputmode="numeric" maxlength="20" placeholder="۱ تا ۲۰ رقم"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.EconomicCode"
+                                       class="f-help text-danger"/>
+                    <div class="f-help">در صورت وجود؛ ۱ تا ۲۰ رقم انگلیسی.</div>
                 </div>
 
                 <div class="col-md-4 field">
@@ -133,11 +144,12 @@
                     _formHelper.Model = new WorkshopFormModel
                     {
                         Name = workshop.Name,
-                        Region = (CreateWorkshopRequestRegion)workshop.Region,
                         Address = workshop.Address,
                         RegistrationDate = workshop.RegistrationDate,
                         NationalId = workshop.NationalId,
-                        PostalCode = workshop.PostalCode
+                        SocialSecurityNumber = workshop.SocialSecurityNumber,
+                        PostalCode = workshop.PostalCode,
+                        EconomicCode = workshop.EconomicCode
                     };
 
                     _formHelper.RebuildEditContext();
@@ -172,12 +184,13 @@
         {
             var result = await ApiService.SendAsync(
                 apiCall: () => ApiClient.UpdateWorkshopAsync(Id!.Value, new UpdateWorkshopRequest(
-                    model.Address,
-                    model.Name,
-                    model.NationalId,
-                    model.PostalCode,
-                    (UpdateWorkshopRequestRegion)model.Region,
-                    model.RegistrationDate
+                    address: model.Address,
+                    name: model.Name,
+                    nationalId: model.NationalId,
+                    postalCode: model.PostalCode ?? string.Empty,
+                    socialSecurityNumber: model.SocialSecurityNumber,
+                    economicCode: model.EconomicCode ?? string.Empty,
+                    registrationDate: model.RegistrationDate
                 )),
                 successMessage: "کارگاه با موفقیت ویرایش شد.",
                 showErrorToastValidation: false
@@ -207,8 +220,9 @@
                     address: model.Address,
                     name: model.Name,
                     nationalId: model.NationalId,
-                    postalCode: model.PostalCode,
-                    region: model.Region,
+                    postalCode: model.PostalCode ?? string.Empty,
+                    socialSecurityNumber: model.SocialSecurityNumber,
+                    economicCode: model.EconomicCode ?? string.Empty,
                     registrationDate: model.RegistrationDate
                 )),
                 successMessage: "کارگاه با موفقیت ثبت شد.",
@@ -236,10 +250,6 @@
         [Display(Name = "نام کارگاه")]
         public string Name { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "نوع منطقه اجباری است.")]
-        [Display(Name = "نوع منطقه")]
-        public CreateWorkshopRequestRegion Region { get; set; }
-
         [Required(ErrorMessage = "آدرس اجباری است.")]
         [MinLength(10, ErrorMessage = "آدرس باید حداقل ۱۰ نویسه باشد.")]
         [MaxLength(1000, ErrorMessage = "آدرس نمی‌تواند بیش از ۱۰۰۰ نویسه باشد.")]
@@ -255,6 +265,15 @@
         [RegularExpression(@"^\d{10,11}$", ErrorMessage = "شناسهٔ ملی باید ۱۰ یا ۱۱ رقم باشد.")]
         [Display(Name = "شناسهٔ ملی")]
         public string NationalId { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "شماره بیمهٔ تأمین اجتماعی اجباری است.")]
+        [RegularExpression(@"^\d{1,20}$", ErrorMessage = "شماره بیمهٔ تأمین اجتماعی باید ۱ تا ۲۰ رقم باشد.")]
+        [Display(Name = "شماره بیمهٔ تأمین اجتماعی")]
+        public string SocialSecurityNumber { get; set; } = string.Empty;
+
+        [Display(Name = "شماره اقتصادی ادارهٔ مالیات")]
+        [RegularExpression(@"^\d{1,20}$", ErrorMessage = "شماره اقتصادی باید ۱ تا ۲۰ رقم انگلیسی باشد.")]
+        public string? EconomicCode { get; set; }
 
         [Display(Name = "کد پستی")]
         [RegularExpression(@"^\d{10}$", ErrorMessage = "کد پستی باید ۱۰ رقم باشد.")]

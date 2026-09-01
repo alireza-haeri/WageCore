@@ -25,11 +25,6 @@ public class EmployeeInformationValidator : AbstractValidator<EmployeeDto>
             .Matches(RegexExtensions.ValidNationalIdRegex())
             .WithMessage("کد ملی باید 10 رقم انگلیسی باشد.");
 
-        RuleFor(x => x.BirthCertificateNumber)
-            .NotEmpty().WithMessage("شماره شناسنامه اجباری است.")
-            .Matches(RegexExtensions.ValidBirthCertificateNumberRegex())
-            .WithMessage("شماره شناسنامه باید بین 1 تا 20 رقم انگلیسی باشد.");
-
         RuleFor(x => x.FatherName)
             .NotEmpty().WithMessage("نام پدر اجباری است.")
             .MinimumLength(3).WithMessage("نام پدر نمیتواند کمتر از 3 کاراکتر باشد.")
@@ -42,22 +37,11 @@ public class EmployeeInformationValidator : AbstractValidator<EmployeeDto>
             .Must(x => x.HasValue && Enum.IsDefined(x.Value))
             .WithMessage("جنسیت معتبر نیست.");
 
-        RuleFor(x => x.MaritalStatus)
+        RuleFor(x => x.Region)
             .Cascade(CascadeMode.Stop)
-            .NotNull().WithMessage("وضعیت تاهل اجباری است.")
+            .NotNull().WithMessage("منطقه کارمند اجباری است.")
             .Must(x => x.HasValue && Enum.IsDefined(x.Value))
-            .WithMessage("وضعیت تاهل معتبر نیست.");
-
-        RuleFor(x => x.ChildrenCount)
-            .Cascade(CascadeMode.Stop)
-            .NotNull().WithMessage("تعداد فرزندان اجباری است.")
-            .Must(x => x.HasValue && x.Value >= 0 && x.Value <= 20)
-            .WithMessage("تعداد فرزندان باید بین 0 تا 20 باشد.");
-
-        RuleFor(x => x.ChildrenCount)
-            .Equal(0)
-            .WithMessage("برای کارمند مجرد، تعداد فرزندان باید صفر باشد.")
-            .When(x => x.MaritalStatus == EmployeeMaritalStatus.Single && x.ChildrenCount.HasValue);
+            .WithMessage("منطقه کارمند معتبر نیست.");
 
         RuleFor(x => x.HireDate)
             .Cascade(CascadeMode.Stop)

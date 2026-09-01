@@ -9,10 +9,6 @@ public class GetUserWorkshopsQueryValidator : AbstractValidator<GetUserWorkshops
         RuleFor(x=>x.UserId)
             .NotEmpty().WithMessage("شناسه کاربر نمیتواند خالی باشد.");
         
-        RuleFor(x=>x.Region)
-            .IsInEnum().WithMessage("منطقه کارگاه نامعتبر است.")
-            .When(x=>x.Region.HasValue);
-        
         RuleFor(x=>x.SearchName)
             .MaximumLength(200).WithMessage("نام کارگاه نباید بیشتر از 200 حرف باشد.")
             .When(x=>!string.IsNullOrWhiteSpace(x.SearchName));

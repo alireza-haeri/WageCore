@@ -29,10 +29,11 @@ public class UpdateWorkshopCommandHandler(IWorkShopRepository workShopRepository
         var domainResult = workshop.Update(
             request.Name,
             request.Address,
-            request.Region,
             request.RegistrationDate,
             request.NationalId,
-            request.PostalCode
+            request.SocialSecurityNumber,
+            request.PostalCode,
+            request.EconomicCode
         );
         if (!domainResult.IsSuccess)
             return Result<bool>.GeneralFailure(domainResult.ErrorMessage!);

@@ -8,18 +8,16 @@ public class CreateEmployeeCommandValidatorTests
     private static readonly Guid ValidUserId = Guid.NewGuid();
     private static readonly Guid ValidWorkshopId = Guid.NewGuid();
 
-    private CreateEmployeeCommand CreateValidCommand(EmployeeDto? employee = null, EmployeeInsuranceDto? insurance = null,
+    private CreateEmployeeCommand CreateValidCommand(EmployeeDto? employee = null,
         List<EmployeeBankAccountDto>? bankAccounts = null, Guid? userId = null, Guid? workshopId = null)
     {
         var employeeDto = employee ?? _employeeBuilder.BuildEmployeeDto();
-        var insuranceDto = insurance ?? _employeeBuilder.BuildInsuranceDto();
         var bankAccountDtos = bankAccounts ?? [_employeeBuilder.BuildBankAccountDto()];
 
         return new CreateEmployeeCommand(
             userId ?? ValidUserId,
             workshopId ?? ValidWorkshopId,
             employeeDto,
-            insuranceDto,
             bankAccountDtos);
     }
 
@@ -56,7 +54,7 @@ public class CreateEmployeeCommandValidatorTests
     [Fact]
     public void Validate_WithNullEmployee_ShouldHaveValidationError()
     {
-        var command = new CreateEmployeeCommand(ValidUserId, ValidWorkshopId, null!, _employeeBuilder.BuildInsuranceDto(),
+        var command = new CreateEmployeeCommand(ValidUserId, ValidWorkshopId, null!,
             [_employeeBuilder.BuildBankAccountDto()]);
 
         var result = _validator.TestValidate(command);
@@ -65,21 +63,9 @@ public class CreateEmployeeCommandValidatorTests
     }
 
     [Fact]
-    public void Validate_WithNullInsurance_ShouldHaveValidationError()
-    {
-        var command = new CreateEmployeeCommand(ValidUserId, ValidWorkshopId, _employeeBuilder.BuildEmployeeDto(), null!,
-            [_employeeBuilder.BuildBankAccountDto()]);
-
-        var result = _validator.TestValidate(command);
-
-        result.ShouldHaveValidationErrorFor(x => x.Insurance);
-    }
-
-    [Fact]
     public void Validate_WithNullBankAccounts_ShouldHaveValidationError()
     {
-        var command = new CreateEmployeeCommand(ValidUserId, ValidWorkshopId, _employeeBuilder.BuildEmployeeDto(),
-            _employeeBuilder.BuildInsuranceDto(), null);
+        var command = new CreateEmployeeCommand(ValidUserId, ValidWorkshopId, _employeeBuilder.BuildEmployeeDto(), null);
 
         var result = _validator.TestValidate(command);
 
@@ -162,19 +148,6 @@ public class CreateEmployeeCommandValidatorTests
         result.ShouldHaveValidationErrorFor(x => x.Employee.NationalCode);
     }
 
-    [Theory]
-    [InlineData(-1)]
-    [InlineData(21)]
-    public void Validate_WithChildrenCountOutOfRange_ShouldHaveValidationError(int childrenCount)
-    {
-        var employee = _employeeBuilder.BuildEmployeeDto() with { ChildrenCount = childrenCount };
-        var command = CreateValidCommand(employee: employee);
-
-        var result = _validator.TestValidate(command);
-
-        result.ShouldHaveValidationErrorFor(x => x.Employee.ChildrenCount);
-    }
-
     [Fact]
     public void Validate_WithHireDateInFuture_ShouldHaveValidationError()
     {
@@ -200,27 +173,5 @@ public class CreateEmployeeCommandValidatorTests
         var result = _validator.TestValidate(command);
 
         result.ShouldHaveValidationErrorFor(x => x.Employee.PhoneNumber);
-    }
-
-    [Fact]
-    public void Validate_WithInsuranceNumberMoreThan20Characters_ShouldHaveValidationError()
-    {
-        var insurance = _employeeBuilder.BuildInsuranceDto() with { InsuranceNumber = new string('a', 21) };
-        var command = CreateValidCommand(insurance: insurance);
-
-        var result = _validator.TestValidate(command);
-
-        result.ShouldHaveValidationErrorFor(x => x.Insurance.InsuranceNumber);
-    }
-
-    [Fact]
-    public void Validate_WithNullInsuranceCalculationProfile_ShouldHaveValidationError()
-    {
-        var insurance = _employeeBuilder.BuildInsuranceDto() with { InsuranceCalculationProfile = null };
-        var command = CreateValidCommand(insurance: insurance);
-
-        var result = _validator.TestValidate(command);
-
-        result.ShouldHaveValidationErrorFor(x => x.Insurance.InsuranceCalculationProfile);
     }
 }

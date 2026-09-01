@@ -5,12 +5,9 @@ public record EmployeeDto(
     string PersonalCode,
     string FullName,
     string NationalCode,
-    string BirthCertificateNumber,
     string FatherName,
     EmployeeGender? Gender,
-    EmployeeMaritalStatus? MaritalStatus,
-    int? ChildrenCount,
     DateOnly? HireDate,
     string PhoneNumber,
     string? JobTitle,
-    bool IsTaxSubject);
+    Region? Region);

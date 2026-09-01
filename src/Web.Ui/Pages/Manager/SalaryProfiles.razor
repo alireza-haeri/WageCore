@@ -94,7 +94,7 @@
                                 <span class="sub"><span class="ltr">@profile.PersonalCode</span> · @profile.DepartmentName</span>
                             </td>
                             <td class="num">از @profile.DisplayEffectiveFrom<span class="sub">باز (بدون پایان)</span></td>
-                            <td class="mnum">@FormatAmount(profile.BaseMonthlySalary)</td>
+                            <td class="mnum">@FormatAmount(profile.BaseDailySalary)</td>
                             <td>
                                 <span class="chip @GetStatusChipClass((int)profile.Status)">
                                     <span class="c-dot"></span>@GetStatusDisplayName((int)profile.Status)
@@ -102,7 +102,7 @@
                             </td>
                             <td>
                                 <span class="rowact">
-                                    <a class="icobtn" href="/salaryprofile-form/@profile.EmployeeSalaryProfileId" title="ویرایش">
+                                    <a class="icobtn" href="/salaryprofile-form/@profile.SalaryDecreeId" title="ویرایش">
                                         <svg class="ic"><use href="assets/img/icons.svg#i-pen"/></svg>
                                     </a>
                                     <button class="icobtn danger" title="حذف"
@@ -191,7 +191,7 @@
 }
 
 @code {
-    private GetEmployeeSalaryProfilesResponsePagedResult? _salaryProfiles;
+    private GetSalaryDecreesResponsePagedResult? _salaryProfiles;
     private List<GetUserWorkshopsNameQueryResponseWorkshopName>? _userWorkshops;
     private List<GetUserDepartmentsNameQueryResponseDepartmentName>? _userDepartments;
     private bool _isLoading;
@@ -207,7 +207,7 @@
         : (int)Math.Ceiling(_salaryProfiles.TotalCount / (double)PageSize);
 
     private Timer? _debounceTimer;
-    private GetEmployeeSalaryProfilesResponse? _profileToDelete;
+    private GetSalaryDecreesResponse? _profileToDelete;
     private bool _isDeleting;
 
     protected override async Task OnInitializedAsync()
@@ -268,7 +268,7 @@
 
         var searchTerm = string.IsNullOrWhiteSpace(_search) ? null : _search.Trim();
 
-        var result = await ApiService.SendAsync(() => ApiClient.GetEmployeeSalaryProfilesAsync(
+        var result = await ApiService.SendAsync(() => ApiClient.GetSalaryDecreesAsync(
             _pageNumber,
             PageSize,
             null,
@@ -350,7 +350,7 @@
         yield return _totalPages;
     }
 
-    private void ConfirmDelete(GetEmployeeSalaryProfilesResponse profile)
+    private void ConfirmDelete(GetSalaryDecreesResponse profile)
     {
         _profileToDelete = profile;
     }
@@ -368,8 +368,8 @@
         _isDeleting = true;
 
         var result = await ApiService.SendAsync(
-            apiCall: () => ApiClient.DeleteEmployeeSalaryProfileAsync(
-                _profileToDelete.EmployeeSalaryProfileId,
+            apiCall: () => ApiClient.DeleteSalaryDecreeAsync(
+                _profileToDelete.SalaryDecreeId,
                 _profileToDelete.EmployeeId),
             successMessage: "حکم با موفقیت حذف شد."
         );

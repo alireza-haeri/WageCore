@@ -9,7 +9,6 @@ public class CreateWorkshopCommandHandlerTests
 
     private const string ValidName = "کارگاه نمونه";
     private const string ValidAddress = "تهران، خیابان نمونه، پلاک ۱۲۳";
-    private const WorkshopRegion ValidRegion = WorkshopRegion.Normal;
     private static readonly DateOnly ValidRegistrationDate = DateOnly.FromDateTime(DateTime.Now);
     private const string ValidNationalId = "1234567890";
     private const string ValidPostalCode = "1234567890";
@@ -35,9 +34,13 @@ public class CreateWorkshopCommandHandlerTests
     [Fact]
     public async Task Handle_WithValidData_ShouldCreateWorkshopAndReturnId()
     {
-        var command = new CreateWorkshopCommand(
-            ValidUserId, ValidName, ValidAddress, ValidRegion,
-            ValidRegistrationDate, ValidNationalId, ValidPostalCode);
+        var command = new CreateWorkshopCommand(ValidUserId,
+            ValidName,
+            ValidAddress,
+            ValidRegistrationDate,
+            ValidNationalId,
+            "1234567890",
+            ValidPostalCode);
 
         SetupNoDuplicates();
 
@@ -45,7 +48,6 @@ public class CreateWorkshopCommandHandlerTests
             .WithUserId(ValidUserId)
             .WithName(ValidName)
             .WithAddress(ValidAddress)
-            .WithRegion(ValidRegion)
             .WithRegistrationDate(ValidRegistrationDate)
             .WithNationalId(ValidNationalId)
             .WithPostalCode(ValidPostalCode)
@@ -64,9 +66,13 @@ public class CreateWorkshopCommandHandlerTests
     [Fact]
     public async Task Handle_WhenWorkshopNameIsDuplicate_ShouldReturnValidationFailure()
     {
-        var command = new CreateWorkshopCommand(
-            ValidUserId, ValidName, ValidAddress, ValidRegion,
-            ValidRegistrationDate, ValidNationalId, ValidPostalCode);
+        var command = new CreateWorkshopCommand(ValidUserId,
+            ValidName,
+            ValidAddress,
+            ValidRegistrationDate,
+            ValidNationalId,
+            "1234567890",
+            ValidPostalCode);
         
         _workshopQuery.IsExistWorkshopName(ValidUserId, ValidName, null, Arg.Any<CancellationToken>())
             .Returns(true);
@@ -79,9 +85,13 @@ public class CreateWorkshopCommandHandlerTests
     [Fact]
     public async Task Handle_WhenWorkshopNationalIdIsDuplicate_ShouldReturnValidationFailure()
     {
-        var command = new CreateWorkshopCommand(
-            ValidUserId, ValidName, ValidAddress, ValidRegion,
-            ValidRegistrationDate, ValidNationalId, ValidPostalCode);
+        var command = new CreateWorkshopCommand(ValidUserId,
+            ValidName,
+            ValidAddress,
+            ValidRegistrationDate,
+            ValidNationalId,
+            "1234567890",
+            ValidPostalCode);
 
         _workshopQuery.IsExistWorkshopName(ValidUserId, ValidName, null, Arg.Any<CancellationToken>())
             .Returns(false);
@@ -97,9 +107,13 @@ public class CreateWorkshopCommandHandlerTests
     public async Task Handle_WhenDomainCreationFails_ShouldReturnGeneralFailure()
     {
         var invalidName = "";
-        var command = new CreateWorkshopCommand(
-            ValidUserId, invalidName, ValidAddress, ValidRegion,
-            ValidRegistrationDate, ValidNationalId, ValidPostalCode);
+        var command = new CreateWorkshopCommand(ValidUserId,
+            invalidName,
+            ValidAddress,
+            ValidRegistrationDate,
+            ValidNationalId,
+            "1234567890",
+            ValidPostalCode);
 
         SetupNoDuplicates();
 
@@ -111,9 +125,13 @@ public class CreateWorkshopCommandHandlerTests
     [Fact]
     public async Task Handle_WhenRepositoryCreateFails_ShouldReturnGeneralFailure()
     {
-        var command = new CreateWorkshopCommand(
-            ValidUserId, ValidName, ValidAddress, ValidRegion,
-            ValidRegistrationDate, ValidNationalId, ValidPostalCode);
+        var command = new CreateWorkshopCommand(ValidUserId,
+            ValidName,
+            ValidAddress,
+            ValidRegistrationDate,
+            ValidNationalId,
+            "1234567890",
+            ValidPostalCode);
 
         SetupNoDuplicates();
 
@@ -128,9 +146,13 @@ public class CreateWorkshopCommandHandlerTests
     [Fact]
     public async Task Handle_ShouldCallCreateAsyncOnce()
     {
-        var command = new CreateWorkshopCommand(
-            ValidUserId, ValidName, ValidAddress, ValidRegion,
-            ValidRegistrationDate, ValidNationalId, ValidPostalCode);
+        var command = new CreateWorkshopCommand(ValidUserId,
+            ValidName,
+            ValidAddress,
+            ValidRegistrationDate,
+            ValidNationalId,
+            "1234567890",
+            ValidPostalCode);
 
         SetupNoDuplicates();
 
@@ -138,7 +160,6 @@ public class CreateWorkshopCommandHandlerTests
             .WithUserId(ValidUserId)
             .WithName(ValidName)
             .WithAddress(ValidAddress)
-            .WithRegion(ValidRegion)
             .WithRegistrationDate(ValidRegistrationDate)
             .WithNationalId(ValidNationalId)
             .WithPostalCode(ValidPostalCode)
@@ -157,9 +178,13 @@ public class CreateWorkshopCommandHandlerTests
     public async Task Handle_WhenDomainFails_ShouldNotCallCreateAsync()
     {
         var invalidName = "";
-        var command = new CreateWorkshopCommand(
-            ValidUserId, invalidName, ValidAddress, ValidRegion,
-            ValidRegistrationDate, ValidNationalId, ValidPostalCode);
+        var command = new CreateWorkshopCommand(ValidUserId,
+            invalidName,
+            ValidAddress,
+            ValidRegistrationDate,
+            ValidNationalId,
+            "1234567890",
+            ValidPostalCode);
 
         SetupNoDuplicates();
 
@@ -171,9 +196,13 @@ public class CreateWorkshopCommandHandlerTests
     [Fact]
     public async Task Handle_WhenNameIsDuplicate_ShouldNotCallCreateAsync()
     {
-        var command = new CreateWorkshopCommand(
-            ValidUserId, ValidName, ValidAddress, ValidRegion,
-            ValidRegistrationDate, ValidNationalId, ValidPostalCode);
+        var command = new CreateWorkshopCommand(ValidUserId,
+            ValidName,
+            ValidAddress,
+            ValidRegistrationDate,
+            ValidNationalId,
+            "1234567890",
+            ValidPostalCode);
 
         _workshopQuery.IsExistWorkshopName(ValidUserId, ValidName, null, Arg.Any<CancellationToken>())
             .Returns(true);
@@ -186,9 +215,13 @@ public class CreateWorkshopCommandHandlerTests
     [Fact]
     public async Task Handle_WhenNationalIdIsDuplicate_ShouldNotCallCreateAsync()
     {
-        var command = new CreateWorkshopCommand(
-            ValidUserId, ValidName, ValidAddress, ValidRegion,
-            ValidRegistrationDate, ValidNationalId, ValidPostalCode);
+        var command = new CreateWorkshopCommand(ValidUserId,
+            ValidName,
+            ValidAddress,
+            ValidRegistrationDate,
+            ValidNationalId,
+            "1234567890",
+            ValidPostalCode);
 
         _workshopQuery.IsExistWorkshopName(ValidUserId, ValidName, null, Arg.Any<CancellationToken>())
             .Returns(false);

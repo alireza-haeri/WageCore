@@ -23,11 +23,6 @@ public class WorkshopConfigurations : IEntityTypeConfiguration<Workshop>
             .IsUnicode()
             .HasMaxLength(1000);
 
-        builder.Property(x => x.Region)
-            .IsRequired()
-            .IsUnicode(false)
-            .HasConversion<string>();
-
         builder.Property(x => x.RegistrationDate)
             .IsRequired()
             .HasColumnType("date");
@@ -38,6 +33,15 @@ public class WorkshopConfigurations : IEntityTypeConfiguration<Workshop>
             .HasMaxLength(20);
         
         builder.Property(x => x.PostalCode)
+            .IsUnicode(false)
+            .HasMaxLength(20);
+
+        builder.Property(x => x.SocialSecurityNumber)
+            .IsRequired()
+            .IsUnicode(false)
+            .HasMaxLength(20);
+
+        builder.Property(x => x.EconomicCode)
             .IsUnicode(false)
             .HasMaxLength(20);
 

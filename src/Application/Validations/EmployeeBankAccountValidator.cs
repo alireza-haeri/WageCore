@@ -10,9 +10,13 @@ public class EmployeeBankAccountValidator : AbstractValidator<EmployeeBankAccoun
             .NotEqual(Guid.Empty).WithMessage("شناسه حساب بانکی نمیتواند خالی باشد.")
             .When(x => x.Id.HasValue);
 
-        RuleFor(x => x.Title)
-            .MaximumLength(100).WithMessage("عنوان حساب بانکی نمیتواند بیشتر از 100 کاراکتر باشد.")
-            .When(x => !string.IsNullOrWhiteSpace(x.Title));
+        RuleFor(x => x.BankName)
+            .MaximumLength(100).WithMessage("نام بانک نمیتواند بیشتر از 100 کاراکتر باشد.")
+            .When(x => !string.IsNullOrWhiteSpace(x.BankName));
+
+        RuleFor(x => x.BranchCode)
+            .MaximumLength(100).WithMessage("کد شعبه نمیتواند بیشتر از 100 کاراکتر باشد.")
+            .When(x => !string.IsNullOrWhiteSpace(x.BranchCode));
 
         RuleFor(x => x.Iban)
             .NotEmpty().WithMessage("شماره شبا اجباری است.")

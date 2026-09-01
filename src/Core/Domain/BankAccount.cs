@@ -5,7 +5,8 @@ public class BankAccount
     public const string TableName = "EmployeeBankAccounts";
 
     public Guid Id { get; private init; }
-    public string? Title { get; private set; }
+    public string? BankName { get; private set; }
+    public string? BranchCode { get; private set; }
     public string Iban { get; private set; } = null!;
 
     public static DomainResult<BankAccount> Create(Guid bankAccountId, EmployeeBankAccountDto? bankAccount)
@@ -24,7 +25,8 @@ public class BankAccount
         return DomainResult<BankAccount>.Success(new BankAccount
         {
             Id = bankAccountId,
-            Title = NormalizeTitle(bankAccount.Title),
+            BankName = NormalizeOptionalText(bankAccount.BankName),
+            BranchCode = NormalizeOptionalText(bankAccount.BranchCode),
             Iban = ibanResult.Response
         });
     }
@@ -45,12 +47,15 @@ public class BankAccount
         if (bankAccount is null)
             return DomainResult.Failure("اطلاعات حساب بانکی نمیتواند خالی باشد.");
 
-        if (!string.IsNullOrWhiteSpace(bankAccount.Title) && bankAccount.Title.Length > 100)
-            return DomainResult.Failure("عنوان حساب بانکی نمیتواند بیشتر از 100 حرف باشد.");
+        if (!string.IsNullOrWhiteSpace(bankAccount.BankName) && bankAccount.BankName.Length > 100)
+            return DomainResult.Failure("نام بانک نمیتواند بیشتر از 100 حرف باشد.");
+
+        if (!string.IsNullOrWhiteSpace(bankAccount.BranchCode) && bankAccount.BranchCode.Length > 100)
+            return DomainResult.Failure("کد شعبه نمیتواند بیشتر از 100 حرف باشد.");
 
         return DomainResult.Success();
     }
 
-    private static string? NormalizeTitle(string? title) =>
-        string.IsNullOrWhiteSpace(title) ? null : title;
+    private static string? NormalizeOptionalText(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? null : value;
 }

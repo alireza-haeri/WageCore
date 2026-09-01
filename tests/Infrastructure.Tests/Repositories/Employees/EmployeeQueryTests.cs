@@ -258,29 +258,18 @@ public class EmployeeQueryTests(WageCoreDbContextFixture fixture)
             .WithPersonalCode("EMP001")
             .WithFullName("علی رضایی")
             .WithNationalCode("1234567890")
-            .WithBirthCertificateNumber("54321")
             .WithFatherName("محمد")
             .WithGender(EmployeeGender.Man)
-            .WithMaritalStatus(EmployeeMaritalStatus.Married)
-            .WithChildrenCount(2)
             .WithWorkshopRegistrationDate(ValidWorkshopRegistrationDate)
             .WithHireDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-10)))
             .WithPhoneNumber("09123456789")
             .WithJobTitle("حسابدار")
-            .WithIsTaxSubject(true)
-            .WithInsuranceNumber("INS-001")
-            .WithSocialSecurityContractRow("CTR-10")
-            .WithPositionInInsuranceList("اپراتور")
-            .WithIsSubjectTo7PercentInsurance(true)
-            .WithIsSubjectTo20PercentInsurance(true)
-            .WithIsSubjectTo3PercentInsurance(false)
-            .WithInsuranceCalculationProfile(InsuranceCalculationProfile.FullLegal)
             .CreateResult()
             .ShouldBeSuccess();
 
         employee.ReplaceBankAccounts([
-            new EmployeeBankAccountDto("حساب حقوق", "IR123456789012345678901234", Guid.NewGuid()),
-            new EmployeeBankAccountDto("حساب پس انداز", "IR999999999999999999999999", Guid.NewGuid())
+            new EmployeeBankAccountDto("بانک ملی", "۱۰۲", "IR123456789012345678901234", Guid.NewGuid()),
+            new EmployeeBankAccountDto("بانک صادرات", "۳۰۳", "IR999999999999999999999999", Guid.NewGuid())
         ]).ShouldBeSuccess();
 
         var createResult = await repository.CreateAsync(employee);
@@ -294,25 +283,15 @@ public class EmployeeQueryTests(WageCoreDbContextFixture fixture)
         result.PersonalCode.Should().Be("EMP001");
         result.FullName.Should().Be("علی رضایی");
         result.NationalCode.Should().Be("1234567890");
-        result.BirthCertificateNumber.Should().Be("54321");
         result.FatherName.Should().Be("محمد");
         result.Gender.Should().Be(EmployeeGender.Man);
-        result.MaritalStatus.Should().Be(EmployeeMaritalStatus.Married);
-        result.ChildrenCount.Should().Be(2);
         result.HireDate.Should().Be(employee.HireDate);
         result.PhoneNumber.Should().Be("09123456789");
         result.JobTitle.Should().Be("حسابدار");
-        result.IsTaxSubject.Should().BeTrue();
-        result.InsuranceNumber.Should().Be("INS-001");
-        result.SocialSecurityContractRow.Should().Be("CTR-10");
-        result.PositionInInsuranceList.Should().Be("اپراتور");
-        result.IsSubjectTo7PercentInsurance.Should().BeTrue();
-        result.IsSubjectTo20PercentInsurance.Should().BeTrue();
-        result.IsSubjectTo3PercentInsurance.Should().BeFalse();
-        result.InsuranceCalculationProfile.Should().Be(InsuranceCalculationProfile.FullLegal);
+        result.Region.Should().Be(employee.Region);
         result.BankAccounts.Should().HaveCount(2);
-        result.BankAccounts.Should().Contain(x => x.Title == "حساب حقوق" && x.Iban == "123456789012345678901234" && x.Id.HasValue);
-        result.BankAccounts.Should().Contain(x => x.Title == "حساب پس انداز" && x.Iban == "999999999999999999999999" && x.Id.HasValue);
+        result.BankAccounts.Should().Contain(x => x.BankName == "بانک ملی" && x.BranchCode == "۱۰۲" && x.Iban == "123456789012345678901234" && x.Id.HasValue);
+        result.BankAccounts.Should().Contain(x => x.BankName == "بانک صادرات" && x.BranchCode == "۳۰۳" && x.Iban == "999999999999999999999999" && x.Id.HasValue);
     }
 
     [Fact]
@@ -363,9 +342,6 @@ public class EmployeeQueryTests(WageCoreDbContextFixture fixture)
             .WithDepartmentId(departmentId)
             .WithWorkshopRegistrationDate(ValidWorkshopRegistrationDate)
             .WithJobTitle(null)
-            .WithSocialSecurityContractRow(null)
-            .WithMaritalStatus(EmployeeMaritalStatus.Single)
-            .WithChildrenCount(0)
             .CreateResult()
             .ShouldBeSuccess();
 
@@ -376,9 +352,6 @@ public class EmployeeQueryTests(WageCoreDbContextFixture fixture)
 
         result.Should().NotBeNull();
         result!.JobTitle.Should().BeNull();
-        result.SocialSecurityContractRow.Should().BeNull();
-        result.MaritalStatus.Should().Be(EmployeeMaritalStatus.Single);
-        result.ChildrenCount.Should().Be(0);
         result.BankAccounts.Should().BeEmpty();
     }
 

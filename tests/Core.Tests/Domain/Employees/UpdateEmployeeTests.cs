@@ -16,15 +16,12 @@ public class UpdateEmployeeTests
             "EMP777",
             "کارمند جدید",
             "0987654321",
-            "54321",
             "محمود",
             EmployeeGender.Woman,
-            EmployeeMaritalStatus.Married,
-            2,
             DateOnly.FromDateTime(DateTime.Now.AddDays(-1)),
             "09987654321",
             "سرپرست",
-            false);
+            Region.Normal);
 
         var result = employee.Update(employeeDto, workshopRegistrationDate);
 
@@ -36,14 +33,11 @@ public class UpdateEmployeeTests
             employee.PersonalCode.Should().Be("EMP777");
             employee.FullName.Should().Be("کارمند جدید");
             employee.NationalCode.Should().Be("0987654321");
-            employee.BirthCertificateNumber.Should().Be("54321");
             employee.FatherName.Should().Be("محمود");
             employee.Gender.Should().Be(EmployeeGender.Woman);
-            employee.MaritalStatus.Should().Be(EmployeeMaritalStatus.Married);
-            employee.ChildrenCount.Should().Be(2);
             employee.PhoneNumber.Should().Be("09987654321");
             employee.JobTitle.Should().Be("سرپرست");
-            employee.IsTaxSubject.Should().BeFalse();
+            employee.Region.Should().Be(Region.Normal);
         }
     }
 
@@ -57,15 +51,12 @@ public class UpdateEmployeeTests
             employee.PersonalCode,
             employee.FullName,
             employee.NationalCode,
-            employee.BirthCertificateNumber,
             employee.FatherName,
             employee.Gender,
-            employee.MaritalStatus,
-            employee.ChildrenCount,
             employee.HireDate,
             employee.PhoneNumber,
             employee.JobTitle,
-            employee.IsTaxSubject);
+            employee.Region);
 
         var result = employee.Update(employeeDto, DateOnly.FromDateTime(DateTime.Now.AddDays(-30)));
 
@@ -82,15 +73,12 @@ public class UpdateEmployeeTests
             "NEW100",
             employee.FullName,
             employee.NationalCode,
-            employee.BirthCertificateNumber,
             employee.FatherName,
             employee.Gender,
-            employee.MaritalStatus,
-            employee.ChildrenCount,
             employee.HireDate,
             employee.PhoneNumber,
             employee.JobTitle,
-            employee.IsTaxSubject);
+            employee.Region);
 
         var result = employee.Update(employeeDto, DateOnly.FromDateTime(DateTime.Now.AddDays(-30)), false, true);
 
@@ -106,43 +94,16 @@ public class UpdateEmployeeTests
             employee.PersonalCode,
             employee.FullName,
             "1111111111",
-            employee.BirthCertificateNumber,
             employee.FatherName,
             employee.Gender,
-            employee.MaritalStatus,
-            employee.ChildrenCount,
             employee.HireDate,
             employee.PhoneNumber,
             employee.JobTitle,
-            employee.IsTaxSubject);
+            employee.Region);
 
         var result = employee.Update(employeeDto, DateOnly.FromDateTime(DateTime.Now.AddDays(-30)), true, false);
 
         result.ShouldBeFailure("کد ملی در بین کارکنان این کاربر تکراری است.");
-    }
-
-    [Fact]
-    public void Update_WithSingleMaritalStatusAndChildrenCountMoreThanZero_ShouldFail()
-    {
-        var employee = _builder.CreateResult().ShouldBeSuccess();
-        var employeeDto = new EmployeeDto(
-            employee.DepartmentId,
-            employee.PersonalCode,
-            employee.FullName,
-            employee.NationalCode,
-            employee.BirthCertificateNumber,
-            employee.FatherName,
-            employee.Gender,
-            EmployeeMaritalStatus.Single,
-            1,
-            employee.HireDate,
-            employee.PhoneNumber,
-            employee.JobTitle,
-            employee.IsTaxSubject);
-
-        var result = employee.Update(employeeDto, DateOnly.FromDateTime(DateTime.Now.AddDays(-30)));
-
-        result.ShouldBeFailure("برای کارمند مجرد، تعداد فرزندان باید صفر باشد.");
     }
 
     [Fact]
@@ -155,15 +116,12 @@ public class UpdateEmployeeTests
             employee.PersonalCode,
             employee.FullName,
             employee.NationalCode,
-            employee.BirthCertificateNumber,
             employee.FatherName,
             employee.Gender,
-            employee.MaritalStatus,
-            employee.ChildrenCount,
             employee.HireDate,
             employee.PhoneNumber,
             employee.JobTitle,
-            employee.IsTaxSubject);
+            employee.Region);
 
         var result = employee.Update(employeeDto, DateOnly.FromDateTime(DateTime.Now.AddDays(-30)));
 

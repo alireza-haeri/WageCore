@@ -22,10 +22,11 @@ public class GetWorkshopForEditQueryHandlerTests
         var workshop = new UserWorkshopByIdResult(
             "کارگاه آریا",
             "تهران، خیابان اصلی، پلاک ۱۰",
-            WorkshopRegion.LessDeveloped,
             DateOnly.FromDateTime(DateTime.Today),
             "1234567890",
-            "0987654321");
+            "1122334455",
+            "0987654321",
+            "12345678901234567890");
 
         _workshopQuery.GetUserWorkshopByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
             .Returns(workshop);
@@ -35,10 +36,11 @@ public class GetWorkshopForEditQueryHandlerTests
         var response = result.ShouldBeSuccess();
         response.Name.Should().Be("کارگاه آریا");
         response.Address.Should().Be("تهران، خیابان اصلی، پلاک ۱۰");
-        response.Region.Should().Be(WorkshopRegion.LessDeveloped);
         response.RegistrationDate.Should().Be(DateOnly.FromDateTime(DateTime.Today));
         response.NationalId.Should().Be("1234567890");
+        response.SocialSecurityNumber.Should().Be("1122334455");
         response.PostalCode.Should().Be("0987654321");
+        response.EconomicCode.Should().Be("12345678901234567890");
     }
 
     [Fact]

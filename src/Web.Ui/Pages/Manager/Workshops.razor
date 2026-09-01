@@ -31,11 +31,6 @@
                    value="@_searchName"
                    @oninput="OnSearchInput"/>
         </div>
-        <select class="in tb-sel" @bind="_selectedRegion" @bind:after="OnRegionChanged">
-            <option value="">همهٔ مناطق</option>
-            <option value="@Region.Normal">عادی</option>
-            <option value="@Region.LessDeveloped">کمتر توسعه‌یافته</option>
-        </select>
         <span class="chip c-grn ms-auto">
             <span class="c-dot"></span>@((_userWorkshops?.TotalCount ?? 0).ToPersianNumber()) کارگاه
         </span>
@@ -76,13 +71,12 @@
                                             @workshop.Address
                                         </div>
                                     </div>
-                                    <span class="chip @GetRegionChipClass((Region)workshop.Region)">
-                                        @GetRegionDisplayName((Region)workshop.Region)
-                                    </span>
                                 </div>
                                 <div class="d-flex gap-3 flex-wrap mt-3"
                                      style="font-size:11.5px;color:var(--muted)">
                                     <span>شناسه ملی: @workshop.NationalId.ToPersianNumber()</span>
+                                    <span>بیمه تأمین اجتماعی: @workshop.SocialSecurityNumber.ToPersianNumber()</span>
+                                    <span>شماره اقتصادی: @(string.IsNullOrWhiteSpace(workshop.EconomicCode) ? "—" : workshop.EconomicCode.ToPersianNumber())</span>
                                     <span>ثبت: @workshop.DisplayRegistrationDate</span>
                                 </div>
                             </div>
@@ -142,8 +136,7 @@
         <svg class="ic" style="width:14px;height:14px">
             <use href="assets/img/icons.svg#i-info"/>
         </svg>
-        کارگاه فقط «نوع» منطقه را نگه می‌دارد؛ مبالغ حداقل حقوق هر منطقه در بخشنامه‌هاست و سالانه
-        یک‌جا به‌روز می‌شود.
+        مبالغ حداقل حقوق هر منطقه در بخشنامه‌هاست و سالانه یک‌جا به‌روز می‌شود.
     </div>
 </div>
 
@@ -187,7 +180,6 @@
 
     // Filters
     private string? _searchName;
-    private string _selectedRegion = string.Empty;
 
     // Pagination
     private int _pageNumber = 1;
@@ -212,14 +204,10 @@
         _isLoading = true;
         StateHasChanged();
 
-        Region? region = string.IsNullOrEmpty(_selectedRegion)
-            ? null
-            : Enum.Parse<Region>(_selectedRegion);
-
         var searchTerm = string.IsNullOrWhiteSpace(_searchName) ? null : _searchName.Trim();
 
         var result = await ApiService.SendAsync(() => ApiClient.GetUserWorkshopsAsync(
-            _pageNumber, PageSize, null, searchTerm, region));
+            _pageNumber, PageSize, null, searchTerm));
 
         if (result?.IsSuccess is true)
         {
@@ -242,12 +230,6 @@
                 await LoadWorkshopsAsync();
             });
         }, null, 500, Timeout.Infinite);
-    }
-
-    private async Task OnRegionChanged()
-    {
-        _pageNumber = 1;
-        await LoadWorkshopsAsync();
     }
 
     private async Task GoToPage(int page)
@@ -320,20 +302,6 @@
     }
 
     // ==================== Helpers ====================
-
-    private string GetRegionDisplayName(Region region) => region switch
-    {
-        Region.Normal => "عادی",
-        Region.LessDeveloped => "کمتر توسعه‌یافته",
-        _ => region.ToString()
-    };
-
-    private string GetRegionChipClass(Region region) => region switch
-    {
-        Region.Normal => "c-blu",
-        Region.LessDeveloped => "c-gold",
-        _ => "c-blu"
-    };
 
     public void Dispose()
     {

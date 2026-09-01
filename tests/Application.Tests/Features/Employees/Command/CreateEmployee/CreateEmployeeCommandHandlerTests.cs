@@ -34,7 +34,7 @@ public class CreateEmployeeCommandHandlerTests
             .ShouldBeSuccess();
     }
 
-    private CreateEmployeeCommand CreateValidCommand(EmployeeDto? employee = null, EmployeeInsuranceDto? insurance = null,
+    private CreateEmployeeCommand CreateValidCommand(EmployeeDto? employee = null,
         List<EmployeeBankAccountDto>? bankAccounts = null)
     {
         var employeeDto = employee ?? _employeeBuilder
@@ -42,14 +42,13 @@ public class CreateEmployeeCommandHandlerTests
             .WithDepartmentId(ValidDepartmentId)
             .BuildEmployeeDto();
 
-        var insuranceDto = insurance ?? _employeeBuilder.BuildInsuranceDto();
         var bankAccountDtos = bankAccounts ??
             [
                 _employeeBuilder.BuildBankAccountDto(),
-                new EmployeeBankAccountDto("حساب دوم", "IR999999999999999999999999")
+                new EmployeeBankAccountDto("بانک صادرات", "۳۰۳", "IR999999999999999999999999")
             ];
 
-        return new CreateEmployeeCommand(ValidUserId, ValidWorkshopId, employeeDto, insuranceDto, bankAccountDtos);
+        return new CreateEmployeeCommand(ValidUserId, ValidWorkshopId, employeeDto, bankAccountDtos);
     }
 
     private void SetupNoDuplicates()
@@ -82,9 +81,11 @@ public class CreateEmployeeCommandHandlerTests
         response.EmployeeId.Should().Be(createdEmployeeId);
         var accounts = command.BankAccounts!;
 
-        var firstTitle = accounts[0].Title;
+        var firstBankName = accounts[0].BankName;
+        var firstBranchCode = accounts[0].BranchCode;
         var firstIban = accounts[0].Iban[2..];
-        var secondTitle = accounts[1].Title;
+        var secondBankName = accounts[1].BankName;
+        var secondBranchCode = accounts[1].BranchCode;
         var secondIban = accounts[1].Iban[2..];
 
         await _employeeRepository.Received(1).CreateAsync(
@@ -93,10 +94,9 @@ public class CreateEmployeeCommandHandlerTests
                 x.DepartmentId == ValidDepartmentId &&
                 x.PersonalCode == command.Employee.PersonalCode &&
                 x.NationalCode == command.Employee.NationalCode &&
-                x.Insurance.InsuranceNumber == command.Insurance.InsuranceNumber &&
                 x.BankAccounts.Count == 2 &&
-                x.BankAccounts.Any(b => b.Title == firstTitle && b.Iban == firstIban) &&
-                x.BankAccounts.Any(b => b.Title == secondTitle && b.Iban == secondIban)),
+                x.BankAccounts.Any(b => b.BankName == firstBankName && b.BranchCode == firstBranchCode && b.Iban == firstIban) &&
+                x.BankAccounts.Any(b => b.BankName == secondBankName && b.BranchCode == secondBranchCode && b.Iban == secondIban)),
             Arg.Any<CancellationToken>());
     }
 
@@ -259,7 +259,7 @@ public class CreateEmployeeCommandHandlerTests
         var command = CreateValidCommand(bankAccounts:
         [
             _employeeBuilder.BuildBankAccountDto(),
-            new EmployeeBankAccountDto("حساب دوم", "IR123456789012345678901234")
+            new EmployeeBankAccountDto("بانک صادرات", "۳۰۳", "IR123456789012345678901234")
         ]);
         var workshop = CreateValidWorkshop();
 

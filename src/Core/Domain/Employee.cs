@@ -10,17 +10,13 @@ public class Employee
     public string PersonalCode { get; private set; } = null!;
     public string FullName { get; private set; } = null!;
     public string NationalCode { get; private set; } = null!;
-    public string BirthCertificateNumber { get; private set; } = null!;
     public string FatherName { get; private set; } = null!;
     public EmployeeGender Gender { get; private set; }
-    public EmployeeMaritalStatus MaritalStatus { get; private set; }
-    public int ChildrenCount { get; private set; }
     public DateOnly HireDate { get; private set; }
     public DateOnly? TerminationDate { get; private set; }
     public string PhoneNumber { get; private set; } = null!;
     public string? JobTitle { get; private set; }
-    public bool IsTaxSubject { get; private set; }
-    public Insurance Insurance { get; private set; } = null!;
+    public Region Region { get; private set; }
     public bool IsTerminated => TerminationDate.HasValue;
 
     private readonly List<BankAccount> _bankAccounts = [];
@@ -31,7 +27,6 @@ public class Employee
         Guid workshopId,
         DateOnly? workshopRegistrationDate,
         EmployeeDto? employee,
-        EmployeeInsuranceDto? insurance,
         bool isPersonalCodeUniqueForUser = true,
         bool isNationalCodeUniqueForUser = true)
     {
@@ -46,10 +41,6 @@ public class Employee
         if (!validationResult.IsSuccess)
             return DomainResult<Employee>.Failure(validationResult.ErrorMessage!);
 
-        var insuranceResult = Insurance.Create(insurance);
-        if (!insuranceResult.IsSuccess)
-            return DomainResult<Employee>.Failure(insuranceResult.ErrorMessage!);
-
         return DomainResult<Employee>.Success(new Employee
         {
             Id = employeeId,
@@ -58,16 +49,12 @@ public class Employee
             PersonalCode = employee.PersonalCode,
             FullName = employee.FullName,
             NationalCode = employee.NationalCode,
-            BirthCertificateNumber = employee.BirthCertificateNumber,
             FatherName = employee.FatherName,
             Gender = employee.Gender!.Value,
-            MaritalStatus = employee.MaritalStatus!.Value,
-            ChildrenCount = employee.ChildrenCount!.Value,
             HireDate = employee.HireDate!.Value,
             PhoneNumber = employee.PhoneNumber,
             JobTitle = NormalizeJobTitle(employee.JobTitle),
-            IsTaxSubject = employee.IsTaxSubject,
-            Insurance = insuranceResult.Response
+            Region = employee.Region!.Value
         });
     }
 
@@ -75,7 +62,6 @@ public class Employee
         Guid workshopId,
         DateOnly? workshopRegistrationDate,
         EmployeeDto? employee,
-        EmployeeInsuranceDto? insurance,
         bool isPersonalCodeUniqueForUser = true,
         bool isNationalCodeUniqueForUser = true) =>
         Create(
@@ -83,7 +69,6 @@ public class Employee
             workshopId,
             workshopRegistrationDate,
             employee,
-            insurance,
             isPersonalCodeUniqueForUser,
             isNationalCodeUniqueForUser);
 
@@ -116,15 +101,12 @@ public class Employee
         PersonalCode = employee.PersonalCode;
         FullName = employee.FullName;
         NationalCode = employee.NationalCode;
-        BirthCertificateNumber = employee.BirthCertificateNumber;
         FatherName = employee.FatherName;
         Gender = employee.Gender!.Value;
-        MaritalStatus = employee.MaritalStatus!.Value;
-        ChildrenCount = employee.ChildrenCount!.Value;
         HireDate = employee.HireDate!.Value;
         PhoneNumber = employee.PhoneNumber;
         JobTitle = NormalizeJobTitle(employee.JobTitle);
-        IsTaxSubject = employee.IsTaxSubject;
+        Region = employee.Region!.Value;
 
         return DomainResult.Success();
     }
@@ -189,15 +171,6 @@ public class Employee
             return DomainResult.Failure("کارمند قبل از این بازه ترک کار کرده است.");
 
         return DomainResult.Success();
-    }
-
-    public DomainResult UpdateInsurance(EmployeeInsuranceDto? insurance)
-    {
-        var canModifyResult = EnsureCanModify();
-        if (!canModifyResult.IsSuccess)
-            return canModifyResult;
-
-        return Insurance.Update(insurance);
     }
 
     public DomainResult ReplaceBankAccounts(List<EmployeeBankAccountDto>? bankAccounts)
@@ -280,12 +253,6 @@ public class Employee
         if (!isNationalCodeUniqueForUser)
             return DomainResult.Failure("کد ملی در بین کارکنان این کاربر تکراری است.");
 
-        if (string.IsNullOrWhiteSpace(employee.BirthCertificateNumber))
-            return DomainResult.Failure("شماره شناسنامه نمیتواند خالی باشد.");
-
-        if (!RegexExtensions.ValidBirthCertificateNumberRegex().IsMatch(employee.BirthCertificateNumber))
-            return DomainResult.Failure("شماره شناسنامه باید بین 1 تا 20 رقم انگلیسی باشد.");
-
         if (string.IsNullOrWhiteSpace(employee.FatherName))
             return DomainResult.Failure("نام پدر نمیتواند خالی باشد.");
 
@@ -295,17 +262,11 @@ public class Employee
         if (employee.Gender is null)
             return DomainResult.Failure("جنسیت نمیتواند خالی باشد.");
 
-        if (employee.MaritalStatus is null)
-            return DomainResult.Failure("وضعیت تاهل نمیتواند خالی باشد.");
+        if (employee.Region is null)
+            return DomainResult.Failure("منطقه کارمند نمیتواند خالی باشد.");
 
-        if (employee.ChildrenCount is null)
-            return DomainResult.Failure("تعداد فرزندان نمیتواند خالی باشد.");
-
-        if (employee.ChildrenCount < 0 || employee.ChildrenCount > 20)
-            return DomainResult.Failure("تعداد فرزندان باید بین 0 تا 20 باشد.");
-
-        if (employee.MaritalStatus == EmployeeMaritalStatus.Single && employee.ChildrenCount > 0)
-            return DomainResult.Failure("برای کارمند مجرد، تعداد فرزندان باید صفر باشد.");
+        if (!Enum.IsDefined(typeof(Region), employee.Region.Value))
+            return DomainResult.Failure("منطقه کارمند معتبر نیست.");
 
         if (workshopRegistrationDate is null)
             return DomainResult.Failure("تاریخ ثبت کارگاه نمیتواند خالی باشد.");

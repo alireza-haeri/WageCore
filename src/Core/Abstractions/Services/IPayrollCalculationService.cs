@@ -5,7 +5,7 @@ public interface IPayrollCalculationService
     Result<PayrollCalculationResult> Calculate(
         Employee employee,
         Workshop workshop,
-        IReadOnlyList<EmployeeSalaryProfile> salaryProfiles,
+        IReadOnlyList<SalaryDecree> salaryProfiles,
         DateOnly periodStart,
         DateOnly periodEnd,
         PayrollWorkInputDto workInput);

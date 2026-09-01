@@ -6,7 +6,6 @@ public class GetUserWorkshopsQueryValidatorTests
 
     private static readonly Guid ValidUserId = Guid.NewGuid();
     private const string ValidSearchName = "کارگاه";
-    private const WorkshopRegion ValidRegion = WorkshopRegion.Normal;
     private static readonly PaginationDto ValidPagination = new(1, 10);
 
     [Fact]
@@ -15,8 +14,7 @@ public class GetUserWorkshopsQueryValidatorTests
         var query = new GetUserWorkshopsQuery(
             ValidUserId,
             ValidPagination,
-            ValidSearchName,
-            ValidRegion);
+            ValidSearchName);
 
         var result = _validator.TestValidate(query);
         result.ShouldNotHaveAnyValidationErrors();
@@ -28,33 +26,6 @@ public class GetUserWorkshopsQueryValidatorTests
         var query = new GetUserWorkshopsQuery(
             ValidUserId,
             ValidPagination,
-            null,
-            ValidRegion);
-
-        var result = _validator.TestValidate(query);
-        result.ShouldNotHaveAnyValidationErrors();
-    }
-
-    [Fact]
-    public void Validate_WithValidQueryAndNullRegion_ShouldNotHaveAnyErrors()
-    {
-        var query = new GetUserWorkshopsQuery(
-            ValidUserId,
-            ValidPagination,
-            ValidSearchName,
-            null);
-
-        var result = _validator.TestValidate(query);
-        result.ShouldNotHaveAnyValidationErrors();
-    }
-
-    [Fact]
-    public void Validate_WithValidQueryAndNullSearchNameAndNullRegion_ShouldNotHaveAnyErrors()
-    {
-        var query = new GetUserWorkshopsQuery(
-            ValidUserId,
-            ValidPagination,
-            null,
             null);
 
         var result = _validator.TestValidate(query);
@@ -68,8 +39,7 @@ public class GetUserWorkshopsQueryValidatorTests
         var query = new GetUserWorkshopsQuery(
             ValidUserId,
             ValidPagination,
-            searchName,
-            ValidRegion);
+            searchName);
 
         var result = _validator.TestValidate(query);
         result.ShouldNotHaveAnyValidationErrors();
@@ -81,24 +51,10 @@ public class GetUserWorkshopsQueryValidatorTests
         var query = new GetUserWorkshopsQuery(
             Guid.Empty,
             ValidPagination,
-            ValidSearchName,
-            ValidRegion);
+            ValidSearchName);
 
         var result = _validator.TestValidate(query);
         result.ShouldHaveValidationErrorFor(x => x.UserId);
-    }
-
-    [Fact]
-    public void Validate_WithInvalidRegion_ShouldHaveValidationError()
-    {
-        var query = new GetUserWorkshopsQuery(
-            ValidUserId,
-            ValidPagination,
-            ValidSearchName,
-            (WorkshopRegion)999);
-
-        var result = _validator.TestValidate(query);
-        result.ShouldHaveValidationErrorFor(x => x.Region);
     }
 
     [Fact]
@@ -108,8 +64,7 @@ public class GetUserWorkshopsQueryValidatorTests
         var query = new GetUserWorkshopsQuery(
             ValidUserId,
             ValidPagination,
-            searchName,
-            ValidRegion);
+            searchName);
 
         var result = _validator.TestValidate(query);
         result.ShouldHaveValidationErrorFor(x => x.SearchName);
@@ -122,8 +77,7 @@ public class GetUserWorkshopsQueryValidatorTests
         var query = new GetUserWorkshopsQuery(
             ValidUserId,
             invalidPagination,
-            ValidSearchName,
-            ValidRegion);
+            ValidSearchName);
 
         var result = _validator.TestValidate(query);
         result.ShouldHaveValidationErrorFor(x => x.Pagination.PageNumber);
@@ -136,8 +90,7 @@ public class GetUserWorkshopsQueryValidatorTests
         var query = new GetUserWorkshopsQuery(
             ValidUserId,
             invalidPagination,
-            ValidSearchName,
-            ValidRegion);
+            ValidSearchName);
 
         var result = _validator.TestValidate(query);
         result.ShouldHaveValidationErrorFor(x => x.Pagination.PageSize);

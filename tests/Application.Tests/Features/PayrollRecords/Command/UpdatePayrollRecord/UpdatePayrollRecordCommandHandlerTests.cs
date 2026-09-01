@@ -8,14 +8,14 @@ public class UpdatePayrollRecordCommandHandlerTests
     private readonly IPayrollRecordQuery _payrollRecordQuery;
     private readonly IPayrollRecordRepository _payrollRecordRepository;
     private readonly IWorkShopRepository _workShopRepository;
-    private readonly IEmployeeSalaryProfileQuery _employeeSalaryProfileQuery;
+    private readonly ISalaryDecreeQuery _salaryDecreeQuery;
     private readonly IPayrollCalculationService _payrollCalculationService;
     private readonly UpdatePayrollRecordCommandHandler _handler;
 
     private readonly PayrollRecordBuilder _payrollRecordBuilder = new();
     private readonly Employee _employee;
     private readonly Workshop _workshop;
-    private readonly IReadOnlyList<EmployeeSalaryProfile> _salaryProfiles;
+    private readonly IReadOnlyList<SalaryDecree> _salaryProfiles;
     private readonly PayrollRecord _payrollRecord;
 
     private static readonly Guid ValidUserId = Guid.NewGuid();
@@ -41,7 +41,7 @@ public class UpdatePayrollRecordCommandHandlerTests
             .ShouldBeSuccess();
         _salaryProfiles =
         [
-            new EmployeeSalaryProfileBuilder()
+            new SalaryDecreeBuilder()
                 .WithEmployeeId(ValidEmployeeId)
                 .CreateResult()
                 .ShouldBeSuccess()
@@ -59,7 +59,7 @@ public class UpdatePayrollRecordCommandHandlerTests
         _payrollRecordQuery = Substitute.For<IPayrollRecordQuery>();
         _payrollRecordRepository = Substitute.For<IPayrollRecordRepository>();
         _workShopRepository = Substitute.For<IWorkShopRepository>();
-        _employeeSalaryProfileQuery = Substitute.For<IEmployeeSalaryProfileQuery>();
+        _salaryDecreeQuery = Substitute.For<ISalaryDecreeQuery>();
         _payrollCalculationService = Substitute.For<IPayrollCalculationService>();
 
         _payrollRecordRepository
@@ -71,8 +71,8 @@ public class UpdatePayrollRecordCommandHandlerTests
         _workShopRepository
             .GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
             .Returns(_workshop);
-        _employeeSalaryProfileQuery
-            .GetEmployeeSalaryProfilesAffectingPeriodAsync(
+        _salaryDecreeQuery
+            .GetSalaryDecreesAffectingPeriodAsync(
                 ValidUserId,
                 ValidEmployeeId,
                 Arg.Any<DateOnly>(),
@@ -92,7 +92,7 @@ public class UpdatePayrollRecordCommandHandlerTests
             _payrollRecordQuery,
             _payrollRecordRepository,
             _workShopRepository,
-            _employeeSalaryProfileQuery,
+            _salaryDecreeQuery,
             _payrollCalculationService);
     }
 
@@ -123,7 +123,7 @@ public class UpdatePayrollRecordCommandHandlerTests
             .Calculate(
                 Arg.Any<Employee>(),
                 Arg.Any<Workshop>(),
-                Arg.Any<IReadOnlyList<EmployeeSalaryProfile>>(),
+                Arg.Any<IReadOnlyList<SalaryDecree>>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<PayrollWorkInputDto>())
@@ -134,7 +134,7 @@ public class UpdatePayrollRecordCommandHandlerTests
             .Calculate(
                 Arg.Any<Employee>(),
                 Arg.Any<Workshop>(),
-                Arg.Any<IReadOnlyList<EmployeeSalaryProfile>>(),
+                Arg.Any<IReadOnlyList<SalaryDecree>>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<PayrollWorkInputDto>())
@@ -178,7 +178,7 @@ public class UpdatePayrollRecordCommandHandlerTests
             .Calculate(
                 Arg.Any<Employee>(),
                 Arg.Any<Workshop>(),
-                Arg.Any<IReadOnlyList<EmployeeSalaryProfile>>(),
+                Arg.Any<IReadOnlyList<SalaryDecree>>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<PayrollWorkInputDto>());
@@ -275,11 +275,11 @@ public class UpdatePayrollRecordCommandHandlerTests
     public async Task Handle_WhenTheCalculationFails_ShouldReturnTheCalculationErrors()
     {
         SetupPeriod(PeriodStart, PeriodEnd);
-        SetupCalculationFailure("خطا در محاسبه‌ی فرمول: [BaseMonthlySalary] یافت نشد.");
+        SetupCalculationFailure("خطا در محاسبه‌ی فرمول: [BaseDailySalary] یافت نشد.");
 
         var result = await _handler.Handle(CreateValidCommand(), CancellationToken.None);
 
-        result.ShouldBeFailure("خطا در محاسبه‌ی فرمول: [BaseMonthlySalary] یافت نشد.", BadResultType.General);
+        result.ShouldBeFailure("خطا در محاسبه‌ی فرمول: [BaseDailySalary] یافت نشد.", BadResultType.General);
         await DidNotReceiveUpdate();
     }
 
@@ -396,14 +396,14 @@ public class UpdatePayrollRecordCommandHandlerTests
     public async Task Handle_WhenNoSalaryProfileAffectsThePeriod_ShouldReturnNotfoundFailure()
     {
         SetupPeriod(PeriodStart, PeriodEnd);
-        _employeeSalaryProfileQuery
-            .GetEmployeeSalaryProfilesAffectingPeriodAsync(
+        _salaryDecreeQuery
+            .GetSalaryDecreesAffectingPeriodAsync(
                 ValidUserId,
                 ValidEmployeeId,
                 PeriodStart,
                 PeriodEnd,
                 Arg.Any<CancellationToken>())
-            .Returns(new List<EmployeeSalaryProfile>());
+            .Returns(new List<SalaryDecree>());
 
         var result = await _handler.Handle(CreateValidCommand(), CancellationToken.None);
 

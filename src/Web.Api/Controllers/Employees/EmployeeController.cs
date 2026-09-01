@@ -23,25 +23,14 @@ public class EmployeeController(IMediator mediator) : BaseController
                 request.Employee.PersonalCode,
                 request.Employee.FullName,
                 request.Employee.NationalCode,
-                request.Employee.BirthCertificateNumber,
                 request.Employee.FatherName,
                 request.Employee.Gender,
-                request.Employee.MaritalStatus,
-                request.Employee.ChildrenCount,
                 request.Employee.HireDate.ToDateOnly(),
                 request.Employee.PhoneNumber,
                 request.Employee.JobTitle,
-                request.Employee.IsTaxSubject),
-            Insurance: new EmployeeInsuranceDto(
-                request.Insurance.InsuranceNumber,
-                request.Insurance.SocialSecurityContractRow,
-                request.Insurance.PositionInInsuranceList,
-                request.Insurance.IsSubjectTo7PercentInsurance,
-                request.Insurance.IsSubjectTo20PercentInsurance,
-                request.Insurance.IsSubjectTo3PercentInsurance,
-                request.Insurance.InsuranceCalculationProfile),
+                request.Employee.Region),
             BankAccounts: request.BankAccounts
-                .Select(x => new EmployeeBankAccountDto(x.Title, x.Iban, x.Id))
+                .Select(x => new EmployeeBankAccountDto(x.BankName, x.BranchCode, x.Iban, x.Id))
                 .ToList()
         ), cancellationToken);
 
@@ -63,25 +52,14 @@ public class EmployeeController(IMediator mediator) : BaseController
                 request.Employee.PersonalCode,
                 request.Employee.FullName,
                 request.Employee.NationalCode,
-                request.Employee.BirthCertificateNumber,
                 request.Employee.FatherName,
                 request.Employee.Gender,
-                request.Employee.MaritalStatus,
-                request.Employee.ChildrenCount,
                 request.Employee.HireDate.ToDateOnly(),
                 request.Employee.PhoneNumber,
                 request.Employee.JobTitle,
-                request.Employee.IsTaxSubject),
-            Insurance: new EmployeeInsuranceDto(
-                request.Insurance.InsuranceNumber,
-                request.Insurance.SocialSecurityContractRow,
-                request.Insurance.PositionInInsuranceList,
-                request.Insurance.IsSubjectTo7PercentInsurance,
-                request.Insurance.IsSubjectTo20PercentInsurance,
-                request.Insurance.IsSubjectTo3PercentInsurance,
-                request.Insurance.InsuranceCalculationProfile),
+                request.Employee.Region),
             BankAccounts: request.BankAccounts
-                .Select(x => new EmployeeBankAccountDto(x.Title, x.Iban, x.Id))
+                .Select(x => new EmployeeBankAccountDto(x.BankName, x.BranchCode, x.Iban, x.Id))
                 .ToList()
         ), cancellationToken);
 
@@ -161,7 +139,8 @@ public class EmployeeController(IMediator mediator) : BaseController
                     e.NationalCode,
                     PersianDate.FromDateOnly(e.HireDate).ToDisplay(UserPersianDateFormat),
                     e.JobTitle,
-                    e.Status)
+                    e.Status,
+                    e.Region)
                 )
             );
 
@@ -185,25 +164,16 @@ public class EmployeeController(IMediator mediator) : BaseController
             e.PersonalCode,
             e.FullName,
             e.NationalCode,
-            e.BirthCertificateNumber,
             e.FatherName,
             e.Gender,
-            e.MaritalStatus,
-            e.ChildrenCount,
             PersianDate.ToRawValue(e.HireDate),
             e.PhoneNumber,
             e.JobTitle,
-            e.IsTaxSubject,
-            e.InsuranceNumber,
-            e.SocialSecurityContractRow,
-            e.PositionInInsuranceList,
-            e.IsSubjectTo7PercentInsurance,
-            e.IsSubjectTo20PercentInsurance,
-            e.IsSubjectTo3PercentInsurance,
-            e.InsuranceCalculationProfile,
+            e.Region,
             e.BankAccounts
                 .Select(x => new EmployeeBankAccountResponse(
-                    x.Title,
+                    x.BankName,
+                    x.BranchCode,
                     $"IR{x.Iban}",
                     x.Id))
                 .ToList()

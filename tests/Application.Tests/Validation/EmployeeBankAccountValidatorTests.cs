@@ -16,13 +16,23 @@ public class EmployeeBankAccountValidatorTests
     }
 
     [Fact]
-    public void Validate_WithNullTitle_ShouldNotHaveAnyErrors()
+    public void Validate_WithNullBankName_ShouldNotHaveAnyErrors()
     {
-        var dto = _employeeBuilder.BuildBankAccountDto() with { Title = null };
+        var dto = _employeeBuilder.BuildBankAccountDto() with { BankName = null };
 
         var result = _validator.TestValidate(dto);
 
-        result.ShouldNotHaveValidationErrorFor(x => x.Title);
+        result.ShouldNotHaveValidationErrorFor(x => x.BankName);
+    }
+
+    [Fact]
+    public void Validate_WithNullBranchCode_ShouldNotHaveAnyErrors()
+    {
+        var dto = _employeeBuilder.BuildBankAccountDto() with { BranchCode = null };
+
+        var result = _validator.TestValidate(dto);
+
+        result.ShouldNotHaveValidationErrorFor(x => x.BranchCode);
     }
 
     [Fact]
@@ -36,23 +46,43 @@ public class EmployeeBankAccountValidatorTests
     }
 
     [Fact]
-    public void Validate_WithTitleExactly100Characters_ShouldNotHaveAnyErrors()
+    public void Validate_WithBankNameExactly100Characters_ShouldNotHaveAnyErrors()
     {
-        var dto = _employeeBuilder.BuildBankAccountDto() with { Title = new string('a', 100) };
+        var dto = _employeeBuilder.BuildBankAccountDto() with { BankName = new string('a', 100) };
 
         var result = _validator.TestValidate(dto);
 
-        result.ShouldNotHaveValidationErrorFor(x => x.Title);
+        result.ShouldNotHaveValidationErrorFor(x => x.BankName);
     }
 
     [Fact]
-    public void Validate_WithTitleMoreThan100Characters_ShouldHaveValidationError()
+    public void Validate_WithBankNameMoreThan100Characters_ShouldHaveValidationError()
     {
-        var dto = _employeeBuilder.BuildBankAccountDto() with { Title = new string('a', 101) };
+        var dto = _employeeBuilder.BuildBankAccountDto() with { BankName = new string('a', 101) };
 
         var result = _validator.TestValidate(dto);
 
-        result.ShouldHaveValidationErrorFor(x => x.Title);
+        result.ShouldHaveValidationErrorFor(x => x.BankName);
+    }
+
+    [Fact]
+    public void Validate_WithBranchCodeExactly100Characters_ShouldNotHaveAnyErrors()
+    {
+        var dto = _employeeBuilder.BuildBankAccountDto() with { BranchCode = new string('a', 100) };
+
+        var result = _validator.TestValidate(dto);
+
+        result.ShouldNotHaveValidationErrorFor(x => x.BranchCode);
+    }
+
+    [Fact]
+    public void Validate_WithBranchCodeMoreThan100Characters_ShouldHaveValidationError()
+    {
+        var dto = _employeeBuilder.BuildBankAccountDto() with { BranchCode = new string('a', 101) };
+
+        var result = _validator.TestValidate(dto);
+
+        result.ShouldHaveValidationErrorFor(x => x.BranchCode);
     }
 
     [Theory]

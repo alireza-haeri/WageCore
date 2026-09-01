@@ -12,7 +12,7 @@
             <span>@(IsEdit ? "ویرایش کارمند" : "کارمند جدید")</span>
         </div>
         <h1>@(IsEdit ? "ویرایش کارمند" : "ثبت کارمند جدید")</h1>
-        <p>اطلاعات پایه، بیمه و حساب‌های بانکی کارمند را از همین فرم ثبت کنید.</p>
+        <p>اطلاعات پایه و حساب‌های بانکی کارمند را از همین فرم ثبت کنید.</p>
     </div>
     <div class="ph-actions">
         <a class="btn btn-g" href="/employees">
@@ -92,12 +92,6 @@
                 </div>
 
                 <div class="col-md-4 field">
-                    <label class="f-label" for="e-birthCertificateNumber"><span class="req-s">*</span>شماره شناسنامه</label>
-                    <InputText @bind-Value="_formHelper.Model.BirthCertificateNumber" class="in in-ltr" id="e-birthCertificateNumber" inputmode="numeric" maxlength="20"/>
-                    <ValidationMessage TValue="string" For="() => _formHelper.Model.BirthCertificateNumber" class="f-help text-danger"/>
-                </div>
-
-                <div class="col-md-4 field">
                     <label class="f-label" for="e-fatherName"><span class="req-s">*</span>نام پدر</label>
                     <InputText @bind-Value="_formHelper.Model.FatherName" class="in" id="e-fatherName" maxlength="50"/>
                     <ValidationMessage TValue="string" For="() => _formHelper.Model.FatherName" class="f-help text-danger"/>
@@ -114,25 +108,14 @@
                 </div>
 
                 <div class="col-md-4 field">
-                    <label class="f-label" for="e-maritalStatus"><span class="req-s">*</span>وضعیت تأهل</label>
-                    <InputSelect @bind-Value="_formHelper.Model.MaritalStatus" @bind-Value:after="OnMaritalStatusChanged" class="in" id="e-maritalStatus">
+                    <label class="f-label" for="e-region"><span class="req-s">*</span>منطقه</label>
+                    <InputSelect @bind-Value="_formHelper.Model.Region" class="in" id="e-region">
                         <option value="">انتخاب کنید...</option>
-                        <option value="@EmployeeInformationRequestMaritalStatus.Single">مجرد</option>
-                        <option value="@EmployeeInformationRequestMaritalStatus.Married">متأهل</option>
-                        <option value="@EmployeeInformationRequestMaritalStatus.Divorced">مطلقه</option>
-                        <option value="@EmployeeInformationRequestMaritalStatus.Widowed">همسر فوت‌شده</option>
+                        <option value="@EmployeeInformationRequestRegion.Normal">عادی</option>
+                        <option value="@EmployeeInformationRequestRegion.LessDeveloped">کمتر توسعه‌یافته</option>
                     </InputSelect>
-                    <ValidationMessage TValue="EmployeeInformationRequestMaritalStatus?" For="() => _formHelper.Model.MaritalStatus" class="f-help text-danger"/>
+                    <ValidationMessage TValue="EmployeeInformationRequestRegion?" For="() => _formHelper.Model.Region" class="f-help text-danger"/>
                 </div>
-
-                @if (_formHelper.Model.MaritalStatus != EmployeeInformationRequestMaritalStatus.Single)
-                {
-                    <div class="col-md-4 field">
-                        <label class="f-label" for="e-childrenCount"><span class="req-s">*</span>تعداد فرزندان</label>
-                        <InputNumber @bind-Value="_formHelper.Model.ChildrenCount" class="in num" id="e-childrenCount" min="0" max="20"/>
-                        <ValidationMessage TValue="int?" For="() => _formHelper.Model.ChildrenCount" class="f-help text-danger"/>
-                    </div>
-                }
 
                 <div class="col-md-4 field">
                     <label class="f-label" for="e-phoneNumber"><span class="req-s">*</span>شماره تلفن</label>
@@ -145,71 +128,6 @@
                     <InputText @bind-Value="_formHelper.Model.JobTitle" class="in" id="e-jobTitle" maxlength="100"/>
                     <ValidationMessage TValue="string" For="() => _formHelper.Model.JobTitle" class="f-help text-danger"/>
                 </div>
-            </div>
-
-            <div class="sec mt-4">
-                <svg class="ic"><use href="assets/img/icons.svg#i-shield"/></svg>
-                بیمه و مالیات
-            </div>
-
-            <div class="row g-3">
-                <div class="col-md-3 field">
-                    <label class="f-label" for="e-insuranceNumber"><span class="req-s">*</span>شماره بیمه</label>
-                    <InputText @bind-Value="_formHelper.Model.InsuranceNumber" class="in in-ltr" id="e-insuranceNumber" maxlength="20"/>
-                    <ValidationMessage TValue="string" For="() => _formHelper.Model.InsuranceNumber" class="f-help text-danger"/>
-                </div>
-
-                <div class="col-md-3 field">
-                    <label class="f-label" for="e-socialSecurityContractRow">ردیف پیمان بیمه <span class="f-badge fb-gold">اختیاری</span></label>
-                    <InputText @bind-Value="_formHelper.Model.SocialSecurityContractRow" class="in in-ltr" id="e-socialSecurityContractRow" maxlength="20"/>
-                    <ValidationMessage TValue="string" For="() => _formHelper.Model.SocialSecurityContractRow" class="f-help text-danger"/>
-                </div>
-
-                <div class="col-md-3 field">
-                    <label class="f-label" for="e-positionInInsuranceList"><span class="req-s">*</span>سمت در لیست بیمه</label>
-                    <InputText @bind-Value="_formHelper.Model.PositionInInsuranceList" class="in" id="e-positionInInsuranceList" maxlength="100"/>
-                    <ValidationMessage TValue="string" For="() => _formHelper.Model.PositionInInsuranceList" class="f-help text-danger"/>
-                </div>
-
-                <div class="col-md-3 field">
-                    <label class="f-label" for="e-insuranceCalculationProfile"><span class="req-s">*</span>پروفایل محاسبه بیمه</label>
-                    <InputSelect @bind-Value="_formHelper.Model.InsuranceCalculationProfile" class="in" id="e-insuranceCalculationProfile">
-                        <option value="">انتخاب کنید...</option>
-                        <option value="@EmployeeInsuranceRequestInsuranceCalculationProfile.FullLegal">کامل و قانونی</option>
-                        <option value="@EmployeeInsuranceRequestInsuranceCalculationProfile.MinimumLaborLaw">حداقل قانون کار</option>
-                    </InputSelect>
-                    <ValidationMessage TValue="EmployeeInsuranceRequestInsuranceCalculationProfile?" For="() => _formHelper.Model.InsuranceCalculationProfile" class="f-help text-danger"/>
-                </div>
-
-               
-                <label class="col-md-4">
-                    <div class="sw-card">
-                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo7PercentInsurance"/><i></i></span>
-                        <span class="swt">مشمول بیمهٔ ۷٪</span>
-                    </div>
-                </label>
-
-                <label class="col-md-4">
-                    <div class="sw-card">
-                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo20PercentInsurance"/><i></i></span>
-                        <span class="swt">مشمول بیمهٔ ۲۰٪</span>
-                    </div>
-                </label>
-
-                <label class="col-md-4">
-                    <div class="sw-card">
-                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo3PercentInsurance"/><i></i></span>
-                        <span class="swt">مشمول بیمهٔ ۳٪</span>
-                    </div>
-                </label>
-                
-                <label class="col-md-12">
-                    <div class="sw-card">
-                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsTaxSubject"/><i></i></span>
-                        <span class="swt">مشمول مالیات حقوق است؟<span class="swd">اگر خیر باشد، مالیات فیش صفر ثبت می‌شود.</span></span>
-                    </div>
-                </label>
-
             </div>
 
             <div class="sec mt-4 d-flex align-items-center justify-content-between">
@@ -255,15 +173,24 @@
                                     </div>
                                     <div class="row g-3">
                                         <div class="col-md-4 field">
-                                            <label class="f-label" for="@($"e-bank-title-{i}")">عنوان حساب <span class="f-badge fb-gold">اختیاری</span></label>
-                                            <InputText @bind-Value="bankAccount.Title" class="in" id="@($"e-bank-title-{i}")" maxlength="100"/>
-                                            @foreach (var error in GetBankAccountErrors(i, nameof(EmployeeBankAccountFormModel.Title)))
+                                            <label class="f-label" for="@($"e-bank-name-{i}")">نام بانک <span class="f-badge fb-gold">اختیاری</span></label>
+                                            <InputText @bind-Value="bankAccount.BankName" class="in" id="@($"e-bank-name-{i}")" maxlength="100"/>
+                                            @foreach (var error in GetBankAccountErrors(i, nameof(EmployeeBankAccountFormModel.BankName)))
                                             {
                                                 <div class="f-help text-danger">@error</div>
                                             }
                                         </div>
 
-                                        <div class="col-md-8 field">
+                                        <div class="col-md-4 field">
+                                            <label class="f-label" for="@($"e-bank-branch-{i}")">کد شعبه <span class="f-badge fb-gold">اختیاری</span></label>
+                                            <InputText @bind-Value="bankAccount.BranchCode" class="in" id="@($"e-bank-branch-{i}")" maxlength="100"/>
+                                            @foreach (var error in GetBankAccountErrors(i, nameof(EmployeeBankAccountFormModel.BranchCode)))
+                                            {
+                                                <div class="f-help text-danger">@error</div>
+                                            }
+                                        </div>
+
+                                        <div class="col-md-4 field">
                                             <label class="f-label" for="@($"e-bank-iban-{i}")"><span class="req-s">*</span>شماره شبا</label>
                                             <InputText @bind-Value="bankAccount.Iban" class="in in-ltr" id="@($"e-bank-iban-{i}")" maxlength="26" placeholder="IR + 24 رقم"/>
                                             @foreach (var error in GetBankAccountErrors(i, nameof(EmployeeBankAccountFormModel.Iban)))
@@ -332,27 +259,18 @@
                         PersonalCode = employee.PersonalCode,
                         FullName = employee.FullName,
                         NationalCode = employee.NationalCode,
-                        BirthCertificateNumber = employee.BirthCertificateNumber,
                         FatherName = employee.FatherName,
                         Gender = (EmployeeInformationRequestGender)employee.Gender,
-                        MaritalStatus = (EmployeeInformationRequestMaritalStatus)employee.MaritalStatus,
-                        ChildrenCount = employee.ChildrenCount,
+                        Region = (EmployeeInformationRequestRegion)employee.Region,
                         HireDate = employee.HireDate,
                         PhoneNumber = employee.PhoneNumber,
                         JobTitle = employee.JobTitle,
-                        IsTaxSubject = employee.IsTaxSubject,
-                        InsuranceNumber = employee.InsuranceNumber,
-                        SocialSecurityContractRow = employee.SocialSecurityContractRow,
-                        PositionInInsuranceList = employee.PositionInInsuranceList,
-                        IsSubjectTo7PercentInsurance = employee.IsSubjectTo7PercentInsurance,
-                        IsSubjectTo20PercentInsurance = employee.IsSubjectTo20PercentInsurance,
-                        IsSubjectTo3PercentInsurance = employee.IsSubjectTo3PercentInsurance,
-                        InsuranceCalculationProfile = (EmployeeInsuranceRequestInsuranceCalculationProfile)employee.InsuranceCalculationProfile,
                         BankAccounts = employee.BankAccounts?
                             .Select(x => new EmployeeBankAccountFormModel
                             {
                                 Id = x.Id,
-                                Title = x.Title,
+                                BankName = x.BankName,
+                                BranchCode = x.BranchCode,
                                 Iban = x.Iban
                             })
                             .ToList() ?? []
@@ -362,7 +280,6 @@
                         _formHelper.Model.BankAccounts.Add(new EmployeeBankAccountFormModel());
 
                     await LoadDepartmentsAsync(employee.WorkshopId);
-                    OnMaritalStatusChanged();
                     _formHelper.RebuildEditContext();
                 }
                 else
@@ -414,12 +331,6 @@
         await LoadDepartmentsAsync(_formHelper.Model.WorkshopId.Value);
     }
 
-    private void OnMaritalStatusChanged()
-    {
-        if (_formHelper.Model.MaritalStatus == EmployeeInformationRequestMaritalStatus.Single)
-            _formHelper.Model.ChildrenCount = 0;
-    }
-
     private void AddBankAccount()
     {
         _formHelper.Model.BankAccounts.Add(new EmployeeBankAccountFormModel());
@@ -446,39 +357,25 @@
         _isLoading = true;
 
         var model = _formHelper.Model;
-        var childrenCount = model.MaritalStatus == EmployeeInformationRequestMaritalStatus.Single
-            ? 0
-            : model.ChildrenCount ?? 0;
 
         var employeeRequest = new EmployeeInformationRequest(
-            birthCertificateNumber: model.BirthCertificateNumber,
-            childrenCount: childrenCount,
             departmentId: model.DepartmentId ?? Guid.Empty,
             fatherName: model.FatherName,
             fullName: model.FullName,
             gender: model.Gender ?? EmployeeInformationRequestGender.Man,
             hireDate: model.HireDate,
-            isTaxSubject: model.IsTaxSubject,
             jobTitle: model.JobTitle,
-            maritalStatus: model.MaritalStatus ?? EmployeeInformationRequestMaritalStatus.Single,
             nationalCode: model.NationalCode,
             personalCode: model.PersonalCode,
-            phoneNumber: model.PhoneNumber);
-
-        var insuranceRequest = new EmployeeInsuranceRequest(
-            insuranceCalculationProfile: model.InsuranceCalculationProfile ?? EmployeeInsuranceRequestInsuranceCalculationProfile.FullLegal,
-            insuranceNumber: model.InsuranceNumber,
-            isSubjectTo20PercentInsurance: model.IsSubjectTo20PercentInsurance,
-            isSubjectTo3PercentInsurance: model.IsSubjectTo3PercentInsurance,
-            isSubjectTo7PercentInsurance: model.IsSubjectTo7PercentInsurance,
-            positionInInsuranceList: model.PositionInInsuranceList,
-            socialSecurityContractRow: model.SocialSecurityContractRow);
+            phoneNumber: model.PhoneNumber,
+            region: model.Region ?? EmployeeInformationRequestRegion.Normal);
 
         var bankAccountsRequest = model.BankAccounts
             .Select(x => new EmployeeBankAccountRequest(
-                id: x.Id,
+                bankName: x.BankName,
+                branchCode: x.BranchCode,
                 iban: x.Iban,
-                title: x.Title))
+                id: x.Id))
             .ToList();
 
         if (IsEdit)
@@ -486,8 +383,7 @@
             var result = await ApiService.SendAsync(
                 apiCall: () => ApiClient.UpdateEmployeeAsync(Id!.Value, new UpdateEmployeeRequest(
                     bankAccounts: bankAccountsRequest,
-                    employee: employeeRequest,
-                    insurance: insuranceRequest
+                    employee: employeeRequest
                 )),
                 successMessage: "کارمند با موفقیت ویرایش شد.",
                 showErrorToastValidation: false
@@ -510,7 +406,6 @@
                 apiCall: () => ApiClient.CreateEmployeeAsync(new CreateEmployeeRequest(
                     bankAccounts: bankAccountsRequest,
                     employee: employeeRequest,
-                    insurance: insuranceRequest,
                     workshopId: model.WorkshopId ?? Guid.Empty
                 )),
                 successMessage: "کارمند با موفقیت ثبت شد.",
@@ -549,13 +444,19 @@
         {
             if (item.bankAccount.Id == Guid.Empty)
             {
-                AddBankAccountError(item.index, nameof(EmployeeBankAccountFormModel.Id), "شناسه حساب بانکی نمیتواند خالی باشد.");
+                AddBankAccountError(item.index, nameof(EmployeeBankAccountFormModel.Id), "شناسه حساب بانکی نمی‌تواند خالی باشد.");
                 isValid = false;
             }
 
-            if (!string.IsNullOrWhiteSpace(item.bankAccount.Title) && item.bankAccount.Title.Length > 100)
+            if (!string.IsNullOrWhiteSpace(item.bankAccount.BankName) && item.bankAccount.BankName.Length > 100)
             {
-                AddBankAccountError(item.index, nameof(EmployeeBankAccountFormModel.Title), "عنوان حساب بانکی نمیتواند بیشتر از 100 کاراکتر باشد.");
+                AddBankAccountError(item.index, nameof(EmployeeBankAccountFormModel.BankName), "نام بانک نمی‌تواند بیشتر از 100 کاراکتر باشد.");
+                isValid = false;
+            }
+
+            if (!string.IsNullOrWhiteSpace(item.bankAccount.BranchCode) && item.bankAccount.BranchCode.Length > 100)
+            {
+                AddBankAccountError(item.index, nameof(EmployeeBankAccountFormModel.BranchCode), "کد شعبه نمی‌تواند بیشتر از 100 کاراکتر باشد.");
                 isValid = false;
             }
 
@@ -663,30 +564,18 @@
         ["Employee.FullName"] = nameof(EmployeeFormModel.FullName),
         ["NationalCode"] = nameof(EmployeeFormModel.NationalCode),
         ["Employee.NationalCode"] = nameof(EmployeeFormModel.NationalCode),
-        ["BirthCertificateNumber"] = nameof(EmployeeFormModel.BirthCertificateNumber),
-        ["Employee.BirthCertificateNumber"] = nameof(EmployeeFormModel.BirthCertificateNumber),
         ["FatherName"] = nameof(EmployeeFormModel.FatherName),
         ["Employee.FatherName"] = nameof(EmployeeFormModel.FatherName),
         ["Gender"] = nameof(EmployeeFormModel.Gender),
         ["Employee.Gender"] = nameof(EmployeeFormModel.Gender),
-        ["MaritalStatus"] = nameof(EmployeeFormModel.MaritalStatus),
-        ["Employee.MaritalStatus"] = nameof(EmployeeFormModel.MaritalStatus),
-        ["ChildrenCount"] = nameof(EmployeeFormModel.ChildrenCount),
-        ["Employee.ChildrenCount"] = nameof(EmployeeFormModel.ChildrenCount),
+        ["Region"] = nameof(EmployeeFormModel.Region),
+        ["Employee.Region"] = nameof(EmployeeFormModel.Region),
         ["HireDate"] = nameof(EmployeeFormModel.HireDate),
         ["Employee.HireDate"] = nameof(EmployeeFormModel.HireDate),
         ["PhoneNumber"] = nameof(EmployeeFormModel.PhoneNumber),
         ["Employee.PhoneNumber"] = nameof(EmployeeFormModel.PhoneNumber),
         ["JobTitle"] = nameof(EmployeeFormModel.JobTitle),
-        ["Employee.JobTitle"] = nameof(EmployeeFormModel.JobTitle),
-        ["InsuranceNumber"] = nameof(EmployeeFormModel.InsuranceNumber),
-        ["Insurance.InsuranceNumber"] = nameof(EmployeeFormModel.InsuranceNumber),
-        ["SocialSecurityContractRow"] = nameof(EmployeeFormModel.SocialSecurityContractRow),
-        ["Insurance.SocialSecurityContractRow"] = nameof(EmployeeFormModel.SocialSecurityContractRow),
-        ["PositionInInsuranceList"] = nameof(EmployeeFormModel.PositionInInsuranceList),
-        ["Insurance.PositionInInsuranceList"] = nameof(EmployeeFormModel.PositionInInsuranceList),
-        ["InsuranceCalculationProfile"] = nameof(EmployeeFormModel.InsuranceCalculationProfile),
-        ["Insurance.InsuranceCalculationProfile"] = nameof(EmployeeFormModel.InsuranceCalculationProfile)
+        ["Employee.JobTitle"] = nameof(EmployeeFormModel.JobTitle)
     };
 
     public class EmployeeFormModel : BaseModel
@@ -711,10 +600,6 @@
         [RegularExpression(@"^\d{10}$", ErrorMessage = "کد ملی باید ۱۰ رقم باشد.")]
         public string NationalCode { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "شماره شناسنامه اجباری است.")]
-        [RegularExpression(@"^\d{1,20}$", ErrorMessage = "شماره شناسنامه باید بین ۱ تا ۲۰ رقم باشد.")]
-        public string BirthCertificateNumber { get; set; } = string.Empty;
-
         [Required(ErrorMessage = "نام پدر اجباری است.")]
         [StringLength(50, MinimumLength = 3, ErrorMessage = "نام پدر باید بین ۳ تا ۵۰ نویسه باشد.")]
         public string FatherName { get; set; } = string.Empty;
@@ -722,12 +607,8 @@
         [Required(ErrorMessage = "جنسیت اجباری است.")]
         public EmployeeInformationRequestGender? Gender { get; set; }
 
-        [Required(ErrorMessage = "وضعیت تأهل اجباری است.")]
-        public EmployeeInformationRequestMaritalStatus? MaritalStatus { get; set; }
-
-        [Required(ErrorMessage = "تعداد فرزندان اجباری است.")]
-        [Range(0, 20, ErrorMessage = "تعداد فرزندان باید بین ۰ تا ۲۰ باشد.")]
-        public int? ChildrenCount { get; set; } = 0;
+        [Required(ErrorMessage = "منطقه اجباری است.")]
+        public EmployeeInformationRequestRegion? Region { get; set; }
 
         [Required(ErrorMessage = "تاریخ استخدام اجباری است.")]
         [RegularExpression(@"^\d{4}/\d{2}/\d{2}$", ErrorMessage = "تاریخ را به فرمت ۱۴۰۵/۰۵/۱۷ وارد کنید.")]
@@ -740,33 +621,14 @@
         [StringLength(100, ErrorMessage = "عنوان شغلی نمی‌تواند بیش از ۱۰۰ نویسه باشد.")]
         public string? JobTitle { get; set; }
 
-        public bool IsTaxSubject { get; set; } = true;
-
-        [Required(ErrorMessage = "شماره بیمه اجباری است.")]
-        [StringLength(20, ErrorMessage = "شماره بیمه نمی‌تواند بیش از ۲۰ نویسه باشد.")]
-        public string InsuranceNumber { get; set; } = string.Empty;
-
-        [StringLength(20, ErrorMessage = "ردیف پیمان بیمه نمی‌تواند بیش از ۲۰ نویسه باشد.")]
-        public string? SocialSecurityContractRow { get; set; }
-
-        [Required(ErrorMessage = "سمت در لیست بیمه اجباری است.")]
-        [StringLength(100, ErrorMessage = "سمت در لیست بیمه نمی‌تواند بیش از ۱۰۰ نویسه باشد.")]
-        public string PositionInInsuranceList { get; set; } = string.Empty;
-
-        public bool IsSubjectTo7PercentInsurance { get; set; } = true;
-        public bool IsSubjectTo20PercentInsurance { get; set; } = true;
-        public bool IsSubjectTo3PercentInsurance { get; set; }
-
-        [Required(ErrorMessage = "پروفایل محاسبه بیمه اجباری است.")]
-        public EmployeeInsuranceRequestInsuranceCalculationProfile? InsuranceCalculationProfile { get; set; }
-
         public List<EmployeeBankAccountFormModel> BankAccounts { get; set; } = [new()];
     }
 
     public class EmployeeBankAccountFormModel
     {
         public Guid? Id { get; set; }
-        public string? Title { get; set; }
+        public string? BankName { get; set; }
+        public string? BranchCode { get; set; }
         public string Iban { get; set; } = string.Empty;
     }
 }

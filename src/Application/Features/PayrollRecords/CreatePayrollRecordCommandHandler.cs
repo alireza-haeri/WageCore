@@ -6,7 +6,7 @@ public class CreatePayrollRecordCommandHandler(
     IPayrollLimitsResolver payrollLimitsResolver,
     IPayrollRecordQuery payrollRecordQuery,
     IWorkShopRepository workShopRepository,
-    IEmployeeSalaryProfileQuery employeeSalaryProfileQuery,
+    ISalaryDecreeQuery salaryDecreeQuery,
     IPayrollCalculationService payrollCalculationService,
     IPayrollRecordRepository payrollRecordRepository)
     : IRequestHandler<CreatePayrollRecordCommand, Result<CreatePayrollRecordCommandResponse>>
@@ -49,7 +49,7 @@ public class CreatePayrollRecordCommandHandler(
                 "برای این کارمند در این بازه فیش پرداختی دیگری ثبت شده است.");
 
         var workshopTask = workShopRepository.GetByIdAsync(request.UserId, employee.WorkshopId, cancellationToken);
-        var salaryProfilesTask = employeeSalaryProfileQuery.GetEmployeeSalaryProfilesAffectingPeriodAsync(
+        var salaryProfilesTask = salaryDecreeQuery.GetSalaryDecreesAffectingPeriodAsync(
             request.UserId,
             request.EmployeeId,
             period.StartPeriod,
@@ -83,7 +83,7 @@ public class CreatePayrollRecordCommandHandler(
             request.EmployeeId,
             period.StartPeriod,
             period.EndPeriod,
-            employee.IsTaxSubject,
+            salaryProfiles[0].IsTaxSubject,
             limits.MaxMonthlyOvertimeHours,
             limits.MaxFridayHours,
             request.Work,

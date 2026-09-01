@@ -38,8 +38,8 @@ public class UpdateEmployeeCommandHandlerTests
 
         if (createBankAccounts)
             employee.ReplaceBankAccounts([
-                new EmployeeBankAccountDto("حساب اول", "IR111111111111111111111111", Guid.NewGuid()),
-                new EmployeeBankAccountDto("حساب دوم", "IR222222222222222222222222", Guid.NewGuid())
+                new EmployeeBankAccountDto("بانک ملی", "۱۰۲", "IR111111111111111111111111", Guid.NewGuid()),
+                new EmployeeBankAccountDto("بانک صادرات", "۳۰۳", "IR222222222222222222222222", Guid.NewGuid())
             ]).ShouldBeSuccess();
 
         return employee;
@@ -55,41 +55,27 @@ public class UpdateEmployeeCommandHandlerTests
             .ShouldBeSuccess();
     }
 
-    private UpdateEmployeeCommand CreateValidCommand(EmployeeDto? employee = null, EmployeeInsuranceDto? insurance = null,
+    private UpdateEmployeeCommand CreateValidCommand(EmployeeDto? employee = null,
         List<EmployeeBankAccountDto>? bankAccounts = null)
     {
         var employeeDto = employee ?? _employeeBuilder
             .WithDepartmentId(UpdatedDepartmentId)
             .WithPersonalCode("EMP777")
             .WithNationalCode("0987654321")
-            .WithBirthCertificateNumber("54321")
             .WithFatherName("محمود")
             .WithGender(EmployeeGender.Woman)
-            .WithMaritalStatus(EmployeeMaritalStatus.Married)
-            .WithChildrenCount(2)
             .WithHireDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-1)))
             .WithPhoneNumber("09987654321")
             .WithJobTitle("سرپرست")
-            .WithIsTaxSubject(false)
             .BuildEmployeeDto();
-
-        var insuranceDto = insurance ?? _employeeBuilder
-            .WithInsuranceNumber("INS-999")
-            .WithSocialSecurityContractRow("CTR-99")
-            .WithPositionInInsuranceList("مدیر مالی")
-            .WithIsSubjectTo7PercentInsurance(false)
-            .WithIsSubjectTo20PercentInsurance(true)
-            .WithIsSubjectTo3PercentInsurance(true)
-            .WithInsuranceCalculationProfile(InsuranceCalculationProfile.MinimumLaborLaw)
-            .BuildInsuranceDto();
 
         var bankAccountDtos = bankAccounts ??
             [
-                new EmployeeBankAccountDto("حساب اول جدید", "IR999999999999999999999999"),
-                new EmployeeBankAccountDto("حساب دوم جدید", "IR888888888888888888888888")
+                new EmployeeBankAccountDto("بانک ملی", "۱۰۲", "IR999999999999999999999999"),
+                new EmployeeBankAccountDto("بانک صادرات", "۳۰۳", "IR888888888888888888888888")
             ];
 
-        return new UpdateEmployeeCommand(ValidUserId, ValidEmployeeId, employeeDto, insuranceDto, bankAccountDtos);
+        return new UpdateEmployeeCommand(ValidUserId, ValidEmployeeId, employeeDto, bankAccountDtos);
     }
 
     private void SetupNoDuplicates()
@@ -107,8 +93,8 @@ public class UpdateEmployeeCommandHandlerTests
         var existingBankAccountIds = employee.BankAccounts.Select(x => x.Id).ToList();
         var command = CreateValidCommand(bankAccounts:
         [
-            new EmployeeBankAccountDto("حساب اول جدید", "IR999999999999999999999999", existingBankAccountIds[0]),
-            new EmployeeBankAccountDto("حساب سوم", "IR777777777777777777777777")
+            new EmployeeBankAccountDto("بانک ملی", "۱۰۲", "IR999999999999999999999999", existingBankAccountIds[0]),
+            new EmployeeBankAccountDto("بانک ملت", "۴۰۴", "IR777777777777777777777777")
         ]);
         var workshop = CreateValidWorkshop();
 
@@ -131,12 +117,9 @@ public class UpdateEmployeeCommandHandlerTests
             employee.DepartmentId.Should().Be(UpdatedDepartmentId);
             employee.PersonalCode.Should().Be(command.Employee.PersonalCode);
             employee.NationalCode.Should().Be(command.Employee.NationalCode);
-            employee.Insurance.InsuranceNumber.Should().Be(command.Insurance!.InsuranceNumber);
-            employee.Insurance.PositionInInsuranceList.Should().Be(command.Insurance.PositionInInsuranceList);
-            employee.Insurance.InsuranceCalculationProfile.Should().Be(command.Insurance.InsuranceCalculationProfile!.Value);
             employee.BankAccounts.Should().HaveCount(2);
-            employee.BankAccounts.Should().Contain(x => x.Id == existingBankAccountIds[0] && x.Title == "حساب اول جدید" && x.Iban == "999999999999999999999999");
-            employee.BankAccounts.Should().Contain(x => x.Title == "حساب سوم" && x.Iban == "777777777777777777777777");
+            employee.BankAccounts.Should().Contain(x => x.Id == existingBankAccountIds[0] && x.BankName == "بانک ملی" && x.Iban == "999999999999999999999999");
+            employee.BankAccounts.Should().Contain(x => x.BankName == "بانک ملت" && x.Iban == "777777777777777777777777");
             employee.BankAccounts.Should().NotContain(x => x.Id == existingBankAccountIds[1]);
         }
     }
@@ -164,13 +147,15 @@ public class UpdateEmployeeCommandHandlerTests
         employee.BankAccounts.Should().HaveCount(2);
         var accounts = command.BankAccounts!;
 
-        var firstTitle = accounts[0].Title;
+        var firstBankName = accounts[0].BankName;
+        var firstBranchCode = accounts[0].BranchCode;
         var firstIban = accounts[0].Iban[2..];
-        var secondTitle = accounts[1].Title;
+        var secondBankName = accounts[1].BankName;
+        var secondBranchCode = accounts[1].BranchCode;
         var secondIban = accounts[1].Iban[2..];
 
-        employee.BankAccounts.Should().Contain(x => x.Title == firstTitle && x.Iban == firstIban);
-        employee.BankAccounts.Should().Contain(x => x.Title == secondTitle && x.Iban == secondIban);
+        employee.BankAccounts.Should().Contain(x => x.BankName == firstBankName && x.BranchCode == firstBranchCode && x.Iban == firstIban);
+        employee.BankAccounts.Should().Contain(x => x.BankName == secondBankName && x.BranchCode == secondBranchCode && x.Iban == secondIban);
     }
 
     [Fact]
@@ -289,39 +274,12 @@ public class UpdateEmployeeCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_WhenInsuranceUpdateFails_ShouldReturnGeneralFailure()
-    {
-        var command = CreateValidCommand(insurance: new EmployeeInsuranceDto(
-            string.Empty,
-            "CTR-99",
-            "مدیر مالی",
-            false,
-            true,
-            true,
-            InsuranceCalculationProfile.MinimumLaborLaw));
-        var employee = CreateValidEmployee(createBankAccounts: true);
-        var workshop = CreateValidWorkshop();
-
-        _employeeRepository.GetByIdAsync(ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
-            .Returns(employee);
-        _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
-            .Returns(workshop);
-        _workshopRepository.GetByDepartmentIdAsync(ValidUserId, UpdatedDepartmentId, Arg.Any<CancellationToken>())
-            .Returns(workshop);
-        SetupNoDuplicates();
-
-        var result = await _handler.Handle(command, CancellationToken.None);
-
-        result.ShouldBeFailure("شماره بیمه نمیتواند خالی باشد.", BadResultType.General);
-    }
-
-    [Fact]
     public async Task Handle_WhenBankAccountsReplaceFails_ShouldReturnGeneralFailure()
     {
         var command = CreateValidCommand(bankAccounts:
         [
-            new EmployeeBankAccountDto("حساب اول", "IR999999999999999999999999"),
-            new EmployeeBankAccountDto("حساب دوم", "IR999999999999999999999999")
+            new EmployeeBankAccountDto("بانک ملی", "۱۰۲", "IR999999999999999999999999"),
+            new EmployeeBankAccountDto("بانک صادرات", "۳۰۳", "IR999999999999999999999999")
         ]);
         var employee = CreateValidEmployee(createBankAccounts: true);
         var workshop = CreateValidWorkshop();

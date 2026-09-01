@@ -7,7 +7,6 @@ public class GetUserWorkshopsQueryHandlerTests
 
     private static readonly Guid ValidUserId = Guid.NewGuid();
     private const string ValidSearchName = "کارگاه";
-    private const WorkshopRegion ValidRegion = WorkshopRegion.Normal;
     private static readonly PaginationDto ValidPagination = new(1, 10);
 
     public GetUserWorkshopsQueryHandlerTests()
@@ -23,13 +22,12 @@ public class GetUserWorkshopsQueryHandlerTests
         var query = new GetUserWorkshopsQuery(
             ValidUserId,
             ValidPagination,
-            ValidSearchName,
-            ValidRegion);
+            ValidSearchName);
 
         var results = new List<UserWorkshopResult>
         {
-            new(Guid.NewGuid(), "کارگاه اول", "آدرس ۱", "11111111111", WorkshopRegion.Normal, DateOnly.FromDateTime(DateTime.Now), 5, 3),
-            new(Guid.NewGuid(), "کارگاه دوم", "آدرس ۲", "22222222222", WorkshopRegion.LessDeveloped, DateOnly.FromDateTime(DateTime.Now), 10, 4)
+            new(Guid.NewGuid(), "کارگاه اول", "آدرس ۱", "11111111111", DateOnly.FromDateTime(DateTime.Now), 5, 3, "1112223334"),
+            new(Guid.NewGuid(), "کارگاه دوم", "آدرس ۲", "22222222222", DateOnly.FromDateTime(DateTime.Now), 10, 4, "5556667778")
         };
         var pagedResult = new PagedResult<UserWorkshopResult>(results, 2, 1, 10);
 
@@ -37,7 +35,6 @@ public class GetUserWorkshopsQueryHandlerTests
                 ValidUserId,
                 ValidPagination,
                 ValidSearchName,
-                ValidRegion,
                 Arg.Any<CancellationToken>())
             .Returns(pagedResult);
 
@@ -57,18 +54,20 @@ public class GetUserWorkshopsQueryHandlerTests
         firstItem.Name.Should().Be("کارگاه اول");
         firstItem.Address.Should().Be("آدرس ۱");
         firstItem.NationalId.Should().Be("11111111111");
-        firstItem.Region.Should().Be(WorkshopRegion.Normal);
         firstItem.EmployeesCount.Should().Be(5);
         firstItem.DepartmentsCount.Should().Be(3);
+        firstItem.SocialSecurityNumber.Should().Be("1112223334");
+        firstItem.EconomicCode.Should().BeNull();
 
         var secondItem = response.Items[1];
         secondItem.Id.Should().Be(results[1].WorkshopId);
         secondItem.Name.Should().Be("کارگاه دوم");
         secondItem.Address.Should().Be("آدرس ۲");
         secondItem.NationalId.Should().Be("22222222222");
-        secondItem.Region.Should().Be(WorkshopRegion.LessDeveloped);
         secondItem.EmployeesCount.Should().Be(10);
         secondItem.DepartmentsCount.Should().Be(4);
+        secondItem.SocialSecurityNumber.Should().Be("5556667778");
+        secondItem.EconomicCode.Should().BeNull();
     }
 
     [Fact]
@@ -78,8 +77,7 @@ public class GetUserWorkshopsQueryHandlerTests
         var query = new GetUserWorkshopsQuery(
             ValidUserId,
             ValidPagination,
-            ValidSearchName,
-            ValidRegion);
+            ValidSearchName);
 
         var emptyPagedResult = new PagedResult<UserWorkshopResult>([], 0, 1, 10);
 
@@ -87,7 +85,6 @@ public class GetUserWorkshopsQueryHandlerTests
                 ValidUserId,
                 ValidPagination,
                 ValidSearchName,
-                ValidRegion,
                 Arg.Any<CancellationToken>())
             .Returns(emptyPagedResult);
 
@@ -110,8 +107,7 @@ public class GetUserWorkshopsQueryHandlerTests
         var query = new GetUserWorkshopsQuery(
             ValidUserId,
             ValidPagination,
-            ValidSearchName,
-            ValidRegion);
+            ValidSearchName);
 
         var pagedResult = new PagedResult<UserWorkshopResult>([], 0, 1, 10);
 
@@ -119,7 +115,6 @@ public class GetUserWorkshopsQueryHandlerTests
                 ValidUserId,
                 ValidPagination,
                 ValidSearchName,
-                ValidRegion,
                 Arg.Any<CancellationToken>())
             .Returns(pagedResult);
 
@@ -131,18 +126,16 @@ public class GetUserWorkshopsQueryHandlerTests
             ValidUserId,
             ValidPagination,
             ValidSearchName,
-            ValidRegion,
             Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    public async Task Handle_WithNullSearchNameAndNullRegion_ShouldCallRepositoryWithNullValues()
+    public async Task Handle_WithNullSearchName_ShouldCallRepositoryWithNullValues()
     {
         // Arrange
         var query = new GetUserWorkshopsQuery(
             ValidUserId,
             ValidPagination,
-            null,
             null);
 
         var pagedResult = new PagedResult<UserWorkshopResult>([], 0, 1, 10);
@@ -151,7 +144,6 @@ public class GetUserWorkshopsQueryHandlerTests
                 ValidUserId,
                 ValidPagination,
                 null,
-                null,
                 Arg.Any<CancellationToken>())
             .Returns(pagedResult);
 
@@ -162,7 +154,6 @@ public class GetUserWorkshopsQueryHandlerTests
         await _workshopQuery.Received(1).GetUserWorkshopsAsync(
             ValidUserId,
             ValidPagination,
-            null,
             null,
             Arg.Any<CancellationToken>());
     }
@@ -175,8 +166,7 @@ public class GetUserWorkshopsQueryHandlerTests
         var query = new GetUserWorkshopsQuery(
             ValidUserId,
             ValidPagination,
-            searchName,
-            ValidRegion);
+            searchName);
 
         var pagedResult = new PagedResult<UserWorkshopResult>([], 0, 1, 10);
 
@@ -184,7 +174,6 @@ public class GetUserWorkshopsQueryHandlerTests
                 ValidUserId,
                 ValidPagination,
                 searchName,
-                ValidRegion,
                 Arg.Any<CancellationToken>())
             .Returns(pagedResult);
 
@@ -196,40 +185,6 @@ public class GetUserWorkshopsQueryHandlerTests
             ValidUserId,
             ValidPagination,
             searchName,
-            ValidRegion,
-            Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task Handle_WithRegion_ShouldPassRegionToRepository()
-    {
-        // Arrange
-        var region = WorkshopRegion.LessDeveloped;
-        var query = new GetUserWorkshopsQuery(
-            ValidUserId,
-            ValidPagination,
-            ValidSearchName,
-            region);
-
-        var pagedResult = new PagedResult<UserWorkshopResult>([], 0, 1, 10);
-
-        _workshopQuery.GetUserWorkshopsAsync(
-                ValidUserId,
-                ValidPagination,
-                ValidSearchName,
-                region,
-                Arg.Any<CancellationToken>())
-            .Returns(pagedResult);
-
-        // Act
-        await _handler.Handle(query, CancellationToken.None);
-
-        // Assert
-        await _workshopQuery.Received(1).GetUserWorkshopsAsync(
-            ValidUserId,
-            ValidPagination,
-            ValidSearchName,
-            region,
             Arg.Any<CancellationToken>());
     }
 }

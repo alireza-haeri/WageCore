@@ -5,8 +5,7 @@ namespace Application.Features.Workshops;
 public record GetUserWorkshopsQuery(
     Guid UserId,
     PaginationDto Pagination,
-    string? SearchName = null,
-    WorkshopRegion? Region = null)
+    string? SearchName = null)
     : IRequest<Result<PagedResult<GetUserWorkshopsQueryResponse>>>;
 
 public record GetUserWorkshopsQueryResponse(
@@ -14,7 +13,8 @@ public record GetUserWorkshopsQueryResponse(
     string Name,
     string Address,
     string NationalId,
-    WorkshopRegion Region,
     DateOnly RegistrationDate,
     int EmployeesCount,
-    int DepartmentsCount);
+    int DepartmentsCount,
+    string SocialSecurityNumber,
+    string? EconomicCode = null);

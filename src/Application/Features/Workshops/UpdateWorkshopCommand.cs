@@ -5,8 +5,9 @@ public record UpdateWorkshopCommand(
     Guid WorkshopId,
     string Name,
     string Address,
-    WorkshopRegion Region,
     DateOnly RegistrationDate,
     string NationalId,
-    string? PostalCode = null)
+    string SocialSecurityNumber,
+    string? PostalCode = null,
+    string? EconomicCode = null)
     : IRequest<Result<bool>>;

@@ -57,10 +57,10 @@ public sealed class WageCoreDbContextFixture : IAsyncLifetime
         services.AddScoped<IWorkshopQuery, WorkshopQuery>();
         services.AddScoped<IDepartmentQuery, DepartmentQuery>();
         services.AddScoped<IEmployeeQuery, EmployeeQuery>();
-        services.AddScoped<EmployeeSalaryProfileRepository>();
-        services.AddScoped<IEmployeeSalaryProfileRepository, EmployeeSalaryProfileRepository>();
-        services.AddScoped<EmployeeSalaryProfileQuery>();
-        services.AddScoped<IEmployeeSalaryProfileQuery, EmployeeSalaryProfileQuery>();
+        services.AddScoped<SalaryDecreeRepository>();
+        services.AddScoped<ISalaryDecreeRepository, SalaryDecreeRepository>();
+        services.AddScoped<SalaryDecreeQuery>();
+        services.AddScoped<ISalaryDecreeQuery, SalaryDecreeQuery>();
         services.AddScoped<LaborLawRuleRepository>();
         services.AddScoped<ILaborLawRuleRepository, LaborLawRuleRepository>();
         services.AddScoped<ILaborLawRuleQuery, LaborLawRuleQuery>();
@@ -73,8 +73,9 @@ public sealed class WageCoreDbContextFixture : IAsyncLifetime
         await using (var scope = _serviceProvider.CreateAsyncScope())
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<WageCoreDbContext>();
-            //await dbContext.Database.EnsureCreatedAsync();
-            await dbContext.Database.MigrateAsync();
+            // Migrations are intentionally left untouched for this domain change, so tests
+            // create the schema directly from the current model.
+            await dbContext.Database.EnsureCreatedAsync();
         }
 
         await using var connection = new SqlConnection(_connectionString);

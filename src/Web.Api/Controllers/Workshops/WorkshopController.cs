@@ -18,10 +18,11 @@ public class WorkshopController(IMediator mediator) : BaseController
             UserId: UserId,
             Name: request.Name,
             Address: request.Address,
-            Region: request.Region,
             RegistrationDate: request.RegistrationDate.ToDateOnly(),
             NationalId: request.NationalId,
-            PostalCode: request.PostalCode
+            SocialSecurityNumber: request.SocialSecurityNumber,
+            PostalCode: request.PostalCode,
+            EconomicCode: request.EconomicCode
         ), cancellationToken);
 
         return Result(result);
@@ -39,10 +40,11 @@ public class WorkshopController(IMediator mediator) : BaseController
             WorkshopId: workshopId,
             Name: request.Name,
             Address: request.Address,
-            Region: request.Region,
             RegistrationDate: request.RegistrationDate.ToDateOnly(),
             NationalId: request.NationalId,
-            PostalCode: request.PostalCode
+            SocialSecurityNumber: request.SocialSecurityNumber,
+            PostalCode: request.PostalCode,
+            EconomicCode: request.EconomicCode
         ), cancellationToken);
 
         return Result(result);
@@ -71,8 +73,7 @@ public class WorkshopController(IMediator mediator) : BaseController
         var result = await mediator.Send(new GetUserWorkshopsQuery(
             UserId: UserId,
             Pagination: request.Pagination,
-            SearchName: request.SearchName,
-            Region: request.Region
+            SearchName: request.SearchName
         ), cancellationToken);
 
         var response = result
@@ -83,10 +84,11 @@ public class WorkshopController(IMediator mediator) : BaseController
                         w.Name,
                         w.Address,
                         w.NationalId,
-                        w.Region,
                         PersianDate.FromDateOnly(w.RegistrationDate).ToDisplay(UserPersianDateFormat),
                         w.EmployeesCount,
-                        w.DepartmentsCount
+                        w.DepartmentsCount,
+                        w.SocialSecurityNumber,
+                        w.EconomicCode
                     )
                 )
             );
@@ -120,10 +122,11 @@ public class WorkshopController(IMediator mediator) : BaseController
         var response = result.Map(w=> new GetWorkshopForEditResponse(
             w.Name,
             w.Address,
-            w.Region,
             PersianDate.ToRawValue(w.RegistrationDate),
             w.NationalId,
-            w.PostalCode
+            w.SocialSecurityNumber,
+            w.PostalCode,
+            w.EconomicCode
         ));
         
         return Result(response);

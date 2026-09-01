@@ -61,18 +61,18 @@
 
             <div class="sec">
                 <svg class="ic"><use href="assets/img/icons.svg#i-coins"/></svg>
-                پایه و مزایای ماهانه <small>مبالغ به ریال</small>
+                پایه و مزایای روزانه <small>مبالغ به ریال</small>
             </div>
 
             <div class="row g-3">
                 <div class="col-md-4 field">
-                    <label class="f-label" for="p-base"><span class="req-s">*</span>حقوق پایهٔ ماهانه (۳۰ روزه)</label>
+                    <label class="f-label" for="p-base"><span class="req-s">*</span>حقوق پایهٔ روزانه</label>
                     <div class="amount">
-                        <InputText @bind-Value="_formHelper.Model.BaseMonthlySalary" class="in in-ltr" id="p-base"
+                        <InputText @bind-Value="_formHelper.Model.BaseDailySalary" class="in in-ltr" id="p-base"
                                    inputmode="numeric" placeholder="1280000000"/>
                         <span class="unit">ریال</span>
                     </div>
-                    <ValidationMessage TValue="string" For="() => _formHelper.Model.BaseMonthlySalary"
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.BaseDailySalary"
                                        class="f-help text-danger"/>
                     <div class="f-help">عدد صحیح ریال؛ نباید از حداقل قانونی منطقه کمتر باشد.</div>
                 </div>
@@ -99,52 +99,6 @@
             </div>
 
             <div class="sec">
-                <svg class="ic"><use href="assets/img/icons.svg#i-clock"/></svg>
-                سنوات
-            </div>
-
-            <div class="row g-3">
-                <div class="col-md-4 field">
-                    <label class="f-label" for="p-senmode"><span class="req-s">*</span>نحوهٔ اعمال پایه سنوات</label>
-                    <InputSelect @bind-Value="_formHelper.Model.SeniorityBaseApplicationMode"
-                                 @bind-Value:after="OnSeniorityModeChanged" class="in" id="p-senmode">
-                        <option value="">انتخاب کنید...</option>
-                        <option value="@EmployeeSalaryProfileRequestSeniorityBaseApplicationMode.Manual">ثابت (مقدار دستی)</option>
-                        <option value="@EmployeeSalaryProfileRequestSeniorityBaseApplicationMode.Automatic">خودکار (سیستم حساب می‌کند)</option>
-                    </InputSelect>
-                    <ValidationMessage TValue="EmployeeSalaryProfileRequestSeniorityBaseApplicationMode?"
-                                       For="() => _formHelper.Model.SeniorityBaseApplicationMode"
-                                       class="f-help text-danger"/>
-                </div>
-                @if (_formHelper.Model.SeniorityBaseApplicationMode == EmployeeSalaryProfileRequestSeniorityBaseApplicationMode.Automatic)
-                {
-                    <div class="col-md-4 field">
-                        <label class="f-label" for="p-senmethod">روش محاسبهٔ پایه سنوات</label>
-                        <InputSelect @bind-Value="_formHelper.Model.SeniorityBaseCalculationMethod" class="in" id="p-senmethod">
-                            <option value="">انتخاب کنید...</option>
-                            <option value="@EmployeeSalaryProfileRequestSeniorityBaseCalculationMethod.Daily">روزانه</option>
-                            <option value="@EmployeeSalaryProfileRequestSeniorityBaseCalculationMethod.CumulativeAuto">تجمیعی خودکار</option>
-                        </InputSelect>
-                        <ValidationMessage TValue="EmployeeSalaryProfileRequestSeniorityBaseCalculationMethod?"
-                                           For="() => _formHelper.Model.SeniorityBaseCalculationMethod"
-                                           class="f-help text-danger"/>
-                    </div>
-                }
-                <div class="col-md-4 field">
-                    <label class="f-label" for="p-yearend"><span class="req-s">*</span>نحوهٔ سنوات پایان سال</label>
-                    <InputSelect @bind-Value="_formHelper.Model.YearEndSeniorityMode" class="in" id="p-yearend">
-                        <option value="">انتخاب کنید...</option>
-                        <option value="@EmployeeSalaryProfileRequestYearEndSeniorityMode.MonthlyAccrual">محاسبه ماهانه (تعهدی)</option>
-                        <option value="@EmployeeSalaryProfileRequestYearEndSeniorityMode.AnnualLumpSum">محاسبه سالانه (یکجا)</option>
-                        <option value="@EmployeeSalaryProfileRequestYearEndSeniorityMode.NotCalculation">بدون محاسبه</option>
-                    </InputSelect>
-                    <ValidationMessage TValue="EmployeeSalaryProfileRequestYearEndSeniorityMode?"
-                                       For="() => _formHelper.Model.YearEndSeniorityMode"
-                                       class="f-help text-danger"/>
-                </div>
-            </div>
-
-            <div class="sec">
                 <svg class="ic"><use href="assets/img/icons.svg#i-scale"/></svg>
                 شیفت و مزایای مصوب
             </div>
@@ -154,46 +108,27 @@
                     <label class="f-label" for="p-shift"><span class="req-s">*</span>نوع شیفت</label>
                     <InputSelect @bind-Value="_formHelper.Model.ShiftType" class="in" id="p-shift">
                         <option value="">انتخاب کنید...</option>
-                        <option value="@EmployeeSalaryProfileRequestShiftType.None">بدون شیفت</option>
-                        <option value="@EmployeeSalaryProfileRequestShiftType.MorningEvening">صبح‌عصر</option>
-                        <option value="@EmployeeSalaryProfileRequestShiftType.MorningNight">صبح‌شب</option>
-                        <option value="@EmployeeSalaryProfileRequestShiftType.EveningNight">عصر‌شب</option>
-                        <option value="@EmployeeSalaryProfileRequestShiftType.MorningEveningNight">صبح‌عصر‌شب</option>
+                        <option value="@SalaryDecreeRequestShiftType.None">بدون شیفت</option>
+                        <option value="@SalaryDecreeRequestShiftType.MorningEvening">صبح‌عصر</option>
+                        <option value="@SalaryDecreeRequestShiftType.MorningNight">صبح‌شب</option>
+                        <option value="@SalaryDecreeRequestShiftType.EveningNight">عصر‌شب</option>
+                        <option value="@SalaryDecreeRequestShiftType.MorningEveningNight">صبح‌عصر‌شب</option>
                     </InputSelect>
-                    <ValidationMessage TValue="EmployeeSalaryProfileRequestShiftType?"
+                    <ValidationMessage TValue="SalaryDecreeRequestShiftType?"
                                        For="() => _formHelper.Model.ShiftType"
                                        class="f-help text-danger"/>
                 </div>
                 <div class="col-md-4 field">
-                    <label class="f-label" for="p-house">حق مسکن <span class="f-badge fb-gold">اختیاری</span></label>
-                    <div class="amount">
-                        <InputText @bind-Value="_formHelper.Model.HousingAllowance" class="in in-ltr" id="p-house"
-                                   inputmode="numeric" placeholder="140000000"/>
-                        <span class="unit">ریال</span>
-                    </div>
-                    <ValidationMessage TValue="string" For="() => _formHelper.Model.HousingAllowance"
+                    <label class="f-label" for="p-contract"><span class="req-s">*</span>نوع قرارداد</label>
+                    <InputSelect @bind-Value="_formHelper.Model.ContractType" class="in" id="p-contract">
+                        <option value="">انتخاب کنید...</option>
+                        <option value="@SalaryDecreeRequestContractType.Permanent">دائم</option>
+                        <option value="@SalaryDecreeRequestContractType.Temporary">موقت</option>
+                        <option value="@SalaryDecreeRequestContractType.FixedTerm">مدت معین</option>
+                    </InputSelect>
+                    <ValidationMessage TValue="SalaryDecreeRequestContractType?"
+                                       For="() => _formHelper.Model.ContractType"
                                        class="f-help text-danger"/>
-                </div>
-                <div class="col-md-4 field">
-                    <label class="f-label" for="p-food">خواربار و بن <span class="f-badge fb-gold">اختیاری</span></label>
-                    <div class="amount">
-                        <InputText @bind-Value="_formHelper.Model.FoodAllowance" class="in in-ltr" id="p-food"
-                                   inputmode="numeric" placeholder="220000000"/>
-                        <span class="unit">ریال</span>
-                    </div>
-                    <ValidationMessage TValue="string" For="() => _formHelper.Model.FoodAllowance"
-                                       class="f-help text-danger"/>
-                </div>
-                <div class="col-md-4 field">
-                    <label class="f-label" for="p-child">حق اولاد هر فرزند <span class="f-badge fb-gold">اختیاری</span></label>
-                    <div class="amount">
-                        <InputText @bind-Value="_formHelper.Model.ChildAllowancePerChild" class="in in-ltr" id="p-child"
-                                   inputmode="numeric" placeholder="104468664"/>
-                        <span class="unit">ریال</span>
-                    </div>
-                    <ValidationMessage TValue="string" For="() => _formHelper.Model.ChildAllowancePerChild"
-                                       class="f-help text-danger"/>
-                    <div class="f-help">پرداختی ماهانه = این مبلغ × تعداد فرزندان پرونده.</div>
                 </div>
                 <div class="col-md-4 field">
                     <label class="f-label" for="p-trans">ایاب‌وذهاب (خالص) <span class="f-badge fb-gold">اختیاری</span></label>
@@ -206,21 +141,110 @@
                                        class="f-help text-danger"/>
                     <div class="f-help">کسورات به آن اعمال نمی‌شود.</div>
                 </div>
+            </div>
+
+            <div class="sec mt-4">
+                <svg class="ic"><use href="assets/img/icons.svg#i-user"/></svg>
+                خانواده و مالیات
+            </div>
+
+            <div class="row g-3">
                 <div class="col-md-4 field">
-                    <label class="f-label" for="p-kar">کارانه (خالص) <span class="f-badge fb-gold">اختیاری</span></label>
-                    <div class="amount">
-                        <InputText @bind-Value="_formHelper.Model.KaranehAmountNet" class="in in-ltr" id="p-kar"
-                                   inputmode="numeric" placeholder="0"/>
-                        <span class="unit">ریال</span>
-                    </div>
-                    <ValidationMessage TValue="string" For="() => _formHelper.Model.KaranehAmountNet"
+                    <label class="f-label" for="p-maritalStatus"><span class="req-s">*</span>وضعیت تأهل</label>
+                    <InputSelect @bind-Value="_formHelper.Model.MaritalStatus" @bind-Value:after="OnMaritalStatusChanged" class="in" id="p-maritalStatus">
+                        <option value="">انتخاب کنید...</option>
+                        <option value="@SalaryDecreeRequestMaritalStatus.Single">مجرد</option>
+                        <option value="@SalaryDecreeRequestMaritalStatus.Married">متأهل</option>
+                        <option value="@SalaryDecreeRequestMaritalStatus.Divorced">مطلقه</option>
+                        <option value="@SalaryDecreeRequestMaritalStatus.Widowed">همسر فوت‌شده</option>
+                    </InputSelect>
+                    <ValidationMessage TValue="SalaryDecreeRequestMaritalStatus?"
+                                       For="() => _formHelper.Model.MaritalStatus"
                                        class="f-help text-danger"/>
                 </div>
+
+                @if (_formHelper.Model.MaritalStatus != SalaryDecreeRequestMaritalStatus.Single)
+                {
+                    <div class="col-md-4 field">
+                        <label class="f-label" for="p-childrenCount"><span class="req-s">*</span>تعداد فرزندان</label>
+                        <InputNumber @bind-Value="_formHelper.Model.ChildrenCount" class="in num" id="p-childrenCount" min="0" max="20"/>
+                        <ValidationMessage TValue="int?" For="() => _formHelper.Model.ChildrenCount"
+                                           class="f-help text-danger"/>
+                    </div>
+                }
+
+                <label class="col-md-4">
+                    <div class="sw-card">
+                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsTaxSubject"/><i></i></span>
+                        <span class="swt">مشمول مالیات حقوق است؟<span class="swd">در محاسبهٔ فیش لحاظ می‌شود.</span></span>
+                    </div>
+                </label>
+            </div>
+
+            <div class="sec mt-4">
+                <svg class="ic"><use href="assets/img/icons.svg#i-shield"/></svg>
+                بیمه
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-4 field">
+                    <label class="f-label" for="p-insuranceNumber"><span class="req-s">*</span>شماره بیمه</label>
+                    <InputText @bind-Value="_formHelper.Model.InsuranceNumber" class="in in-ltr" id="p-insuranceNumber" maxlength="20"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.InsuranceNumber"
+                                       class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-4 field">
+                    <label class="f-label" for="p-positionInInsuranceList"><span class="req-s">*</span>سمت در لیست بیمه</label>
+                    <InputText @bind-Value="_formHelper.Model.PositionInInsuranceList" class="in" id="p-positionInInsuranceList" maxlength="100"/>
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.PositionInInsuranceList"
+                                       class="f-help text-danger"/>
+                </div>
+
+                <div class="col-md-4 field">
+                    <label class="f-label" for="p-insuranceCalculationProfile"><span class="req-s">*</span>پروفایل محاسبه بیمه</label>
+                    <InputSelect @bind-Value="_formHelper.Model.InsuranceCalculationProfile" class="in" id="p-insuranceCalculationProfile">
+                        <option value="">انتخاب کنید...</option>
+                        <option value="@EmployeeInsuranceRequestInsuranceCalculationProfile.FullLegal">کامل و قانونی</option>
+                        <option value="@EmployeeInsuranceRequestInsuranceCalculationProfile.MinimumLaborLaw">حداقل قانون کار</option>
+                    </InputSelect>
+                    <ValidationMessage TValue="EmployeeInsuranceRequestInsuranceCalculationProfile?"
+                                       For="() => _formHelper.Model.InsuranceCalculationProfile"
+                                       class="f-help text-danger"/>
+                </div>
+
+                <label class="col-md-3">
+                    <div class="sw-card">
+                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo7PercentInsurance"/><i></i></span>
+                        <span class="swt">مشمول بیمهٔ ۷٪</span>
+                    </div>
+                </label>
+
+                <label class="col-md-3">
+                    <div class="sw-card">
+                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo20PercentInsurance"/><i></i></span>
+                        <span class="swt">مشمول بیمهٔ ۲۰٪</span>
+                    </div>
+                </label>
+
+                <label class="col-md-3">
+                    <div class="sw-card">
+                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo3PercentInsurance"/><i></i></span>
+                        <span class="swt">مشمول بیمهٔ ۳٪</span>
+                    </div>
+                </label>
+
+                <label class="col-md-3">
+                    <div class="sw-card">
+                        <span class="sw"><InputCheckbox @bind-Value="_formHelper.Model.IsSubjectTo4PercentInsurance"/><i></i></span>
+                        <span class="swt">مشمول بیمهٔ ۴٪</span>
+                    </div>
+                </label>
             </div>
 
             <div class="note n-gold">
                 <svg class="ic"><use href="assets/img/icons.svg#i-info"/></svg>
-                <div>حقوق پایه مبلغ توافقی است، فقط نباید از حداقل قانونی منطقه کمتر باشد. حق اولاد عمداً اینجاست چون «مبلغ دلبخواه مدیر» است؛ سقف قانونی آن (در صورت اعلام) به بخشنامه‌ها می‌رود.</div>
+                <div>حقوق پایه مبلغ توافقی است، فقط نباید از حداقل قانونی منطقه کمتر باشد.</div>
             </div>
 
             <div class="form-foot">
@@ -259,7 +283,7 @@
             try
             {
                 var result = await ApiService.SendAsync(
-                    apiCall: () => ApiClient.GetEmployeeSalaryProfileForEditAsync(Id!.Value)
+                    apiCall: () => ApiClient.GetSalaryDecreeForEditAsync(Id!.Value)
                 );
 
                 if (result is { IsSuccess: true })
@@ -269,22 +293,25 @@
                     {
                         EmployeeId = profile.EmployeeId,
                         EffectiveFrom = profile.EffectiveFrom,
-                        BaseMonthlySalary = ((long)profile.BaseMonthlySalary).ToString(),
+                        BaseDailySalary = ((long)profile.BaseDailySalary).ToString(),
                         AttractionAllowance = FormatOptionalAmount(profile.AttractionAllowance),
                         SupervisionAllowance = FormatOptionalAmount(profile.SupervisionAllowance),
-                        SeniorityBaseApplicationMode = (EmployeeSalaryProfileRequestSeniorityBaseApplicationMode)profile.SeniorityBaseApplicationMode,
-                        SeniorityBaseCalculationMethod = profile.SeniorityBaseCalculationMethod.HasValue
-                            ? (EmployeeSalaryProfileRequestSeniorityBaseCalculationMethod?)profile.SeniorityBaseCalculationMethod.Value
-                            : null,
-                        YearEndSeniorityMode = (EmployeeSalaryProfileRequestYearEndSeniorityMode)profile.YearEndSeniorityMode,
-                        ShiftType = (EmployeeSalaryProfileRequestShiftType)profile.ShiftType,
-                        HousingAllowance = FormatOptionalAmount(profile.HousingAllowance),
-                        FoodAllowance = FormatOptionalAmount(profile.FoodAllowance),
-                        ChildAllowancePerChild = FormatOptionalAmount(profile.ChildAllowancePerChild),
+                        ShiftType = (SalaryDecreeRequestShiftType)profile.ShiftType,
+                        ContractType = (SalaryDecreeRequestContractType)profile.ContractType,
                         TransportationAllowanceNet = FormatOptionalAmount(profile.TransportationAllowanceNet),
-                        KaranehAmountNet = FormatOptionalAmount(profile.KaranehAmountNet)
+                        MaritalStatus = (SalaryDecreeRequestMaritalStatus)profile.MaritalStatus,
+                        ChildrenCount = profile.ChildrenCount,
+                        IsTaxSubject = profile.IsTaxSubject,
+                        InsuranceNumber = profile.InsuranceNumber,
+                        PositionInInsuranceList = profile.PositionInInsuranceList,
+                        IsSubjectTo7PercentInsurance = profile.IsSubjectTo7PercentInsurance,
+                        IsSubjectTo20PercentInsurance = profile.IsSubjectTo20PercentInsurance,
+                        IsSubjectTo3PercentInsurance = profile.IsSubjectTo3PercentInsurance,
+                        IsSubjectTo4PercentInsurance = profile.IsSubjectTo4PercentInsurance,
+                        InsuranceCalculationProfile = (EmployeeInsuranceRequestInsuranceCalculationProfile)profile.InsuranceCalculationProfile
                     };
 
+                    OnMaritalStatusChanged();
                     _formHelper.RebuildEditContext();
                 }
                 else
@@ -309,12 +336,10 @@
         }
     }
 
-    private void OnSeniorityModeChanged()
+    private void OnMaritalStatusChanged()
     {
-        if (_formHelper.Model.SeniorityBaseApplicationMode != EmployeeSalaryProfileRequestSeniorityBaseApplicationMode.Automatic)
-        {
-            _formHelper.Model.SeniorityBaseCalculationMethod = null;
-        }
+        if (_formHelper.Model.MaritalStatus == SalaryDecreeRequestMaritalStatus.Single)
+            _formHelper.Model.ChildrenCount = 0;
     }
 
     private async Task HandleSubmit()
@@ -332,39 +357,50 @@
 
         var model = _formHelper.Model;
 
-        if (!long.TryParse(model.BaseMonthlySalary, out var baseMonthlySalary))
+        if (!long.TryParse(model.BaseDailySalary, out var baseDailySalary))
         {
             _formHelper.SetServerErrors(new Dictionary<string, ICollection<string>>
             {
-                { nameof(SalaryProfileFormModel.BaseMonthlySalary), ["حقوق پایه ماهانه باید عدد صحیح ریال باشد."] }
+                { nameof(SalaryProfileFormModel.BaseDailySalary), ["حقوق پایه روزانه باید عدد صحیح ریال باشد."] }
             });
             ToastService.ShowToastWarning("لطفاً خطاها را بررسی کنید.");
             return;
         }
 
-        var salaryProfile = new EmployeeSalaryProfileRequest(
+        var childrenCount = model.MaritalStatus == SalaryDecreeRequestMaritalStatus.Single
+            ? 0
+            : model.ChildrenCount ?? 0;
+
+        var insuranceRequest = new EmployeeInsuranceRequest(
+            insuranceCalculationProfile: model.InsuranceCalculationProfile ?? EmployeeInsuranceRequestInsuranceCalculationProfile.FullLegal,
+            insuranceNumber: model.InsuranceNumber,
+            isSubjectTo20PercentInsurance: model.IsSubjectTo20PercentInsurance,
+            isSubjectTo3PercentInsurance: model.IsSubjectTo3PercentInsurance,
+            isSubjectTo4PercentInsurance: model.IsSubjectTo4PercentInsurance,
+            isSubjectTo7PercentInsurance: model.IsSubjectTo7PercentInsurance,
+            positionInInsuranceList: model.PositionInInsuranceList);
+
+        var salaryProfile = new SalaryDecreeRequest(
             attractionAllowance: ParseOptionalAmount(model.AttractionAllowance),
-            baseMonthlySalary: baseMonthlySalary,
-            childAllowancePerChild: ParseOptionalAmount(model.ChildAllowancePerChild),
+            baseDailySalary: baseDailySalary,
+            childrenCount: childrenCount,
+            contractType: model.ContractType ?? SalaryDecreeRequestContractType.Permanent,
             effectiveFrom: model.EffectiveFrom,
-            foodAllowance: ParseOptionalAmount(model.FoodAllowance),
-            housingAllowance: ParseOptionalAmount(model.HousingAllowance),
-            karanehAmountNet: ParseOptionalAmount(model.KaranehAmountNet),
-            seniorityBaseApplicationMode: model.SeniorityBaseApplicationMode ?? EmployeeSalaryProfileRequestSeniorityBaseApplicationMode.Manual,
-            seniorityBaseCalculationMethod: model.SeniorityBaseCalculationMethod,
-            shiftType: model.ShiftType ?? EmployeeSalaryProfileRequestShiftType.None,
+            insurance: insuranceRequest,
+            isTaxSubject: model.IsTaxSubject,
+            maritalStatus: model.MaritalStatus ?? SalaryDecreeRequestMaritalStatus.Single,
+            shiftType: model.ShiftType ?? SalaryDecreeRequestShiftType.None,
             supervisionAllowance: ParseOptionalAmount(model.SupervisionAllowance),
-            transportationAllowanceNet: ParseOptionalAmount(model.TransportationAllowanceNet),
-            yearEndSeniorityMode: model.YearEndSeniorityMode ?? EmployeeSalaryProfileRequestYearEndSeniorityMode.MonthlyAccrual);
+            transportationAllowanceNet: ParseOptionalAmount(model.TransportationAllowanceNet));
 
         _isLoading = true;
 
         if (IsEdit)
         {
             var result = await ApiService.SendAsync(
-                apiCall: () => ApiClient.UpdateEmployeeSalaryProfileAsync(
+                apiCall: () => ApiClient.UpdateSalaryDecreeAsync(
                     Id!.Value,
-                    new UpdateEmployeeSalaryProfileRequest(
+                    new UpdateSalaryDecreeRequest(
                         employeeId: model.EmployeeId ?? Guid.Empty,
                         salaryProfile: salaryProfile)
                 ),
@@ -385,8 +421,8 @@
         else
         {
             var result = await ApiService.SendAsync(
-                apiCall: () => ApiClient.CreateEmployeeSalaryProfileAsync(
-                    new CreateEmployeeSalaryProfileRequest(
+                apiCall: () => ApiClient.CreateSalaryDecreeAsync(
+                    new CreateSalaryDecreeRequest(
                         employeeId: model.EmployeeId ?? Guid.Empty,
                         salaryProfile: salaryProfile)
                 ),
@@ -419,30 +455,30 @@
         ["EmployeeId"] = nameof(SalaryProfileFormModel.EmployeeId),
         ["EffectiveFrom"] = nameof(SalaryProfileFormModel.EffectiveFrom),
         ["SalaryProfile.EffectiveFrom"] = nameof(SalaryProfileFormModel.EffectiveFrom),
-        ["BaseMonthlySalary"] = nameof(SalaryProfileFormModel.BaseMonthlySalary),
-        ["SalaryProfile.BaseMonthlySalary"] = nameof(SalaryProfileFormModel.BaseMonthlySalary),
+        ["BaseDailySalary"] = nameof(SalaryProfileFormModel.BaseDailySalary),
+        ["SalaryProfile.BaseDailySalary"] = nameof(SalaryProfileFormModel.BaseDailySalary),
         ["AttractionAllowance"] = nameof(SalaryProfileFormModel.AttractionAllowance),
         ["SalaryProfile.AttractionAllowance"] = nameof(SalaryProfileFormModel.AttractionAllowance),
         ["SupervisionAllowance"] = nameof(SalaryProfileFormModel.SupervisionAllowance),
         ["SalaryProfile.SupervisionAllowance"] = nameof(SalaryProfileFormModel.SupervisionAllowance),
-        ["SeniorityBaseApplicationMode"] = nameof(SalaryProfileFormModel.SeniorityBaseApplicationMode),
-        ["SalaryProfile.SeniorityBaseApplicationMode"] = nameof(SalaryProfileFormModel.SeniorityBaseApplicationMode),
-        ["SeniorityBaseCalculationMethod"] = nameof(SalaryProfileFormModel.SeniorityBaseCalculationMethod),
-        ["SalaryProfile.SeniorityBaseCalculationMethod"] = nameof(SalaryProfileFormModel.SeniorityBaseCalculationMethod),
-        ["YearEndSeniorityMode"] = nameof(SalaryProfileFormModel.YearEndSeniorityMode),
-        ["SalaryProfile.YearEndSeniorityMode"] = nameof(SalaryProfileFormModel.YearEndSeniorityMode),
         ["ShiftType"] = nameof(SalaryProfileFormModel.ShiftType),
         ["SalaryProfile.ShiftType"] = nameof(SalaryProfileFormModel.ShiftType),
-        ["HousingAllowance"] = nameof(SalaryProfileFormModel.HousingAllowance),
-        ["SalaryProfile.HousingAllowance"] = nameof(SalaryProfileFormModel.HousingAllowance),
-        ["FoodAllowance"] = nameof(SalaryProfileFormModel.FoodAllowance),
-        ["SalaryProfile.FoodAllowance"] = nameof(SalaryProfileFormModel.FoodAllowance),
-        ["ChildAllowancePerChild"] = nameof(SalaryProfileFormModel.ChildAllowancePerChild),
-        ["SalaryProfile.ChildAllowancePerChild"] = nameof(SalaryProfileFormModel.ChildAllowancePerChild),
+        ["ContractType"] = nameof(SalaryProfileFormModel.ContractType),
+        ["SalaryProfile.ContractType"] = nameof(SalaryProfileFormModel.ContractType),
         ["TransportationAllowanceNet"] = nameof(SalaryProfileFormModel.TransportationAllowanceNet),
         ["SalaryProfile.TransportationAllowanceNet"] = nameof(SalaryProfileFormModel.TransportationAllowanceNet),
-        ["KaranehAmountNet"] = nameof(SalaryProfileFormModel.KaranehAmountNet),
-        ["SalaryProfile.KaranehAmountNet"] = nameof(SalaryProfileFormModel.KaranehAmountNet)
+        ["MaritalStatus"] = nameof(SalaryProfileFormModel.MaritalStatus),
+        ["SalaryProfile.MaritalStatus"] = nameof(SalaryProfileFormModel.MaritalStatus),
+        ["ChildrenCount"] = nameof(SalaryProfileFormModel.ChildrenCount),
+        ["SalaryProfile.ChildrenCount"] = nameof(SalaryProfileFormModel.ChildrenCount),
+        ["IsTaxSubject"] = nameof(SalaryProfileFormModel.IsTaxSubject),
+        ["SalaryProfile.IsTaxSubject"] = nameof(SalaryProfileFormModel.IsTaxSubject),
+        ["InsuranceNumber"] = nameof(SalaryProfileFormModel.InsuranceNumber),
+        ["SalaryProfile.Insurance.InsuranceNumber"] = nameof(SalaryProfileFormModel.InsuranceNumber),
+        ["PositionInInsuranceList"] = nameof(SalaryProfileFormModel.PositionInInsuranceList),
+        ["SalaryProfile.Insurance.PositionInInsuranceList"] = nameof(SalaryProfileFormModel.PositionInInsuranceList),
+        ["InsuranceCalculationProfile"] = nameof(SalaryProfileFormModel.InsuranceCalculationProfile),
+        ["SalaryProfile.Insurance.InsuranceCalculationProfile"] = nameof(SalaryProfileFormModel.InsuranceCalculationProfile)
     };
 
     public class SalaryProfileFormModel : BaseModel
@@ -456,10 +492,10 @@
         [Display(Name = "از تاریخ")]
         public string EffectiveFrom { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "حقوق پایه ماهانه اجباری است.")]
-        [RegularExpression(@"^\d+$", ErrorMessage = "حقوق پایه ماهانه باید عدد صحیح ریال باشد.")]
-        [Display(Name = "حقوق پایه ماهانه")]
-        public string BaseMonthlySalary { get; set; } = string.Empty;
+        [Required(ErrorMessage = "حقوق پایه روزانه اجباری است.")]
+        [RegularExpression(@"^\d+$", ErrorMessage = "حقوق پایه روزانه باید عدد صحیح ریال باشد.")]
+        [Display(Name = "حقوق پایه روزانه")]
+        public string BaseDailySalary { get; set; } = string.Empty;
 
         [RegularExpression(@"^(\d+)?$", ErrorMessage = "حق جذب باید عدد صحیح ریال باشد.")]
         [Display(Name = "حق جذب")]
@@ -469,39 +505,43 @@
         [Display(Name = "حق سرپرستی")]
         public string? SupervisionAllowance { get; set; }
 
-        [Required(ErrorMessage = "نحوه اعمال پایه سنوات اجباری است.")]
-        [Display(Name = "نحوه اعمال پایه سنوات")]
-        public EmployeeSalaryProfileRequestSeniorityBaseApplicationMode? SeniorityBaseApplicationMode { get; set; }
-
-        [Display(Name = "روش محاسبه پایه سنوات")]
-        public EmployeeSalaryProfileRequestSeniorityBaseCalculationMethod? SeniorityBaseCalculationMethod { get; set; }
-
-        [Required(ErrorMessage = "نحوه سنوات پایان سال اجباری است.")]
-        [Display(Name = "نحوه سنوات پایان سال")]
-        public EmployeeSalaryProfileRequestYearEndSeniorityMode? YearEndSeniorityMode { get; set; }
-
         [Required(ErrorMessage = "نوع شیفت اجباری است.")]
         [Display(Name = "نوع شیفت")]
-        public EmployeeSalaryProfileRequestShiftType? ShiftType { get; set; }
+        public SalaryDecreeRequestShiftType? ShiftType { get; set; }
 
-        [RegularExpression(@"^(\d+)?$", ErrorMessage = "حق مسکن باید عدد صحیح ریال باشد.")]
-        [Display(Name = "حق مسکن")]
-        public string? HousingAllowance { get; set; }
-
-        [RegularExpression(@"^(\d+)?$", ErrorMessage = "حق بن خواربار باید عدد صحیح ریال باشد.")]
-        [Display(Name = "خواربار و بن")]
-        public string? FoodAllowance { get; set; }
-
-        [RegularExpression(@"^(\d+)?$", ErrorMessage = "حق اولاد به ازای هر فرزند باید عدد صحیح ریال باشد.")]
-        [Display(Name = "حق اولاد هر فرزند")]
-        public string? ChildAllowancePerChild { get; set; }
+        [Required(ErrorMessage = "نوع قرارداد اجباری است.")]
+        [Display(Name = "نوع قرارداد")]
+        public SalaryDecreeRequestContractType? ContractType { get; set; }
 
         [RegularExpression(@"^(\d+)?$", ErrorMessage = "حق ایاب و ذهاب خالص باید عدد صحیح ریال باشد.")]
         [Display(Name = "ایاب و ذهاب")]
         public string? TransportationAllowanceNet { get; set; }
 
-        [RegularExpression(@"^(\d+)?$", ErrorMessage = "مبلغ خالص کارانه باید عدد صحیح ریال باشد.")]
-        [Display(Name = "کارانه")]
-        public string? KaranehAmountNet { get; set; }
+        [Required(ErrorMessage = "وضعیت تأهل اجباری است.")]
+        [Display(Name = "وضعیت تأهل")]
+        public SalaryDecreeRequestMaritalStatus? MaritalStatus { get; set; }
+
+        [Required(ErrorMessage = "تعداد فرزندان اجباری است.")]
+        [Range(0, 20, ErrorMessage = "تعداد فرزندان باید بین ۰ تا ۲۰ باشد.")]
+        [Display(Name = "تعداد فرزندان")]
+        public int? ChildrenCount { get; set; } = 0;
+
+        public bool IsTaxSubject { get; set; } = true;
+
+        [Required(ErrorMessage = "شماره بیمه اجباری است.")]
+        [StringLength(20, ErrorMessage = "شماره بیمه نمی‌تواند بیش از ۲۰ نویسه باشد.")]
+        public string InsuranceNumber { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "سمت در لیست بیمه اجباری است.")]
+        [StringLength(100, ErrorMessage = "سمت در لیست بیمه نمی‌تواند بیش از ۱۰۰ نویسه باشد.")]
+        public string PositionInInsuranceList { get; set; } = string.Empty;
+
+        public bool IsSubjectTo7PercentInsurance { get; set; } = true;
+        public bool IsSubjectTo20PercentInsurance { get; set; } = true;
+        public bool IsSubjectTo3PercentInsurance { get; set; }
+        public bool IsSubjectTo4PercentInsurance { get; set; }
+
+        [Required(ErrorMessage = "پروفایل محاسبه بیمه اجباری است.")]
+        public EmployeeInsuranceRequestInsuranceCalculationProfile? InsuranceCalculationProfile { get; set; }
     }
 }

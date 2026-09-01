@@ -9,17 +9,18 @@ public class Workshop
     public Guid UserId { get; private init; }
     public string Name { get; private set; } = null!;
     public string Address { get; private set; } = null!;
-    public WorkshopRegion Region { get; private set; }
     public DateOnly RegistrationDate { get; private set; }
     public string NationalId { get; private set; } = null!;
     public string? PostalCode { get; private set; }
+    public string SocialSecurityNumber { get; private set; } = null!;
+    public string? EconomicCode { get; private set; }
 
     private readonly List<Department> _departments = [];
     public IReadOnlyCollection<Department> Departments => _departments.AsReadOnly();
 
     public static DomainResult<Workshop> Create(Guid workshopId, Guid userId, string name, string address,
-        WorkshopRegion? region,
-        DateOnly? registrationDate, string nationalId, string? postalCode = null)
+        DateOnly? registrationDate, string nationalId, string socialSecurityNumber,
+        string? postalCode = null, string? economicCode = null)
     {
         if (workshopId == Guid.Empty)
             return DomainResult<Workshop>.Failure("شناسه کارگاه نمیتواند خالی باشد.");
@@ -38,9 +39,6 @@ public class Workshop
 
         if (address.Length < 10 || address.Length > 1000)
             return DomainResult<Workshop>.Failure("آدرس کارگاه باید بین 10 تا 1000 حرف باشد.");
-
-        if (region is null)
-            return DomainResult<Workshop>.Failure("منطقه کارگاه نمیتواند خالی باشد.");
 
         if (registrationDate is null)
             return DomainResult<Workshop>.Failure("تاریخ ثبت کارگاه نمیتواند خالی باشد.");
@@ -62,26 +60,44 @@ public class Workshop
         else
             postalCode = null;
 
+        if (string.IsNullOrWhiteSpace(socialSecurityNumber))
+            return DomainResult<Workshop>.Failure("شماره بیمه تامین اجتماعی کارگاه نمیتواند خالی باشد.");
+
+        if (!RegexExtensions.ValidSocialSecurityNumberRegex().IsMatch(socialSecurityNumber))
+            return DomainResult<Workshop>.Failure("شماره بیمه تامین اجتماعی کارگاه باید 1 تا 20 رقم انگلیسی باشد.");
+
+        if (!string.IsNullOrWhiteSpace(economicCode))
+        {
+            if (!RegexExtensions.ValidEconomicCodeRegex().IsMatch(economicCode))
+                return DomainResult<Workshop>.Failure("شماره اقتصادی کارگاه باید 1 تا 20 رقم انگلیسی باشد.");
+        }
+        else
+            economicCode = null;
+
         var workshop = new Workshop
         {
             Id = workshopId,
             UserId = userId,
             Name = name,
             Address = address,
-            Region = region.Value,
             RegistrationDate = registrationDate.Value,
             NationalId = nationalId,
-            PostalCode = postalCode
+            PostalCode = postalCode,
+            SocialSecurityNumber = socialSecurityNumber,
+            EconomicCode = economicCode
         };
         return DomainResult<Workshop>.Success(workshop);
     }
 
-    public static DomainResult<Workshop> Create(Guid userId, string name, string address, WorkshopRegion? region,
-        DateOnly? registrationDate, string nationalId, string? postalCode = null) =>
-        Create(Guid.NewGuid(), userId, name, address, region, registrationDate, nationalId, postalCode);
+    public static DomainResult<Workshop> Create(Guid userId, string name, string address,
+        DateOnly? registrationDate, string nationalId, string socialSecurityNumber,
+        string? postalCode = null, string? economicCode = null) =>
+        Create(Guid.NewGuid(), userId, name, address, registrationDate, nationalId, socialSecurityNumber,
+            postalCode, economicCode);
 
-    public DomainResult Update(string name, string address, WorkshopRegion? region, DateOnly? registrationDate,
-        string nationalId, string? postalCode = null)
+    public DomainResult Update(string name, string address, DateOnly? registrationDate,
+        string nationalId, string socialSecurityNumber, string? postalCode = null,
+        string? economicCode = null)
     {
         if (string.IsNullOrWhiteSpace(name))
             return DomainResult.Failure("نام کارگاه نمیتواند خالی باشد.");
@@ -95,8 +111,6 @@ public class Workshop
         if (address.Length < 10 || address.Length > 1000)
             return DomainResult.Failure("آدرس کارگاه باید بین 10 تا 1000 حرف باشد.");
 
-        if (region is null)
-            return DomainResult.Failure("منطقه کارگاه نمیتواند خالی باشد.");
 
         if (registrationDate is null)
             return DomainResult.Failure("تاریخ ثبت کارگاه نمیتواند خالی باشد.");
@@ -117,13 +131,28 @@ public class Workshop
         }
         else
             postalCode = null;
-        
+
+        if (string.IsNullOrWhiteSpace(socialSecurityNumber))
+            return DomainResult.Failure("شماره بیمه تامین اجتماعی کارگاه نمیتواند خالی باشد.");
+
+        if (!RegexExtensions.ValidSocialSecurityNumberRegex().IsMatch(socialSecurityNumber))
+            return DomainResult.Failure("شماره بیمه تامین اجتماعی کارگاه باید 1 تا 20 رقم انگلیسی باشد.");
+
+        if (!string.IsNullOrWhiteSpace(economicCode))
+        {
+            if (!RegexExtensions.ValidEconomicCodeRegex().IsMatch(economicCode))
+                return DomainResult.Failure("شماره اقتصادی کارگاه باید 1 تا 20 رقم انگلیسی باشد.");
+        }
+        else
+            economicCode = null;
+
         Name = name;
         Address = address;
-        Region = region.Value;
         RegistrationDate = registrationDate.Value;
         NationalId = nationalId;
         PostalCode = postalCode;
+        SocialSecurityNumber = socialSecurityNumber;
+        EconomicCode = economicCode;
 
         return DomainResult.Success();
     }

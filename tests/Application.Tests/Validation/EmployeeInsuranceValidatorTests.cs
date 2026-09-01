@@ -46,26 +46,6 @@ public class EmployeeInsuranceValidatorTests
         result.ShouldHaveValidationErrorFor(x => x.InsuranceNumber);
     }
 
-    [Fact]
-    public void Validate_WithNullSocialSecurityContractRow_ShouldNotHaveAnyErrors()
-    {
-        var dto = _employeeBuilder.BuildInsuranceDto() with { SocialSecurityContractRow = null };
-
-        var result = _validator.TestValidate(dto);
-
-        result.ShouldNotHaveValidationErrorFor(x => x.SocialSecurityContractRow);
-    }
-
-    [Fact]
-    public void Validate_WithSocialSecurityContractRowMoreThan20Characters_ShouldHaveValidationError()
-    {
-        var dto = _employeeBuilder.BuildInsuranceDto() with { SocialSecurityContractRow = new string('a', 21) };
-
-        var result = _validator.TestValidate(dto);
-
-        result.ShouldHaveValidationErrorFor(x => x.SocialSecurityContractRow);
-    }
-
     [Theory]
     [MemberData(nameof(StringTestData.NullOrWhiteSpace), MemberType = typeof(StringTestData))]
     public void Validate_WithInvalidPositionInInsuranceList_ShouldHaveValidationError(string? positionInInsuranceList)
@@ -95,6 +75,17 @@ public class EmployeeInsuranceValidatorTests
         var result = _validator.TestValidate(dto);
 
         result.ShouldHaveValidationErrorFor(x => x.PositionInInsuranceList);
+    }
+
+    [Fact]
+    public void Validate_With4PercentInsuranceFlag_ShouldNotHaveAnyErrors()
+    {
+        var dto = _employeeBuilder.BuildInsuranceDto() with { IsSubjectTo4PercentInsurance = true };
+
+        var result = _validator.TestValidate(dto);
+
+        result.ShouldNotHaveAnyValidationErrors();
+        result.ShouldNotHaveValidationErrorFor(x => x.IsSubjectTo4PercentInsurance);
     }
 
     [Fact]

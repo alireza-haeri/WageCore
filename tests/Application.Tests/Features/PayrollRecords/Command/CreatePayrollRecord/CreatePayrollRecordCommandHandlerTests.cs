@@ -7,7 +7,7 @@ public class CreatePayrollRecordCommandHandlerTests
     private readonly IPayrollLimitsResolver _payrollLimitsResolver;
     private readonly IPayrollRecordQuery _payrollRecordQuery;
     private readonly IWorkShopRepository _workShopRepository;
-    private readonly IEmployeeSalaryProfileQuery _employeeSalaryProfileQuery;
+    private readonly ISalaryDecreeQuery _salaryDecreeQuery;
     private readonly IPayrollCalculationService _payrollCalculationService;
     private readonly IPayrollRecordRepository _payrollRecordRepository;
     private readonly CreatePayrollRecordCommandHandler _handler;
@@ -15,7 +15,7 @@ public class CreatePayrollRecordCommandHandlerTests
     private readonly PayrollRecordBuilder _payrollRecordBuilder = new();
     private readonly Employee _employee;
     private readonly Workshop _workshop;
-    private readonly IReadOnlyList<EmployeeSalaryProfile> _salaryProfiles;
+    private readonly IReadOnlyList<SalaryDecree> _salaryProfiles;
 
     private static readonly Guid ValidUserId = Guid.NewGuid();
     private static readonly Guid ValidEmployeeId = Guid.NewGuid();
@@ -39,7 +39,7 @@ public class CreatePayrollRecordCommandHandlerTests
             .ShouldBeSuccess();
         _salaryProfiles =
         [
-            new EmployeeSalaryProfileBuilder()
+            new SalaryDecreeBuilder()
                 .WithEmployeeId(ValidEmployeeId)
                 .CreateResult()
                 .ShouldBeSuccess()
@@ -50,7 +50,7 @@ public class CreatePayrollRecordCommandHandlerTests
         _payrollLimitsResolver = Substitute.For<IPayrollLimitsResolver>();
         _payrollRecordQuery = Substitute.For<IPayrollRecordQuery>();
         _workShopRepository = Substitute.For<IWorkShopRepository>();
-        _employeeSalaryProfileQuery = Substitute.For<IEmployeeSalaryProfileQuery>();
+        _salaryDecreeQuery = Substitute.For<ISalaryDecreeQuery>();
         _payrollCalculationService = Substitute.For<IPayrollCalculationService>();
         _payrollRecordRepository = Substitute.For<IPayrollRecordRepository>();
 
@@ -60,8 +60,8 @@ public class CreatePayrollRecordCommandHandlerTests
         _workShopRepository
             .GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
             .Returns(_workshop);
-        _employeeSalaryProfileQuery
-            .GetEmployeeSalaryProfilesAffectingPeriodAsync(
+        _salaryDecreeQuery
+            .GetSalaryDecreesAffectingPeriodAsync(
                 ValidUserId,
                 ValidEmployeeId,
                 Arg.Any<DateOnly>(),
@@ -77,7 +77,7 @@ public class CreatePayrollRecordCommandHandlerTests
             _payrollLimitsResolver,
             _payrollRecordQuery,
             _workShopRepository,
-            _employeeSalaryProfileQuery,
+            _salaryDecreeQuery,
             _payrollCalculationService,
             _payrollRecordRepository);
     }
@@ -108,7 +108,7 @@ public class CreatePayrollRecordCommandHandlerTests
             .Calculate(
                 Arg.Any<Employee>(),
                 Arg.Any<Workshop>(),
-                Arg.Any<IReadOnlyList<EmployeeSalaryProfile>>(),
+                Arg.Any<IReadOnlyList<SalaryDecree>>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<PayrollWorkInputDto>())
@@ -119,7 +119,7 @@ public class CreatePayrollRecordCommandHandlerTests
             .Calculate(
                 Arg.Any<Employee>(),
                 Arg.Any<Workshop>(),
-                Arg.Any<IReadOnlyList<EmployeeSalaryProfile>>(),
+                Arg.Any<IReadOnlyList<SalaryDecree>>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<PayrollWorkInputDto>())
@@ -151,14 +151,14 @@ public class CreatePayrollRecordCommandHandlerTests
             .Calculate(
                 Arg.Any<Employee>(),
                 Arg.Any<Workshop>(),
-                Arg.Any<IReadOnlyList<EmployeeSalaryProfile>>(),
+                Arg.Any<IReadOnlyList<SalaryDecree>>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<PayrollWorkInputDto>());
 
     private Task DidNotReceiveSalaryProfiles() =>
-        _employeeSalaryProfileQuery.DidNotReceive()
-            .GetEmployeeSalaryProfilesAffectingPeriodAsync(
+        _salaryDecreeQuery.DidNotReceive()
+            .GetSalaryDecreesAffectingPeriodAsync(
                 Arg.Any<Guid>(),
                 Arg.Any<Guid>(),
                 Arg.Any<DateOnly>(),
@@ -209,11 +209,11 @@ public class CreatePayrollRecordCommandHandlerTests
     public async Task Handle_WhenTheCalculationFails_ShouldReturnTheCalculationErrors()
     {
         SetupPeriod(PeriodStart, PeriodEnd);
-        SetupCalculationFailure("خطا در محاسبه‌ی فرمول: [BaseMonthlySalary] یافت نشد.");
+        SetupCalculationFailure("خطا در محاسبه‌ی فرمول: [BaseDailySalary] یافت نشد.");
 
         var result = await _handler.Handle(CreateValidCommand(), CancellationToken.None);
 
-        result.ShouldBeFailure("خطا در محاسبه‌ی فرمول: [BaseMonthlySalary] یافت نشد.", BadResultType.General);
+        result.ShouldBeFailure("خطا در محاسبه‌ی فرمول: [BaseDailySalary] یافت نشد.", BadResultType.General);
         await _payrollRecordRepository.DidNotReceive()
             .CreateAsync(Arg.Any<PayrollRecord>(), Arg.Any<CancellationToken>());
     }
@@ -254,14 +254,14 @@ public class CreatePayrollRecordCommandHandlerTests
     public async Task Handle_WhenNoSalaryProfileAffectsThePeriod_ShouldReturnNotfoundFailure()
     {
         SetupPeriod(PeriodStart, PeriodEnd);
-        _employeeSalaryProfileQuery
-            .GetEmployeeSalaryProfilesAffectingPeriodAsync(
+        _salaryDecreeQuery
+            .GetSalaryDecreesAffectingPeriodAsync(
                 ValidUserId,
                 ValidEmployeeId,
                 PeriodStart,
                 PeriodEnd,
                 Arg.Any<CancellationToken>())
-            .Returns(new List<EmployeeSalaryProfile>());
+            .Returns(new List<SalaryDecree>());
 
         var result = await _handler.Handle(CreateValidCommand(), CancellationToken.None);
 
@@ -357,7 +357,7 @@ public class CreatePayrollRecordCommandHandlerTests
 
         await _handler.Handle(CreateValidCommand(), CancellationToken.None);
 
-        await _employeeSalaryProfileQuery.Received(1).GetEmployeeSalaryProfilesAffectingPeriodAsync(
+        await _salaryDecreeQuery.Received(1).GetSalaryDecreesAffectingPeriodAsync(
             ValidUserId,
             ValidEmployeeId,
             PeriodStart,
