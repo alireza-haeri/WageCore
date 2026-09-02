@@ -5,6 +5,8 @@ public class PayrollRecord
     public const string TableName = "PayrollRecords";
     public const int MaxPeriodLengthInDays = 31;
     public const int MaxDaysCount = 31;
+    public const int MinStandardWorkingDaysCount = 28;
+    public const int MaxStandardWorkingDaysCount = 31;
 
     public Guid Id { get; private init; }
     public Guid EmployeeId { get; private init; }
@@ -14,13 +16,24 @@ public class PayrollRecord
     public decimal OvertimeHours { get; private set; }
     public decimal NightShiftHours { get; private set; }
     public decimal FridayWorkHours { get; private set; }
-    public decimal LeaveDaysCount { get; private set; }
+    public decimal LeaveHours { get; private set; }
     public decimal AbsenceDaysCount { get; private set; }
     public decimal MissionDaysCount { get; private set; }
+    public decimal MissionHours { get; private set; }
+    public decimal HolidayWorkHours { get; private set; }
+    public decimal? MissionAmountOverride { get; private set; }
+    public int StandardWorkingDaysCount { get; private set; }
+    public bool IsEsfandPeriod { get; private set; }
+    public AnnualBonusType? AnnualBonusType { get; private set; }
+    public decimal? PerformanceBonusAmount { get; private set; }
+    public decimal? CashBenefitsAmount { get; private set; }
     public decimal OvertimeAmount { get; private set; }
     public decimal NightShiftExtraAmount { get; private set; }
     public decimal FridayWorkAllowance { get; private set; }
     public decimal CalculatedTaxAmount { get; private set; }
+    public decimal GrossAmount { get; private set; }
+    public decimal InsuranceAmount { get; private set; }
+    public decimal TotalDeductionsAmount { get; private set; }
     public decimal NetPayableAmount { get; private set; }
     public PayrollRecordStatus Status { get; private set; }
 
@@ -35,7 +48,8 @@ public class PayrollRecord
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
         PayrollWorkInputDto? workInput,
-        PayrollRecordAmountsDto? payrollAmounts)
+        PayrollRecordAmountsDto? payrollAmounts,
+        PayrollCalculatedAmountsDto? calculatedAmounts)
     {
         var validationResult = Validate(
             payrollRecordId,
@@ -46,7 +60,8 @@ public class PayrollRecord
             maxMonthlyOvertimeHours,
             maxFridayHours,
             workInput,
-            payrollAmounts);
+            payrollAmounts,
+            calculatedAmounts);
 
         if (!validationResult.IsSuccess)
             return DomainResult<PayrollRecord>.Failure(validationResult.ErrorMessage!);
@@ -61,13 +76,24 @@ public class PayrollRecord
             OvertimeHours = workInput.OvertimeHours!.Value,
             NightShiftHours = workInput.NightShiftHours!.Value,
             FridayWorkHours = workInput.FridayWorkHours!.Value,
-            LeaveDaysCount = workInput.LeaveDaysCount!.Value,
+            LeaveHours = workInput.LeaveHours!.Value,
             AbsenceDaysCount = workInput.AbsenceDaysCount!.Value,
             MissionDaysCount = workInput.MissionDaysCount!.Value,
-            OvertimeAmount = payrollAmounts!.OvertimeAmount,
-            NightShiftExtraAmount = payrollAmounts.NightShiftExtraAmount,
-            FridayWorkAllowance = payrollAmounts.FridayWorkAllowance,
-            CalculatedTaxAmount = payrollAmounts.CalculatedTaxAmount,
+            MissionHours = workInput.MissionHours!.Value,
+            HolidayWorkHours = workInput.HolidayWorkHours!.Value,
+            MissionAmountOverride = workInput.MissionAmountOverride,
+            StandardWorkingDaysCount = workInput.StandardWorkingDaysCount!.Value,
+            IsEsfandPeriod = workInput.IsEsfandPeriod,
+            AnnualBonusType = workInput.AnnualBonusType,
+            PerformanceBonusAmount = workInput.PerformanceBonusAmount,
+            CashBenefitsAmount = workInput.CashBenefitsAmount,
+            OvertimeAmount = calculatedAmounts!.OvertimeAmount,
+            NightShiftExtraAmount = calculatedAmounts.NightShiftExtraAmount,
+            FridayWorkAllowance = calculatedAmounts.FridayWorkAllowance,
+            CalculatedTaxAmount = payrollAmounts!.CalculatedTaxAmount,
+            GrossAmount = payrollAmounts.GrossAmount,
+            InsuranceAmount = payrollAmounts.InsuranceAmount,
+            TotalDeductionsAmount = payrollAmounts.TotalDeductionsAmount,
             NetPayableAmount = payrollAmounts.NetPayableAmount,
             Status = PayrollRecordStatus.Draft
         });
@@ -81,7 +107,8 @@ public class PayrollRecord
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
         PayrollWorkInputDto? workInput,
-        PayrollRecordAmountsDto? payrollAmounts) =>
+        PayrollRecordAmountsDto? payrollAmounts,
+        PayrollCalculatedAmountsDto? calculatedAmounts) =>
         Create(
             Guid.NewGuid(),
             employeeId,
@@ -91,7 +118,8 @@ public class PayrollRecord
             maxMonthlyOvertimeHours,
             maxFridayHours,
             workInput,
-            payrollAmounts);
+            payrollAmounts,
+            calculatedAmounts);
 
     public DomainResult Update(
         DateOnly periodStart,
@@ -100,7 +128,8 @@ public class PayrollRecord
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
         PayrollWorkInputDto? workInput,
-        PayrollRecordAmountsDto? payrollAmounts)
+        PayrollRecordAmountsDto? payrollAmounts,
+        PayrollCalculatedAmountsDto? calculatedAmounts)
     {
         var canModifyResult = EnsureCanModify();
         if (!canModifyResult.IsSuccess)
@@ -113,7 +142,8 @@ public class PayrollRecord
             maxMonthlyOvertimeHours,
             maxFridayHours,
             workInput,
-            payrollAmounts);
+            payrollAmounts,
+            calculatedAmounts);
 
         if (!validationResult.IsSuccess)
             return validationResult;
@@ -124,13 +154,24 @@ public class PayrollRecord
         OvertimeHours = workInput.OvertimeHours!.Value;
         NightShiftHours = workInput.NightShiftHours!.Value;
         FridayWorkHours = workInput.FridayWorkHours!.Value;
-        LeaveDaysCount = workInput.LeaveDaysCount!.Value;
+        LeaveHours = workInput.LeaveHours!.Value;
         AbsenceDaysCount = workInput.AbsenceDaysCount!.Value;
         MissionDaysCount = workInput.MissionDaysCount!.Value;
-        OvertimeAmount = payrollAmounts!.OvertimeAmount;
-        NightShiftExtraAmount = payrollAmounts.NightShiftExtraAmount;
-        FridayWorkAllowance = payrollAmounts.FridayWorkAllowance;
-        CalculatedTaxAmount = payrollAmounts.CalculatedTaxAmount;
+        MissionHours = workInput.MissionHours!.Value;
+        HolidayWorkHours = workInput.HolidayWorkHours!.Value;
+        MissionAmountOverride = workInput.MissionAmountOverride;
+        StandardWorkingDaysCount = workInput.StandardWorkingDaysCount!.Value;
+        IsEsfandPeriod = workInput.IsEsfandPeriod;
+        AnnualBonusType = workInput.AnnualBonusType;
+        PerformanceBonusAmount = workInput.PerformanceBonusAmount;
+        CashBenefitsAmount = workInput.CashBenefitsAmount;
+        OvertimeAmount = calculatedAmounts!.OvertimeAmount;
+        NightShiftExtraAmount = calculatedAmounts.NightShiftExtraAmount;
+        FridayWorkAllowance = calculatedAmounts.FridayWorkAllowance;
+        CalculatedTaxAmount = payrollAmounts!.CalculatedTaxAmount;
+        GrossAmount = payrollAmounts.GrossAmount;
+        InsuranceAmount = payrollAmounts.InsuranceAmount;
+        TotalDeductionsAmount = payrollAmounts.TotalDeductionsAmount;
         NetPayableAmount = payrollAmounts.NetPayableAmount;
 
         return DomainResult.Success();
@@ -170,7 +211,8 @@ public class PayrollRecord
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
         PayrollWorkInputDto? workInput,
-        PayrollRecordAmountsDto? payrollAmounts)
+        PayrollRecordAmountsDto? payrollAmounts,
+        PayrollCalculatedAmountsDto? calculatedAmounts)
     {
         if (payrollRecordId == Guid.Empty)
             return DomainResult.Failure("شناسه فیش پرداختی نمیتواند خالی باشد.");
@@ -185,7 +227,8 @@ public class PayrollRecord
             maxMonthlyOvertimeHours,
             maxFridayHours,
             workInput,
-            payrollAmounts);
+            payrollAmounts,
+            calculatedAmounts);
     }
 
     private static DomainResult ValidateCommon(
@@ -195,13 +238,17 @@ public class PayrollRecord
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
         PayrollWorkInputDto? workInput,
-        PayrollRecordAmountsDto? payrollAmounts)
+        PayrollRecordAmountsDto? payrollAmounts,
+        PayrollCalculatedAmountsDto? calculatedAmounts)
     {
         if (workInput is null)
             return DomainResult.Failure("اطلاعات فیش پرداختی نمیتواند خالی باشد.");
 
         if (payrollAmounts is null)
             return DomainResult.Failure("مبالغ فیش پرداختی نمیتواند خالی باشد.");
+
+        if (calculatedAmounts is null)
+            return DomainResult.Failure("مبالغ محاسبه شده فیش پرداختی نمیتواند خالی باشد.");
 
         var periodResult = ValidatePeriod(periodStart, periodEnd);
         if (!periodResult.IsSuccess)
@@ -211,7 +258,15 @@ public class PayrollRecord
         if (!attendanceResult.IsSuccess)
             return attendanceResult;
 
-        return ValidateAmounts(payrollAmounts, employeeIsTaxSubject);
+        var annualBonusResult = ValidateAnnualBonus(workInput);
+        if (!annualBonusResult.IsSuccess)
+            return annualBonusResult;
+
+        var amountsResult = ValidateAmounts(payrollAmounts, employeeIsTaxSubject);
+        if (!amountsResult.IsSuccess)
+            return amountsResult;
+
+        return ValidateCalculatedAmounts(calculatedAmounts);
     }
 
     private static DomainResult ValidateAttendance(
@@ -223,7 +278,7 @@ public class PayrollRecord
         if (!daysCountResult.IsSuccess)
             return daysCountResult;
 
-        daysCountResult = ValidateDaysCount(workInput.LeaveDaysCount, "تعداد روزهای مرخصی");
+        daysCountResult = ValidateNonNegative(workInput.LeaveHours, "ساعات مرخصی");
         if (!daysCountResult.IsSuccess)
             return daysCountResult;
 
@@ -234,6 +289,33 @@ public class PayrollRecord
         daysCountResult = ValidateDaysCount(workInput.MissionDaysCount, "تعداد روزهای مأموریت");
         if (!daysCountResult.IsSuccess)
             return daysCountResult;
+
+        var standardDaysResult = ValidateStandardWorkingDaysCount(workInput.StandardWorkingDaysCount);
+        if (!standardDaysResult.IsSuccess)
+            return standardDaysResult;
+
+        if (workInput.WorkedDaysCount > workInput.StandardWorkingDaysCount)
+            return DomainResult.Failure("تعداد روزهای کارکرد نمیتواند بیشتر از روزهای کارکرد استاندارد باشد.");
+
+        daysCountResult = ValidateNonNegative(workInput.MissionHours, "ساعات مأموریت");
+        if (!daysCountResult.IsSuccess)
+            return daysCountResult;
+
+        daysCountResult = ValidateNonNegative(workInput.HolidayWorkHours, "ساعات تعطیل‌کاری");
+        if (!daysCountResult.IsSuccess)
+            return daysCountResult;
+
+        var optionalAmountResult = ValidateOptionalNonNegative(workInput.MissionAmountOverride, "مبلغ مأموریت");
+        if (!optionalAmountResult.IsSuccess)
+            return optionalAmountResult;
+
+        optionalAmountResult = ValidateOptionalNonNegative(workInput.PerformanceBonusAmount, "مبلغ کارانه");
+        if (!optionalAmountResult.IsSuccess)
+            return optionalAmountResult;
+
+        optionalAmountResult = ValidateOptionalNonNegative(workInput.CashBenefitsAmount, "مبلغ مزایای نقدی");
+        if (!optionalAmountResult.IsSuccess)
+            return optionalAmountResult;
 
         var overtimeHoursResult = ValidateNonNegative(workInput.OvertimeHours, "ساعات اضافه‌کاری");
         if (!overtimeHoursResult.IsSuccess)
@@ -262,28 +344,115 @@ public class PayrollRecord
         return DomainResult.Success();
     }
 
+    private static DomainResult ValidateAnnualBonus(PayrollWorkInputDto workInput)
+    {
+        if (workInput.AnnualBonusAmount is null)
+            return DomainResult.Success();
+
+        if (!workInput.IsEsfandPeriod)
+            return DomainResult.Failure("عیدی سالانه فقط در ماه اسفند قابل ثبت است.");
+
+        if (workInput.AnnualBonusType is null)
+            return DomainResult.Failure("نوع عیدی سالانه نمیتواند خالی باشد.");
+
+        return DomainResult.Success();
+    }
+
     private static DomainResult ValidateAmounts(
         PayrollRecordAmountsDto payrollAmounts,
         bool employeeIsTaxSubject)
     {
-        var overtimeAmountResult = ValidateNonNegative(payrollAmounts.OvertimeAmount, "مبلغ اضافه‌کاری");
-        if (!overtimeAmountResult.IsSuccess)
-            return overtimeAmountResult;
-
-        var nightShiftExtraResult = ValidateNonNegative(payrollAmounts.NightShiftExtraAmount, "فوق‌العاده شیفت شب");
-        if (!nightShiftExtraResult.IsSuccess)
-            return nightShiftExtraResult;
-
-        var fridayWorkAllowanceResult = ValidateNonNegative(payrollAmounts.FridayWorkAllowance, "حق کار جمعه");
-        if (!fridayWorkAllowanceResult.IsSuccess)
-            return fridayWorkAllowanceResult;
-
-        var taxAmountResult = ValidateNonNegative(payrollAmounts.CalculatedTaxAmount, "مالیات محاسبه شده");
+        var taxAmountResult = ValidateNonNegativeAmount(payrollAmounts.CalculatedTaxAmount, "مالیات محاسبه شده");
         if (!taxAmountResult.IsSuccess)
             return taxAmountResult;
 
         if (employeeIsTaxSubject && payrollAmounts.CalculatedTaxAmount == 0)
             return DomainResult.Failure("برای کارمند مشمول مالیات، مالیات محاسبه شده نمیتواند صفر باشد.");
+
+        var grossAmountResult = ValidateNonNegativeAmount(payrollAmounts.GrossAmount, "جمع حقوق و مزایا");
+        if (!grossAmountResult.IsSuccess)
+            return grossAmountResult;
+
+        var insuranceAmountResult = ValidateNonNegativeAmount(payrollAmounts.InsuranceAmount, "بیمه ۷٪");
+        if (!insuranceAmountResult.IsSuccess)
+            return insuranceAmountResult;
+
+        var totalDeductionsResult = ValidateNonNegativeAmount(payrollAmounts.TotalDeductionsAmount, "مالیات و کسورات");
+        if (!totalDeductionsResult.IsSuccess)
+            return totalDeductionsResult;
+
+        var netPayableResult = ValidateNonNegativeAmount(payrollAmounts.NetPayableAmount, "حقوق نهایی");
+        if (!netPayableResult.IsSuccess)
+            return netPayableResult;
+
+        return DomainResult.Success();
+    }
+
+    private static DomainResult ValidateCalculatedAmounts(PayrollCalculatedAmountsDto calculatedAmounts)
+    {
+        var result = ValidateNonNegativeAmount(calculatedAmounts.BaseSalaryAmount, "پایه حقوق ماهانه");
+        if (!result.IsSuccess)
+            return result;
+
+        result = ValidateNonNegativeAmount(calculatedAmounts.AttractionAllowanceAmount, "حق جذب");
+        if (!result.IsSuccess)
+            return result;
+
+        result = ValidateNonNegativeAmount(calculatedAmounts.SupervisionAllowanceAmount, "حق سرپرستی");
+        if (!result.IsSuccess)
+            return result;
+
+        result = ValidateNonNegativeAmount(calculatedAmounts.NightShiftExtraAmount, "فوق‌العاده شیفت شب");
+        if (!result.IsSuccess)
+            return result;
+
+        result = ValidateNonNegativeAmount(calculatedAmounts.HolidayWorkAmount, "مبلغ تعطیل‌کاری");
+        if (!result.IsSuccess)
+            return result;
+
+        result = ValidateNonNegativeAmount(calculatedAmounts.ChildAllowanceAmount, "حق اولاد");
+        if (!result.IsSuccess)
+            return result;
+
+        result = ValidateNonNegativeAmount(calculatedAmounts.HousingAllowanceAmount, "هزینه مسکن");
+        if (!result.IsSuccess)
+            return result;
+
+        result = ValidateNonNegativeAmount(calculatedAmounts.FoodAllowanceAmount, "حق بن و خوار و بار");
+        if (!result.IsSuccess)
+            return result;
+
+        result = ValidateNonNegativeAmount(calculatedAmounts.MarriageAllowanceAmount, "حق تأهل");
+        if (!result.IsSuccess)
+            return result;
+
+        result = ValidateNonNegativeAmount(calculatedAmounts.OvertimeAmount, "مبلغ اضافه‌کاری");
+        if (!result.IsSuccess)
+            return result;
+
+        result = ValidateNonNegativeAmount(calculatedAmounts.ShiftWorkAmount, "مبلغ نوبت‌کاری");
+        if (!result.IsSuccess)
+            return result;
+
+        result = ValidateNonNegativeAmount(calculatedAmounts.DailyMissionAmount, "مبلغ مأموریت روزانه");
+        if (!result.IsSuccess)
+            return result;
+
+        result = ValidateNonNegativeAmount(calculatedAmounts.FridayWorkAllowance, "حق کار جمعه");
+        if (!result.IsSuccess)
+            return result;
+
+        result = ValidateNonNegativeAmount(calculatedAmounts.EndOfServiceAmount, "مبلغ سنوات پایان سال");
+        if (!result.IsSuccess)
+            return result;
+
+        result = ValidateNonNegativeAmount(calculatedAmounts.AnnualBonusAmount ?? 0m, "مبلغ عیدی سالانه");
+        if (!result.IsSuccess)
+            return result;
+
+        result = ValidateNonNegativeAmount(calculatedAmounts.CommutingAllowanceAmount, "مبلغ ایاب و ذهاب");
+        if (!result.IsSuccess)
+            return result;
 
         return DomainResult.Success();
     }
@@ -314,11 +483,43 @@ public class PayrollRecord
         return DomainResult.Success();
     }
 
+    private static DomainResult ValidateStandardWorkingDaysCount(int? standardWorkingDaysCount)
+    {
+        if (standardWorkingDaysCount is null)
+            return DomainResult.Failure("تعداد روزهای کارکرد استاندارد نمیتواند خالی باشد.");
+
+        if (standardWorkingDaysCount < MinStandardWorkingDaysCount ||
+            standardWorkingDaysCount > MaxStandardWorkingDaysCount)
+            return DomainResult.Failure(
+                $"تعداد روزهای کارکرد استاندارد باید بین {MinStandardWorkingDaysCount} تا {MaxStandardWorkingDaysCount} روز باشد.");
+
+        return DomainResult.Success();
+    }
+
     private static DomainResult ValidateNonNegative(decimal? value, string fieldName)
     {
         if (value is null)
             return DomainResult.Failure($"{fieldName} نمیتواند خالی باشد.");
 
+        if (value < 0)
+            return DomainResult.Failure($"{fieldName} نمیتواند منفی باشد.");
+
+        return DomainResult.Success();
+    }
+
+    private static DomainResult ValidateOptionalNonNegative(decimal? value, string fieldName)
+    {
+        if (value is null)
+            return DomainResult.Success();
+
+        if (value < 0)
+            return DomainResult.Failure($"{fieldName} نمیتواند منفی باشد.");
+
+        return DomainResult.Success();
+    }
+
+    private static DomainResult ValidateNonNegativeAmount(decimal value, string fieldName)
+    {
         if (value < 0)
             return DomainResult.Failure($"{fieldName} نمیتواند منفی باشد.");
 

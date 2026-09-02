@@ -102,17 +102,45 @@ public class PayrollRecordStatusTests
             1m,
             1m,
             1m,
-            1m);
+            1m,
+            0m,
+            0m,
+            null,
+            31,
+            false,
+            null,
+            null,
+            null,
+            null);
         var amounts = new PayrollRecordAmountsDto(
-            800_000m,
-            300_000m,
-            250_000m,
             1_000m,
+            5_000_000m,
+            350_000m,
+            1_350_000m,
             5_000_000m);
+        var calculatedAmounts = new PayrollCalculatedAmountsDto(
+            10_000_000m,
+            0m,
+            0m,
+            300_000m,
+            0m,
+            0m,
+            0m,
+            0m,
+            0m,
+            800_000m,
+            0m,
+            0m,
+            250_000m,
+            0m,
+            0m,
+            0m,
+            null,
+            null);
 
         using (new AssertionScope())
         {
-            record.Update(periodStart, periodEnd, false, 20m, 12m, dto, amounts)
+            record.Update(periodStart, periodEnd, false, 20m, 12m, dto, amounts, calculatedAmounts)
                 .IsSuccess.Should().BeTrue();
             record.EnsureCanDelete().IsSuccess.Should().BeTrue();
         }
@@ -133,17 +161,45 @@ public class PayrollRecordStatusTests
             1m,
             1m,
             1m,
-            1m);
+            1m,
+            0m,
+            0m,
+            null,
+            31,
+            false,
+            null,
+            null,
+            null,
+            null);
         var amounts = new PayrollRecordAmountsDto(
-            800_000m,
-            300_000m,
-            250_000m,
             1_000m,
+            5_000_000m,
+            350_000m,
+            1_350_000m,
             5_000_000m);
+        var calculatedAmounts = new PayrollCalculatedAmountsDto(
+            10_000_000m,
+            0m,
+            0m,
+            300_000m,
+            0m,
+            0m,
+            0m,
+            0m,
+            0m,
+            800_000m,
+            0m,
+            0m,
+            250_000m,
+            0m,
+            0m,
+            0m,
+            null,
+            null);
 
         using (new AssertionScope())
         {
-            record.Update(periodStart, periodEnd, false, 20m, 12m, dto, amounts)
+            record.Update(periodStart, periodEnd, false, 20m, 12m, dto, amounts, calculatedAmounts)
                 .IsSuccess.Should().BeFalse();
             record.EnsureCanDelete().IsSuccess.Should().BeFalse();
         }

@@ -5,7 +5,7 @@ namespace Shared.Tests.Builders;
 public class LaborLawRuleItemBuilder
 {
     private Guid _id = Guid.NewGuid();
-    private LaborLawRuleKey _key = LaborLawRuleKey.MinimumMonthlySalary;
+    private LaborLawRuleKey _key = LaborLawRuleKey.MinimumDailySalary;
     private decimal _value = 71_661_840m;
     private DateOnly? _effectiveFrom = DateOnly.FromDateTime(DateTime.Now.AddDays(-30));
 

@@ -22,7 +22,7 @@ public class UpdatePayrollRecordCommandHandlerTests
     private static readonly Guid ValidEmployeeId = Guid.NewGuid();
     private static readonly Guid ValidWorkshopId = Guid.NewGuid();
     private static readonly Guid ValidPayrollRecordId = Guid.NewGuid();
-    private static readonly DateOnly PeriodStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-25));
+    private static readonly DateOnly PeriodStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-30));
     private static readonly DateOnly PeriodEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(-1));
     private const int ValidPersianYear = 1404;
     private const int ValidPersianMonth = 6;
@@ -120,24 +120,26 @@ public class UpdatePayrollRecordCommandHandlerTests
 
     private void SetupCalculation(PayrollCalculationResult calculation) =>
         _payrollCalculationService
-            .Calculate(
+            .CalculateAsync(
                 Arg.Any<Employee>(),
                 Arg.Any<Workshop>(),
                 Arg.Any<IReadOnlyList<SalaryDecree>>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<DateOnly>(),
-                Arg.Any<PayrollWorkInputDto>())
+                Arg.Any<PayrollWorkInputDto>(),
+                Arg.Any<CancellationToken>())
             .Returns(Result<PayrollCalculationResult>.Success(calculation));
 
     private void SetupCalculationFailure(string message) =>
         _payrollCalculationService
-            .Calculate(
+            .CalculateAsync(
                 Arg.Any<Employee>(),
                 Arg.Any<Workshop>(),
                 Arg.Any<IReadOnlyList<SalaryDecree>>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<DateOnly>(),
-                Arg.Any<PayrollWorkInputDto>())
+                Arg.Any<PayrollWorkInputDto>(),
+                Arg.Any<CancellationToken>())
             .Returns(Result<PayrollCalculationResult>.GeneralFailure(message));
 
     private void SetupRecord(PayrollRecord payrollRecord) =>
@@ -175,20 +177,47 @@ public class UpdatePayrollRecordCommandHandlerTests
 
     private void DidNotReceiveCalculation() =>
         _payrollCalculationService.DidNotReceive()
-            .Calculate(
+            .CalculateAsync(
                 Arg.Any<Employee>(),
                 Arg.Any<Workshop>(),
                 Arg.Any<IReadOnlyList<SalaryDecree>>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<DateOnly>(),
-                Arg.Any<PayrollWorkInputDto>());
+                Arg.Any<PayrollWorkInputDto>(),
+                Arg.Any<CancellationToken>());
 
     private Task DidNotReceiveUpdate() =>
         _payrollRecordRepository.DidNotReceive()
             .UpdateAsync(Arg.Any<PayrollRecord>(), Arg.Any<CancellationToken>());
 
     private static PayrollCalculationResult UpdatedCalculation() =>
-        new(100_000m, 50_000m, 25_000m, 10_000m, 900_000m);
+        new(
+            new PayrollCalculatedAmountsDto(
+                10_000_000m,
+                0m,
+                0m,
+                50_000m,
+                0m,
+                0m,
+                0m,
+                0m,
+                0m,
+                100_000m,
+                0m,
+                0m,
+                25_000m,
+                0m,
+                0m,
+                0m,
+                null,
+                null),
+            new PayrollRecordAmountsDto(
+                10_000m,
+                1_000_000m,
+                70_000m,
+                80_000m,
+                900_000m),
+            false);
 
     [Fact]
     public async Task Handle_WhenPeriodStartsAfterToday_ShouldReturnGeneralFailure()
@@ -279,7 +308,7 @@ public class UpdatePayrollRecordCommandHandlerTests
 
         var result = await _handler.Handle(CreateValidCommand(), CancellationToken.None);
 
-        result.ShouldBeFailure("خطا در محاسبه‌ی فرمول: [BaseDailySalary] یافت نشد.", BadResultType.General);
+        result.ShouldBeFailure("خطا در محاسبه‌ی فرمول: [BaseDailySalary] یافت نشد.", BadResultType.Validation);
         await DidNotReceiveUpdate();
     }
 
@@ -449,13 +478,18 @@ public class UpdatePayrollRecordCommandHandlerTests
 
         result.ShouldBeSuccess().Should().BeTrue();
 
-        _payrollCalculationService.Received(1).Calculate(
+        _payrollCalculationService.Received(1).CalculateAsync(
             _employee,
             _workshop,
             _salaryProfiles,
             PeriodStart,
             PeriodEnd,
-            work);
+            work with
+            {
+                StandardWorkingDaysCount = PeriodEnd.DayNumber - PeriodStart.DayNumber + 1,
+                IsEsfandPeriod = false
+            },
+            Arg.Any<CancellationToken>());
         await _payrollRecordRepository.Received(1).UpdateAsync(
             Arg.Is<PayrollRecord>(x =>
                 x == _payrollRecord &&
@@ -466,7 +500,11 @@ public class UpdatePayrollRecordCommandHandlerTests
                 x.Status == PayrollRecordStatus.Draft &&
                 x.OvertimeHours == 4m &&
                 x.OvertimeAmount == 100_000m &&
-                x.NetPayableAmount == 900_000m),
+                x.GrossAmount == 1_000_000m &&
+                x.InsuranceAmount == 70_000m &&
+                x.TotalDeductionsAmount == 80_000m &&
+                x.NetPayableAmount == 900_000m &&
+                x.IsEsfandPeriod == false),
             Arg.Any<CancellationToken>());
     }
 }

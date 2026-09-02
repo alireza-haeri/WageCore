@@ -16,7 +16,7 @@ public class LaborLawRuleQueryTests(WageCoreDbContextFixture fixture)
         var repository = scope.ServiceProvider.GetRequiredService<LaborLawRuleRepository>();
         var rule = _builder
             .WithId(Guid.NewGuid())
-            .WithKey(LaborLawRuleKey.MinimumMonthlySalary)
+            .WithKey(LaborLawRuleKey.MinimumDailySalary)
             .WithValue(value)
             .WithEffectiveFrom(effectiveFrom)
             .CreateResult()
@@ -35,7 +35,7 @@ public class LaborLawRuleQueryTests(WageCoreDbContextFixture fixture)
         var query = scope.ServiceProvider.GetRequiredService<ILaborLawRuleQuery>();
 
         var result = await query.GetActiveValueAsync(
-            LaborLawRuleKey.MinimumMonthlySalary,
+            LaborLawRuleKey.MinimumDailySalary,
             DateOnly.FromDateTime(DateTime.Now));
 
         result.Should().BeNull();
@@ -50,7 +50,7 @@ public class LaborLawRuleQueryTests(WageCoreDbContextFixture fixture)
         await CreateRuleAsync(scope, 71_661_840m, DateOnly.FromDateTime(DateTime.Now.AddDays(-10)));
 
         var result = await query.GetActiveValueAsync(
-            LaborLawRuleKey.MinimumMonthlySalary,
+            LaborLawRuleKey.MinimumDailySalary,
             DateOnly.FromDateTime(DateTime.Now.AddDays(-20)));
 
         result.Should().BeNull();
@@ -69,10 +69,10 @@ public class LaborLawRuleQueryTests(WageCoreDbContextFixture fixture)
         await CreateRuleAsync(scope, 103_909_680m, newerDate);
 
         var olderValue = await query.GetActiveValueAsync(
-            LaborLawRuleKey.MinimumMonthlySalary,
+            LaborLawRuleKey.MinimumDailySalary,
             olderDate.AddDays(1));
         var newerValue = await query.GetActiveValueAsync(
-            LaborLawRuleKey.MinimumMonthlySalary,
+            LaborLawRuleKey.MinimumDailySalary,
             DateOnly.FromDateTime(DateTime.Now));
 
         olderValue.Should().Be(71_661_840m);
@@ -106,11 +106,11 @@ public class LaborLawRuleQueryTests(WageCoreDbContextFixture fixture)
 
         var result = await query.GetLaborLawRulesAsync(
             new PaginationDto(1, 10),
-            LaborLawRuleKey.MinimumMonthlySalary);
+            LaborLawRuleKey.MinimumDailySalary);
 
         result.TotalCount.Should().Be(1);
         result.Items.Should().ContainSingle();
-        result.Items.First().Key.Should().Be(LaborLawRuleKey.MinimumMonthlySalary);
+        result.Items.First().Key.Should().Be(LaborLawRuleKey.MinimumDailySalary);
     }
 
     [Fact]
@@ -140,7 +140,7 @@ public class LaborLawRuleQueryTests(WageCoreDbContextFixture fixture)
         var result = await query.GetLaborLawRuleByIdAsync(rule.Id);
 
         result.Should().NotBeNull();
-        result!.Key.Should().Be(LaborLawRuleKey.MinimumMonthlySalary);
+        result!.Key.Should().Be(LaborLawRuleKey.MinimumDailySalary);
         result.Value.Should().Be(103_909_680m);
         result.EffectiveFrom.Should().Be(effectiveFrom);
     }

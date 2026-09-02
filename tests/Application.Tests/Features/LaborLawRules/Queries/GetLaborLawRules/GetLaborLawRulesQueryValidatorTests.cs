@@ -8,7 +8,7 @@ public class GetLaborLawRulesQueryValidatorTests
     [Fact]
     public void Validate_WithValidQuery_ShouldNotHaveAnyErrors()
     {
-        var query = new GetLaborLawRulesQuery(ValidPagination, LaborLawRuleKey.MinimumMonthlySalary);
+        var query = new GetLaborLawRulesQuery(ValidPagination, LaborLawRuleKey.MinimumDailySalary);
 
         var result = _validator.TestValidate(query);
 

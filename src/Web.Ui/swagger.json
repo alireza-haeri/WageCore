@@ -104,10 +104,46 @@
               "type": "integer",
               "format": "int32",
               "x-enumNames": [
-                "OvertimePay"
+                "OvertimePay",
+                "BaseSalaryPay",
+                "AttractionAllowancePay",
+                "SupervisionAllowancePay",
+                "NightShiftExtraPay",
+                "HolidayWorkPay",
+                "ChildAllowancePay",
+                "HousingAllowancePay",
+                "FoodAllowancePay",
+                "MarriageAllowancePay",
+                "ShiftWorkPay",
+                "DailyMissionPay",
+                "FridayWorkPay",
+                "EndOfServicePay",
+                "AnnualBonusPay",
+                "CommutingAllowancePay",
+                "InsurancePay",
+                "TaxPay",
+                "TaxableAmountPay"
               ],
               "enum": [
-                0
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18
               ]
             }
           }
@@ -1331,16 +1367,78 @@
               "type": "integer",
               "format": "int32",
               "x-enumNames": [
-                "MinimumMonthlySalary",
+                "MinimumDailySalary",
                 "DailyWorkingHours",
                 "MaximumOvertimeHoursPerDay",
-                "MaximumNightShiftHoursPerDay"
+                "MaximumNightShiftHoursPerDay",
+                "MaximumOvertimeHoursPerMonth",
+                "MaximumFridayWorkHoursPerMonth",
+                "InsurancePercentage",
+                "AnnualBonusMinimumAmount",
+                "AnnualBonusMaximumAmount",
+                "TaxExemptMonthlyAmount",
+                "TaxRatePercentage",
+                "StandardDailyWorkHours",
+                "NightShiftPercentage",
+                "HolidayWorkPercentage",
+                "OvertimePercentage",
+                "FridayWorkPercentage",
+                "ChildAllowanceMultiplier",
+                "EndOfServiceDaysPerYear",
+                "HousingAllowanceAmount",
+                "FoodAllowanceAmount",
+                "MarriageAllowanceAmount",
+                "ShiftWorkPercentageMorningEvening",
+                "ShiftWorkPercentageMorningNight",
+                "ShiftWorkPercentageEveningNight",
+                "ShiftWorkPercentageMorningEveningNight",
+                "TaxBracket1Threshold",
+                "TaxBracket2Threshold",
+                "TaxBracket2Rate",
+                "TaxBracket3Threshold",
+                "TaxBracket3Rate",
+                "TaxBracket4Threshold",
+                "TaxBracket4Rate",
+                "TaxBracket5Threshold",
+                "TaxBracket5Rate",
+                "TaxBracket6Rate"
               ],
               "enum": [
                 0,
                 1,
                 2,
-                3
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                22,
+                23,
+                24,
+                25,
+                26,
+                27,
+                28,
+                29,
+                30,
+                31,
+                32,
+                33,
+                34
               ]
             }
           }
@@ -1517,6 +1615,239 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/GetLaborLawRuleForEditResponseResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/payroll-records": {
+      "post": {
+        "tags": [
+          "PayrollRecord"
+        ],
+        "summary": "CreatePayrollRecord",
+        "operationId": "CreatePayrollRecord",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreatePayrollRecordRequest"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreatePayrollRecordRequest"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreatePayrollRecordRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePayrollRecordCommandResponseResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePayrollRecordCommandResponseResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePayrollRecordCommandResponseResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/payroll-records/{payrollRecordId}": {
+      "put": {
+        "tags": [
+          "PayrollRecord"
+        ],
+        "summary": "UpdatePayrollRecord",
+        "operationId": "UpdatePayrollRecord",
+        "parameters": [
+          {
+            "name": "payrollRecordId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdatePayrollRecordRequest"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdatePayrollRecordRequest"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdatePayrollRecordRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "PayrollRecord"
+        ],
+        "summary": "DeletePayrollRecord",
+        "operationId": "DeletePayrollRecord",
+        "parameters": [
+          {
+            "name": "employeeId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "payrollRecordId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/payroll-records/{payrollRecordId}/mark-as-paid": {
+      "post": {
+        "tags": [
+          "PayrollRecord"
+        ],
+        "summary": "MarkPayrollRecordAsPaid",
+        "operationId": "MarkPayrollRecordAsPaid",
+        "parameters": [
+          {
+            "name": "employeeId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "payrollRecordId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResult"
                 }
               }
             }
@@ -2291,10 +2622,46 @@
             "type": "integer",
             "format": "int32",
             "x-enumNames": [
-              "OvertimePay"
+              "OvertimePay",
+              "BaseSalaryPay",
+              "AttractionAllowancePay",
+              "SupervisionAllowancePay",
+              "NightShiftExtraPay",
+              "HolidayWorkPay",
+              "ChildAllowancePay",
+              "HousingAllowancePay",
+              "FoodAllowancePay",
+              "MarriageAllowancePay",
+              "ShiftWorkPay",
+              "DailyMissionPay",
+              "FridayWorkPay",
+              "EndOfServicePay",
+              "AnnualBonusPay",
+              "CommutingAllowancePay",
+              "InsurancePay",
+              "TaxPay",
+              "TaxableAmountPay"
             ],
             "enum": [
-              0
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18
             ]
           },
           "expression": {
@@ -2515,16 +2882,78 @@
             "type": "integer",
             "format": "int32",
             "x-enumNames": [
-              "MinimumMonthlySalary",
+              "MinimumDailySalary",
               "DailyWorkingHours",
               "MaximumOvertimeHoursPerDay",
-              "MaximumNightShiftHoursPerDay"
+              "MaximumNightShiftHoursPerDay",
+              "MaximumOvertimeHoursPerMonth",
+              "MaximumFridayWorkHoursPerMonth",
+              "InsurancePercentage",
+              "AnnualBonusMinimumAmount",
+              "AnnualBonusMaximumAmount",
+              "TaxExemptMonthlyAmount",
+              "TaxRatePercentage",
+              "StandardDailyWorkHours",
+              "NightShiftPercentage",
+              "HolidayWorkPercentage",
+              "OvertimePercentage",
+              "FridayWorkPercentage",
+              "ChildAllowanceMultiplier",
+              "EndOfServiceDaysPerYear",
+              "HousingAllowanceAmount",
+              "FoodAllowanceAmount",
+              "MarriageAllowanceAmount",
+              "ShiftWorkPercentageMorningEvening",
+              "ShiftWorkPercentageMorningNight",
+              "ShiftWorkPercentageEveningNight",
+              "ShiftWorkPercentageMorningEveningNight",
+              "TaxBracket1Threshold",
+              "TaxBracket2Threshold",
+              "TaxBracket2Rate",
+              "TaxBracket3Threshold",
+              "TaxBracket3Rate",
+              "TaxBracket4Threshold",
+              "TaxBracket4Rate",
+              "TaxBracket5Threshold",
+              "TaxBracket5Rate",
+              "TaxBracket6Rate"
             ],
             "enum": [
               0,
               1,
               2,
-              3
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34
             ]
           },
           "value": {
@@ -2533,6 +2962,86 @@
           },
           "effectiveFrom": {
             "type": "string"
+          }
+        }
+      },
+      "CreatePayrollRecordCommandResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "payrollRecordId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "CreatePayrollRecordCommandResponseResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatePayrollRecordCommandResponse"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "CreatePayrollRecordRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "employeeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "persianYear": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "persianMonth": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "work": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PayrollWorkInputDto"
+              }
+            ]
           }
         }
       },
@@ -2848,10 +3357,46 @@
             "type": "integer",
             "format": "int32",
             "x-enumNames": [
-              "OvertimePay"
+              "OvertimePay",
+              "BaseSalaryPay",
+              "AttractionAllowancePay",
+              "SupervisionAllowancePay",
+              "NightShiftExtraPay",
+              "HolidayWorkPay",
+              "ChildAllowancePay",
+              "HousingAllowancePay",
+              "FoodAllowancePay",
+              "MarriageAllowancePay",
+              "ShiftWorkPay",
+              "DailyMissionPay",
+              "FridayWorkPay",
+              "EndOfServicePay",
+              "AnnualBonusPay",
+              "CommutingAllowancePay",
+              "InsurancePay",
+              "TaxPay",
+              "TaxableAmountPay"
             ],
             "enum": [
-              0
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18
             ]
           },
           "expression": {
@@ -2920,10 +3465,46 @@
             "type": "integer",
             "format": "int32",
             "x-enumNames": [
-              "OvertimePay"
+              "OvertimePay",
+              "BaseSalaryPay",
+              "AttractionAllowancePay",
+              "SupervisionAllowancePay",
+              "NightShiftExtraPay",
+              "HolidayWorkPay",
+              "ChildAllowancePay",
+              "HousingAllowancePay",
+              "FoodAllowancePay",
+              "MarriageAllowancePay",
+              "ShiftWorkPay",
+              "DailyMissionPay",
+              "FridayWorkPay",
+              "EndOfServicePay",
+              "AnnualBonusPay",
+              "CommutingAllowancePay",
+              "InsurancePay",
+              "TaxPay",
+              "TaxableAmountPay"
             ],
             "enum": [
-              0
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18
             ]
           },
           "expression": {
@@ -3193,16 +3774,78 @@
             "type": "integer",
             "format": "int32",
             "x-enumNames": [
-              "MinimumMonthlySalary",
+              "MinimumDailySalary",
               "DailyWorkingHours",
               "MaximumOvertimeHoursPerDay",
-              "MaximumNightShiftHoursPerDay"
+              "MaximumNightShiftHoursPerDay",
+              "MaximumOvertimeHoursPerMonth",
+              "MaximumFridayWorkHoursPerMonth",
+              "InsurancePercentage",
+              "AnnualBonusMinimumAmount",
+              "AnnualBonusMaximumAmount",
+              "TaxExemptMonthlyAmount",
+              "TaxRatePercentage",
+              "StandardDailyWorkHours",
+              "NightShiftPercentage",
+              "HolidayWorkPercentage",
+              "OvertimePercentage",
+              "FridayWorkPercentage",
+              "ChildAllowanceMultiplier",
+              "EndOfServiceDaysPerYear",
+              "HousingAllowanceAmount",
+              "FoodAllowanceAmount",
+              "MarriageAllowanceAmount",
+              "ShiftWorkPercentageMorningEvening",
+              "ShiftWorkPercentageMorningNight",
+              "ShiftWorkPercentageEveningNight",
+              "ShiftWorkPercentageMorningEveningNight",
+              "TaxBracket1Threshold",
+              "TaxBracket2Threshold",
+              "TaxBracket2Rate",
+              "TaxBracket3Threshold",
+              "TaxBracket3Rate",
+              "TaxBracket4Threshold",
+              "TaxBracket4Rate",
+              "TaxBracket5Threshold",
+              "TaxBracket5Rate",
+              "TaxBracket6Rate"
             ],
             "enum": [
               0,
               1,
               2,
-              3
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34
             ]
           },
           "value": {
@@ -3271,16 +3914,78 @@
             "type": "integer",
             "format": "int32",
             "x-enumNames": [
-              "MinimumMonthlySalary",
+              "MinimumDailySalary",
               "DailyWorkingHours",
               "MaximumOvertimeHoursPerDay",
-              "MaximumNightShiftHoursPerDay"
+              "MaximumNightShiftHoursPerDay",
+              "MaximumOvertimeHoursPerMonth",
+              "MaximumFridayWorkHoursPerMonth",
+              "InsurancePercentage",
+              "AnnualBonusMinimumAmount",
+              "AnnualBonusMaximumAmount",
+              "TaxExemptMonthlyAmount",
+              "TaxRatePercentage",
+              "StandardDailyWorkHours",
+              "NightShiftPercentage",
+              "HolidayWorkPercentage",
+              "OvertimePercentage",
+              "FridayWorkPercentage",
+              "ChildAllowanceMultiplier",
+              "EndOfServiceDaysPerYear",
+              "HousingAllowanceAmount",
+              "FoodAllowanceAmount",
+              "MarriageAllowanceAmount",
+              "ShiftWorkPercentageMorningEvening",
+              "ShiftWorkPercentageMorningNight",
+              "ShiftWorkPercentageEveningNight",
+              "ShiftWorkPercentageMorningEveningNight",
+              "TaxBracket1Threshold",
+              "TaxBracket2Threshold",
+              "TaxBracket2Rate",
+              "TaxBracket3Threshold",
+              "TaxBracket3Rate",
+              "TaxBracket4Threshold",
+              "TaxBracket4Rate",
+              "TaxBracket5Threshold",
+              "TaxBracket5Rate",
+              "TaxBracket6Rate"
             ],
             "enum": [
               0,
               1,
               2,
-              3
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34
             ]
           },
           "value": {
@@ -4307,6 +5012,98 @@
           }
         }
       },
+      "PayrollWorkInputDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "workedDaysCount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "overtimeHours": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "nightShiftHours": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "fridayWorkHours": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "leaveHours": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "absenceDaysCount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "missionDaysCount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "missionHours": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "holidayWorkHours": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "missionAmountOverride": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "standardWorkingDaysCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "isEsfandPeriod": {
+            "type": "boolean"
+          },
+          "annualBonusAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "annualBonusType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "Minimum",
+              "Maximum"
+            ],
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "performanceBonusAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "cashBenefitsAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        }
+      },
       "RegisterUserCommandResponse": {
         "type": "object",
         "additionalProperties": false,
@@ -4508,10 +5305,46 @@
             "type": "integer",
             "format": "int32",
             "x-enumNames": [
-              "OvertimePay"
+              "OvertimePay",
+              "BaseSalaryPay",
+              "AttractionAllowancePay",
+              "SupervisionAllowancePay",
+              "NightShiftExtraPay",
+              "HolidayWorkPay",
+              "ChildAllowancePay",
+              "HousingAllowancePay",
+              "FoodAllowancePay",
+              "MarriageAllowancePay",
+              "ShiftWorkPay",
+              "DailyMissionPay",
+              "FridayWorkPay",
+              "EndOfServicePay",
+              "AnnualBonusPay",
+              "CommutingAllowancePay",
+              "InsurancePay",
+              "TaxPay",
+              "TaxableAmountPay"
             ],
             "enum": [
-              0
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18
             ]
           },
           "expression": {
@@ -4562,16 +5395,78 @@
             "type": "integer",
             "format": "int32",
             "x-enumNames": [
-              "MinimumMonthlySalary",
+              "MinimumDailySalary",
               "DailyWorkingHours",
               "MaximumOvertimeHoursPerDay",
-              "MaximumNightShiftHoursPerDay"
+              "MaximumNightShiftHoursPerDay",
+              "MaximumOvertimeHoursPerMonth",
+              "MaximumFridayWorkHoursPerMonth",
+              "InsurancePercentage",
+              "AnnualBonusMinimumAmount",
+              "AnnualBonusMaximumAmount",
+              "TaxExemptMonthlyAmount",
+              "TaxRatePercentage",
+              "StandardDailyWorkHours",
+              "NightShiftPercentage",
+              "HolidayWorkPercentage",
+              "OvertimePercentage",
+              "FridayWorkPercentage",
+              "ChildAllowanceMultiplier",
+              "EndOfServiceDaysPerYear",
+              "HousingAllowanceAmount",
+              "FoodAllowanceAmount",
+              "MarriageAllowanceAmount",
+              "ShiftWorkPercentageMorningEvening",
+              "ShiftWorkPercentageMorningNight",
+              "ShiftWorkPercentageEveningNight",
+              "ShiftWorkPercentageMorningEveningNight",
+              "TaxBracket1Threshold",
+              "TaxBracket2Threshold",
+              "TaxBracket2Rate",
+              "TaxBracket3Threshold",
+              "TaxBracket3Rate",
+              "TaxBracket4Threshold",
+              "TaxBracket4Rate",
+              "TaxBracket5Threshold",
+              "TaxBracket5Rate",
+              "TaxBracket6Rate"
             ],
             "enum": [
               0,
               1,
               2,
-              3
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34
             ]
           },
           "value": {
@@ -4580,6 +5475,32 @@
           },
           "effectiveFrom": {
             "type": "string"
+          }
+        }
+      },
+      "UpdatePayrollRecordRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "employeeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "persianYear": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "persianMonth": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "work": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PayrollWorkInputDto"
+              }
+            ]
           }
         }
       },
@@ -4667,6 +5588,9 @@
     },
     {
       "name": "LaborLawRule"
+    },
+    {
+      "name": "PayrollRecord"
     },
     {
       "name": "SalaryDecree"

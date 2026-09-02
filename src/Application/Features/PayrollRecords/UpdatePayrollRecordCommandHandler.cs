@@ -20,6 +20,11 @@ public class UpdatePayrollRecordCommandHandler(
         if (period.StartPeriod > DateOnly.FromDateTime(DateTime.Now))
             return Result<bool>.GeneralFailure("تاریخ شروع دوره نباید برای آینده باشد.");
 
+        var workInput = request.Work with
+        {
+            StandardWorkingDaysCount = period.EndPeriod.DayNumber - period.StartPeriod.DayNumber + 1
+        };
+
         var payrollRecord = await payrollRecordRepository.GetByIdAsync(
             request.UserId,
             request.PayrollRecordId,
@@ -77,13 +82,14 @@ public class UpdatePayrollRecordCommandHandler(
         if (salaryProfiles.Count == 0)
             return Result<bool>.NotfoundFailure("برای این بازه حکم حقوقی کارمند یافت نشد.");
 
-        var calculationResult = payrollCalculationService.Calculate(
+        var calculationResult = await payrollCalculationService.CalculateAsync(
             employee,
             workshop,
             salaryProfiles,
             period.StartPeriod,
             period.EndPeriod,
-            request.Work);
+            workInput,
+            cancellationToken);
         if (!calculationResult.IsSuccess)
             return Result<bool>.ValidationFailure(calculationResult.Errors!);
 
@@ -94,13 +100,9 @@ public class UpdatePayrollRecordCommandHandler(
             salaryProfiles[0].IsTaxSubject,
             limits.MaxMonthlyOvertimeHours,
             limits.MaxFridayHours,
-            request.Work,
-            new PayrollRecordAmountsDto(
-                calculation.OvertimeAmount,
-                calculation.NightShiftExtraAmount,
-                calculation.FridayWorkAllowance,
-                calculation.CalculatedTaxAmount,
-                calculation.NetPayableAmount));
+            workInput with { IsEsfandPeriod = calculation.IsEsfandPeriod },
+            calculation.Amounts,
+            calculation.CalculatedAmounts);
         if (!updateResult.IsSuccess)
             return Result<bool>.GeneralFailure(updateResult.ErrorMessage!);
 

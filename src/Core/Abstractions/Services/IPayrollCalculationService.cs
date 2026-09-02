@@ -2,11 +2,12 @@ namespace Core.Abstractions.Services;
 
 public interface IPayrollCalculationService
 {
-    Result<PayrollCalculationResult> Calculate(
+    Task<Result<PayrollCalculationResult>> CalculateAsync(
         Employee employee,
         Workshop workshop,
-        IReadOnlyList<SalaryDecree> salaryProfiles,
+        IReadOnlyList<SalaryDecree> salaryDecrees,
         DateOnly periodStart,
         DateOnly periodEnd,
-        PayrollWorkInputDto workInput);
+        PayrollWorkInputDto workInput,
+        CancellationToken cancellationToken = default);
 }

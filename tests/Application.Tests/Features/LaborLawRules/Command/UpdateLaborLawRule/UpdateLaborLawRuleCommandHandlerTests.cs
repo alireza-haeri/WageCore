@@ -29,7 +29,7 @@ public class UpdateLaborLawRuleCommandHandlerTests
 
     private static UpdateLaborLawRuleCommand CreateValidCommand(
         Guid? ruleId = null,
-        LaborLawRuleKey? key = LaborLawRuleKey.MinimumMonthlySalary,
+        LaborLawRuleKey? key = LaborLawRuleKey.MinimumDailySalary,
         decimal? value = ValidValue,
         DateOnly? effectiveFrom = null) =>
         new(ruleId ?? ValidRuleId, key, value, effectiveFrom ?? ValidEffectiveFrom);

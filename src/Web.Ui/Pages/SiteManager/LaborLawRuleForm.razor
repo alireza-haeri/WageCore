@@ -38,7 +38,10 @@
                     <label class="f-label" for="r-key"><span class="req-s">*</span>کلید قانون</label>
                     <InputSelect @bind-Value="_formHelper.Model.Key" class="in" id="r-key" data-autofocus>
                         <option value="">انتخاب کنید...</option>
-                        <option value="@LaborLawRuleKey.MinimumMonthlySalary">حداقل حقوق ماهانه</option>
+                        @foreach (var i in Enum.GetValues<LaborLawRuleKey>())
+                        {
+                            <option value="@i">@i</option>
+                        }
                     </InputSelect>
                     <ValidationMessage TValue="LaborLawRuleKey?" For="() => _formHelper.Model.Key"
                                        class="f-help text-danger"/>

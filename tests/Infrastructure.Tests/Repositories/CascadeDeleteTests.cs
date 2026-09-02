@@ -101,7 +101,7 @@ public class CascadeDeleteTests(WageCoreDbContextFixture fixture)
             .WithId(Guid.NewGuid())
             .WithEmployeeId(employee.Id)
             .WithEmployeeHireDate(employee.HireDate)
-            .WithMinimumMonthlySalary(10_000_000m)
+            .WithMinimumDailySalary(10_000_000m)
             .WithEffectiveFrom(effectiveFrom)
             .WithBaseDailySalary(20_000_000m)
             .CreateResult()
@@ -116,6 +116,29 @@ public class CascadeDeleteTests(WageCoreDbContextFixture fixture)
     {
         var context = scope.ServiceProvider.GetRequiredService<WageCoreDbContext>();
         return await context.Set<SalaryDecree>().CountAsync(x => x.EmployeeId == employeeId);
+    }
+
+    private async Task<PayrollRecord> CreatePayrollRecordAsync(AsyncServiceScope scope,
+        Core.Domain.Employee employee, DateOnly periodStart, DateOnly periodEnd)
+    {
+        var repository = scope.ServiceProvider.GetRequiredService<IPayrollRecordRepository>();
+
+        var payrollRecord = new PayrollRecordBuilder()
+            .WithId(Guid.NewGuid())
+            .WithEmployeeId(employee.Id)
+            .WithPeriod(periodStart, periodEnd)
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        (await repository.CreateAsync(payrollRecord)).Should().Be(payrollRecord.Id);
+
+        return payrollRecord;
+    }
+
+    private static async Task<int> CountPayrollRecordsAsync(AsyncServiceScope scope, Guid employeeId)
+    {
+        var context = scope.ServiceProvider.GetRequiredService<WageCoreDbContext>();
+        return await context.Set<PayrollRecord>().CountAsync(x => x.EmployeeId == employeeId);
     }
 
     #region Delete Workshop
@@ -420,6 +443,35 @@ public class CascadeDeleteTests(WageCoreDbContextFixture fixture)
         {
             (await employeeRepository.GetByIdAsync(userId, employee.Id)).Should().BeNull();
             (await CountSalaryProfilesAsync(scope, employee.Id)).Should().Be(0);
+        }
+    }
+
+    [Fact]
+    public async Task DeleteEmployee_WhenEmployeeHasPayrollRecords_ShouldDeleteItsPayrollRecords()
+    {
+        await using var scope = fixture.CreateScope();
+        var employeeRepository = scope.ServiceProvider.GetRequiredService<EmployeeRepository>();
+        var userId = await CreateUserAsync(scope);
+
+        var departmentId = Guid.NewGuid();
+        var workshop = await CreateWorkshopWithDepartmentsAsync(scope, userId, "1111111111",
+            (departmentId, "بخش تولید"));
+
+        var employee = await CreateEmployeeAsync(scope, workshop.Id, departmentId, "EMP001", "1234567890");
+
+        await CreatePayrollRecordAsync(scope, employee, new DateOnly(2025, 1, 1), new DateOnly(2025, 1, 31));
+        await CreatePayrollRecordAsync(scope, employee, new DateOnly(2025, 2, 1), new DateOnly(2025, 2, 28));
+
+        (await CountPayrollRecordsAsync(scope, employee.Id)).Should().Be(2);
+
+        var deleteResult = await employeeRepository.DeleteAsync(userId, employee.Id);
+
+        deleteResult.Should().BeTrue();
+
+        using (new AssertionScope())
+        {
+            (await employeeRepository.GetByIdAsync(userId, employee.Id)).Should().BeNull();
+            (await CountPayrollRecordsAsync(scope, employee.Id)).Should().Be(0);
         }
     }
 

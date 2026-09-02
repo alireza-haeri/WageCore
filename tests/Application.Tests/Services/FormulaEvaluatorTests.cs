@@ -16,6 +16,8 @@ public class FormulaEvaluatorTests
         decimal MonthlyWorkingHours,
         decimal MinimumMonthlyWage);
 
+    private record AllowanceProfile(decimal? AttractionAllowance, int? ChildrenCount, DateOnly? EffectiveFrom);
+
     private record WorkInput(decimal WorkedDaysCount);
 
     private record WorkshopSettings(decimal MinimumMonthlyWage, decimal FridayAllowanceFactor);
@@ -53,6 +55,57 @@ public class FormulaEvaluatorTests
     }
 
     [Fact]
+    public void Evaluate_WithNullNullableDecimalProperty_ShouldBindItAsZero()
+    {
+        var profile = new AllowanceProfile(null, 0, null);
+
+        var result = _evaluator.Evaluate(
+            "[AllowanceProfileAttractionAllowance] * 2 + 1",
+            profile);
+
+        result.ShouldBeSuccess().Should().Be(1m);
+    }
+
+    [Fact]
+    public void Evaluate_WithNullNullableIntegerProperty_ShouldBindItAsZero()
+    {
+        var profile = new AllowanceProfile(0m, null, null);
+
+        var result = _evaluator.Evaluate(
+            "[AllowanceProfileChildrenCount] * 3",
+            profile);
+
+        result.ShouldBeSuccess().Should().Be(0m);
+    }
+
+    [Fact]
+    public void Evaluate_WithValueNullableDecimalProperty_ShouldBindItsValue()
+    {
+        var profile = new AllowanceProfile(500_000m, 0, null);
+
+        var result = _evaluator.Evaluate(
+            "[AllowanceProfileAttractionAllowance] * 2",
+            profile);
+
+        result.ShouldBeSuccess().Should().Be(1_000_000m);
+    }
+
+    [Fact]
+    public void Evaluate_WithNullNullableDateOnlyProperty_ShouldLeaveItUnbound()
+    {
+        var profile = new AllowanceProfile(0m, 0, null);
+
+        var result = _evaluator.Evaluate(
+            "[AllowanceProfileEffectiveFrom] = [RequestedDate] ? 3 : 7",
+            profile,
+            new FormulaVariable("RequestedDate", new DateOnly(2025, 1, 1)));
+
+        // The null DateOnly property is not a numeric, so it stays unbound and
+        // referencing it is an evaluation failure (same as before normalization).
+        result.ShouldBeFailure("خطا در محاسبه‌ی فرمول");
+    }
+
+    [Fact]
     public void Evaluate_WithFractionalLiteral_ShouldKeepTheFractionalPart()
     {
         var work = new WorkInput(24m);
@@ -79,7 +132,7 @@ public class FormulaEvaluatorTests
     public void Evaluate_WithBooleanVariable_ShouldUseItAsTheCondition()
     {
         var result = _evaluator.Evaluate(
-            "IF([IsDraft], 5, 9)",
+            "[IsDraft] ? 5 : 9",
             new FormulaVariable("IsDraft", true));
 
         result.ShouldBeSuccess().Should().Be(5m);
@@ -89,7 +142,7 @@ public class FormulaEvaluatorTests
     public void Evaluate_WithStringVariable_ShouldCompareItForEquality()
     {
         var result = _evaluator.Evaluate(
-            @"IF([Note] = ""مأموریت"", 2, 8)",
+            @"[Note] = ""مأموریت"" ? 2 : 8",
             new FormulaVariable("Note", "مأموریت"));
 
         result.ShouldBeSuccess().Should().Be(2m);
@@ -115,7 +168,7 @@ public class FormulaEvaluatorTests
         var period = new PayrollPeriod(new DateOnly(2025, 2, 1), new TimeOnly(8, 0));
 
         var result = _evaluator.Evaluate(
-            "IF([PayrollPeriodPeriodStart] = [RequestedPeriodStart], 12, 4)",
+            "[PayrollPeriodPeriodStart] = [RequestedPeriodStart] ? 12 : 4",
             period,
             new FormulaVariable("RequestedPeriodStart", new DateOnly(2025, 2, 1)));
 
@@ -128,7 +181,7 @@ public class FormulaEvaluatorTests
         var period = new PayrollPeriod(new DateOnly(2025, 2, 1), new TimeOnly(22, 30));
 
         var result = _evaluator.Evaluate(
-            "IF([PayrollPeriodStartTime] = [RequestedStartTime], 3, 7)",
+            "[PayrollPeriodStartTime] = [RequestedStartTime] ? 3 : 7",
             period,
             new FormulaVariable("RequestedStartTime", new TimeOnly(22, 30)));
 

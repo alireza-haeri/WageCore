@@ -71,7 +71,7 @@ public class SalaryDecreeQueryTests(WageCoreDbContextFixture fixture)
             .WithId(Guid.NewGuid())
             .WithEmployeeId(employee.Id)
             .WithEmployeeHireDate(employee.HireDate)
-            .WithMinimumMonthlySalary(10_000_000m)
+            .WithMinimumDailySalary(10_000_000m)
             .WithEffectiveFrom(effectiveFrom)
             .WithBaseDailySalary(baseDailySalary)
             .CreateResult()
@@ -369,7 +369,7 @@ public class SalaryDecreeQueryTests(WageCoreDbContextFixture fixture)
             .WithId(Guid.NewGuid())
             .WithEmployeeId(employee.Id)
             .WithEmployeeHireDate(employee.HireDate)
-            .WithMinimumMonthlySalary(10_000_000m)
+            .WithMinimumDailySalary(10_000_000m)
             .WithEffectiveFrom(effectiveFrom)
             .WithBaseDailySalary(20_000_000m)
             .WithAttractionAllowance(1_000_000m)
@@ -475,6 +475,88 @@ public class SalaryDecreeQueryTests(WageCoreDbContextFixture fixture)
         var result = await query.GetSalaryDecreeByIdAsync(userId, Guid.NewGuid());
 
         result.Should().BeNull();
+    }
+
+    #endregion
+
+    #region GetSalaryDecreesAffectingPeriodAsync
+
+    [Fact]
+    public async Task GetSalaryDecreesAffectingPeriodAsync_ShouldReturnDecreeEffectiveByPeriodEndOrderedDesc()
+    {
+        await using var scope = fixture.CreateScope();
+        var query = scope.ServiceProvider.GetRequiredService<ISalaryDecreeQuery>();
+        var userId = await CreateUserAsync(scope);
+        var departmentId = Guid.NewGuid();
+        var workshop = await CreateWorkshopWithDepartmentAsync(scope, userId, departmentId,
+            "کارگاه نمونه", "بخش تولید", "1111111111");
+        var employee = await CreateEmployeeAsync(scope, workshop.Id, departmentId, "EMP001", "علی رضایی", "1234567890");
+
+        var olderDate = employee.HireDate.AddDays(1);
+        var midPeriodDate = employee.HireDate.AddDays(10);
+        await SaveSalaryProfileAsync(scope, employee, olderDate, 20_000_000m);
+        await SaveSalaryProfileAsync(scope, employee, midPeriodDate, 25_000_000m);
+
+        var result = await query.GetSalaryDecreesAffectingPeriodAsync(
+            userId,
+            employee.Id,
+            midPeriodDate.AddDays(1),
+            midPeriodDate.AddDays(31));
+
+        result.Should().HaveCount(2);
+        result[0].EffectiveFrom.Should().Be(midPeriodDate);
+        result[0].BaseDailySalary.Should().Be(25_000_000m);
+        result[1].EffectiveFrom.Should().Be(olderDate);
+        result[1].BaseDailySalary.Should().Be(20_000_000m);
+    }
+
+    [Fact]
+    public async Task GetSalaryDecreesAffectingPeriodAsync_WhenDecreeStartsAfterPeriodEnd_ShouldExcludeIt()
+    {
+        await using var scope = fixture.CreateScope();
+        var query = scope.ServiceProvider.GetRequiredService<ISalaryDecreeQuery>();
+        var userId = await CreateUserAsync(scope);
+        var departmentId = Guid.NewGuid();
+        var workshop = await CreateWorkshopWithDepartmentAsync(scope, userId, departmentId,
+            "کارگاه نمونه", "بخش تولید", "1111111111");
+        var employee = await CreateEmployeeAsync(scope, workshop.Id, departmentId, "EMP001", "علی رضایی", "1234567890");
+
+        var effectiveDate = employee.HireDate.AddDays(1);
+        var laterDate = effectiveDate.AddDays(14);
+        await SaveSalaryProfileAsync(scope, employee, effectiveDate, 20_000_000m);
+        await SaveSalaryProfileAsync(scope, employee, laterDate, 25_000_000m);
+
+        var result = await query.GetSalaryDecreesAffectingPeriodAsync(
+            userId,
+            employee.Id,
+            effectiveDate.AddDays(1),
+            effectiveDate.AddDays(9));
+
+        result.Should().ContainSingle();
+        result[0].EffectiveFrom.Should().Be(effectiveDate);
+    }
+
+    [Fact]
+    public async Task GetSalaryDecreesAffectingPeriodAsync_WithAnotherUser_ShouldReturnEmpty()
+    {
+        await using var scope = fixture.CreateScope();
+        var query = scope.ServiceProvider.GetRequiredService<ISalaryDecreeQuery>();
+        var userId = await CreateUserAsync(scope);
+        var anotherUserId = await CreateUserAsync(scope, "09123456780");
+        var departmentId = Guid.NewGuid();
+        var workshop = await CreateWorkshopWithDepartmentAsync(scope, userId, departmentId,
+            "کارگاه نمونه", "بخش تولید", "1111111111");
+        var employee = await CreateEmployeeAsync(scope, workshop.Id, departmentId, "EMP001", "علی رضایی", "1234567890");
+
+        await SaveSalaryProfileAsync(scope, employee, employee.HireDate.AddDays(1), 20_000_000m);
+
+        var result = await query.GetSalaryDecreesAffectingPeriodAsync(
+            anotherUserId,
+            employee.Id,
+            employee.HireDate.AddDays(2),
+            employee.HireDate.AddDays(32));
+
+        result.Should().BeEmpty();
     }
 
     #endregion

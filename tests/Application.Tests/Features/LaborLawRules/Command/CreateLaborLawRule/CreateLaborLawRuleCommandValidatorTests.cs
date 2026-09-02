@@ -8,7 +8,7 @@ public class CreateLaborLawRuleCommandValidatorTests
     private const decimal ValidValue = 71_661_840m;
 
     private static CreateLaborLawRuleCommand CreateValidCommand(
-        LaborLawRuleKey? key = LaborLawRuleKey.MinimumMonthlySalary,
+        LaborLawRuleKey? key = LaborLawRuleKey.MinimumDailySalary,
         decimal? value = ValidValue,
         DateOnly? effectiveFrom = null) =>
         new(key, value, effectiveFrom ?? ValidEffectiveFrom);
@@ -78,7 +78,7 @@ public class CreateLaborLawRuleCommandValidatorTests
     public void Validate_WithNullEffectiveFrom_ShouldHaveValidationError()
     {
         var command = new CreateLaborLawRuleCommand(
-            LaborLawRuleKey.MinimumMonthlySalary,
+            LaborLawRuleKey.MinimumDailySalary,
             ValidValue,
             null);
 

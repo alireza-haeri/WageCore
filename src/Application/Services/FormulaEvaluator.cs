@@ -16,7 +16,7 @@ public class FormulaEvaluator(ILogger<FormulaEvaluator> logger) : IFormulaEvalua
             {
                 if (modelOrVariable is FormulaVariable variable)
                 {
-                    if (!TryAddParameter(parameters, variable.Name, variable.Value))
+                    if (!TryAddParameter(parameters, variable.Name, NormalizeParameterValue(variable.Value, null)))
                         return FailureForDuplicatedParameter(expression, variable.Name);
 
                     continue;
@@ -28,7 +28,7 @@ public class FormulaEvaluator(ILogger<FormulaEvaluator> logger) : IFormulaEvalua
                 {
                     var parameterName = $"{modelType.Name}{property.Name}";
 
-                    if (!TryAddParameter(parameters, parameterName, property.GetValue(modelOrVariable)))
+                    if (!TryAddParameter(parameters, parameterName, NormalizeParameterValue(property.GetValue(modelOrVariable), property.PropertyType)))
                         return FailureForDuplicatedParameter(expression, parameterName);
                 }
             }
@@ -48,6 +48,45 @@ public class FormulaEvaluator(ILogger<FormulaEvaluator> logger) : IFormulaEvalua
 
     private static bool TryAddParameter(IDictionary<string, object> parameters, string name, object? value) =>
         value is null || !IsSupportedType(value) || parameters.TryAdd(name, value);
+
+    // NCalc's equality/comparison operators do not understand DateOnly/TimeOnly natively,
+    // so [DateOnly] = [DateOnly] fails at evaluation time. Normalize them to DateTime
+    // (a type NCalc compares by value) so equality checks work inside expressions.
+    // Nullable numeric model properties (decimal?, int?, ...) are normalized to their
+    // default (0) so a formula can reference them even when the source value is null.
+    // declaredType is null for explicit FormulaVariable values, whose null-ness cannot
+    // be attributed to a nullable numeric type at runtime.
+    private static object? NormalizeParameterValue(object? value, Type? declaredType)
+    {
+        if (value is null &&
+            declaredType is not null &&
+            TryGetNullableNumericUnderlyingType(declaredType, out var numericType))
+            return Activator.CreateInstance(numericType);
+
+        return value switch
+        {
+            DateOnly dateOnly => dateOnly.ToDateTime(TimeOnly.MinValue),
+            TimeOnly timeOnly => new DateTime(1, 1, 1, timeOnly.Hour, timeOnly.Minute, timeOnly.Second, timeOnly.Millisecond),
+            _ => value
+        };
+    }
+
+    private static bool TryGetNullableNumericUnderlyingType(Type type, out Type numericType)
+    {
+        numericType = Nullable.GetUnderlyingType(type) ?? type;
+
+        return numericType == typeof(decimal)
+            || numericType == typeof(double)
+            || numericType == typeof(float)
+            || numericType == typeof(int)
+            || numericType == typeof(long)
+            || numericType == typeof(short)
+            || numericType == typeof(byte)
+            || numericType == typeof(sbyte)
+            || numericType == typeof(uint)
+            || numericType == typeof(ulong)
+            || numericType == typeof(ushort);
+    }
 
     private DomainResult<decimal> FailureForDuplicatedParameter(string expression, string parameterName)
     {

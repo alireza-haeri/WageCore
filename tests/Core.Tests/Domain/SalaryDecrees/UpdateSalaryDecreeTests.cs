@@ -147,25 +147,25 @@ public class UpdateSalaryDecreeTests
     }
 
     [Fact]
-    public void Update_WithNullMinimumMonthlySalary_ShouldFail()
+    public void Update_WithNullMinimumDailySalary_ShouldFail()
     {
         var profile = CreateValidSalaryProfile();
 
         var result = profile.Update(ValidHireDate, null, null, BuildValidDto());
 
-        result.ShouldBeFailure("حداقل حقوق ماهانه");
+        result.ShouldBeFailure("حداقل حقوق روزانه");
     }
 
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
-    public void Update_WithMinimumMonthlySalaryLessThanOrEqualToZero_ShouldFail(decimal minimumMonthlySalary)
+    public void Update_WithMinimumDailySalaryLessThanOrEqualToZero_ShouldFail(decimal minimumDailySalary)
     {
         var profile = CreateValidSalaryProfile();
 
-        var result = profile.Update(ValidHireDate, null, minimumMonthlySalary, BuildValidDto());
+        var result = profile.Update(ValidHireDate, null, minimumDailySalary, BuildValidDto());
 
-        result.ShouldBeFailure("حداقل حقوق ماهانه باید بیشتر از صفر ریال باشد.");
+        result.ShouldBeFailure("حداقل حقوق روزانه باید بیشتر از صفر ریال باشد.");
     }
 
     [Fact]
@@ -176,7 +176,7 @@ public class UpdateSalaryDecreeTests
 
         var result = profile.Update(ValidHireDate, null, 20_000_000m, dto);
 
-        result.ShouldBeFailure("حقوق پایه روزانه نمیتواند کمتر از حداقل حقوق ماهانه باشد.");
+        result.ShouldBeFailure("حقوق پایه روزانه نمیتواند کمتر از حداقل حقوق روزانه باشد.");
     }
     [Fact]
     public void Update_WhenFailed_ShouldNotChangeValues()

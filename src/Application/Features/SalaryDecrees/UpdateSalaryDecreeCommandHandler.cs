@@ -45,15 +45,15 @@ public class UpdateSalaryDecreeCommandHandler(
                 return Result<bool>.GeneralFailure("امکان انتقال این حکم به این بازه وجود ندارد، چون فیش پرداختی برای این بازه صادر شده است.");
         }
 
-        var minimumMonthlySalary = await laborLawRuleQuery.GetActiveValueAsync(
-            LaborLawRuleKey.MinimumMonthlySalary,
+        var minimumDailySalary = await laborLawRuleQuery.GetActiveValueAsync(
+            LaborLawRuleKey.MinimumDailySalary,
             request.SalaryProfile.EffectiveFrom!.Value,
             cancellationToken);
 
-        if (minimumMonthlySalary is null)
+        if (minimumDailySalary is null)
         {
-            logger.LogCritical("MinimumMonthlySalary for {DateTime} not found", request.SalaryProfile.EffectiveFrom);
-            return Result<bool>.NotfoundFailure("حداقل حقوق ماهانه یافت نشد.");
+            logger.LogCritical("MinimumDailySalary for {DateTime} not found", request.SalaryProfile.EffectiveFrom);
+            return Result<bool>.NotfoundFailure("حداقل حقوق روزانه یافت نشد.");
         }
 
         var latestExistingEffectiveFrom = await salaryDecreeQuery.GetLatestEffectiveFromAsync(
@@ -65,7 +65,7 @@ public class UpdateSalaryDecreeCommandHandler(
         var domainResult = salaryProfile.Update(
             employee.HireDate,
             latestExistingEffectiveFrom,
-            minimumMonthlySalary,
+            minimumDailySalary,
             request.SalaryProfile);
 
         if (!domainResult.IsSuccess)
