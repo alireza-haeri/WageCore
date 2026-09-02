@@ -308,7 +308,7 @@ public class UpdatePayrollRecordCommandHandlerTests
 
         var result = await _handler.Handle(CreateValidCommand(), CancellationToken.None);
 
-        result.ShouldBeFailure("خطا در محاسبه‌ی فرمول: [BaseDailySalary] یافت نشد.", BadResultType.General);
+        result.ShouldBeFailure("خطا در محاسبه‌ی فرمول: [BaseDailySalary] یافت نشد.", BadResultType.Validation);
         await DidNotReceiveUpdate();
     }
 

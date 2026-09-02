@@ -384,7 +384,7 @@ public class PayrollCalculationService(
         if (!insurancePercentageResult.IsSuccess)
             return insurancePercentageResult.Map<decimal?>(value => value);
 
-        var insurancePercentage = insurancePercentageResult.Response!.Value;
+        var insurancePercentage = insurancePercentageResult.Response;
 
         // The insurance formula receives the gross amount and the insurance
         // percentage rule value, e.g. "GrossAmount * InsurancePercentage / 100".
@@ -452,8 +452,8 @@ public class PayrollCalculationService(
             period,
             [
                 new FormulaVariable("GrossAmount", grossAmount),
-                new FormulaVariable(nameof(LaborLawRuleKey.TaxExemptMonthlyAmount), taxExemptAmountResult.Response!.Value),
-                new FormulaVariable(nameof(LaborLawRuleKey.TaxRatePercentage), taxRateResult.Response!.Value)
+                new FormulaVariable(nameof(LaborLawRuleKey.TaxExemptMonthlyAmount), taxExemptAmountResult.Response),
+                new FormulaVariable(nameof(LaborLawRuleKey.TaxRatePercentage), taxRateResult.Response)
             ],
             cancellationToken);
         if (!taxResult.IsSuccess)

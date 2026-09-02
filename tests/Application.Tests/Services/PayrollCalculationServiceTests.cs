@@ -182,9 +182,11 @@ public class PayrollCalculationServiceTests
         await Calculate();
 
         await _laborLawRuleQuery.Received(1)
-            .GetActiveValueAsync(LaborLawRuleKey.MaximumOvertimeHoursPerMonth, PeriodStart, Arg.Any<CancellationToken>());
+            .GetActiveValueAsync(LaborLawRuleKey.MaximumOvertimeHoursPerMonth, PeriodStart,
+                Arg.Any<CancellationToken>());
         await _laborLawRuleQuery.Received(1)
-            .GetActiveValueAsync(LaborLawRuleKey.MaximumFridayWorkHoursPerMonth, PeriodStart, Arg.Any<CancellationToken>());
+            .GetActiveValueAsync(LaborLawRuleKey.MaximumFridayWorkHoursPerMonth, PeriodStart,
+                Arg.Any<CancellationToken>());
         await _laborLawRuleQuery.Received(1)
             .GetActiveValueAsync(LaborLawRuleKey.InsurancePercentage, PeriodStart, Arg.Any<CancellationToken>());
         await _laborLawRuleQuery.Received(1)
@@ -216,26 +218,6 @@ public class PayrollCalculationServiceTests
             .ContainSingle(v =>
                 v.Name == nameof(LaborLawRuleKey.MaximumOvertimeHoursPerMonth) &&
                 Equals(v.Value, 80m));
-    }
-
-    [Fact]
-    public async Task CalculateAsync_ShouldPassTheWorkInputToTheFormula()
-    {
-        var workInput = BuildWorkInput();
-        object[]? formulaInputs = null;
-        _formulaEvaluator
-            .Evaluate(Arg.Any<string>(), Arg.Any<object[]>())
-            .Returns(ci =>
-            {
-                formulaInputs = ci.Arg<object[]>();
-
-                return DomainResult<decimal>.Success(DefaultItemAmount);
-            });
-
-        await Calculate(workInput);
-
-        formulaInputs.Should().NotBeNull();
-        formulaInputs!.Should().Contain(workInput);
     }
 
     [Fact]
@@ -503,6 +485,29 @@ public class PayrollCalculationServiceTests
     }
 
     [Fact]
+    public async Task CalculateAsync_ShouldPassTheWorkInputToTheFormula()
+    {
+        var workInput = BuildWorkInput();
+        var formulaInputsCalls = new List<object[]>();
+        _formulaEvaluator
+            .Evaluate(Arg.Any<string>(), Arg.Any<object[]>())
+            .Returns(ci =>
+            {
+                formulaInputsCalls.Add(ci.Arg<object[]>());
+
+                return DomainResult<decimal>.Success(DefaultItemAmount);
+            });
+
+        await Calculate(workInput);
+
+        formulaInputsCalls.Should().NotBeEmpty();
+        // The first Evaluate call is for a payroll item (e.g. BaseSalaryPay), which
+        // receives the work input directly — unlike the insurance/tax calls that
+        // only receive GrossAmount and labor law rule values.
+        formulaInputsCalls.First().Should().Contain(workInput);
+    }
+
+    [Fact]
     public async Task CalculateAsync_ShouldSelectTheLatestDecreeEffectiveByPeriodEnd()
     {
         var olderDecree = new SalaryDecreeBuilder()
@@ -519,12 +524,12 @@ public class PayrollCalculationServiceTests
             .ShouldBeSuccess();
         IReadOnlyList<SalaryDecree> salaryDecrees = [olderDecree, midPeriodDecree];
 
-        object[]? formulaInputs = null;
+        var formulaInputsCalls = new List<object[]>();
         _formulaEvaluator
             .Evaluate(Arg.Any<string>(), Arg.Any<object[]>())
             .Returns(ci =>
             {
-                formulaInputs = ci.Arg<object[]>();
+                formulaInputsCalls.Add(ci.Arg<object[]>());
 
                 return DomainResult<decimal>.Success(DefaultItemAmount);
             });
@@ -532,9 +537,11 @@ public class PayrollCalculationServiceTests
         var result = await Calculate(salaryDecrees: salaryDecrees);
 
         result.ShouldBeSuccess();
-        formulaInputs.Should().NotBeNull();
-        formulaInputs!.Should().Contain(midPeriodDecree);
-        formulaInputs!.Should().NotContain(olderDecree);
+        formulaInputsCalls.Should().NotBeEmpty();
+        // The first Evaluate call is for a payroll item, which receives the
+        // salary decree directly — insurance/tax calls do not.
+        formulaInputsCalls.First().Should().Contain(midPeriodDecree);
+        formulaInputsCalls.SelectMany(inputs => inputs).Should().NotContain(olderDecree);
     }
 
     [Fact]
