@@ -55,15 +55,29 @@ public class PayrollCalculationService(
             return Result<PayrollCalculationResult>.NotfoundFailure("برای این بازه حکم حقوقی کارمند یافت نشد.");
 
         var salaryProfile = salaryProfiles
-            .Where(profile => profile.EffectiveFrom <= periodStart)
+            .Where(profile => profile.EffectiveFrom <= periodEnd)
             .OrderByDescending(profile => profile.EffectiveFrom)
-            .FirstOrDefault() ?? salaryProfiles[^1];
+            .FirstOrDefault();
+
+        if (salaryProfile is null)
+        {
+            logger.LogWarning(
+                "No active salary decree found for employee {EmployeeId} in period {PeriodStart}..{PeriodEnd}",
+                employee.Id,
+                periodStart,
+                periodEnd);
+
+            return Result<PayrollCalculationResult>.NotfoundFailure(
+                "حکم حقوقی فعال برای این کارمند در این بازه یافت نشد.");
+        }
 
         var period = new PayrollPeriod(
             periodStart,
             periodEnd,
             periodEnd.DayNumber - periodStart.DayNumber + 1,
             persianCalendarService.GetFridayCount(periodStart, periodEnd));
+
+        var isEsfandPeriod = persianCalendarService.GetPersianMonth(periodStart) == 12;
 
         logger.LogInformation(
             "Starting payroll calculation for employee {EmployeeId} ({EmployeeName}) in period {PeriodStart}..{PeriodEnd}",
@@ -181,18 +195,22 @@ public class PayrollCalculationService(
             DailyMissionAmount: GetAmount(amounts, FormulaKey.DailyMissionPay),
             FridayWorkAllowance: GetAmount(amounts, FormulaKey.FridayWorkPay),
             EndOfServiceAmount: GetAmount(amounts, FormulaKey.EndOfServicePay),
-            AnnualBonusAmount: GetAmount(amounts, FormulaKey.AnnualBonusPay),
-            CommutingAllowanceAmount: GetAmount(amounts, FormulaKey.CommutingAllowancePay));
+            AnnualBonusAmount: GetOptionalAmount(amounts, FormulaKey.AnnualBonusPay),
+            CommutingAllowanceAmount: GetAmount(amounts, FormulaKey.CommutingAllowancePay),
+            PerformanceBonusAmount: performanceBonusResult.Response,
+            CashBenefitsAmount: cashBenefitsResult.Response);
 
+        // The IsSuccess guards above guarantee these values are non-null; .Value is
+        // used instead of ?? 0m so a missing amount can never be silently masked as zero.
         var payrollAmounts = new PayrollRecordAmountsDto(
-            CalculatedTaxAmount: calculatedTaxAmount,
+            CalculatedTaxAmount: calculatedTaxAmount.Value,
             GrossAmount: grossAmount,
-            InsuranceAmount: insuranceAmount,
-            TotalDeductionsAmount: totalDeductionsAmount,
-            NetPayableAmount: netPayableAmount);
+            InsuranceAmount: insuranceAmount.Value,
+            TotalDeductionsAmount: totalDeductionsAmount.Value,
+            NetPayableAmount: netPayableAmount.Value);
 
         return Result<PayrollCalculationResult>.Success(
-            new PayrollCalculationResult(calculatedAmounts, payrollAmounts));
+            new PayrollCalculationResult(calculatedAmounts, payrollAmounts, isEsfandPeriod));
     }
 
     private async Task<Result<decimal?>> CalculateItemAsync(
@@ -466,6 +484,9 @@ public class PayrollCalculationService(
 
     private static decimal GetAmount(IReadOnlyDictionary<FormulaKey, decimal> amounts, FormulaKey key) =>
         amounts.TryGetValue(key, out var amount) ? amount : 0m;
+
+    private static decimal? GetOptionalAmount(IReadOnlyDictionary<FormulaKey, decimal> amounts, FormulaKey key) =>
+        amounts.TryGetValue(key, out var amount) ? amount : (decimal?)null;
 
     private static Result<PayrollCalculationResult> ConvertFailure<T>(Result<T> result)
     {

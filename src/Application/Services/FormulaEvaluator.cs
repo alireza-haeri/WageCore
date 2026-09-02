@@ -16,7 +16,7 @@ public class FormulaEvaluator(ILogger<FormulaEvaluator> logger) : IFormulaEvalua
             {
                 if (modelOrVariable is FormulaVariable variable)
                 {
-                    if (!TryAddParameter(parameters, variable.Name, variable.Value))
+                    if (!TryAddParameter(parameters, variable.Name, NormalizeParameterValue(variable.Value)))
                         return FailureForDuplicatedParameter(expression, variable.Name);
 
                     continue;
@@ -28,7 +28,7 @@ public class FormulaEvaluator(ILogger<FormulaEvaluator> logger) : IFormulaEvalua
                 {
                     var parameterName = $"{modelType.Name}{property.Name}";
 
-                    if (!TryAddParameter(parameters, parameterName, property.GetValue(modelOrVariable)))
+                    if (!TryAddParameter(parameters, parameterName, NormalizeParameterValue(property.GetValue(modelOrVariable))))
                         return FailureForDuplicatedParameter(expression, parameterName);
                 }
             }
@@ -48,6 +48,17 @@ public class FormulaEvaluator(ILogger<FormulaEvaluator> logger) : IFormulaEvalua
 
     private static bool TryAddParameter(IDictionary<string, object> parameters, string name, object? value) =>
         value is null || !IsSupportedType(value) || parameters.TryAdd(name, value);
+
+    // NCalc's equality/comparison operators do not understand DateOnly/TimeOnly natively,
+    // so IF([DateOnly] = [DateOnly]) fails at evaluation time. Normalize them to DateTime
+    // (a type NCalc compares by value) so equality checks work inside expressions.
+    private static object? NormalizeParameterValue(object? value) =>
+        value switch
+        {
+            DateOnly dateOnly => dateOnly.ToDateTime(TimeOnly.MinValue),
+            TimeOnly timeOnly => new DateTime(1, 1, 1, timeOnly.Hour, timeOnly.Minute, timeOnly.Second, timeOnly.Millisecond),
+            _ => value
+        };
 
     private DomainResult<decimal> FailureForDuplicatedParameter(string expression, string parameterName)
     {

@@ -350,7 +350,9 @@ public class PayrollRecordBuilder
             _fridayWorkAllowance,
             _endOfServiceAmount,
             _calculatedAnnualBonusAmount,
-            _commutingAllowanceAmount);
+            _commutingAllowanceAmount,
+            _performanceBonusAmount,
+            _cashBenefitsAmount);
 
     public DomainResult<PayrollRecord> CreateResult()
     {

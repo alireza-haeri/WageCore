@@ -61,6 +61,9 @@ public class PayrollCalculationServiceTests
         _persianCalendarService
             .GetFridayCount(PeriodStart, PeriodEnd)
             .Returns(4);
+        _persianCalendarService
+            .GetPersianMonth(Arg.Any<DateOnly>())
+            .Returns(1);
         SetupRules();
         SetupFormulas();
         SetupEvaluation(DefaultItemAmount);
@@ -107,11 +110,12 @@ public class PayrollCalculationServiceTests
 
     private Task<Result<PayrollCalculationResult>> Calculate(
         PayrollWorkInputDto? workInput = null,
-        CancellationToken cancellationToken = default) =>
+        CancellationToken cancellationToken = default,
+        IReadOnlyList<SalaryDecree>? salaryProfiles = null) =>
         _service.CalculateAsync(
             _employee,
             _workshop,
-            _salaryProfiles,
+            salaryProfiles ?? _salaryProfiles,
             PeriodStart,
             PeriodEnd,
             workInput ?? BuildWorkInput(),
@@ -139,8 +143,10 @@ public class PayrollCalculationServiceTests
             response.CalculatedAmounts.DailyMissionAmount.Should().Be(DefaultItemAmount);
             response.CalculatedAmounts.FridayWorkAllowance.Should().Be(DefaultItemAmount);
             response.CalculatedAmounts.EndOfServiceAmount.Should().Be(DefaultItemAmount);
-            response.CalculatedAmounts.AnnualBonusAmount.Should().Be(0m);
+            response.CalculatedAmounts.AnnualBonusAmount.Should().BeNull();
             response.CalculatedAmounts.CommutingAllowanceAmount.Should().Be(DefaultItemAmount);
+            response.CalculatedAmounts.PerformanceBonusAmount.Should().BeNull();
+            response.CalculatedAmounts.CashBenefitsAmount.Should().BeNull();
         }
     }
 
@@ -258,12 +264,13 @@ public class PayrollCalculationServiceTests
             AnnualBonusType = AnnualBonusType.Minimum
         };
 
-        await Calculate(workInput);
+        var result = await Calculate(workInput);
 
         await _laborLawRuleQuery.Received(1)
             .GetActiveValueAsync(LaborLawRuleKey.AnnualBonusMinimumAmount, PeriodStart, Arg.Any<CancellationToken>());
         await _laborLawRuleQuery.DidNotReceive()
             .GetActiveValueAsync(LaborLawRuleKey.AnnualBonusMaximumAmount, PeriodStart, Arg.Any<CancellationToken>());
+        result.ShouldBeSuccess().CalculatedAmounts.AnnualBonusAmount.Should().Be(DefaultItemAmount);
     }
 
     [Fact]
@@ -284,11 +291,11 @@ public class PayrollCalculationServiceTests
     }
 
     [Fact]
-    public async Task CalculateAsync_WithoutAnnualBonusType_ShouldSkipTheAnnualBonus()
+    public async Task CalculateAsync_WithoutAnnualBonusType_ShouldSkipTheAnnualBonusAndReturnNull()
     {
         var result = await Calculate();
 
-        result.ShouldBeSuccess().CalculatedAmounts.AnnualBonusAmount.Should().Be(0m);
+        result.ShouldBeSuccess().CalculatedAmounts.AnnualBonusAmount.Should().BeNull();
         await _calculationFormulaQuery.DidNotReceive()
             .GetActiveExpressionAsync(FormulaKey.AnnualBonusPay, Arg.Any<DateOnly>(), Arg.Any<CancellationToken>());
     }
@@ -370,6 +377,8 @@ public class PayrollCalculationServiceTests
             response.Amounts.TotalDeductionsAmount.Should().Be(2_669_000m);
             // gross - total deductions
             response.Amounts.NetPayableAmount.Should().Be(13_031_000m);
+            response.CalculatedAmounts.PerformanceBonusAmount.Should().Be(500_000m);
+            response.CalculatedAmounts.CashBenefitsAmount.Should().Be(200_000m);
         }
     }
 
@@ -439,7 +448,85 @@ public class PayrollCalculationServiceTests
             PeriodEnd,
             BuildWorkInput());
 
-        result.ShouldBeFailure("حکم حقوقی کارمند یافت نشد.", BadResultType.General);
+        result.ShouldBeFailure("برای این بازه حکم حقوقی کارمند یافت نشد.", BadResultType.NotFound);
+    }
+
+    [Fact]
+    public async Task CalculateAsync_ShouldSelectTheLatestDecreeEffectiveByPeriodEnd()
+    {
+        var olderProfile = new SalaryDecreeBuilder()
+            .WithEmployeeId(EmployeeId)
+            .WithEmployeeHireDate(new DateOnly(2024, 6, 1))
+            .WithEffectiveFrom(new DateOnly(2024, 11, 1))
+            .CreateResult()
+            .ShouldBeSuccess();
+        var midPeriodProfile = new SalaryDecreeBuilder()
+            .WithEmployeeId(EmployeeId)
+            .WithEmployeeHireDate(new DateOnly(2024, 6, 1))
+            .WithEffectiveFrom(new DateOnly(2025, 1, 10))
+            .CreateResult()
+            .ShouldBeSuccess();
+        IReadOnlyList<SalaryDecree> salaryProfiles = [olderProfile, midPeriodProfile];
+
+        object[]? formulaInputs = null;
+        _formulaEvaluator
+            .Evaluate(Arg.Any<string>(), Arg.Any<object[]>())
+            .Returns(ci =>
+            {
+                formulaInputs = ci.Arg<object[]>();
+
+                return DomainResult<decimal>.Success(DefaultItemAmount);
+            });
+
+        var result = await Calculate(salaryProfiles: salaryProfiles);
+
+        result.ShouldBeSuccess();
+        formulaInputs.Should().NotBeNull();
+        formulaInputs!.Should().Contain(midPeriodProfile);
+        formulaInputs!.Should().NotContain(olderProfile);
+    }
+
+    [Fact]
+    public async Task CalculateAsync_WhenNoDecreeIsEffectiveByPeriodEnd_ShouldReturnNotfoundFailureAndLog()
+    {
+        var futureProfile = new SalaryDecreeBuilder()
+            .WithEmployeeId(EmployeeId)
+            .WithEmployeeHireDate(new DateOnly(2024, 6, 1))
+            .WithEffectiveFrom(new DateOnly(2025, 2, 1))
+            .CreateResult()
+            .ShouldBeSuccess();
+        IReadOnlyList<SalaryDecree> salaryProfiles = [futureProfile];
+
+        var result = await Calculate(salaryProfiles: salaryProfiles);
+
+        result.ShouldBeFailure("حکم حقوقی فعال برای این کارمند در این بازه یافت نشد.", BadResultType.NotFound);
+        _logger.Entries.Should().Contain(e =>
+            e.Level == LogLevel.Warning && e.Message.Contains("حکم حقوقی فعال"));
+    }
+
+    [Fact]
+    public async Task CalculateAsync_WhenThePeriodIsInEsfand_ShouldReportIsEsfandPeriod()
+    {
+        _persianCalendarService
+            .GetPersianMonth(PeriodStart)
+            .Returns(12);
+
+        var result = await Calculate();
+
+        result.ShouldBeSuccess().IsEsfandPeriod.Should().BeTrue();
+        _persianCalendarService.Received(1).GetPersianMonth(PeriodStart);
+    }
+
+    [Fact]
+    public async Task CalculateAsync_WhenThePeriodIsOutsideEsfand_ShouldReportIsEsfandPeriodFalse()
+    {
+        _persianCalendarService
+            .GetPersianMonth(PeriodStart)
+            .Returns(1);
+
+        var result = await Calculate();
+
+        result.ShouldBeSuccess().IsEsfandPeriod.Should().BeFalse();
     }
 
     private sealed class CapturingLogger : ILogger<PayrollCalculationService>

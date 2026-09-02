@@ -22,8 +22,7 @@ public class UpdatePayrollRecordCommandHandler(
 
         var workInput = request.Work with
         {
-            StandardWorkingDaysCount = period.EndPeriod.DayNumber - period.StartPeriod.DayNumber + 1,
-            IsEsfandPeriod = request.PersianMonth == 12
+            StandardWorkingDaysCount = period.EndPeriod.DayNumber - period.StartPeriod.DayNumber + 1
         };
 
         var payrollRecord = await payrollRecordRepository.GetByIdAsync(
@@ -101,7 +100,7 @@ public class UpdatePayrollRecordCommandHandler(
             salaryProfiles[0].IsTaxSubject,
             limits.MaxMonthlyOvertimeHours,
             limits.MaxFridayHours,
-            workInput,
+            workInput with { IsEsfandPeriod = calculation.IsEsfandPeriod },
             calculation.Amounts,
             calculation.CalculatedAmounts);
         if (!updateResult.IsSuccess)

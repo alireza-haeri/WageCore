@@ -446,7 +446,7 @@ public class PayrollRecord
         if (!result.IsSuccess)
             return result;
 
-        result = ValidateNonNegativeAmount(calculatedAmounts.AnnualBonusAmount, "مبلغ عیدی سالانه");
+        result = ValidateNonNegativeAmount(calculatedAmounts.AnnualBonusAmount ?? 0m, "مبلغ عیدی سالانه");
         if (!result.IsSuccess)
             return result;
 

@@ -59,7 +59,9 @@ public class UpdatePayrollRecordTests
             250_000m,
             0m,
             0m,
-            0m);
+            0m,
+            null,
+            null);
 
     [Fact]
     public void Update_WithValidData_ShouldReturnSuccess()

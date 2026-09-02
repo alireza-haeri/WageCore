@@ -22,8 +22,7 @@ public class CreatePayrollRecordCommandHandler(
 
         var workInput = request.Work with
         {
-            StandardWorkingDaysCount = period.EndPeriod.DayNumber - period.StartPeriod.DayNumber + 1,
-            IsEsfandPeriod = request.PersianMonth == 12
+            StandardWorkingDaysCount = period.EndPeriod.DayNumber - period.StartPeriod.DayNumber + 1
         };
 
         var limitsResult = await payrollLimitsResolver.ResolveAsync(
@@ -93,7 +92,7 @@ public class CreatePayrollRecordCommandHandler(
             salaryProfiles[0].IsTaxSubject,
             limits.MaxMonthlyOvertimeHours,
             limits.MaxFridayHours,
-            workInput,
+            workInput with { IsEsfandPeriod = calculation.IsEsfandPeriod },
             calculation.Amounts,
             calculation.CalculatedAmounts);
         if (!payrollRecord.IsSuccess)

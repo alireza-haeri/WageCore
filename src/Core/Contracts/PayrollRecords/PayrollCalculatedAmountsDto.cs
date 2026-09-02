@@ -15,5 +15,7 @@ public record PayrollCalculatedAmountsDto(
     decimal DailyMissionAmount,
     decimal FridayWorkAllowance,
     decimal EndOfServiceAmount,
-    decimal AnnualBonusAmount,
-    decimal CommutingAllowanceAmount);
+    decimal? AnnualBonusAmount,
+    decimal CommutingAllowanceAmount,
+    decimal? PerformanceBonusAmount,
+    decimal? CashBenefitsAmount);

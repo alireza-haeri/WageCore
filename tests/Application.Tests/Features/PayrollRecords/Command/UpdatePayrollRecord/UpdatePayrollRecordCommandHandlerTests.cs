@@ -208,13 +208,16 @@ public class UpdatePayrollRecordCommandHandlerTests
                 25_000m,
                 0m,
                 0m,
-                0m),
+                0m,
+                null,
+                null),
             new PayrollRecordAmountsDto(
                 10_000m,
                 1_000_000m,
                 70_000m,
                 80_000m,
-                900_000m));
+                900_000m),
+            false);
 
     [Fact]
     public async Task Handle_WhenPeriodStartsAfterToday_ShouldReturnGeneralFailure()
@@ -500,7 +503,8 @@ public class UpdatePayrollRecordCommandHandlerTests
                 x.GrossAmount == 1_000_000m &&
                 x.InsuranceAmount == 70_000m &&
                 x.TotalDeductionsAmount == 80_000m &&
-                x.NetPayableAmount == 900_000m),
+                x.NetPayableAmount == 900_000m &&
+                x.IsEsfandPeriod == false),
             Arg.Any<CancellationToken>());
     }
 }

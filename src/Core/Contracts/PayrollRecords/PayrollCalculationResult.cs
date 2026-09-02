@@ -2,4 +2,5 @@ namespace Core.Contracts.PayrollRecords;
 
 public record PayrollCalculationResult(
     PayrollCalculatedAmountsDto CalculatedAmounts,
-    PayrollRecordAmountsDto Amounts);
+    PayrollRecordAmountsDto Amounts,
+    bool IsEsfandPeriod);

@@ -134,7 +134,9 @@ public class PayrollRecordStatusTests
             250_000m,
             0m,
             0m,
-            0m);
+            0m,
+            null,
+            null);
 
         using (new AssertionScope())
         {
@@ -191,7 +193,9 @@ public class PayrollRecordStatusTests
             250_000m,
             0m,
             0m,
-            0m);
+            0m,
+            null,
+            null);
 
         using (new AssertionScope())
         {

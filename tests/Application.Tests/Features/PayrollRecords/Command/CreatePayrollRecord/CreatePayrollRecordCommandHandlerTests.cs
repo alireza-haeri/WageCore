@@ -186,13 +186,16 @@ public class CreatePayrollRecordCommandHandlerTests
                 250_000m,
                 0m,
                 0m,
-                0m),
+                0m,
+                null,
+                null),
             new PayrollRecordAmountsDto(
                 1_500_000m,
                 17_900_000m,
                 1_400_000m,
                 2_900_000m,
-                15_000_000m));
+                15_000_000m),
+            false);
 
     [Fact]
     public async Task Handle_WhenPeriodStartsAfterToday_ShouldReturnGeneralFailure()
@@ -429,7 +432,8 @@ public class CreatePayrollRecordCommandHandlerTests
                 x.GrossAmount == 17_900_000m &&
                 x.InsuranceAmount == 1_400_000m &&
                 x.TotalDeductionsAmount == 2_900_000m &&
-                x.NetPayableAmount == 15_000_000m),
+                x.NetPayableAmount == 15_000_000m &&
+                x.IsEsfandPeriod == false),
             Arg.Any<CancellationToken>());
     }
 
