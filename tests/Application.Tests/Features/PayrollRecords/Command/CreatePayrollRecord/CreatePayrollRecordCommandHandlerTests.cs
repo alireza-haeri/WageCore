@@ -105,24 +105,26 @@ public class CreatePayrollRecordCommandHandlerTests
 
     private void SetupCalculation(PayrollCalculationResult calculation) =>
         _payrollCalculationService
-            .Calculate(
+            .CalculateAsync(
                 Arg.Any<Employee>(),
                 Arg.Any<Workshop>(),
                 Arg.Any<IReadOnlyList<SalaryDecree>>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<DateOnly>(),
-                Arg.Any<PayrollWorkInputDto>())
+                Arg.Any<PayrollWorkInputDto>(),
+                Arg.Any<CancellationToken>())
             .Returns(Result<PayrollCalculationResult>.Success(calculation));
 
     private void SetupCalculationFailure(string message) =>
         _payrollCalculationService
-            .Calculate(
+            .CalculateAsync(
                 Arg.Any<Employee>(),
                 Arg.Any<Workshop>(),
                 Arg.Any<IReadOnlyList<SalaryDecree>>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<DateOnly>(),
-                Arg.Any<PayrollWorkInputDto>())
+                Arg.Any<PayrollWorkInputDto>(),
+                Arg.Any<CancellationToken>())
             .Returns(Result<PayrollCalculationResult>.GeneralFailure(message));
 
     private void SetupOverlappingPeriod() =>
@@ -148,13 +150,14 @@ public class CreatePayrollRecordCommandHandlerTests
 
     private void DidNotReceiveCalculation() =>
         _payrollCalculationService.DidNotReceive()
-            .Calculate(
+            .CalculateAsync(
                 Arg.Any<Employee>(),
                 Arg.Any<Workshop>(),
                 Arg.Any<IReadOnlyList<SalaryDecree>>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<DateOnly>(),
-                Arg.Any<PayrollWorkInputDto>());
+                Arg.Any<PayrollWorkInputDto>(),
+                Arg.Any<CancellationToken>());
 
     private Task DidNotReceiveSalaryProfiles() =>
         _salaryDecreeQuery.DidNotReceive()
@@ -403,7 +406,7 @@ public class CreatePayrollRecordCommandHandlerTests
         var response = result.ShouldBeSuccess();
         response.PayrollRecordId.Should().Be(createdId);
 
-        _payrollCalculationService.Received(1).Calculate(
+        _payrollCalculationService.Received(1).CalculateAsync(
             _employee,
             _workshop,
             _salaryProfiles,
@@ -413,7 +416,8 @@ public class CreatePayrollRecordCommandHandlerTests
             {
                 StandardWorkingDaysCount = PeriodEnd.DayNumber - PeriodStart.DayNumber + 1,
                 IsEsfandPeriod = false
-            });
+            },
+            Arg.Any<CancellationToken>());
         await _payrollRecordRepository.Received(1).CreateAsync(
             Arg.Is<PayrollRecord>(x =>
                 x.EmployeeId == ValidEmployeeId &&

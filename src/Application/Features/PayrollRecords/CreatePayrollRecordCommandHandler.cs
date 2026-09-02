@@ -74,13 +74,14 @@ public class CreatePayrollRecordCommandHandler(
             return Result<CreatePayrollRecordCommandResponse>.NotfoundFailure(
                 "برای این بازه حکم حقوقی کارمند یافت نشد.");
 
-        var calculationResult = payrollCalculationService.Calculate(
+        var calculationResult = await payrollCalculationService.CalculateAsync(
             employee,
             workshop,
             salaryProfiles,
             period.StartPeriod,
             period.EndPeriod,
-            workInput);
+            workInput,
+            cancellationToken);
         if (!calculationResult.IsSuccess)
             return Result<CreatePayrollRecordCommandResponse>.ValidationFailure(calculationResult.Errors!);
 
