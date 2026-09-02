@@ -20,6 +20,12 @@ public class CreatePayrollRecordCommandHandler(
         if (period.StartPeriod > DateOnly.FromDateTime(DateTime.Now))
             return Result<CreatePayrollRecordCommandResponse>.GeneralFailure("تاریخ شروع دوره نباید برای آینده باشد.");
 
+        var workInput = request.Work with
+        {
+            StandardWorkingDaysCount = period.EndPeriod.DayNumber - period.StartPeriod.DayNumber + 1,
+            IsEsfandPeriod = request.PersianMonth == 12
+        };
+
         var limitsResult = await payrollLimitsResolver.ResolveAsync(
             period.StartPeriod,
             period.EndPeriod,
@@ -74,7 +80,7 @@ public class CreatePayrollRecordCommandHandler(
             salaryProfiles,
             period.StartPeriod,
             period.EndPeriod,
-            request.Work);
+            workInput);
         if (!calculationResult.IsSuccess)
             return Result<CreatePayrollRecordCommandResponse>.ValidationFailure(calculationResult.Errors!);
 
@@ -86,13 +92,9 @@ public class CreatePayrollRecordCommandHandler(
             salaryProfiles[0].IsTaxSubject,
             limits.MaxMonthlyOvertimeHours,
             limits.MaxFridayHours,
-            request.Work,
-            new PayrollRecordAmountsDto(
-                calculation.OvertimeAmount,
-                calculation.NightShiftExtraAmount,
-                calculation.FridayWorkAllowance,
-                calculation.CalculatedTaxAmount,
-                calculation.NetPayableAmount));
+            workInput,
+            calculation.Amounts,
+            calculation.CalculatedAmounts);
         if (!payrollRecord.IsSuccess)
             return Result<CreatePayrollRecordCommandResponse>.GeneralFailure(payrollRecord.ErrorMessage!);
 

@@ -109,7 +109,7 @@ public class UpdatePayrollRecordCommandValidatorTests
 
     [Theory]
     [InlineData("WorkedDaysCount")]
-    [InlineData("LeaveDaysCount")]
+    [InlineData("LeaveHours")]
     [InlineData("AbsenceDaysCount")]
     [InlineData("MissionDaysCount")]
     public void Validate_ShouldRunTheNestedWorkValidatorOnDayCounts(string fieldName)
@@ -117,7 +117,7 @@ public class UpdatePayrollRecordCommandValidatorTests
         var work = fieldName switch
         {
             "WorkedDaysCount" => _builder.BuildDto() with { WorkedDaysCount = 40m },
-            "LeaveDaysCount" => _builder.BuildDto() with { LeaveDaysCount = 40m },
+            "LeaveHours" => _builder.BuildDto() with { LeaveHours = -1m },
             "AbsenceDaysCount" => _builder.BuildDto() with { AbsenceDaysCount = 40m },
             _ => _builder.BuildDto() with { MissionDaysCount = 40m }
         };

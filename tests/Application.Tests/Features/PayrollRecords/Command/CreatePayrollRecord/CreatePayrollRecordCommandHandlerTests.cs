@@ -20,7 +20,7 @@ public class CreatePayrollRecordCommandHandlerTests
     private static readonly Guid ValidUserId = Guid.NewGuid();
     private static readonly Guid ValidEmployeeId = Guid.NewGuid();
     private static readonly Guid ValidWorkshopId = Guid.NewGuid();
-    private static readonly DateOnly PeriodStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-25));
+    private static readonly DateOnly PeriodStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-30));
     private static readonly DateOnly PeriodEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(-1));
     private const int ValidPersianYear = 1404;
     private const int ValidPersianMonth = 6;
@@ -166,7 +166,30 @@ public class CreatePayrollRecordCommandHandlerTests
                 Arg.Any<CancellationToken>());
 
     private static PayrollCalculationResult ValidCalculation() =>
-        new(800_000m, 300_000m, 250_000m, 1_500_000m, 15_000_000m);
+        new(
+            new PayrollCalculatedAmountsDto(
+                10_000_000m,
+                0m,
+                0m,
+                300_000m,
+                0m,
+                0m,
+                0m,
+                0m,
+                0m,
+                800_000m,
+                0m,
+                0m,
+                250_000m,
+                0m,
+                0m,
+                0m),
+            new PayrollRecordAmountsDto(
+                1_500_000m,
+                17_900_000m,
+                1_400_000m,
+                2_900_000m,
+                15_000_000m));
 
     [Fact]
     public async Task Handle_WhenPeriodStartsAfterToday_ShouldReturnGeneralFailure()
@@ -386,7 +409,11 @@ public class CreatePayrollRecordCommandHandlerTests
             _salaryProfiles,
             PeriodStart,
             PeriodEnd,
-            work);
+            work with
+            {
+                StandardWorkingDaysCount = PeriodEnd.DayNumber - PeriodStart.DayNumber + 1,
+                IsEsfandPeriod = false
+            });
         await _payrollRecordRepository.Received(1).CreateAsync(
             Arg.Is<PayrollRecord>(x =>
                 x.EmployeeId == ValidEmployeeId &&
@@ -395,6 +422,9 @@ public class CreatePayrollRecordCommandHandlerTests
                 x.Status == PayrollRecordStatus.Draft &&
                 x.OvertimeHours == 4m &&
                 x.OvertimeAmount == 800_000m &&
+                x.GrossAmount == 17_900_000m &&
+                x.InsuranceAmount == 1_400_000m &&
+                x.TotalDeductionsAmount == 2_900_000m &&
                 x.NetPayableAmount == 15_000_000m),
             Arg.Any<CancellationToken>());
     }
