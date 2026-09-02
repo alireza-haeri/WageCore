@@ -15,7 +15,7 @@ public class PayrollCalculationServiceTests
     private readonly ICalculationFormulaQuery _calculationFormulaQuery;
     private readonly IFormulaEvaluator _formulaEvaluator;
     private readonly IPersianCalendarService _persianCalendarService;
-    private readonly ILogger<PayrollCalculationService> _logger;
+    private readonly CapturingLogger _logger;
     private readonly PayrollCalculationService _service;
 
     private readonly PayrollRecordBuilder _payrollRecordBuilder = new();
@@ -29,7 +29,7 @@ public class PayrollCalculationServiceTests
         _calculationFormulaQuery = Substitute.For<ICalculationFormulaQuery>();
         _formulaEvaluator = Substitute.For<IFormulaEvaluator>();
         _persianCalendarService = Substitute.For<IPersianCalendarService>();
-        _logger = Substitute.For<ILogger<PayrollCalculationService>>();
+        _logger = new CapturingLogger();
 
         _employee = new EmployeeBuilder()
             .WithId(EmployeeId)
@@ -202,9 +202,12 @@ public class PayrollCalculationServiceTests
         await Calculate();
 
         overtimeFormulaInputs.Should().NotBeNull();
-        overtimeFormulaInputs!.Should().Contain(v => v is FormulaVariable variable &&
-            variable.Name == nameof(LaborLawRuleKey.MaximumOvertimeHoursPerMonth) &&
-            Equals(variable.Value, 80m));
+        overtimeFormulaInputs!
+            .OfType<FormulaVariable>()
+            .Should()
+            .ContainSingle(v =>
+                v.Name == nameof(LaborLawRuleKey.MaximumOvertimeHoursPerMonth) &&
+                Equals(v.Value, 80m));
     }
 
     [Fact]
@@ -298,12 +301,8 @@ public class PayrollCalculationServiceTests
         var result = await Calculate();
 
         result.ShouldBeFailure("قانون MaximumOvertimeHoursPerMonth", BadResultType.NotFound);
-        _logger.Received(1).Log(
-            LogLevel.Warning,
-            Arg.Any<EventId>(),
-            Arg.Any<It.IsAnyType>(),
-            Arg.Any<Exception?>(),
-            Arg.Any<Func<It.IsAnyType, Exception?, string>>());
+        _logger.Entries.Should().Contain(e =>
+            e.Level == LogLevel.Warning && e.Message.Contains("MaximumOvertimeHoursPerMonth"));
         await _calculationFormulaQuery.DidNotReceive()
             .GetActiveExpressionAsync(FormulaKey.OvertimePay, Arg.Any<DateOnly>(), Arg.Any<CancellationToken>());
     }
@@ -316,12 +315,8 @@ public class PayrollCalculationServiceTests
         var result = await Calculate();
 
         result.ShouldBeFailure("فرمول BaseSalaryPay", BadResultType.NotFound);
-        _logger.Received(1).Log(
-            LogLevel.Warning,
-            Arg.Any<EventId>(),
-            Arg.Any<It.IsAnyType>(),
-            Arg.Any<Exception?>(),
-            Arg.Any<Func<It.IsAnyType, Exception?, string>>());
+        _logger.Entries.Should().Contain(e =>
+            e.Level == LogLevel.Warning && e.Message.Contains("BaseSalaryPay"));
     }
 
     [Fact]
@@ -332,12 +327,8 @@ public class PayrollCalculationServiceTests
         var result = await Calculate();
 
         result.ShouldBeFailure("خطا در محاسبه", BadResultType.General);
-        _logger.Received(1).Log(
-            LogLevel.Error,
-            Arg.Any<EventId>(),
-            Arg.Any<It.IsAnyType>(),
-            Arg.Any<Exception?>(),
-            Arg.Any<Func<It.IsAnyType, Exception?, string>>());
+        _logger.Entries.Should().Contain(e =>
+            e.Level == LogLevel.Error && e.Message.Contains("خطای آزمون"));
     }
 
     [Fact]
@@ -449,5 +440,22 @@ public class PayrollCalculationServiceTests
             BuildWorkInput());
 
         result.ShouldBeFailure("حکم حقوقی کارمند یافت نشد.", BadResultType.NotFound);
+    }
+
+    private sealed class CapturingLogger : ILogger<PayrollCalculationService>
+    {
+        public List<(LogLevel Level, string Message)> Entries { get; } = [];
+
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
+
+        public bool IsEnabled(LogLevel logLevel) => true;
+
+        public void Log<TState>(
+            LogLevel logLevel,
+            EventId eventId,
+            TState state,
+            Exception? exception,
+            Func<TState, Exception?, string> formatter) =>
+            Entries.Add((logLevel, formatter(state, exception)));
     }
 }

@@ -150,8 +150,8 @@ public class PayrollCalculationService(
         if (!taxResult.IsSuccess)
             return ConvertFailure(taxResult);
 
-        var insuranceAmount = insuranceResult.Response;
-        var calculatedTaxAmount = taxResult.Response;
+        var insuranceAmount = insuranceResult.Response!.Value;
+        var calculatedTaxAmount = taxResult.Response!.Value;
         var totalDeductionsAmount = insuranceAmount + calculatedTaxAmount;
         var netPayableAmount = grossAmount - totalDeductionsAmount;
 
@@ -185,11 +185,11 @@ public class PayrollCalculationService(
             CommutingAllowanceAmount: GetAmount(amounts, FormulaKey.CommutingAllowancePay));
 
         var payrollAmounts = new PayrollRecordAmountsDto(
-            CalculatedTaxAmount: calculatedTaxAmount ?? 0m,
+            CalculatedTaxAmount: calculatedTaxAmount,
             GrossAmount: grossAmount,
-            InsuranceAmount: insuranceAmount ?? 0m,
-            TotalDeductionsAmount: totalDeductionsAmount ?? 0m,
-            NetPayableAmount: netPayableAmount ?? 0m);
+            InsuranceAmount: insuranceAmount,
+            TotalDeductionsAmount: totalDeductionsAmount,
+            NetPayableAmount: netPayableAmount);
 
         return Result<PayrollCalculationResult>.Success(
             new PayrollCalculationResult(calculatedAmounts, payrollAmounts));
