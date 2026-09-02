@@ -200,14 +200,12 @@ public class PayrollCalculationService(
             PerformanceBonusAmount: performanceBonusResult.Response,
             CashBenefitsAmount: cashBenefitsResult.Response);
 
-        // The IsSuccess guards above guarantee these values are non-null; .Value is
-        // used instead of ?? 0m so a missing amount can never be silently masked as zero.
         var payrollAmounts = new PayrollRecordAmountsDto(
-            CalculatedTaxAmount: calculatedTaxAmount.Value,
+            CalculatedTaxAmount: calculatedTaxAmount,
             GrossAmount: grossAmount,
-            InsuranceAmount: insuranceAmount.Value,
-            TotalDeductionsAmount: totalDeductionsAmount.Value,
-            NetPayableAmount: netPayableAmount.Value);
+            InsuranceAmount: insuranceAmount,
+            TotalDeductionsAmount: totalDeductionsAmount,
+            NetPayableAmount: netPayableAmount);
 
         return Result<PayrollCalculationResult>.Success(
             new PayrollCalculationResult(calculatedAmounts, payrollAmounts, isEsfandPeriod));

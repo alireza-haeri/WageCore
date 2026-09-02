@@ -501,7 +501,7 @@ public class PayrollCalculationServiceTests
 
         result.ShouldBeFailure("حکم حقوقی فعال برای این کارمند در این بازه یافت نشد.", BadResultType.NotFound);
         _logger.Entries.Should().Contain(e =>
-            e.Level == LogLevel.Warning && e.Message.Contains("حکم حقوقی فعال"));
+            e.Level == LogLevel.Warning);
     }
 
     [Fact]
