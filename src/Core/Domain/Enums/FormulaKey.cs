@@ -19,5 +19,6 @@ public enum FormulaKey
     AnnualBonusPay = 14,
     CommutingAllowancePay = 15,
     InsurancePay = 16,
-    TaxPay = 17
+    TaxPay = 17,
+    TaxableAmountPay = 18
 }

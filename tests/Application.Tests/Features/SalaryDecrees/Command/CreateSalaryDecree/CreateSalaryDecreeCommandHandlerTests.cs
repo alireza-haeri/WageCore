@@ -16,7 +16,7 @@ public class CreateSalaryDecreeCommandHandlerTests
 
     private static readonly Guid ValidUserId = Guid.NewGuid();
     private static readonly Guid ValidEmployeeId = Guid.NewGuid();
-    private const decimal ValidMinimumMonthlySalary = 71_661_840m;
+    private const decimal ValidMinimumDailySalary = 71_661_840m;
 
     public CreateSalaryDecreeCommandHandlerTests()
     {
@@ -52,7 +52,7 @@ public class CreateSalaryDecreeCommandHandlerTests
         Guid? employeeId = null)
     {
         var dto = salaryProfile ?? _salaryProfileBuilder
-            .WithBaseDailySalary(ValidMinimumMonthlySalary)
+            .WithBaseDailySalary(ValidMinimumDailySalary)
             .WithEffectiveFrom(DateOnly.FromDateTime(DateTime.Now.AddDays(-5)))
             .BuildDto();
 
@@ -62,10 +62,10 @@ public class CreateSalaryDecreeCommandHandlerTests
             dto);
     }
 
-    private void SetupMinimumMonthlySalary(decimal? value = ValidMinimumMonthlySalary)
+    private void SetupMinimumDailySalary(decimal? value = ValidMinimumDailySalary)
     {
         _laborLawRuleQuery.GetActiveValueAsync(
-                LaborLawRuleKey.MinimumMonthlySalary,
+                LaborLawRuleKey.MinimumDailySalary,
                 Arg.Any<DateOnly>(),
                 Arg.Any<CancellationToken>())
             .Returns(value);
@@ -93,7 +93,7 @@ public class CreateSalaryDecreeCommandHandlerTests
         _salaryDecreeQuery.GetLatestEffectiveFromAsync(
                 ValidUserId, ValidEmployeeId, null, Arg.Any<CancellationToken>())
             .Returns((DateOnly?)null);
-        SetupMinimumMonthlySalary();
+        SetupMinimumDailySalary();
         SetupNoPayrollRecordEffect();
         _salaryDecreeRepository.CreateAsync(Arg.Any<SalaryDecree>(), Arg.Any<CancellationToken>())
             .Returns(createdId);
@@ -106,7 +106,7 @@ public class CreateSalaryDecreeCommandHandlerTests
         await _salaryDecreeRepository.Received(1).CreateAsync(
             Arg.Is<SalaryDecree>(x =>
                 x.EmployeeId == ValidEmployeeId &&
-                x.BaseDailySalary == ValidMinimumMonthlySalary &&
+                x.BaseDailySalary == ValidMinimumDailySalary &&
                 x.EffectiveFrom == command.SalaryProfile.EffectiveFrom),
             Arg.Any<CancellationToken>());
     }
@@ -127,7 +127,7 @@ public class CreateSalaryDecreeCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_WhenMinimumMonthlySalaryNotFound_ShouldReturnNotFoundFailure()
+    public async Task Handle_WhenMinimumDailySalaryNotFound_ShouldReturnNotFoundFailure()
     {
         var command = CreateValidCommand();
         var employee = CreateValidEmployee();
@@ -137,17 +137,17 @@ public class CreateSalaryDecreeCommandHandlerTests
         _salaryDecreeQuery.GetLatestEffectiveFromAsync(
                 ValidUserId, ValidEmployeeId, null, Arg.Any<CancellationToken>())
             .Returns((DateOnly?)null);
-        SetupMinimumMonthlySalary(null);
+        SetupMinimumDailySalary(null);
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
-        result.ShouldBeFailure("حداقل حقوق ماهانه یافت نشد.", BadResultType.NotFound);
+        result.ShouldBeFailure("حداقل حقوق روزانه یافت نشد.", BadResultType.NotFound);
         await _salaryDecreeRepository.DidNotReceive()
             .CreateAsync(Arg.Any<SalaryDecree>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    public async Task Handle_ShouldGetMinimumMonthlySalaryByEffectiveFrom()
+    public async Task Handle_ShouldGetMinimumDailySalaryByEffectiveFrom()
     {
         var command = CreateValidCommand();
         var employee = CreateValidEmployee();
@@ -157,14 +157,14 @@ public class CreateSalaryDecreeCommandHandlerTests
         _salaryDecreeQuery.GetLatestEffectiveFromAsync(
                 ValidUserId, ValidEmployeeId, null, Arg.Any<CancellationToken>())
             .Returns((DateOnly?)null);
-        SetupMinimumMonthlySalary();
+        SetupMinimumDailySalary();
         _salaryDecreeRepository.CreateAsync(Arg.Any<SalaryDecree>(), Arg.Any<CancellationToken>())
             .Returns(Guid.NewGuid());
 
         await _handler.Handle(command, CancellationToken.None);
 
         await _laborLawRuleQuery.Received(1).GetActiveValueAsync(
-            LaborLawRuleKey.MinimumMonthlySalary,
+            LaborLawRuleKey.MinimumDailySalary,
             command.SalaryProfile.EffectiveFrom!.Value,
             Arg.Any<CancellationToken>());
     }
@@ -174,7 +174,7 @@ public class CreateSalaryDecreeCommandHandlerTests
     {
         var hireDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-10));
         var salaryProfile = _salaryProfileBuilder
-            .WithBaseDailySalary(ValidMinimumMonthlySalary)
+            .WithBaseDailySalary(ValidMinimumDailySalary)
             .WithEffectiveFrom(hireDate.AddDays(-1))
             .BuildDto();
         var command = CreateValidCommand(salaryProfile);
@@ -185,7 +185,7 @@ public class CreateSalaryDecreeCommandHandlerTests
         _salaryDecreeQuery.GetLatestEffectiveFromAsync(
                 ValidUserId, ValidEmployeeId, null, Arg.Any<CancellationToken>())
             .Returns((DateOnly?)null);
-        SetupMinimumMonthlySalary();
+        SetupMinimumDailySalary();
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
@@ -200,7 +200,7 @@ public class CreateSalaryDecreeCommandHandlerTests
         var hireDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-30));
         var latestExisting = DateOnly.FromDateTime(DateTime.Now.AddDays(-5));
         var salaryProfile = _salaryProfileBuilder
-            .WithBaseDailySalary(ValidMinimumMonthlySalary)
+            .WithBaseDailySalary(ValidMinimumDailySalary)
             .WithEffectiveFrom(latestExisting.AddDays(-1))
             .BuildDto();
         var command = CreateValidCommand(salaryProfile);
@@ -211,7 +211,7 @@ public class CreateSalaryDecreeCommandHandlerTests
         _salaryDecreeQuery.GetLatestEffectiveFromAsync(
                 ValidUserId, ValidEmployeeId, null, Arg.Any<CancellationToken>())
             .Returns(latestExisting);
-        SetupMinimumMonthlySalary();
+        SetupMinimumDailySalary();
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
@@ -222,7 +222,7 @@ public class CreateSalaryDecreeCommandHandlerTests
     public async Task Handle_WhenBaseDailySalaryIsLessThanMinimum_ShouldReturnGeneralFailure()
     {
         var salaryProfile = _salaryProfileBuilder
-            .WithBaseDailySalary(ValidMinimumMonthlySalary - 1)
+            .WithBaseDailySalary(ValidMinimumDailySalary - 1)
             .BuildDto();
         var command = CreateValidCommand(salaryProfile);
         var employee = CreateValidEmployee();
@@ -232,11 +232,11 @@ public class CreateSalaryDecreeCommandHandlerTests
         _salaryDecreeQuery.GetLatestEffectiveFromAsync(
                 ValidUserId, ValidEmployeeId, null, Arg.Any<CancellationToken>())
             .Returns((DateOnly?)null);
-        SetupMinimumMonthlySalary();
+        SetupMinimumDailySalary();
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
-        result.ShouldBeFailure("حقوق پایه روزانه نمیتواند کمتر از حداقل حقوق ماهانه باشد.", BadResultType.General);
+        result.ShouldBeFailure("حقوق پایه روزانه نمیتواند کمتر از حداقل حقوق روزانه باشد.", BadResultType.General);
     }
 
     [Fact]
@@ -250,7 +250,7 @@ public class CreateSalaryDecreeCommandHandlerTests
         _salaryDecreeQuery.GetLatestEffectiveFromAsync(
                 ValidUserId, ValidEmployeeId, null, Arg.Any<CancellationToken>())
             .Returns((DateOnly?)null);
-        SetupMinimumMonthlySalary();
+        SetupMinimumDailySalary();
         _salaryDecreeRepository.CreateAsync(Arg.Any<SalaryDecree>(), Arg.Any<CancellationToken>())
             .Returns((Guid?)null);
 
@@ -260,7 +260,7 @@ public class CreateSalaryDecreeCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldPassMinimumMonthlySalaryFromLaborLawToDomain()
+    public async Task Handle_ShouldPassMinimumDailySalaryFromLaborLawToDomain()
     {
         var command = CreateValidCommand();
         var employee = CreateValidEmployee();
@@ -270,7 +270,7 @@ public class CreateSalaryDecreeCommandHandlerTests
         _salaryDecreeQuery.GetLatestEffectiveFromAsync(
                 ValidUserId, ValidEmployeeId, null, Arg.Any<CancellationToken>())
             .Returns((DateOnly?)null);
-        SetupMinimumMonthlySalary();
+        SetupMinimumDailySalary();
         _salaryDecreeRepository.CreateAsync(Arg.Any<SalaryDecree>(), Arg.Any<CancellationToken>())
             .Returns(Guid.NewGuid());
 
@@ -278,7 +278,7 @@ public class CreateSalaryDecreeCommandHandlerTests
 
         await _salaryDecreeRepository.Received(1).CreateAsync(
             Arg.Is<SalaryDecree>(x =>
-                x.BaseDailySalary >= ValidMinimumMonthlySalary),
+                x.BaseDailySalary >= ValidMinimumDailySalary),
             Arg.Any<CancellationToken>());
     }
 
@@ -293,7 +293,7 @@ public class CreateSalaryDecreeCommandHandlerTests
         _salaryDecreeQuery.GetLatestEffectiveFromAsync(
                 ValidUserId, ValidEmployeeId, null, Arg.Any<CancellationToken>())
             .Returns((DateOnly?)null);
-        SetupMinimumMonthlySalary();
+        SetupMinimumDailySalary();
         SetupNoPayrollRecordEffect();
         _salaryDecreeRepository.CreateAsync(Arg.Any<SalaryDecree>(), Arg.Any<CancellationToken>())
             .Returns(Guid.NewGuid());
@@ -318,7 +318,7 @@ public class CreateSalaryDecreeCommandHandlerTests
         _salaryDecreeQuery.GetLatestEffectiveFromAsync(
                 ValidUserId, ValidEmployeeId, null, Arg.Any<CancellationToken>())
             .Returns((DateOnly?)null);
-        SetupMinimumMonthlySalary();
+        SetupMinimumDailySalary();
         _payrollRecordQuery.HasPayrollRecordEffectAsync(
                 ValidUserId,
                 ValidEmployeeId,

@@ -12,12 +12,12 @@ public class UpdateLaborLawRuleItemTests
         var rule = _builder.CreateResult().ShouldBeSuccess();
         var effectiveFrom = DateOnly.FromDateTime(DateTime.Now.AddDays(-2));
 
-        var result = rule.Update(LaborLawRuleKey.MinimumMonthlySalary, 103_909_680m, effectiveFrom);
+        var result = rule.Update(LaborLawRuleKey.MinimumDailySalary, 103_909_680m, effectiveFrom);
 
         result.ShouldBeSuccess();
         using (new AssertionScope())
         {
-            rule.Key.Should().Be(LaborLawRuleKey.MinimumMonthlySalary);
+            rule.Key.Should().Be(LaborLawRuleKey.MinimumDailySalary);
             rule.Value.Should().Be(103_909_680m);
             rule.EffectiveFrom.Should().Be(effectiveFrom);
         }
@@ -28,7 +28,7 @@ public class UpdateLaborLawRuleItemTests
     {
         var rule = _builder.CreateResult().ShouldBeSuccess();
 
-        var result = rule.Update(LaborLawRuleKey.MinimumMonthlySalary, -1, DateOnly.FromDateTime(DateTime.Now));
+        var result = rule.Update(LaborLawRuleKey.MinimumDailySalary, -1, DateOnly.FromDateTime(DateTime.Now));
 
         result.ShouldBeFailure("مقدار قانون نمیتواند منفی باشد.");
     }
@@ -38,7 +38,7 @@ public class UpdateLaborLawRuleItemTests
     {
         var rule = _builder.CreateResult().ShouldBeSuccess();
 
-        var result = rule.Update(LaborLawRuleKey.MinimumMonthlySalary, 71_661_840m, null);
+        var result = rule.Update(LaborLawRuleKey.MinimumDailySalary, 71_661_840m, null);
 
         result.ShouldBeFailure("تاریخ اجرا نمیتواند خالی باشد.");
     }
@@ -50,7 +50,7 @@ public class UpdateLaborLawRuleItemTests
         var originalValue = rule.Value;
         var originalEffectiveFrom = rule.EffectiveFrom;
 
-        rule.Update(LaborLawRuleKey.MinimumMonthlySalary, -10, DateOnly.FromDateTime(DateTime.Now));
+        rule.Update(LaborLawRuleKey.MinimumDailySalary, -10, DateOnly.FromDateTime(DateTime.Now));
 
         using (new AssertionScope())
         {

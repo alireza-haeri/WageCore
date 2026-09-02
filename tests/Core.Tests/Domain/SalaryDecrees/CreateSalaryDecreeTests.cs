@@ -43,7 +43,7 @@ public class CreateSalaryDecreeTests
             .WithEmployeeId(employeeId)
             .WithEmployeeHireDate(hireDate)
             .WithLatestExistingEffectiveFrom(latestExistingEffectiveFrom)
-            .WithMinimumMonthlySalary(15_000_000m)
+            .WithMinimumDailySalary(15_000_000m)
             .WithEffectiveFrom(effectiveFrom)
             .WithBaseDailySalary(25_000_000m)
             .WithAttractionAllowance(1_000_000m)
@@ -185,21 +185,21 @@ public class CreateSalaryDecreeTests
     }
 
     [Fact]
-    public void Create_WithNullMinimumMonthlySalary_ShouldFail()
+    public void Create_WithNullMinimumDailySalary_ShouldFail()
     {
-        var result = _builder.WithMinimumMonthlySalary(null).CreateResult();
+        var result = _builder.WithMinimumDailySalary(null).CreateResult();
 
-        result.ShouldBeFailure("حداقل حقوق ماهانه");
+        result.ShouldBeFailure("حداقل حقوق روزانه");
     }
 
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
-    public void Create_WithMinimumMonthlySalaryLessThanOrEqualToZero_ShouldFail(decimal minimumMonthlySalary)
+    public void Create_WithMinimumDailySalaryLessThanOrEqualToZero_ShouldFail(decimal minimumDailySalary)
     {
-        var result = _builder.WithMinimumMonthlySalary(minimumMonthlySalary).CreateResult();
+        var result = _builder.WithMinimumDailySalary(minimumDailySalary).CreateResult();
 
-        result.ShouldBeFailure("حداقل حقوق ماهانه باید بیشتر از صفر ریال باشد.");
+        result.ShouldBeFailure("حداقل حقوق روزانه باید بیشتر از صفر ریال باشد.");
     }
 
     [Fact]
@@ -224,11 +224,11 @@ public class CreateSalaryDecreeTests
     public void Create_WithBaseDailySalaryLessThanMinimum_ShouldFail()
     {
         var result = _builder
-            .WithMinimumMonthlySalary(20_000_000m)
+            .WithMinimumDailySalary(20_000_000m)
             .WithBaseDailySalary(19_999_999m)
             .CreateResult();
 
-        result.ShouldBeFailure("حقوق پایه روزانه نمیتواند کمتر از حداقل حقوق ماهانه باشد.");
+        result.ShouldBeFailure("حقوق پایه روزانه نمیتواند کمتر از حداقل حقوق روزانه باشد.");
     }
 
     [Theory]

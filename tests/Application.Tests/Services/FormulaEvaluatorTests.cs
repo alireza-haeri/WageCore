@@ -16,6 +16,8 @@ public class FormulaEvaluatorTests
         decimal MonthlyWorkingHours,
         decimal MinimumMonthlyWage);
 
+    private record AllowanceProfile(decimal? AttractionAllowance, int? ChildrenCount, DateOnly? EffectiveFrom);
+
     private record WorkInput(decimal WorkedDaysCount);
 
     private record WorkshopSettings(decimal MinimumMonthlyWage, decimal FridayAllowanceFactor);
@@ -50,6 +52,57 @@ public class FormulaEvaluatorTests
             work);
 
         result.ShouldBeSuccess().Should().Be(960_000m);
+    }
+
+    [Fact]
+    public void Evaluate_WithNullNullableDecimalProperty_ShouldBindItAsZero()
+    {
+        var profile = new AllowanceProfile(null, 0, null);
+
+        var result = _evaluator.Evaluate(
+            "[AllowanceProfileAttractionAllowance] * 2 + 1",
+            profile);
+
+        result.ShouldBeSuccess().Should().Be(1m);
+    }
+
+    [Fact]
+    public void Evaluate_WithNullNullableIntegerProperty_ShouldBindItAsZero()
+    {
+        var profile = new AllowanceProfile(0m, null, null);
+
+        var result = _evaluator.Evaluate(
+            "[AllowanceProfileChildrenCount] * 3",
+            profile);
+
+        result.ShouldBeSuccess().Should().Be(0m);
+    }
+
+    [Fact]
+    public void Evaluate_WithValueNullableDecimalProperty_ShouldBindItsValue()
+    {
+        var profile = new AllowanceProfile(500_000m, 0, null);
+
+        var result = _evaluator.Evaluate(
+            "[AllowanceProfileAttractionAllowance] * 2",
+            profile);
+
+        result.ShouldBeSuccess().Should().Be(1_000_000m);
+    }
+
+    [Fact]
+    public void Evaluate_WithNullNullableDateOnlyProperty_ShouldLeaveItUnbound()
+    {
+        var profile = new AllowanceProfile(0m, 0, null);
+
+        var result = _evaluator.Evaluate(
+            "[AllowanceProfileEffectiveFrom] = [RequestedDate] ? 3 : 7",
+            profile,
+            new FormulaVariable("RequestedDate", new DateOnly(2025, 1, 1)));
+
+        // The null DateOnly property is not a numeric, so it stays unbound and
+        // referencing it is an evaluation failure (same as before normalization).
+        result.ShouldBeFailure("خطا در محاسبه‌ی فرمول");
     }
 
     [Fact]

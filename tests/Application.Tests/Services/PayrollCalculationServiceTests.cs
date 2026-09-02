@@ -11,13 +11,18 @@ public class PayrollCalculationServiceTests
     private static readonly DateOnly PeriodStart = new(2025, 1, 1);
     private static readonly DateOnly PeriodEnd = new(2025, 1, 31);
 
+    private static readonly FormulaEvaluator RealEvaluator =
+        new(Substitute.For<ILogger<FormulaEvaluator>>());
+
     private readonly ILaborLawRuleQuery _laborLawRuleQuery;
     private readonly ICalculationFormulaQuery _calculationFormulaQuery;
     private readonly IFormulaEvaluator _formulaEvaluator;
     private readonly IPersianCalendarService _persianCalendarService;
+    private readonly IPayrollRecordQuery _payrollRecordQuery;
     private readonly CapturingLogger _logger;
     private readonly PayrollCalculationService _service;
 
+    private readonly Guid _workshopUserId = Guid.NewGuid();
     private readonly PayrollRecordBuilder _payrollRecordBuilder = new();
     private readonly Employee _employee;
     private readonly Workshop _workshop;
@@ -29,6 +34,7 @@ public class PayrollCalculationServiceTests
         _calculationFormulaQuery = Substitute.For<ICalculationFormulaQuery>();
         _formulaEvaluator = Substitute.For<IFormulaEvaluator>();
         _persianCalendarService = Substitute.For<IPersianCalendarService>();
+        _payrollRecordQuery = Substitute.For<IPayrollRecordQuery>();
         _logger = new CapturingLogger();
 
         _employee = new EmployeeBuilder()
@@ -38,7 +44,7 @@ public class PayrollCalculationServiceTests
             .ShouldBeSuccess();
         _workshop = new WorkshopBuilder()
             .WithId(WorkshopId)
-            .WithUserId(Guid.NewGuid())
+            .WithUserId(_workshopUserId)
             .CreateResult()
             .ShouldBeSuccess();
         _salaryDecrees =
@@ -47,6 +53,7 @@ public class PayrollCalculationServiceTests
                 .WithEmployeeId(EmployeeId)
                 .WithEmployeeHireDate(new DateOnly(2024, 6, 1))
                 .WithEffectiveFrom(new DateOnly(2024, 12, 1))
+                .WithShiftType(ShiftType.MorningEvening)
                 .CreateResult()
                 .ShouldBeSuccess()
         ];
@@ -56,6 +63,7 @@ public class PayrollCalculationServiceTests
             _calculationFormulaQuery,
             _formulaEvaluator,
             _persianCalendarService,
+            _payrollRecordQuery,
             _logger);
 
         _persianCalendarService
@@ -64,6 +72,12 @@ public class PayrollCalculationServiceTests
         _persianCalendarService
             .GetPersianMonth(Arg.Any<DateOnly>())
             .Returns(1);
+        _persianCalendarService
+            .GetDaysInPersianYear(Arg.Any<DateOnly>())
+            .Returns(365);
+        _payrollRecordQuery
+            .GetAnnualWorkedDaysCountAsync(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<DateOnly>(), Arg.Any<CancellationToken>())
+            .Returns(0m);
         SetupRules();
         SetupFormulas();
         SetupEvaluation(DefaultItemAmount);
@@ -71,13 +85,8 @@ public class PayrollCalculationServiceTests
 
     private void SetupRules()
     {
-        SetupRule(LaborLawRuleKey.MaximumOvertimeHoursPerMonth, 80m);
-        SetupRule(LaborLawRuleKey.MaximumFridayWorkHoursPerMonth, 12m);
-        SetupRule(LaborLawRuleKey.InsurancePercentage, 7m);
-        SetupRule(LaborLawRuleKey.AnnualBonusMinimumAmount, 3_000_000m);
-        SetupRule(LaborLawRuleKey.AnnualBonusMaximumAmount, 6_000_000m);
-        SetupRule(LaborLawRuleKey.TaxExemptMonthlyAmount, 0m);
-        SetupRule(LaborLawRuleKey.TaxRatePercentage, 10m);
+        foreach (var (key, value) in PayrollFormulaCatalog.RuleValues)
+            SetupRule(key, value);
     }
 
     private void SetupRule(LaborLawRuleKey key, decimal? value) =>
@@ -88,7 +97,7 @@ public class PayrollCalculationServiceTests
     private void SetupFormulas()
     {
         foreach (var key in Enum.GetValues<FormulaKey>())
-            SetupFormula(key, $"[{key}] * 1");
+            SetupFormula(key, PayrollFormulaCatalog.Expression(key));
     }
 
     private void SetupFormula(FormulaKey key, string? expression) =>
@@ -105,6 +114,25 @@ public class PayrollCalculationServiceTests
         _formulaEvaluator
             .Evaluate(Arg.Any<string>(), Arg.Any<object[]>())
             .Returns(DomainResult<decimal>.Failure(message));
+
+    // Captures every formula evaluation (expression + inputs) while the evaluator
+    // stub keeps returning the default amount.
+    private IReadOnlyList<(string Expression, object[] Inputs)> CaptureEvaluationCalls()
+    {
+        var calls = new List<(string Expression, object[] Inputs)>();
+        _formulaEvaluator
+            .Evaluate(Arg.Any<string>(), Arg.Any<object[]>())
+            .Returns(ci =>
+            {
+                calls.Add((ci.Arg<string>(), ci.Arg<object[]>()));
+                return DomainResult<decimal>.Success(DefaultItemAmount);
+            });
+
+        return calls;
+    }
+
+    private static decimal EvaluateWithRealEvaluator(string expression, object[] inputs) =>
+        RealEvaluator.Evaluate(expression, inputs).ShouldBeSuccess();
 
     private PayrollWorkInputDto BuildWorkInput() => _payrollRecordBuilder.BuildDto();
 
@@ -167,6 +195,7 @@ public class PayrollCalculationServiceTests
     [InlineData(FormulaKey.EndOfServicePay)]
     [InlineData(FormulaKey.CommutingAllowancePay)]
     [InlineData(FormulaKey.InsurancePay)]
+    [InlineData(FormulaKey.TaxableAmountPay)]
     [InlineData(FormulaKey.TaxPay)]
     public async Task CalculateAsync_ShouldFetchTheFormulaForEachItem(FormulaKey formulaKey)
     {
@@ -182,28 +211,79 @@ public class PayrollCalculationServiceTests
         await Calculate();
 
         await _laborLawRuleQuery.Received(1)
-            .GetActiveValueAsync(LaborLawRuleKey.MaximumOvertimeHoursPerMonth, PeriodStart,
-                Arg.Any<CancellationToken>());
+            .GetActiveValueAsync(LaborLawRuleKey.NightShiftPercentage, PeriodStart, Arg.Any<CancellationToken>());
         await _laborLawRuleQuery.Received(1)
-            .GetActiveValueAsync(LaborLawRuleKey.MaximumFridayWorkHoursPerMonth, PeriodStart,
-                Arg.Any<CancellationToken>());
+            .GetActiveValueAsync(LaborLawRuleKey.HolidayWorkPercentage, PeriodStart, Arg.Any<CancellationToken>());
+        await _laborLawRuleQuery.Received(1)
+            .GetActiveValueAsync(LaborLawRuleKey.ChildAllowanceMultiplier, PeriodStart, Arg.Any<CancellationToken>());
+        await _laborLawRuleQuery.Received(1)
+            .GetActiveValueAsync(LaborLawRuleKey.HousingAllowanceAmount, PeriodStart, Arg.Any<CancellationToken>());
+        await _laborLawRuleQuery.Received(1)
+            .GetActiveValueAsync(LaborLawRuleKey.FoodAllowanceAmount, PeriodStart, Arg.Any<CancellationToken>());
+        await _laborLawRuleQuery.Received(1)
+            .GetActiveValueAsync(LaborLawRuleKey.MarriageAllowanceAmount, PeriodStart, Arg.Any<CancellationToken>());
+        await _laborLawRuleQuery.Received(1)
+            .GetActiveValueAsync(LaborLawRuleKey.OvertimePercentage, PeriodStart, Arg.Any<CancellationToken>());
+        await _laborLawRuleQuery.Received(1)
+            .GetActiveValueAsync(LaborLawRuleKey.FridayWorkPercentage, PeriodStart, Arg.Any<CancellationToken>());
+        await _laborLawRuleQuery.Received(1)
+            .GetActiveValueAsync(LaborLawRuleKey.EndOfServiceDaysPerYear, PeriodStart, Arg.Any<CancellationToken>());
+        await _laborLawRuleQuery.Received(1)
+            .GetActiveValueAsync(LaborLawRuleKey.MinimumDailySalary, PeriodStart, Arg.Any<CancellationToken>());
+        await _laborLawRuleQuery.Received(4)
+            .GetActiveValueAsync(LaborLawRuleKey.StandardDailyWorkHours, PeriodStart, Arg.Any<CancellationToken>());
+        await _laborLawRuleQuery.Received(1)
+            .GetActiveValueAsync(LaborLawRuleKey.ShiftWorkPercentageMorningEvening, PeriodStart, Arg.Any<CancellationToken>());
         await _laborLawRuleQuery.Received(1)
             .GetActiveValueAsync(LaborLawRuleKey.InsurancePercentage, PeriodStart, Arg.Any<CancellationToken>());
+
+        // Every tax bracket threshold/rate is fetched as a rule.
         await _laborLawRuleQuery.Received(1)
+            .GetActiveValueAsync(LaborLawRuleKey.TaxBracket1Threshold, PeriodStart, Arg.Any<CancellationToken>());
+        await _laborLawRuleQuery.Received(1)
+            .GetActiveValueAsync(LaborLawRuleKey.TaxBracket2Threshold, PeriodStart, Arg.Any<CancellationToken>());
+        await _laborLawRuleQuery.Received(1)
+            .GetActiveValueAsync(LaborLawRuleKey.TaxBracket2Rate, PeriodStart, Arg.Any<CancellationToken>());
+        await _laborLawRuleQuery.Received(1)
+            .GetActiveValueAsync(LaborLawRuleKey.TaxBracket3Threshold, PeriodStart, Arg.Any<CancellationToken>());
+        await _laborLawRuleQuery.Received(1)
+            .GetActiveValueAsync(LaborLawRuleKey.TaxBracket3Rate, PeriodStart, Arg.Any<CancellationToken>());
+        await _laborLawRuleQuery.Received(1)
+            .GetActiveValueAsync(LaborLawRuleKey.TaxBracket4Threshold, PeriodStart, Arg.Any<CancellationToken>());
+        await _laborLawRuleQuery.Received(1)
+            .GetActiveValueAsync(LaborLawRuleKey.TaxBracket4Rate, PeriodStart, Arg.Any<CancellationToken>());
+        await _laborLawRuleQuery.Received(1)
+            .GetActiveValueAsync(LaborLawRuleKey.TaxBracket5Threshold, PeriodStart, Arg.Any<CancellationToken>());
+        await _laborLawRuleQuery.Received(1)
+            .GetActiveValueAsync(LaborLawRuleKey.TaxBracket5Rate, PeriodStart, Arg.Any<CancellationToken>());
+        await _laborLawRuleQuery.Received(1)
+            .GetActiveValueAsync(LaborLawRuleKey.TaxBracket6Rate, PeriodStart, Arg.Any<CancellationToken>());
+
+        // The cap/limit rules belong to the payroll limits resolver, not to the
+        // item formulas; the old single-rate tax rules are deprecated.
+        await _laborLawRuleQuery.DidNotReceive()
+            .GetActiveValueAsync(LaborLawRuleKey.MaximumOvertimeHoursPerMonth, PeriodStart, Arg.Any<CancellationToken>());
+        await _laborLawRuleQuery.DidNotReceive()
+            .GetActiveValueAsync(LaborLawRuleKey.MaximumFridayWorkHoursPerMonth, PeriodStart, Arg.Any<CancellationToken>());
+        await _laborLawRuleQuery.DidNotReceive()
             .GetActiveValueAsync(LaborLawRuleKey.TaxExemptMonthlyAmount, PeriodStart, Arg.Any<CancellationToken>());
-        await _laborLawRuleQuery.Received(1)
+        await _laborLawRuleQuery.DidNotReceive()
             .GetActiveValueAsync(LaborLawRuleKey.TaxRatePercentage, PeriodStart, Arg.Any<CancellationToken>());
+        await _laborLawRuleQuery.DidNotReceive()
+            .GetActiveValueAsync(LaborLawRuleKey.AnnualBonusMinimumAmount, PeriodStart, Arg.Any<CancellationToken>());
+        await _laborLawRuleQuery.DidNotReceive()
+            .GetActiveValueAsync(LaborLawRuleKey.AnnualBonusMaximumAmount, PeriodStart, Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    public async Task CalculateAsync_ShouldPassTheRuleValueToTheOvertimeFormula()
+    public async Task CalculateAsync_ShouldPassThePercentageAndStandardHoursRulesToTheOvertimeFormula()
     {
         object[]? overtimeFormulaInputs = null;
         _formulaEvaluator
             .Evaluate(Arg.Any<string>(), Arg.Any<object[]>())
             .Returns(ci =>
             {
-                if (ci.Arg<string>() == "[OvertimePay] * 1")
+                if (ci.Arg<string>() == PayrollFormulaCatalog.Expression(FormulaKey.OvertimePay))
                     overtimeFormulaInputs = ci.Arg<object[]>();
 
                 return DomainResult<decimal>.Success(DefaultItemAmount);
@@ -216,8 +296,14 @@ public class PayrollCalculationServiceTests
             .OfType<FormulaVariable>()
             .Should()
             .ContainSingle(v =>
-                v.Name == nameof(LaborLawRuleKey.MaximumOvertimeHoursPerMonth) &&
-                Equals(v.Value, 80m));
+                v.Name == nameof(LaborLawRuleKey.OvertimePercentage) &&
+                Equals(v.Value, PayrollFormulaCatalog.OvertimePercentage));
+        overtimeFormulaInputs!
+            .OfType<FormulaVariable>()
+            .Should()
+            .ContainSingle(v =>
+                v.Name == nameof(LaborLawRuleKey.StandardDailyWorkHours) &&
+                Equals(v.Value, PayrollFormulaCatalog.StandardDailyWorkHoursValue));
     }
 
     [Fact]
@@ -275,6 +361,27 @@ public class PayrollCalculationServiceTests
     }
 
     [Fact]
+    public async Task CalculateAsync_WithAnnualBonusType_ShouldPassTheResolvedRuleUnderTheFixedVariableName()
+    {
+        var workInput = BuildWorkInput() with
+        {
+            IsEsfandPeriod = true,
+            AnnualBonusType = AnnualBonusType.Minimum
+        };
+
+        var calls = CaptureEvaluationCalls();
+
+        await Calculate(workInput);
+
+        var annualBonusInputs = calls.Single(c => c.Expression == PayrollFormulaCatalog.Expression(FormulaKey.AnnualBonusPay)).Inputs;
+        annualBonusInputs
+            .OfType<FormulaVariable>()
+            .Should()
+            .ContainSingle(v => v.Name == "AnnualBonusRuleAmount" && Equals(v.Value, PayrollFormulaCatalog.AnnualBonusMinimumAmount));
+        annualBonusInputs.OfType<FormulaVariable>().Should().NotContain(v => v.Name == nameof(LaborLawRuleKey.AnnualBonusMinimumAmount));
+    }
+
+    [Fact]
     public async Task CalculateAsync_WithoutAnnualBonusType_ShouldSkipTheAnnualBonusAndReturnNull()
     {
         var result = await Calculate();
@@ -284,18 +391,97 @@ public class PayrollCalculationServiceTests
             .GetActiveExpressionAsync(FormulaKey.AnnualBonusPay, Arg.Any<DateOnly>(), Arg.Any<CancellationToken>());
     }
 
+    [Theory]
+    [InlineData(ShiftType.MorningEvening, LaborLawRuleKey.ShiftWorkPercentageMorningEvening)]
+    [InlineData(ShiftType.MorningNight, LaborLawRuleKey.ShiftWorkPercentageMorningNight)]
+    [InlineData(ShiftType.EveningNight, LaborLawRuleKey.ShiftWorkPercentageEveningNight)]
+    [InlineData(ShiftType.MorningEveningNight, LaborLawRuleKey.ShiftWorkPercentageMorningEveningNight)]
+    public async Task CalculateAsync_WithEachShiftType_ShouldFetchItsOwnShiftWorkRuleAndPassItAsShiftWorkPercentage(
+        ShiftType shiftType, LaborLawRuleKey expectedRuleKey)
+    {
+        IReadOnlyList<SalaryDecree> salaryDecrees =
+        [
+            new SalaryDecreeBuilder()
+                .WithEmployeeId(EmployeeId)
+                .WithEmployeeHireDate(new DateOnly(2024, 6, 1))
+                .WithEffectiveFrom(new DateOnly(2024, 12, 1))
+                .WithShiftType(shiftType)
+                .CreateResult()
+                .ShouldBeSuccess()
+        ];
+
+        var calls = CaptureEvaluationCalls();
+
+        var result = await Calculate(salaryDecrees: salaryDecrees);
+
+        result.ShouldBeSuccess().CalculatedAmounts.ShiftWorkAmount.Should().Be(DefaultItemAmount);
+        await _laborLawRuleQuery.Received(1)
+            .GetActiveValueAsync(expectedRuleKey, PeriodStart, Arg.Any<CancellationToken>());
+
+        var shiftWorkInputs = calls.Single(c => c.Expression == PayrollFormulaCatalog.Expression(FormulaKey.ShiftWorkPay)).Inputs;
+        shiftWorkInputs
+            .OfType<FormulaVariable>()
+            .Should()
+            .ContainSingle(v =>
+                v.Name == "ShiftWorkPercentage" &&
+                Equals(v.Value, PayrollFormulaCatalog.RuleValues[expectedRuleKey]));
+    }
+
+    [Fact]
+    public async Task CalculateAsync_WithShiftTypeNone_ShouldSkipTheShiftWorkPayItemAndLog()
+    {
+        IReadOnlyList<SalaryDecree> salaryDecrees =
+        [
+            new SalaryDecreeBuilder()
+                .WithEmployeeId(EmployeeId)
+                .WithEmployeeHireDate(new DateOnly(2024, 6, 1))
+                .WithEffectiveFrom(new DateOnly(2024, 12, 1))
+                .WithShiftType(ShiftType.None)
+                .CreateResult()
+                .ShouldBeSuccess()
+        ];
+
+        var result = await Calculate(salaryDecrees: salaryDecrees);
+
+        result.ShouldBeSuccess().CalculatedAmounts.ShiftWorkAmount.Should().Be(0m);
+        _logger.Entries.Should().Contain(e =>
+            e.Level == LogLevel.Information && e.Message.Contains("Shift type is None"));
+        await _calculationFormulaQuery.DidNotReceive()
+            .GetActiveExpressionAsync(FormulaKey.ShiftWorkPay, Arg.Any<DateOnly>(), Arg.Any<CancellationToken>());
+        await _laborLawRuleQuery.DidNotReceive()
+            .GetActiveValueAsync(LaborLawRuleKey.ShiftWorkPercentageMorningEvening, Arg.Any<DateOnly>(), Arg.Any<CancellationToken>());
+        await _laborLawRuleQuery.DidNotReceive()
+            .GetActiveValueAsync(LaborLawRuleKey.ShiftWorkPercentageMorningNight, Arg.Any<DateOnly>(), Arg.Any<CancellationToken>());
+        await _laborLawRuleQuery.DidNotReceive()
+            .GetActiveValueAsync(LaborLawRuleKey.ShiftWorkPercentageEveningNight, Arg.Any<DateOnly>(), Arg.Any<CancellationToken>());
+        await _laborLawRuleQuery.DidNotReceive()
+            .GetActiveValueAsync(LaborLawRuleKey.ShiftWorkPercentageMorningEveningNight, Arg.Any<DateOnly>(), Arg.Any<CancellationToken>());
+    }
+
     [Fact]
     public async Task CalculateAsync_WhenARuleIsMissing_ShouldReturnNotfoundFailureAndLog()
     {
-        SetupRule(LaborLawRuleKey.MaximumOvertimeHoursPerMonth, null);
+        SetupRule(LaborLawRuleKey.OvertimePercentage, null);
 
         var result = await Calculate();
 
         result.ShouldBeFailure(null, BadResultType.NotFound);
         _logger.Entries.Should().Contain(e =>
-            e.Level == LogLevel.Warning && e.Message.Contains("MaximumOvertimeHoursPerMonth"));
+            e.Level == LogLevel.Warning && e.Message.Contains("OvertimePercentage"));
         await _calculationFormulaQuery.DidNotReceive()
             .GetActiveExpressionAsync(FormulaKey.OvertimePay, Arg.Any<DateOnly>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task CalculateAsync_WhenATaxBracketRuleIsMissing_ShouldReturnNotfoundFailureAndLog()
+    {
+        SetupRule(LaborLawRuleKey.TaxBracket3Rate, null);
+
+        var result = await Calculate();
+
+        result.ShouldBeFailure(null, BadResultType.NotFound);
+        _logger.Entries.Should().Contain(e =>
+            e.Level == LogLevel.Warning && e.Message.Contains("TaxBracket3Rate"));
     }
 
     [Fact]
@@ -308,6 +494,18 @@ public class PayrollCalculationServiceTests
         result.ShouldBeFailure(null, BadResultType.NotFound);
         _logger.Entries.Should().Contain(e =>
             e.Level == LogLevel.Warning && e.Message.Contains("BaseSalaryPay"));
+    }
+
+    [Fact]
+    public async Task CalculateAsync_WhenTheTaxableAmountFormulaIsMissing_ShouldReturnNotfoundFailureAndLog()
+    {
+        SetupFormula(FormulaKey.TaxableAmountPay, null);
+
+        var result = await Calculate();
+
+        result.ShouldBeFailure(null, BadResultType.NotFound);
+        _logger.Entries.Should().Contain(e =>
+            e.Level == LogLevel.Warning && e.Message.Contains("TaxableAmountPay"));
     }
 
     [Fact]
@@ -331,6 +529,8 @@ public class PayrollCalculationServiceTests
         var act = async () => await Calculate(cancellationToken: cancellationTokenSource.Token);
 
         await act.Should().ThrowAsync<OperationCanceledException>();
+        await _payrollRecordQuery.DidNotReceive()
+            .GetAnnualWorkedDaysCountAsync(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<DateOnly>(), Arg.Any<CancellationToken>());
         await _laborLawRuleQuery.DidNotReceive()
             .GetActiveValueAsync(Arg.Any<LaborLawRuleKey>(), Arg.Any<DateOnly>(), Arg.Any<CancellationToken>());
         await _calculationFormulaQuery.DidNotReceive()
@@ -382,7 +582,7 @@ public class PayrollCalculationServiceTests
             .Evaluate(Arg.Any<string>(), Arg.Any<object[]>())
             .Returns(ci =>
             {
-                if (ci.Arg<string>() == "[InsurancePay] * 1")
+                if (ci.Arg<string>() == PayrollFormulaCatalog.Expression(FormulaKey.InsurancePay))
                     insuranceFormulaInputs = ci.Arg<object[]>();
 
                 return DomainResult<decimal>.Success(DefaultItemAmount);
@@ -400,45 +600,77 @@ public class PayrollCalculationServiceTests
             .Should()
             .Contain(v =>
                 v.Name == nameof(LaborLawRuleKey.InsurancePercentage) &&
-                Equals(v.Value, 7m));
+                Equals(v.Value, PayrollFormulaCatalog.InsurancePercentage));
     }
 
     [Fact]
-    public async Task CalculateAsync_ShouldPassTheGrossAndTaxRulesToTheTaxFormula()
+    public async Task CalculateAsync_ShouldPassEveryItemAmountToTheTaxableAmountFormulaExceptMissionAndEndOfService()
     {
-        SetupRule(LaborLawRuleKey.TaxExemptMonthlyAmount, 2_000_000m);
-        SetupRule(LaborLawRuleKey.TaxRatePercentage, 20m);
+        var workInput = BuildWorkInput() with
+        {
+            PerformanceBonusAmount = 500_000m,
+            CashBenefitsAmount = 200_000m
+        };
 
-        object[]? taxFormulaInputs = null;
-        _formulaEvaluator
-            .Evaluate(Arg.Any<string>(), Arg.Any<object[]>())
-            .Returns(ci =>
-            {
-                if (ci.Arg<string>() == "[TaxPay] * 1")
-                    taxFormulaInputs = ci.Arg<object[]>();
+        var calls = CaptureEvaluationCalls();
 
-                return DomainResult<decimal>.Success(DefaultItemAmount);
-            });
+        await Calculate(workInput);
+
+        var taxableInputs = calls.Single(c => c.Expression == PayrollFormulaCatalog.Expression(FormulaKey.TaxableAmountPay)).Inputs;
+        var variables = taxableInputs.OfType<FormulaVariable>().ToList();
+
+        // One variable per taxable item (all items but mission and end-of-service)
+        // plus the optional performance/cash amounts.
+        variables.Should().Contain(v => v.Name == nameof(FormulaKey.BaseSalaryPay) && Equals(v.Value, 1_000_000m));
+        variables.Should().Contain(v => v.Name == nameof(FormulaKey.AttractionAllowancePay) && Equals(v.Value, 1_000_000m));
+        variables.Should().Contain(v => v.Name == nameof(FormulaKey.SupervisionAllowancePay) && Equals(v.Value, 1_000_000m));
+        variables.Should().Contain(v => v.Name == nameof(FormulaKey.NightShiftExtraPay) && Equals(v.Value, 1_000_000m));
+        variables.Should().Contain(v => v.Name == nameof(FormulaKey.HolidayWorkPay) && Equals(v.Value, 1_000_000m));
+        variables.Should().Contain(v => v.Name == nameof(FormulaKey.ChildAllowancePay) && Equals(v.Value, 1_000_000m));
+        variables.Should().Contain(v => v.Name == nameof(FormulaKey.HousingAllowancePay) && Equals(v.Value, 1_000_000m));
+        variables.Should().Contain(v => v.Name == nameof(FormulaKey.FoodAllowancePay) && Equals(v.Value, 1_000_000m));
+        variables.Should().Contain(v => v.Name == nameof(FormulaKey.MarriageAllowancePay) && Equals(v.Value, 1_000_000m));
+        variables.Should().Contain(v => v.Name == nameof(FormulaKey.OvertimePay) && Equals(v.Value, 1_000_000m));
+        variables.Should().Contain(v => v.Name == nameof(FormulaKey.ShiftWorkPay) && Equals(v.Value, 1_000_000m));
+        variables.Should().Contain(v => v.Name == nameof(FormulaKey.FridayWorkPay) && Equals(v.Value, 1_000_000m));
+        variables.Should().Contain(v => v.Name == nameof(FormulaKey.CommutingAllowancePay) && Equals(v.Value, 1_000_000m));
+        // Annual bonus is not applicable in this period, so its variable is zero.
+        variables.Should().Contain(v => v.Name == nameof(FormulaKey.AnnualBonusPay) && Equals(v.Value, 0m));
+        variables.Should().Contain(v => v.Name == "PerformanceBonusAmount" && Equals(v.Value, 500_000m));
+        variables.Should().Contain(v => v.Name == "CashBenefitsAmount" && Equals(v.Value, 200_000m));
+
+        variables.Should().NotContain(v => v.Name == nameof(FormulaKey.DailyMissionPay));
+        variables.Should().NotContain(v => v.Name == nameof(FormulaKey.EndOfServicePay));
+    }
+
+    [Fact]
+    public async Task CalculateAsync_ShouldPassTheTaxableAmountAndEveryBracketRuleToTheTaxFormula()
+    {
+        var calls = CaptureEvaluationCalls();
 
         await Calculate();
 
-        taxFormulaInputs.Should().NotBeNull();
-        taxFormulaInputs!
+        var taxInputs = calls.Single(c => c.Expression == PayrollFormulaCatalog.Expression(FormulaKey.TaxPay)).Inputs;
+        taxInputs
             .OfType<FormulaVariable>()
             .Should()
-            .Contain(v => v.Name == "GrossAmount" && Equals(v.Value, 15_000_000m));
-        taxFormulaInputs!
-            .OfType<FormulaVariable>()
-            .Should()
-            .Contain(v =>
-                v.Name == nameof(LaborLawRuleKey.TaxExemptMonthlyAmount) &&
-                Equals(v.Value, 2_000_000m));
-        taxFormulaInputs!
-            .OfType<FormulaVariable>()
+            .ContainSingle(v => v.Name == "TaxableAmount" && Equals(v.Value, DefaultItemAmount));
+
+        taxInputs.OfType<FormulaVariable>()
             .Should()
             .Contain(v =>
-                v.Name == nameof(LaborLawRuleKey.TaxRatePercentage) &&
-                Equals(v.Value, 20m));
+                v.Name == nameof(LaborLawRuleKey.TaxBracket1Threshold) &&
+                Equals(v.Value, PayrollFormulaCatalog.TaxBracket1Threshold));
+        taxInputs.OfType<FormulaVariable>()
+            .Should()
+            .Contain(v =>
+                v.Name == nameof(LaborLawRuleKey.TaxBracket6Rate) &&
+                Equals(v.Value, PayrollFormulaCatalog.TaxBracket6Rate));
+
+        // The deprecated single-rate tax inputs are gone.
+        taxInputs.OfType<FormulaVariable>().Should().NotContain(v => v.Name == "GrossAmount");
+        taxInputs.OfType<FormulaVariable>().Should().NotContain(v => v.Name == nameof(LaborLawRuleKey.TaxExemptMonthlyAmount));
+        taxInputs.OfType<FormulaVariable>().Should().NotContain(v => v.Name == nameof(LaborLawRuleKey.TaxRatePercentage));
     }
 
     [Fact]
@@ -447,13 +679,156 @@ public class PayrollCalculationServiceTests
         _formulaEvaluator
             .Evaluate(Arg.Any<string>(), Arg.Any<object[]>())
             .Returns(ci =>
-                ci.Arg<string>() == "[TaxPay] * 1"
+                ci.Arg<string>() == PayrollFormulaCatalog.Expression(FormulaKey.TaxPay)
                     ? DomainResult<decimal>.Success(0m)
                     : DomainResult<decimal>.Success(DefaultItemAmount));
 
         var result = await Calculate();
 
         result.ShouldBeSuccess().Amounts.CalculatedTaxAmount.Should().Be(0m);
+    }
+
+    [Fact]
+    public async Task CalculateAsync_ShouldAddTheCurrentPeriodWorkedDaysToThePersistedAnnualAggregate()
+    {
+        _payrollRecordQuery
+            .GetAnnualWorkedDaysCountAsync(
+                Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<DateOnly>(), Arg.Any<CancellationToken>())
+            .Returns(100m);
+
+        var calls = CaptureEvaluationCalls();
+
+        await Calculate();
+
+        await _payrollRecordQuery.Received(1)
+            .GetAnnualWorkedDaysCountAsync(_workshopUserId, EmployeeId, PeriodStart, Arg.Any<CancellationToken>());
+        _persianCalendarService.Received(1).GetDaysInPersianYear(PeriodStart);
+
+        // 100 persisted + 24 current-period worked days = 124 annual total.
+        var endOfServiceInputs = calls.Single(c => c.Expression == PayrollFormulaCatalog.Expression(FormulaKey.EndOfServicePay)).Inputs;
+        endOfServiceInputs.OfType<FormulaVariable>()
+            .Should()
+            .ContainSingle(v => v.Name == "AnnualWorkedDaysCount" && Equals(v.Value, 124m));
+        endOfServiceInputs.OfType<FormulaVariable>()
+            .Should()
+            .ContainSingle(v => v.Name == "DaysInYear" && Equals(v.Value, 365));
+
+        // The annual variables reach only the year-proportional items.
+        var baseSalaryInputs = calls.Single(c => c.Expression == PayrollFormulaCatalog.Expression(FormulaKey.BaseSalaryPay)).Inputs;
+        baseSalaryInputs.OfType<FormulaVariable>()
+            .Should()
+            .NotContain(v => v.Name == "AnnualWorkedDaysCount");
+        baseSalaryInputs.OfType<FormulaVariable>()
+            .Should()
+            .NotContain(v => v.Name == "DaysInYear");
+    }
+
+    [Fact]
+    public async Task CalculateAsync_ShouldPassTheAnnualContextToTheAnnualBonusFormulaToo()
+    {
+        _payrollRecordQuery
+            .GetAnnualWorkedDaysCountAsync(
+                Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<DateOnly>(), Arg.Any<CancellationToken>())
+            .Returns(100m);
+
+        var workInput = BuildWorkInput() with
+        {
+            IsEsfandPeriod = true,
+            AnnualBonusType = AnnualBonusType.Maximum
+        };
+
+        var calls = CaptureEvaluationCalls();
+
+        await Calculate(workInput);
+
+        var annualBonusInputs = calls.Single(c => c.Expression == PayrollFormulaCatalog.Expression(FormulaKey.AnnualBonusPay)).Inputs;
+        annualBonusInputs.OfType<FormulaVariable>()
+            .Should()
+            .ContainSingle(v => v.Name == "AnnualWorkedDaysCount" && Equals(v.Value, 124m));
+        annualBonusInputs.OfType<FormulaVariable>()
+            .Should()
+            .ContainSingle(v => v.Name == "DaysInYear" && Equals(v.Value, 365));
+        annualBonusInputs.OfType<FormulaVariable>()
+            .Should()
+            .ContainSingle(v =>
+                v.Name == "AnnualBonusRuleAmount" &&
+                Equals(v.Value, PayrollFormulaCatalog.AnnualBonusMaximumAmount));
+    }
+
+    [Fact]
+    public async Task CalculateAsync_WhenTheDecreeAllowancesAreNull_ShouldEvaluateTheAllowanceFormulasToZero()
+    {
+        var calls = CaptureEvaluationCalls();
+
+        await Calculate();
+
+        // The fixture decree has no attraction/supervision allowances (null), and
+        // the real evaluator normalizes null decimals to zero.
+        var attractionInputs = calls.Single(c => c.Expression == PayrollFormulaCatalog.Expression(FormulaKey.AttractionAllowancePay)).Inputs;
+        var supervisionInputs = calls.Single(c => c.Expression == PayrollFormulaCatalog.Expression(FormulaKey.SupervisionAllowancePay)).Inputs;
+        EvaluateWithRealEvaluator(PayrollFormulaCatalog.Expression(FormulaKey.AttractionAllowancePay), attractionInputs)
+            .Should().Be(0m);
+        EvaluateWithRealEvaluator(PayrollFormulaCatalog.Expression(FormulaKey.SupervisionAllowancePay), supervisionInputs)
+            .Should().Be(0m);
+    }
+
+    [Fact]
+    public async Task CalculateAsync_WithRealFormulaEvaluation_ShouldComputeTheTaxableBaseAndTheProgressiveTax()
+    {
+        // The taxable-base and tax formulas are evaluated with the real evaluator,
+        // everything else keeps the fixed stub amount.
+        _formulaEvaluator
+            .Evaluate(Arg.Any<string>(), Arg.Any<object[]>())
+            .Returns(ci =>
+            {
+                var expression = ci.Arg<string>();
+                var inputs = ci.Arg<object[]>();
+
+                return expression == PayrollFormulaCatalog.Expression(FormulaKey.TaxableAmountPay) ||
+                       expression == PayrollFormulaCatalog.Expression(FormulaKey.TaxPay)
+                    ? DomainResult<decimal>.Success(EvaluateWithRealEvaluator(expression, inputs))
+                    : DomainResult<decimal>.Success(DefaultItemAmount);
+            });
+
+        var workInput = BuildWorkInput() with
+        {
+            PerformanceBonusAmount = 500_000m,
+            CashBenefitsAmount = 200_000m
+        };
+
+        var result = await Calculate(workInput);
+
+        var response = result.ShouldBeSuccess();
+        // 13 taxable formula items (all but mission/end-of-service/annual bonus) at
+        // 1,000,000 each + 500,000 + 200,000 optional = 13,700,000, which sits in
+        // the first (exempt) tax bracket, so the progressive formula yields zero.
+        response.Amounts.CalculatedTaxAmount.Should().Be(0m);
+    }
+
+    [Fact]
+    public async Task CalculateAsync_WhenABracketRuleValueChanges_ShouldChangeTheTaxWithoutAnyCodeChange()
+    {
+        _formulaEvaluator
+            .Evaluate(Arg.Any<string>(), Arg.Any<object[]>())
+            .Returns(ci =>
+            {
+                var expression = ci.Arg<string>();
+                var inputs = ci.Arg<object[]>();
+
+                return expression == PayrollFormulaCatalog.Expression(FormulaKey.TaxableAmountPay) ||
+                       expression == PayrollFormulaCatalog.Expression(FormulaKey.TaxPay)
+                    ? DomainResult<decimal>.Success(EvaluateWithRealEvaluator(expression, inputs))
+                    : DomainResult<decimal>.Success(DefaultItemAmount);
+            });
+
+        // Taxable base is 13,700,000; a zero first-bracket threshold makes the
+        // whole base taxable at the 10% second-bracket rate => 1,370,000.
+        SetupRule(LaborLawRuleKey.TaxBracket1Threshold, 0m);
+
+        var result = await Calculate();
+
+        var response = result.ShouldBeSuccess();
+        response.Amounts.CalculatedTaxAmount.Should().Be(1_370_000m);
     }
 
     [Fact]
@@ -503,7 +878,7 @@ public class PayrollCalculationServiceTests
         formulaInputsCalls.Should().NotBeEmpty();
         // The first Evaluate call is for a payroll item (e.g. BaseSalaryPay), which
         // receives the work input directly — unlike the insurance/tax calls that
-        // only receive GrossAmount and labor law rule values.
+        // only receive GrossAmount/TaxableAmount and labor law rule values.
         formulaInputsCalls.First().Should().Contain(workInput);
     }
 
@@ -514,12 +889,14 @@ public class PayrollCalculationServiceTests
             .WithEmployeeId(EmployeeId)
             .WithEmployeeHireDate(new DateOnly(2024, 6, 1))
             .WithEffectiveFrom(new DateOnly(2024, 11, 1))
+            .WithShiftType(ShiftType.MorningEvening)
             .CreateResult()
             .ShouldBeSuccess();
         var midPeriodDecree = new SalaryDecreeBuilder()
             .WithEmployeeId(EmployeeId)
             .WithEmployeeHireDate(new DateOnly(2024, 6, 1))
             .WithEffectiveFrom(new DateOnly(2025, 1, 10))
+            .WithShiftType(ShiftType.MorningEvening)
             .CreateResult()
             .ShouldBeSuccess();
         IReadOnlyList<SalaryDecree> salaryDecrees = [olderDecree, midPeriodDecree];
@@ -551,6 +928,7 @@ public class PayrollCalculationServiceTests
             .WithEmployeeId(EmployeeId)
             .WithEmployeeHireDate(new DateOnly(2024, 6, 1))
             .WithEffectiveFrom(new DateOnly(2025, 2, 1))
+            .WithShiftType(ShiftType.MorningEvening)
             .CreateResult()
             .ShouldBeSuccess();
         IReadOnlyList<SalaryDecree> salaryDecrees = [futureDecree];

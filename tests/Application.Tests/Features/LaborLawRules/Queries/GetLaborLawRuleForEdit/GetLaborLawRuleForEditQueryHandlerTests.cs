@@ -19,7 +19,7 @@ public class GetLaborLawRuleForEditQueryHandlerTests
     {
         var query = new GetLaborLawRuleForEditQuery(ValidRuleId);
         var rule = new LaborLawRuleByIdResult(
-            LaborLawRuleKey.MinimumMonthlySalary,
+            LaborLawRuleKey.MinimumDailySalary,
             103_909_680m,
             ValidEffectiveFrom);
 
@@ -29,7 +29,7 @@ public class GetLaborLawRuleForEditQueryHandlerTests
         var result = await _handler.Handle(query, CancellationToken.None);
 
         var response = result.ShouldBeSuccess();
-        response.Key.Should().Be(LaborLawRuleKey.MinimumMonthlySalary);
+        response.Key.Should().Be(LaborLawRuleKey.MinimumDailySalary);
         response.Value.Should().Be(103_909_680m);
         response.EffectiveFrom.Should().Be(ValidEffectiveFrom);
     }

@@ -15,7 +15,7 @@ public class CreateLaborLawRuleItemTests
         using (new AssertionScope())
         {
             response.Id.Should().NotBeEmpty();
-            response.Key.Should().Be(LaborLawRuleKey.MinimumMonthlySalary);
+            response.Key.Should().Be(LaborLawRuleKey.MinimumDailySalary);
             response.Value.Should().Be(71_661_840m);
             response.EffectiveFrom.Should().NotBe(default);
         }
@@ -29,7 +29,7 @@ public class CreateLaborLawRuleItemTests
 
         var result = _builder
             .WithId(id)
-            .WithKey(LaborLawRuleKey.MinimumMonthlySalary)
+            .WithKey(LaborLawRuleKey.MinimumDailySalary)
             .WithValue(103_909_680m)
             .WithEffectiveFrom(effectiveFrom)
             .CreateResult();
@@ -38,7 +38,7 @@ public class CreateLaborLawRuleItemTests
         using (new AssertionScope())
         {
             response.Id.Should().Be(id);
-            response.Key.Should().Be(LaborLawRuleKey.MinimumMonthlySalary);
+            response.Key.Should().Be(LaborLawRuleKey.MinimumDailySalary);
             response.Value.Should().Be(103_909_680m);
             response.EffectiveFrom.Should().Be(effectiveFrom);
         }
@@ -50,7 +50,7 @@ public class CreateLaborLawRuleItemTests
         var effectiveFrom = DateOnly.FromDateTime(DateTime.Now.AddDays(-1));
 
         var result = LaborLawRuleItem.Create(
-            LaborLawRuleKey.MinimumMonthlySalary,
+            LaborLawRuleKey.MinimumDailySalary,
             71_661_840m,
             effectiveFrom);
 
@@ -58,7 +58,7 @@ public class CreateLaborLawRuleItemTests
         using (new AssertionScope())
         {
             response.Id.Should().NotBeEmpty();
-            response.Key.Should().Be(LaborLawRuleKey.MinimumMonthlySalary);
+            response.Key.Should().Be(LaborLawRuleKey.MinimumDailySalary);
             response.Value.Should().Be(71_661_840m);
             response.EffectiveFrom.Should().Be(effectiveFrom);
         }

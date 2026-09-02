@@ -46,7 +46,7 @@ public class LaborLawRuleControllerTests(ApiFixture fixture) : IClassFixture<Api
 
         var response = await _client.PostAsJsonAsync(LaborLawRulesUrl, new
         {
-            laborLawRuleKey = LaborLawRuleKey.MinimumMonthlySalary,
+            laborLawRuleKey = LaborLawRuleKey.MinimumDailySalary,
             value = 71_661_840m,
             effectiveFrom = "1403/01/01"
         });
@@ -66,7 +66,7 @@ public class LaborLawRuleControllerTests(ApiFixture fixture) : IClassFixture<Api
 
         var response = await _client.PostAsJsonAsync(LaborLawRulesUrl, new
         {
-            laborLawRuleKey = LaborLawRuleKey.MinimumMonthlySalary,
+            laborLawRuleKey = LaborLawRuleKey.MinimumDailySalary,
             value = 71_661_840m,
             effectiveFrom = "1403/01/01"
         });

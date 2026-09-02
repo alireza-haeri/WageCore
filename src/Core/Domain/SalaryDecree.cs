@@ -23,7 +23,7 @@ public class SalaryDecree
         Guid employeeId,
         DateOnly? employeeHireDate,
         DateOnly? latestExistingEffectiveFrom,
-        decimal? minimumMonthlySalary,
+        decimal? minimumDailySalary,
         SalaryDecreeDto? salaryProfile)
     {
         var validationResult = Validate(
@@ -31,7 +31,7 @@ public class SalaryDecree
             employeeId,
             employeeHireDate,
             latestExistingEffectiveFrom,
-            minimumMonthlySalary,
+            minimumDailySalary,
             salaryProfile);
 
         if (!validationResult.IsSuccess)
@@ -63,26 +63,26 @@ public class SalaryDecree
         Guid employeeId,
         DateOnly? employeeHireDate,
         DateOnly? latestExistingEffectiveFrom,
-        decimal? minimumMonthlySalary,
+        decimal? minimumDailySalary,
         SalaryDecreeDto? salaryProfile) =>
         Create(
             Guid.NewGuid(),
             employeeId,
             employeeHireDate,
             latestExistingEffectiveFrom,
-            minimumMonthlySalary,
+            minimumDailySalary,
             salaryProfile);
 
     public DomainResult Update(
         DateOnly? employeeHireDate,
         DateOnly? latestExistingEffectiveFrom,
-        decimal? minimumMonthlySalary,
+        decimal? minimumDailySalary,
         SalaryDecreeDto? salaryProfile)
     {
         var validationResult = ValidateCommon(
             employeeHireDate,
             latestExistingEffectiveFrom,
-            minimumMonthlySalary,
+            minimumDailySalary,
             salaryProfile);
 
         if (!validationResult.IsSuccess)
@@ -112,7 +112,7 @@ public class SalaryDecree
         Guid employeeId,
         DateOnly? employeeHireDate,
         DateOnly? latestExistingEffectiveFrom,
-        decimal? minimumMonthlySalary,
+        decimal? minimumDailySalary,
         SalaryDecreeDto? salaryProfile)
     {
         if (salaryProfileId == Guid.Empty)
@@ -121,13 +121,13 @@ public class SalaryDecree
         if (employeeId == Guid.Empty)
             return DomainResult.Failure("شناسه کارمند نمیتواند خالی باشد.");
 
-        return ValidateCommon(employeeHireDate, latestExistingEffectiveFrom, minimumMonthlySalary, salaryProfile);
+        return ValidateCommon(employeeHireDate, latestExistingEffectiveFrom, minimumDailySalary, salaryProfile);
     }
 
     private static DomainResult ValidateCommon(
         DateOnly? employeeHireDate,
         DateOnly? latestExistingEffectiveFrom,
-        decimal? minimumMonthlySalary,
+        decimal? minimumDailySalary,
         SalaryDecreeDto? salaryProfile)
     {
         if (salaryProfile is null)
@@ -146,11 +146,11 @@ public class SalaryDecree
             salaryProfile.EffectiveFrom <= latestExistingEffectiveFrom)
             return DomainResult.Failure("تاریخ اعمال نباید قبل از پروفایل حقوق قبلی کارمند باشد.");
 
-        if (minimumMonthlySalary is null)
-            return DomainResult.Failure("حداقل حقوق ماهانه نمیتواند خالی باشد.");
+        if (minimumDailySalary is null)
+            return DomainResult.Failure("حداقل حقوق روزانه نمیتواند خالی باشد.");
 
-        if (minimumMonthlySalary <= 0)
-            return DomainResult.Failure("حداقل حقوق ماهانه باید بیشتر از صفر ریال باشد.");
+        if (minimumDailySalary <= 0)
+            return DomainResult.Failure("حداقل حقوق روزانه باید بیشتر از صفر ریال باشد.");
 
         if (salaryProfile.BaseDailySalary is null)
             return DomainResult.Failure("حقوق پایه روزانه نمیتواند خالی باشد.");
@@ -158,8 +158,8 @@ public class SalaryDecree
         if (salaryProfile.BaseDailySalary <= 0)
             return DomainResult.Failure("حقوق پایه روزانه باید بیشتر از صفر ریال باشد.");
 
-        if (salaryProfile.BaseDailySalary < minimumMonthlySalary)
-            return DomainResult.Failure("حقوق پایه روزانه نمیتواند کمتر از حداقل حقوق ماهانه باشد.");
+        if (salaryProfile.BaseDailySalary < minimumDailySalary)
+            return DomainResult.Failure("حقوق پایه روزانه نمیتواند کمتر از حداقل حقوق روزانه باشد.");
 
         var optionalAmountResult = ValidateOptionalAmount(salaryProfile.AttractionAllowance, "حق جذب");
         if (!optionalAmountResult.IsSuccess)

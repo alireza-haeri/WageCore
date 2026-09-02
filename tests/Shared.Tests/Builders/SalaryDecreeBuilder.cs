@@ -6,7 +6,7 @@ public class SalaryDecreeBuilder
     private Guid _employeeId = Guid.NewGuid();
     private DateOnly? _employeeHireDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-30));
     private DateOnly? _latestExistingEffectiveFrom;
-    private decimal? _minimumMonthlySalary = 10_000_000m;
+    private decimal? _minimumDailySalary = 10_000_000m;
     private DateOnly? _effectiveFrom = DateOnly.FromDateTime(DateTime.Now.AddDays(-5));
     private decimal? _baseDailySalary = 20_000_000m;
     private decimal? _attractionAllowance;
@@ -49,9 +49,9 @@ public class SalaryDecreeBuilder
         return this;
     }
 
-    public SalaryDecreeBuilder WithMinimumMonthlySalary(decimal? minimumMonthlySalary)
+    public SalaryDecreeBuilder WithMinimumDailySalary(decimal? minimumDailySalary)
     {
-        _minimumMonthlySalary = minimumMonthlySalary;
+        _minimumDailySalary = minimumDailySalary;
         return this;
     }
 
@@ -189,7 +189,7 @@ public class SalaryDecreeBuilder
             _employeeId,
             _employeeHireDate,
             _latestExistingEffectiveFrom,
-            _minimumMonthlySalary,
+            _minimumDailySalary,
             BuildDto());
     }
 }

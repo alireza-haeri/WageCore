@@ -17,7 +17,7 @@ public class CreateLaborLawRuleCommandHandlerTests
     }
 
     private static CreateLaborLawRuleCommand CreateValidCommand(
-        LaborLawRuleKey? key = LaborLawRuleKey.MinimumMonthlySalary,
+        LaborLawRuleKey? key = LaborLawRuleKey.MinimumDailySalary,
         decimal? value = ValidValue,
         DateOnly? effectiveFrom = null) =>
         new(key, value, effectiveFrom ?? ValidEffectiveFrom);
@@ -48,7 +48,7 @@ public class CreateLaborLawRuleCommandHandlerTests
 
         await _laborLawRuleRepository.Received(1).CreateAsync(
             Arg.Is<LaborLawRuleItem>(x =>
-                x.Key == LaborLawRuleKey.MinimumMonthlySalary &&
+                x.Key == LaborLawRuleKey.MinimumDailySalary &&
                 x.Value == ValidValue &&
                 x.EffectiveFrom == ValidEffectiveFrom),
             Arg.Any<CancellationToken>());
@@ -90,7 +90,7 @@ public class CreateLaborLawRuleCommandHandlerTests
     public async Task Handle_WhenEffectiveFromIsNull_ShouldReturnGeneralFailure()
     {
         var command = new CreateLaborLawRuleCommand(
-            LaborLawRuleKey.MinimumMonthlySalary,
+            LaborLawRuleKey.MinimumDailySalary,
             ValidValue,
             null);
 

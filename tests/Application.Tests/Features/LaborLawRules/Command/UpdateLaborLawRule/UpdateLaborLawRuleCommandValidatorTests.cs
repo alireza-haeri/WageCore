@@ -10,7 +10,7 @@ public class UpdateLaborLawRuleCommandValidatorTests
 
     private static UpdateLaborLawRuleCommand CreateValidCommand(
         Guid? ruleId = null,
-        LaborLawRuleKey? key = LaborLawRuleKey.MinimumMonthlySalary,
+        LaborLawRuleKey? key = LaborLawRuleKey.MinimumDailySalary,
         decimal? value = ValidValue,
         DateOnly? effectiveFrom = null) =>
         new(ruleId ?? ValidRuleId, key, value, effectiveFrom ?? ValidEffectiveFrom);
@@ -60,7 +60,7 @@ public class UpdateLaborLawRuleCommandValidatorTests
     {
         var command = new UpdateLaborLawRuleCommand(
             ValidRuleId,
-            LaborLawRuleKey.MinimumMonthlySalary,
+            LaborLawRuleKey.MinimumDailySalary,
             ValidValue,
             null);
 

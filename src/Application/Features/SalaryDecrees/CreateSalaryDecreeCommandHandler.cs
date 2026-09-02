@@ -26,22 +26,22 @@ public class CreateSalaryDecreeCommandHandler(
             cancellationToken);
 
         var ruleDate = request.SalaryProfile.EffectiveFrom ?? DateOnly.FromDateTime(DateTime.Now);
-        var minimumMonthlySalary = await laborLawRuleQuery.GetActiveValueAsync(
-            LaborLawRuleKey.MinimumMonthlySalary,
+        var minimumDailySalary = await laborLawRuleQuery.GetActiveValueAsync(
+            LaborLawRuleKey.MinimumDailySalary,
             ruleDate,
             cancellationToken);
 
-        if (minimumMonthlySalary is null)
+        if (minimumDailySalary is null)
         {
-            logger.LogCritical("MinimumMonthlySalary for {DateTime} not found", ruleDate);
-            return Result<CreateSalaryDecreeCommandResponse>.NotfoundFailure("حداقل حقوق ماهانه یافت نشد.");
+            logger.LogCritical("MinimumDailySalary for {DateTime} not found", ruleDate);
+            return Result<CreateSalaryDecreeCommandResponse>.NotfoundFailure("حداقل حقوق روزانه یافت نشد.");
         }
 
         var salaryProfile = SalaryDecree.Create(
             request.EmployeeId,
             employee.HireDate,
             latestExistingEffectiveFrom,
-            minimumMonthlySalary,
+            minimumDailySalary,
             request.SalaryProfile);
         if (!salaryProfile.IsSuccess)
             return Result<CreateSalaryDecreeCommandResponse>.GeneralFailure(salaryProfile.ErrorMessage!);

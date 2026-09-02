@@ -106,4 +106,64 @@ public class PersianCalendarServiceTests
     }
 
     #endregion
+
+    #region GetDaysInPersianYear
+
+    [Fact]
+    public void GetDaysInPersianYear_ForADateIn1404_ShouldReturn365()
+    {
+        var result = _service.GetDaysInPersianYear(new DateOnly(2025, 10, 1));
+
+        result.Should().Be(365);
+    }
+
+    [Fact]
+    public void GetDaysInPersianYear_ForTheLastDayOf1404_ShouldReturn365()
+    {
+        var result = _service.GetDaysInPersianYear(new DateOnly(2026, 3, 19));
+
+        result.Should().Be(365);
+    }
+
+    [Fact]
+    public void GetDaysInPersianYear_ForADateInALeapYear_ShouldReturn366()
+    {
+        var persianCalendar = new System.Globalization.PersianCalendar();
+        var leapYear = Enumerable.Range(1400, 100).First(year => persianCalendar.IsLeapYear(year));
+        var dateInLeapYear = DateOnly.FromDateTime(
+            persianCalendar.ToDateTime(leapYear, 6, 1, 0, 0, 0, 0));
+
+        var result = _service.GetDaysInPersianYear(dateInLeapYear);
+
+        result.Should().Be(366);
+    }
+
+    [Fact]
+    public void GetDaysInPersianYear_ForADateInACommonYear_ShouldReturn365()
+    {
+        var persianCalendar = new System.Globalization.PersianCalendar();
+        var commonYear = Enumerable.Range(1400, 100).First(year => !persianCalendar.IsLeapYear(year));
+        var dateInCommonYear = DateOnly.FromDateTime(
+            persianCalendar.ToDateTime(commonYear, 6, 1, 0, 0, 0, 0));
+
+        var result = _service.GetDaysInPersianYear(dateInCommonYear);
+
+        result.Should().Be(365);
+    }
+
+    [Fact]
+    public void GetDaysInPersianYear_ShouldAgreeWithTheLengthOfTheYearSpanningTheDate()
+    {
+        var sampleDate = new DateOnly(2025, 8, 15);
+
+        var yearOfSample = new System.Globalization.PersianCalendar()
+            .GetYear(sampleDate.ToDateTime(TimeOnly.MinValue));
+        var yearStart = _service.GetMonthRange(yearOfSample, 1).StartPeriod;
+        var yearEnd = _service.GetMonthRange(yearOfSample, 12).EndPeriod;
+        var yearLength = yearEnd.DayNumber - yearStart.DayNumber + 1;
+
+        _service.GetDaysInPersianYear(sampleDate).Should().Be(yearLength);
+    }
+
+    #endregion
 }

@@ -16,7 +16,7 @@ public class LaborLawRuleRepositoryTests(WageCoreDbContextFixture fixture)
         var repository = scope.ServiceProvider.GetRequiredService<LaborLawRuleRepository>();
         var rule = _builder
             .WithId(Guid.NewGuid())
-            .WithKey(LaborLawRuleKey.MinimumMonthlySalary)
+            .WithKey(LaborLawRuleKey.MinimumDailySalary)
             .WithValue(value)
             .WithEffectiveFrom(effectiveFrom ?? DateOnly.FromDateTime(DateTime.Now.AddDays(-30)))
             .CreateResult()
@@ -48,7 +48,7 @@ public class LaborLawRuleRepositoryTests(WageCoreDbContextFixture fixture)
 
         var stored = await repository.GetByIdAsync(rule.Id);
         stored.Should().NotBeNull();
-        stored!.Key.Should().Be(LaborLawRuleKey.MinimumMonthlySalary);
+        stored!.Key.Should().Be(LaborLawRuleKey.MinimumDailySalary);
         stored.Value.Should().Be(103_909_680m);
         stored.EffectiveFrom.Should().Be(effectiveFrom);
     }
@@ -72,7 +72,7 @@ public class LaborLawRuleRepositoryTests(WageCoreDbContextFixture fixture)
         var rule = await CreateRuleAsync(scope);
         var newEffectiveFrom = DateOnly.FromDateTime(DateTime.Now.AddDays(-1));
 
-        rule.Update(LaborLawRuleKey.MinimumMonthlySalary, 103_909_680m, newEffectiveFrom).ShouldBeSuccess();
+        rule.Update(LaborLawRuleKey.MinimumDailySalary, 103_909_680m, newEffectiveFrom).ShouldBeSuccess();
 
         var updateResult = await repository.UpdateAsync(rule);
 

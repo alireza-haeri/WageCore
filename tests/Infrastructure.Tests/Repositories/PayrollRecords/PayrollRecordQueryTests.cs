@@ -236,4 +236,141 @@ public class PayrollRecordQueryTests(WageCoreDbContextFixture fixture)
     }
 
     #endregion
+
+    #region GetAnnualWorkedDaysCountAsync
+
+    // The payroll periods used here (April-August 2025 and February 2025) sit
+    // well inside Persian years 1404 and 1403 respectively, whichever day .NET
+    // picks for Nowruz, so the year classification is stable.
+
+    [Fact]
+    public async Task GetAnnualWorkedDaysCountAsync_WhenClosedRecordsExistEarlierInTheSamePersianYear_ShouldSumTheirWorkedDays()
+    {
+        await using var scope = fixture.CreateScope();
+        var query = scope.ServiceProvider.GetRequiredService<IPayrollRecordQuery>();
+        var userId = await CreateUserAsync(scope);
+        var departmentId = Guid.NewGuid();
+        var workshop = await CreateWorkshopWithDepartmentAsync(scope, userId, departmentId);
+        var employee = await CreateEmployeeAsync(scope, workshop.Id, departmentId);
+
+        // Two closed periods of 1404 before the current period: 24 worked days each.
+        await SavePayrollRecordAsync(scope, employee, new DateOnly(2025, 4, 20), new DateOnly(2025, 5, 14));
+        await SavePayrollRecordAsync(scope, employee, new DateOnly(2025, 5, 15), new DateOnly(2025, 6, 14));
+
+        var result = await query.GetAnnualWorkedDaysCountAsync(
+            userId,
+            employee.Id,
+            new DateOnly(2025, 7, 1));
+
+        result.Should().Be(48m);
+    }
+
+    [Fact]
+    public async Task GetAnnualWorkedDaysCountAsync_WhenTheCurrentPeriodIsAlreadyPersisted_ShouldExcludeIt()
+    {
+        await using var scope = fixture.CreateScope();
+        var query = scope.ServiceProvider.GetRequiredService<IPayrollRecordQuery>();
+        var userId = await CreateUserAsync(scope);
+        var departmentId = Guid.NewGuid();
+        var workshop = await CreateWorkshopWithDepartmentAsync(scope, userId, departmentId);
+        var employee = await CreateEmployeeAsync(scope, workshop.Id, departmentId);
+
+        await SavePayrollRecordAsync(scope, employee, new DateOnly(2025, 4, 20), new DateOnly(2025, 5, 14));
+        // The payroll record of the very period being calculated is persisted
+        // during an update flow, so it must not be counted.
+        await SavePayrollRecordAsync(scope, employee, new DateOnly(2025, 7, 1), new DateOnly(2025, 7, 31));
+
+        var result = await query.GetAnnualWorkedDaysCountAsync(
+            userId,
+            employee.Id,
+            new DateOnly(2025, 7, 1));
+
+        result.Should().Be(24m);
+    }
+
+    [Fact]
+    public async Task GetAnnualWorkedDaysCountAsync_ShouldExcludeRecordsOfThePreviousPersianYear()
+    {
+        await using var scope = fixture.CreateScope();
+        var query = scope.ServiceProvider.GetRequiredService<IPayrollRecordQuery>();
+        var userId = await CreateUserAsync(scope);
+        var departmentId = Guid.NewGuid();
+        var workshop = await CreateWorkshopWithDepartmentAsync(scope, userId, departmentId);
+        var employee = await CreateEmployeeAsync(scope, workshop.Id, departmentId);
+
+        // February 2025 belongs to Persian year 1403; the current period (July) is 1404.
+        await SavePayrollRecordAsync(scope, employee, new DateOnly(2025, 2, 1), new DateOnly(2025, 2, 28));
+        await SavePayrollRecordAsync(scope, employee, new DateOnly(2025, 4, 20), new DateOnly(2025, 5, 14));
+
+        var result = await query.GetAnnualWorkedDaysCountAsync(
+            userId,
+            employee.Id,
+            new DateOnly(2025, 7, 1));
+
+        result.Should().Be(24m);
+    }
+
+    [Fact]
+    public async Task GetAnnualWorkedDaysCountAsync_ShouldExcludeRecordsOfLaterMonthsInTheSameYear()
+    {
+        await using var scope = fixture.CreateScope();
+        var query = scope.ServiceProvider.GetRequiredService<IPayrollRecordQuery>();
+        var userId = await CreateUserAsync(scope);
+        var departmentId = Guid.NewGuid();
+        var workshop = await CreateWorkshopWithDepartmentAsync(scope, userId, departmentId);
+        var employee = await CreateEmployeeAsync(scope, workshop.Id, departmentId);
+
+        await SavePayrollRecordAsync(scope, employee, new DateOnly(2025, 4, 20), new DateOnly(2025, 5, 14));
+        // A later month of the same Persian year has not ended before the current
+        // period started, so it is not part of the year-to-date aggregation.
+        await SavePayrollRecordAsync(scope, employee, new DateOnly(2025, 8, 1), new DateOnly(2025, 8, 31));
+
+        var result = await query.GetAnnualWorkedDaysCountAsync(
+            userId,
+            employee.Id,
+            new DateOnly(2025, 7, 1));
+
+        result.Should().Be(24m);
+    }
+
+    [Fact]
+    public async Task GetAnnualWorkedDaysCountAsync_WithAnotherUser_ShouldReturnZero()
+    {
+        await using var scope = fixture.CreateScope();
+        var query = scope.ServiceProvider.GetRequiredService<IPayrollRecordQuery>();
+        var userId = await CreateUserAsync(scope);
+        var anotherUserId = await CreateUserAsync(scope, "09123456780");
+        var departmentId = Guid.NewGuid();
+        var workshop = await CreateWorkshopWithDepartmentAsync(scope, userId, departmentId);
+        var employee = await CreateEmployeeAsync(scope, workshop.Id, departmentId);
+
+        await SavePayrollRecordAsync(scope, employee, new DateOnly(2025, 4, 20), new DateOnly(2025, 5, 14));
+
+        var result = await query.GetAnnualWorkedDaysCountAsync(
+            anotherUserId,
+            employee.Id,
+            new DateOnly(2025, 7, 1));
+
+        result.Should().Be(0m);
+    }
+
+    [Fact]
+    public async Task GetAnnualWorkedDaysCountAsync_WhenTheEmployeeHasNoRecords_ShouldReturnZero()
+    {
+        await using var scope = fixture.CreateScope();
+        var query = scope.ServiceProvider.GetRequiredService<IPayrollRecordQuery>();
+        var userId = await CreateUserAsync(scope);
+        var departmentId = Guid.NewGuid();
+        var workshop = await CreateWorkshopWithDepartmentAsync(scope, userId, departmentId);
+        var employee = await CreateEmployeeAsync(scope, workshop.Id, departmentId);
+
+        var result = await query.GetAnnualWorkedDaysCountAsync(
+            userId,
+            employee.Id,
+            new DateOnly(2025, 7, 1));
+
+        result.Should().Be(0m);
+    }
+
+    #endregion
 }

@@ -16,7 +16,7 @@ public class GetLaborLawRulesQueryHandlerTests
     [Fact]
     public async Task Handle_WithValidData_ShouldReturnPagedResult()
     {
-        var query = new GetLaborLawRulesQuery(ValidPagination, LaborLawRuleKey.MinimumMonthlySalary);
+        var query = new GetLaborLawRulesQuery(ValidPagination, LaborLawRuleKey.MinimumDailySalary);
         var id1 = Guid.NewGuid();
         var id2 = Guid.NewGuid();
         var effectiveFrom1 = DateOnly.FromDateTime(DateTime.Now.AddDays(-10));
@@ -24,14 +24,14 @@ public class GetLaborLawRulesQueryHandlerTests
 
         var results = new List<LaborLawRuleResult>
         {
-            new(id1, LaborLawRuleKey.MinimumMonthlySalary, 103_909_680m, effectiveFrom1),
-            new(id2, LaborLawRuleKey.MinimumMonthlySalary, 71_661_840m, effectiveFrom2)
+            new(id1, LaborLawRuleKey.MinimumDailySalary, 103_909_680m, effectiveFrom1),
+            new(id2, LaborLawRuleKey.MinimumDailySalary, 71_661_840m, effectiveFrom2)
         };
         var pagedResult = new PagedResult<LaborLawRuleResult>(results, 2, 1, 10);
 
         _laborLawRuleQuery.GetLaborLawRulesAsync(
                 ValidPagination,
-                LaborLawRuleKey.MinimumMonthlySalary,
+                LaborLawRuleKey.MinimumDailySalary,
                 Arg.Any<CancellationToken>())
             .Returns(pagedResult);
 
