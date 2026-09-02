@@ -150,8 +150,8 @@ public class PayrollCalculationService(
         if (!taxResult.IsSuccess)
             return ConvertFailure(taxResult);
 
-        var insuranceAmount = insuranceResult.Response!.Value;
-        var calculatedTaxAmount = taxResult.Response!.Value;
+        var insuranceAmount = insuranceResult.Response;
+        var calculatedTaxAmount = taxResult.Response;
         var totalDeductionsAmount = insuranceAmount + calculatedTaxAmount;
         var netPayableAmount = grossAmount - totalDeductionsAmount;
 

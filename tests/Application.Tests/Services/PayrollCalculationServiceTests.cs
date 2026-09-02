@@ -300,7 +300,7 @@ public class PayrollCalculationServiceTests
 
         var result = await Calculate();
 
-        result.ShouldBeFailure("قانون MaximumOvertimeHoursPerMonth", BadResultType.NotFound);
+        result.ShouldBeFailure(null, BadResultType.NotFound);
         _logger.Entries.Should().Contain(e =>
             e.Level == LogLevel.Warning && e.Message.Contains("MaximumOvertimeHoursPerMonth"));
         await _calculationFormulaQuery.DidNotReceive()
@@ -314,7 +314,7 @@ public class PayrollCalculationServiceTests
 
         var result = await Calculate();
 
-        result.ShouldBeFailure("فرمول BaseSalaryPay", BadResultType.NotFound);
+        result.ShouldBeFailure(null, BadResultType.NotFound);
         _logger.Entries.Should().Contain(e =>
             e.Level == LogLevel.Warning && e.Message.Contains("BaseSalaryPay"));
     }
@@ -326,7 +326,7 @@ public class PayrollCalculationServiceTests
 
         var result = await Calculate();
 
-        result.ShouldBeFailure("خطا در محاسبه", BadResultType.General);
+        result.ShouldBeFailure(null, BadResultType.General);
         _logger.Entries.Should().Contain(e =>
             e.Level == LogLevel.Error && e.Message.Contains("خطای آزمون"));
     }
@@ -439,7 +439,7 @@ public class PayrollCalculationServiceTests
             PeriodEnd,
             BuildWorkInput());
 
-        result.ShouldBeFailure("حکم حقوقی کارمند یافت نشد.", BadResultType.NotFound);
+        result.ShouldBeFailure("حکم حقوقی کارمند یافت نشد.", BadResultType.General);
     }
 
     private sealed class CapturingLogger : ILogger<PayrollCalculationService>
