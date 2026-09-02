@@ -238,7 +238,8 @@ public class PayrollCalculationServiceTests
         using (new AssertionScope())
         {
             response.CalculatedAmounts.DailyMissionAmount.Should().Be(500_000m);
-            response.Amounts.GrossAmount.Should().Be(14 * DefaultItemAmount + 500_000m);
+            // 14 formula items at 1,000,000 each + the 500,000 override (annual bonus skipped)
+            response.Amounts.GrossAmount.Should().Be(14_500_000m);
         }
 
         await _calculationFormulaQuery.DidNotReceive()
@@ -366,18 +367,18 @@ public class PayrollCalculationServiceTests
         var result = await Calculate(workInput);
 
         var response = result.ShouldBeSuccess();
-        var grossAmount = 15 * DefaultItemAmount + 500_000m + 200_000m;
-        var insuranceAmount = grossAmount * 7m / 100m;
-        var taxAmount = grossAmount * 10m / 100m;
-        var totalDeductionsAmount = insuranceAmount + taxAmount;
-
         using (new AssertionScope())
         {
-            response.Amounts.GrossAmount.Should().Be(grossAmount);
-            response.Amounts.InsuranceAmount.Should().Be(insuranceAmount);
-            response.Amounts.CalculatedTaxAmount.Should().Be(taxAmount);
-            response.Amounts.TotalDeductionsAmount.Should().Be(totalDeductionsAmount);
-            response.Amounts.NetPayableAmount.Should().Be(grossAmount - totalDeductionsAmount);
+            // 15 items at 1,000,000 each + 500,000 performance bonus + 200,000 cash benefits
+            response.Amounts.GrossAmount.Should().Be(15_700_000m);
+            // 7% insurance rule
+            response.Amounts.InsuranceAmount.Should().Be(1_099_000m);
+            // 10% tax rule over the whole gross (no exemption)
+            response.Amounts.CalculatedTaxAmount.Should().Be(1_570_000m);
+            // insurance + tax
+            response.Amounts.TotalDeductionsAmount.Should().Be(2_669_000m);
+            // gross - total deductions
+            response.Amounts.NetPayableAmount.Should().Be(13_031_000m);
         }
     }
 
@@ -387,7 +388,7 @@ public class PayrollCalculationServiceTests
         var result = await Calculate();
 
         var response = result.ShouldBeSuccess();
-        response.Amounts.GrossAmount.Should().Be(15 * DefaultItemAmount);
+        response.Amounts.GrossAmount.Should().Be(15_000_000m);
     }
 
     [Fact]
@@ -397,7 +398,7 @@ public class PayrollCalculationServiceTests
 
         var result = await Calculate();
 
-        result.ShouldBeSuccess().Amounts.InsuranceAmount.Should().Be(15 * DefaultItemAmount * 8m / 100m);
+        result.ShouldBeSuccess().Amounts.InsuranceAmount.Should().Be(1_200_000m);
     }
 
     [Fact]
@@ -408,8 +409,8 @@ public class PayrollCalculationServiceTests
 
         var result = await Calculate();
 
-        var expectedTax = (15 * DefaultItemAmount - 2_000_000m) * 20m / 100m;
-        result.ShouldBeSuccess().Amounts.CalculatedTaxAmount.Should().Be(expectedTax);
+        // (15,000,000 - 2,000,000) * 20%
+        result.ShouldBeSuccess().Amounts.CalculatedTaxAmount.Should().Be(2_600_000m);
     }
 
     [Fact]
