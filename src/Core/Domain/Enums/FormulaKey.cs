@@ -17,5 +17,7 @@ public enum FormulaKey
     FridayWorkPay = 12,
     EndOfServicePay = 13,
     AnnualBonusPay = 14,
-    CommutingAllowancePay = 15
+    CommutingAllowancePay = 15,
+    InsurancePay = 16,
+    TaxPay = 17
 }

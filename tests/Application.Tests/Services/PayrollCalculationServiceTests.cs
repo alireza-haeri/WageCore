@@ -21,7 +21,7 @@ public class PayrollCalculationServiceTests
     private readonly PayrollRecordBuilder _payrollRecordBuilder = new();
     private readonly Employee _employee;
     private readonly Workshop _workshop;
-    private readonly IReadOnlyList<SalaryDecree> _salaryProfiles;
+    private readonly IReadOnlyList<SalaryDecree> _salaryDecrees;
 
     public PayrollCalculationServiceTests()
     {
@@ -41,7 +41,7 @@ public class PayrollCalculationServiceTests
             .WithUserId(Guid.NewGuid())
             .CreateResult()
             .ShouldBeSuccess();
-        _salaryProfiles =
+        _salaryDecrees =
         [
             new SalaryDecreeBuilder()
                 .WithEmployeeId(EmployeeId)
@@ -111,11 +111,11 @@ public class PayrollCalculationServiceTests
     private Task<Result<PayrollCalculationResult>> Calculate(
         PayrollWorkInputDto? workInput = null,
         CancellationToken cancellationToken = default,
-        IReadOnlyList<SalaryDecree>? salaryProfiles = null) =>
+        IReadOnlyList<SalaryDecree>? salaryDecrees = null) =>
         _service.CalculateAsync(
             _employee,
             _workshop,
-            salaryProfiles ?? _salaryProfiles,
+            salaryDecrees ?? _salaryDecrees,
             PeriodStart,
             PeriodEnd,
             workInput ?? BuildWorkInput(),
@@ -166,6 +166,8 @@ public class PayrollCalculationServiceTests
     [InlineData(FormulaKey.FridayWorkPay)]
     [InlineData(FormulaKey.EndOfServicePay)]
     [InlineData(FormulaKey.CommutingAllowancePay)]
+    [InlineData(FormulaKey.InsurancePay)]
+    [InlineData(FormulaKey.TaxPay)]
     public async Task CalculateAsync_ShouldFetchTheFormulaForEachItem(FormulaKey formulaKey)
     {
         await Calculate();
@@ -369,14 +371,13 @@ public class PayrollCalculationServiceTests
         {
             // 15 items at 1,000,000 each + 500,000 performance bonus + 200,000 cash benefits
             response.Amounts.GrossAmount.Should().Be(15_700_000m);
-            // 7% insurance rule
-            response.Amounts.InsuranceAmount.Should().Be(1_099_000m);
-            // 10% tax rule over the whole gross (no exemption)
-            response.Amounts.CalculatedTaxAmount.Should().Be(1_570_000m);
+            // insurance and tax are formula-driven too; the evaluator stub returns 1,000,000 for each
+            response.Amounts.InsuranceAmount.Should().Be(1_000_000m);
+            response.Amounts.CalculatedTaxAmount.Should().Be(1_000_000m);
             // insurance + tax
-            response.Amounts.TotalDeductionsAmount.Should().Be(2_669_000m);
+            response.Amounts.TotalDeductionsAmount.Should().Be(2_000_000m);
             // gross - total deductions
-            response.Amounts.NetPayableAmount.Should().Be(13_031_000m);
+            response.Amounts.NetPayableAmount.Should().Be(13_700_000m);
             response.CalculatedAmounts.PerformanceBonusAmount.Should().Be(500_000m);
             response.CalculatedAmounts.CashBenefitsAmount.Should().Be(200_000m);
         }
@@ -392,31 +393,81 @@ public class PayrollCalculationServiceTests
     }
 
     [Fact]
-    public async Task CalculateAsync_ShouldUseTheFetchedInsurancePercentageForTheInsuranceAmount()
+    public async Task CalculateAsync_ShouldPassTheGrossAndInsurancePercentageToTheInsuranceFormula()
     {
-        SetupRule(LaborLawRuleKey.InsurancePercentage, 8m);
+        object[]? insuranceFormulaInputs = null;
+        _formulaEvaluator
+            .Evaluate(Arg.Any<string>(), Arg.Any<object[]>())
+            .Returns(ci =>
+            {
+                if (ci.Arg<string>() == "[InsurancePay] * 1")
+                    insuranceFormulaInputs = ci.Arg<object[]>();
 
-        var result = await Calculate();
+                return DomainResult<decimal>.Success(DefaultItemAmount);
+            });
 
-        result.ShouldBeSuccess().Amounts.InsuranceAmount.Should().Be(1_200_000m);
+        await Calculate();
+
+        insuranceFormulaInputs.Should().NotBeNull();
+        insuranceFormulaInputs!
+            .OfType<FormulaVariable>()
+            .Should()
+            .Contain(v => v.Name == "GrossAmount" && Equals(v.Value, 15_000_000m));
+        insuranceFormulaInputs!
+            .OfType<FormulaVariable>()
+            .Should()
+            .Contain(v =>
+                v.Name == nameof(LaborLawRuleKey.InsurancePercentage) &&
+                Equals(v.Value, 7m));
     }
 
     [Fact]
-    public async Task CalculateAsync_ShouldUseTheFetchedTaxRulesForTheTaxAmount()
+    public async Task CalculateAsync_ShouldPassTheGrossAndTaxRulesToTheTaxFormula()
     {
         SetupRule(LaborLawRuleKey.TaxExemptMonthlyAmount, 2_000_000m);
         SetupRule(LaborLawRuleKey.TaxRatePercentage, 20m);
 
-        var result = await Calculate();
+        object[]? taxFormulaInputs = null;
+        _formulaEvaluator
+            .Evaluate(Arg.Any<string>(), Arg.Any<object[]>())
+            .Returns(ci =>
+            {
+                if (ci.Arg<string>() == "[TaxPay] * 1")
+                    taxFormulaInputs = ci.Arg<object[]>();
 
-        // (15,000,000 - 2,000,000) * 20%
-        result.ShouldBeSuccess().Amounts.CalculatedTaxAmount.Should().Be(2_600_000m);
+                return DomainResult<decimal>.Success(DefaultItemAmount);
+            });
+
+        await Calculate();
+
+        taxFormulaInputs.Should().NotBeNull();
+        taxFormulaInputs!
+            .OfType<FormulaVariable>()
+            .Should()
+            .Contain(v => v.Name == "GrossAmount" && Equals(v.Value, 15_000_000m));
+        taxFormulaInputs!
+            .OfType<FormulaVariable>()
+            .Should()
+            .Contain(v =>
+                v.Name == nameof(LaborLawRuleKey.TaxExemptMonthlyAmount) &&
+                Equals(v.Value, 2_000_000m));
+        taxFormulaInputs!
+            .OfType<FormulaVariable>()
+            .Should()
+            .Contain(v =>
+                v.Name == nameof(LaborLawRuleKey.TaxRatePercentage) &&
+                Equals(v.Value, 20m));
     }
 
     [Fact]
-    public async Task CalculateAsync_WhenGrossIsBelowTheTaxExemption_ShouldCalculateZeroTax()
+    public async Task CalculateAsync_WhenTheTaxFormulaReturnsZero_ShouldReportZeroTax()
     {
-        SetupRule(LaborLawRuleKey.TaxExemptMonthlyAmount, 100_000_000m);
+        _formulaEvaluator
+            .Evaluate(Arg.Any<string>(), Arg.Any<object[]>())
+            .Returns(ci =>
+                ci.Arg<string>() == "[TaxPay] * 1"
+                    ? DomainResult<decimal>.Success(0m)
+                    : DomainResult<decimal>.Success(DefaultItemAmount));
 
         var result = await Calculate();
 
@@ -429,7 +480,7 @@ public class PayrollCalculationServiceTests
         var result = await _service.CalculateAsync(
             _employee,
             _workshop,
-            _salaryProfiles,
+            _salaryDecrees,
             PeriodStart,
             PeriodEnd,
             null!);
@@ -454,19 +505,19 @@ public class PayrollCalculationServiceTests
     [Fact]
     public async Task CalculateAsync_ShouldSelectTheLatestDecreeEffectiveByPeriodEnd()
     {
-        var olderProfile = new SalaryDecreeBuilder()
+        var olderDecree = new SalaryDecreeBuilder()
             .WithEmployeeId(EmployeeId)
             .WithEmployeeHireDate(new DateOnly(2024, 6, 1))
             .WithEffectiveFrom(new DateOnly(2024, 11, 1))
             .CreateResult()
             .ShouldBeSuccess();
-        var midPeriodProfile = new SalaryDecreeBuilder()
+        var midPeriodDecree = new SalaryDecreeBuilder()
             .WithEmployeeId(EmployeeId)
             .WithEmployeeHireDate(new DateOnly(2024, 6, 1))
             .WithEffectiveFrom(new DateOnly(2025, 1, 10))
             .CreateResult()
             .ShouldBeSuccess();
-        IReadOnlyList<SalaryDecree> salaryProfiles = [olderProfile, midPeriodProfile];
+        IReadOnlyList<SalaryDecree> salaryDecrees = [olderDecree, midPeriodDecree];
 
         object[]? formulaInputs = null;
         _formulaEvaluator
@@ -478,26 +529,26 @@ public class PayrollCalculationServiceTests
                 return DomainResult<decimal>.Success(DefaultItemAmount);
             });
 
-        var result = await Calculate(salaryProfiles: salaryProfiles);
+        var result = await Calculate(salaryDecrees: salaryDecrees);
 
         result.ShouldBeSuccess();
         formulaInputs.Should().NotBeNull();
-        formulaInputs!.Should().Contain(midPeriodProfile);
-        formulaInputs!.Should().NotContain(olderProfile);
+        formulaInputs!.Should().Contain(midPeriodDecree);
+        formulaInputs!.Should().NotContain(olderDecree);
     }
 
     [Fact]
     public async Task CalculateAsync_WhenNoDecreeIsEffectiveByPeriodEnd_ShouldReturnNotfoundFailureAndLog()
     {
-        var futureProfile = new SalaryDecreeBuilder()
+        var futureDecree = new SalaryDecreeBuilder()
             .WithEmployeeId(EmployeeId)
             .WithEmployeeHireDate(new DateOnly(2024, 6, 1))
             .WithEffectiveFrom(new DateOnly(2025, 2, 1))
             .CreateResult()
             .ShouldBeSuccess();
-        IReadOnlyList<SalaryDecree> salaryProfiles = [futureProfile];
+        IReadOnlyList<SalaryDecree> salaryDecrees = [futureDecree];
 
-        var result = await Calculate(salaryProfiles: salaryProfiles);
+        var result = await Calculate(salaryDecrees: salaryDecrees);
 
         result.ShouldBeFailure("حکم حقوقی فعال برای این کارمند در این بازه یافت نشد.", BadResultType.NotFound);
         _logger.Entries.Should().Contain(e =>

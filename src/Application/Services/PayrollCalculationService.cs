@@ -31,10 +31,14 @@ public class PayrollCalculationService(
         new("مبلغ ایاب و ذهاب", FormulaKey.CommutingAllowancePay, null)
     ];
 
+    // Calculates every monetary amount of a payroll period: the salary decree
+    // effective for the period is selected first, then each payroll item is
+    // calculated from its formula, optional entered amounts are added, and
+    // finally insurance, tax and the totals are derived via formulas as well.
     public async Task<Result<PayrollCalculationResult>> CalculateAsync(
         Employee employee,
         Workshop workshop,
-        IReadOnlyList<SalaryDecree> salaryProfiles,
+        IReadOnlyList<SalaryDecree> salaryDecrees,
         DateOnly periodStart,
         DateOnly periodEnd,
         PayrollWorkInputDto workInput,
@@ -51,15 +55,17 @@ public class PayrollCalculationService(
         if (workshop is null)
             return Result<PayrollCalculationResult>.GeneralFailure("کارگاه نمیتواند خالی باشد.");
 
-        if (salaryProfiles is null || salaryProfiles.Count == 0)
+        if (salaryDecrees is null || salaryDecrees.Count == 0)
             return Result<PayrollCalculationResult>.NotfoundFailure("برای این بازه حکم حقوقی کارمند یافت نشد.");
 
-        var salaryProfile = salaryProfiles
-            .Where(profile => profile.EffectiveFrom <= periodEnd)
-            .OrderByDescending(profile => profile.EffectiveFrom)
+        // A decree is in force for the whole period once its effective date has
+        // passed, so the latest decree effective by the period end is selected.
+        var salaryDecree = salaryDecrees
+            .Where(decree => decree.EffectiveFrom <= periodEnd)
+            .OrderByDescending(decree => decree.EffectiveFrom)
             .FirstOrDefault();
 
-        if (salaryProfile is null)
+        if (salaryDecree is null)
         {
             logger.LogWarning(
                 "No active salary decree found for employee {EmployeeId} in period {PeriodStart}..{PeriodEnd}",
@@ -86,6 +92,9 @@ public class PayrollCalculationService(
             periodStart,
             periodEnd);
 
+        // Each CalculationItem maps one payroll component to its formula; when
+        // the item is not applicable for this period its result is null and it
+        // is skipped (a skipped item is not the same as a zero amount).
         var amounts = new Dictionary<FormulaKey, decimal>();
         foreach (var item in Items)
         {
@@ -102,7 +111,7 @@ public class PayrollCalculationService(
                 item,
                 employee,
                 workshop,
-                salaryProfile,
+                salaryDecree,
                 workInput,
                 period,
                 cancellationToken);
@@ -164,8 +173,10 @@ public class PayrollCalculationService(
         if (!taxResult.IsSuccess)
             return ConvertFailure(taxResult);
 
-        var insuranceAmount = insuranceResult.Response;
-        var calculatedTaxAmount = taxResult.Response;
+        // The IsSuccess guards above guarantee these values are non-null; .Value is
+        // used instead of ?? 0m so a missing amount can never be silently masked as zero.
+        var insuranceAmount = insuranceResult.Response!.Value;
+        var calculatedTaxAmount = taxResult.Response!.Value;
         var totalDeductionsAmount = insuranceAmount + calculatedTaxAmount;
         var netPayableAmount = grossAmount - totalDeductionsAmount;
 
@@ -215,7 +226,7 @@ public class PayrollCalculationService(
         CalculationItem item,
         Employee employee,
         Workshop workshop,
-        SalaryDecree salaryProfile,
+        SalaryDecree salaryDecree,
         PayrollWorkInputDto workInput,
         PayrollPeriod period,
         CancellationToken cancellationToken)
@@ -253,66 +264,106 @@ public class PayrollCalculationService(
         decimal? ruleValue = null;
         if (ruleKey is not null)
         {
-            ruleValue = await laborLawRuleQuery.GetActiveValueAsync(
+            var ruleResult = await GetRuleValueAsync(
                 ruleKey.Value,
-                period.PeriodStart,
+                item.DisplayName,
+                employee.Id,
+                period,
                 cancellationToken);
-            if (ruleValue is null)
-            {
-                logger.LogWarning(
-                    "Labor law rule {RuleKey} was not found for item {ItemName} of employee {EmployeeId} " +
-                    "in period {PeriodStart}..{PeriodEnd}",
-                    ruleKey.Value,
-                    item.DisplayName,
-                    employee.Id,
-                    period.PeriodStart,
-                    period.PeriodEnd);
+            if (!ruleResult.IsSuccess)
+                return ruleResult.Map<decimal?>(value => value);
 
-                return Result<decimal?>.NotfoundFailure(
-                    $"قانون {ruleKey.Value} برای محاسبه {item.DisplayName} یافت نشد.");
-            }
+            ruleValue = ruleResult.Response;
         }
 
-        var expression = await calculationFormulaQuery.GetActiveExpressionAsync(
+        return await EvaluateFormulaAsync(
             item.FormulaKey,
+            item.DisplayName,
+            employee.Id,
+            period,
+            BuildEvaluationInputs(item, employee, workshop, salaryDecree, workInput, period, ruleKey, ruleValue),
+            cancellationToken);
+    }
+
+    // Fetches the active value of a labor law rule; a missing rule is reported
+    // as a not-found failure instead of silently calculating with zero.
+    private async Task<Result<decimal>> GetRuleValueAsync(
+        LaborLawRuleKey ruleKey,
+        string displayName,
+        Guid employeeId,
+        PayrollPeriod period,
+        CancellationToken cancellationToken)
+    {
+        var ruleValue = await laborLawRuleQuery.GetActiveValueAsync(
+            ruleKey,
+            period.PeriodStart,
+            cancellationToken);
+        if (ruleValue is null)
+        {
+            logger.LogWarning(
+                "Labor law rule {RuleKey} was not found for {ItemName} of employee {EmployeeId} " +
+                "in period {PeriodStart}..{PeriodEnd}",
+                ruleKey,
+                displayName,
+                employeeId,
+                period.PeriodStart,
+                period.PeriodEnd);
+
+            return Result<decimal>.NotfoundFailure(
+                $"قانون {ruleKey} برای محاسبه {displayName} یافت نشد.");
+        }
+
+        return Result<decimal>.Success(ruleValue.Value);
+    }
+
+    // Shared by payroll items, insurance and tax: fetches the formula expression
+    // for a key and evaluates it with the given inputs.
+    private async Task<Result<decimal?>> EvaluateFormulaAsync(
+        FormulaKey formulaKey,
+        string displayName,
+        Guid employeeId,
+        PayrollPeriod period,
+        object[] inputs,
+        CancellationToken cancellationToken)
+    {
+        var expression = await calculationFormulaQuery.GetActiveExpressionAsync(
+            formulaKey,
             period.PeriodStart,
             cancellationToken);
         if (expression is null)
         {
             logger.LogWarning(
-                "Calculation formula {FormulaKey} was not found for item {ItemName} of employee {EmployeeId} " +
+                "Calculation formula {FormulaKey} was not found for {ItemName} of employee {EmployeeId} " +
                 "in period {PeriodStart}..{PeriodEnd}",
-                item.FormulaKey,
-                item.DisplayName,
-                employee.Id,
+                formulaKey,
+                displayName,
+                employeeId,
                 period.PeriodStart,
                 period.PeriodEnd);
 
             return Result<decimal?>.NotfoundFailure(
-                $"فرمول {item.FormulaKey} برای محاسبه {item.DisplayName} یافت نشد.");
+                $"فرمول {formulaKey} برای محاسبه {displayName} یافت نشد.");
         }
 
-        var evaluationResult = formulaEvaluator.Evaluate(
-            expression,
-            BuildEvaluationInputs(item, employee, workshop, salaryProfile, workInput, period, ruleKey, ruleValue));
+        var evaluationResult = formulaEvaluator.Evaluate(expression, inputs);
         if (!evaluationResult.IsSuccess)
         {
             logger.LogError(
-                "Formula evaluation failed for item {ItemName} of employee {EmployeeId} in period {PeriodStart}..{PeriodEnd}: {Error}",
-                item.DisplayName,
-                employee.Id,
+                "Formula evaluation failed for {ItemName} of employee {EmployeeId} in period {PeriodStart}..{PeriodEnd}: {Error}",
+                displayName,
+                employeeId,
                 period.PeriodStart,
                 period.PeriodEnd,
                 evaluationResult.ErrorMessage);
 
             return Result<decimal?>.GeneralFailure(
-                $"خطا در محاسبه {item.DisplayName}: {evaluationResult.ErrorMessage}");
+                $"خطا در محاسبه {displayName}: {evaluationResult.ErrorMessage}");
         }
 
         return Result<decimal?>.Success(evaluationResult.Response);
     }
 
-    private async Task<Result<decimal>> CalculateInsuranceAmountAsync(
+    private async Task<Result<decimal?>> CalculateInsuranceAmountAsync(
         decimal grossAmount,
         Guid employeeId,
         PayrollPeriod period,
@@ -324,38 +375,44 @@ public class PayrollCalculationService(
             period.PeriodStart,
             period.PeriodEnd);
 
-        var insurancePercentage = await laborLawRuleQuery.GetActiveValueAsync(
+        var insurancePercentageResult = await GetRuleValueAsync(
             LaborLawRuleKey.InsurancePercentage,
-            period.PeriodStart,
+            "بیمه",
+            employeeId,
+            period,
             cancellationToken);
-        if (insurancePercentage is null)
-        {
-            logger.LogWarning(
-                "Labor law rule {RuleKey} was not found for item {ItemName} of employee {EmployeeId} " +
-                "in period {PeriodStart}..{PeriodEnd}",
-                LaborLawRuleKey.InsurancePercentage,
-                "بیمه ۷٪",
-                employeeId,
-                period.PeriodStart,
-                period.PeriodEnd);
+        if (!insurancePercentageResult.IsSuccess)
+            return insurancePercentageResult.Map<decimal?>(value => value);
 
-            return Result<decimal>.NotfoundFailure(
-                $"قانون {LaborLawRuleKey.InsurancePercentage} برای محاسبه بیمه یافت نشد.");
-        }
+        var insurancePercentage = insurancePercentageResult.Response!.Value;
 
-        var insuranceAmount = grossAmount * insurancePercentage.Value / 100m;
+        // The insurance formula receives the gross amount and the insurance
+        // percentage rule value, e.g. "GrossAmount * InsurancePercentage / 100".
+        var insuranceResult = await EvaluateFormulaAsync(
+            FormulaKey.InsurancePay,
+            "بیمه",
+            employeeId,
+            period,
+            [
+                new FormulaVariable("GrossAmount", grossAmount),
+                new FormulaVariable(nameof(LaborLawRuleKey.InsurancePercentage), insurancePercentage)
+            ],
+            cancellationToken);
+        if (!insuranceResult.IsSuccess)
+            return insuranceResult;
+
         logger.LogInformation(
             "Insurance amount calculated as {InsuranceAmount} for employee {EmployeeId} " +
             "(gross {GrossAmount} at {InsurancePercentage}%)",
-            insuranceAmount,
+            insuranceResult.Response,
             employeeId,
             grossAmount,
-            insurancePercentage.Value);
+            insurancePercentage);
 
-        return Result<decimal>.Success(insuranceAmount);
+        return insuranceResult;
     }
 
-    private async Task<Result<decimal>> CalculateTaxAmountAsync(
+    private async Task<Result<decimal?>> CalculateTaxAmountAsync(
         decimal grossAmount,
         Guid employeeId,
         PayrollPeriod period,
@@ -367,59 +424,47 @@ public class PayrollCalculationService(
             period.PeriodStart,
             period.PeriodEnd);
 
-        var taxExemptMonthlyAmount = await laborLawRuleQuery.GetActiveValueAsync(
+        var taxExemptAmountResult = await GetRuleValueAsync(
             LaborLawRuleKey.TaxExemptMonthlyAmount,
-            period.PeriodStart,
+            "مالیات",
+            employeeId,
+            period,
             cancellationToken);
-        if (taxExemptMonthlyAmount is null)
-        {
-            logger.LogWarning(
-                "Labor law rule {RuleKey} was not found for item {ItemName} of employee {EmployeeId} " +
-                "in period {PeriodStart}..{PeriodEnd}",
-                LaborLawRuleKey.TaxExemptMonthlyAmount,
-                "مالیات",
-                employeeId,
-                period.PeriodStart,
-                period.PeriodEnd);
+        if (!taxExemptAmountResult.IsSuccess)
+            return taxExemptAmountResult.Map<decimal?>(value => value);
 
-            return Result<decimal>.NotfoundFailure(
-                $"قانون {LaborLawRuleKey.TaxExemptMonthlyAmount} برای محاسبه مالیات یافت نشد.");
-        }
-
-        var taxRatePercentage = await laborLawRuleQuery.GetActiveValueAsync(
+        var taxRateResult = await GetRuleValueAsync(
             LaborLawRuleKey.TaxRatePercentage,
-            period.PeriodStart,
+            "مالیات",
+            employeeId,
+            period,
             cancellationToken);
-        if (taxRatePercentage is null)
-        {
-            logger.LogWarning(
-                "Labor law rule {RuleKey} was not found for item {ItemName} of employee {EmployeeId} " +
-                "in period {PeriodStart}..{PeriodEnd}",
-                LaborLawRuleKey.TaxRatePercentage,
-                "مالیات",
-                employeeId,
-                period.PeriodStart,
-                period.PeriodEnd);
+        if (!taxRateResult.IsSuccess)
+            return taxRateResult.Map<decimal?>(value => value);
 
-            return Result<decimal>.NotfoundFailure(
-                $"قانون {LaborLawRuleKey.TaxRatePercentage} برای محاسبه مالیات یافت نشد.");
-        }
-
-        var taxableAmount = grossAmount - taxExemptMonthlyAmount.Value;
-        var calculatedTaxAmount = taxableAmount > 0
-            ? taxableAmount * taxRatePercentage.Value / 100m
-            : 0m;
+        // The tax formula receives the gross amount, the tax-exempt monthly
+        // amount and the tax rate rule values, e.g. a tiered multi-bracket
+        // formula or "Max(GrossAmount - TaxExemptMonthlyAmount, 0) * TaxRatePercentage / 100".
+        var taxResult = await EvaluateFormulaAsync(
+            FormulaKey.TaxPay,
+            "مالیات",
+            employeeId,
+            period,
+            [
+                new FormulaVariable("GrossAmount", grossAmount),
+                new FormulaVariable(nameof(LaborLawRuleKey.TaxExemptMonthlyAmount), taxExemptAmountResult.Response!.Value),
+                new FormulaVariable(nameof(LaborLawRuleKey.TaxRatePercentage), taxRateResult.Response!.Value)
+            ],
+            cancellationToken);
+        if (!taxResult.IsSuccess)
+            return taxResult;
 
         logger.LogInformation(
-            "Tax amount calculated as {CalculatedTaxAmount} for employee {EmployeeId} " +
-            "(gross {GrossAmount}, exempt {TaxExemptMonthlyAmount}, rate {TaxRatePercentage}%)",
-            calculatedTaxAmount,
-            employeeId,
-            grossAmount,
-            taxExemptMonthlyAmount.Value,
-            taxRatePercentage.Value);
+            "Tax amount calculated as {CalculatedTaxAmount} for employee {EmployeeId}",
+            taxResult.Response,
+            employeeId);
 
-        return Result<decimal>.Success(calculatedTaxAmount);
+        return taxResult;
     }
 
     private Result<decimal?> AddOptionalAmount(
@@ -453,7 +498,7 @@ public class PayrollCalculationService(
         CalculationItem item,
         Employee employee,
         Workshop workshop,
-        SalaryDecree salaryProfile,
+        SalaryDecree salaryDecree,
         PayrollWorkInputDto workInput,
         PayrollPeriod period,
         LaborLawRuleKey? ruleKey,
@@ -462,7 +507,7 @@ public class PayrollCalculationService(
         var inputs = new List<object>
         {
             workInput,
-            salaryProfile,
+            salaryDecree,
             employee,
             workshop,
             period
@@ -472,10 +517,10 @@ public class PayrollCalculationService(
             inputs.Add(new FormulaVariable(ruleKey.Value.ToString(), ruleValue.Value));
 
         if (item.FormulaKey == FormulaKey.ShiftWorkPay)
-            inputs.Add(new FormulaVariable("ShiftType", (int)salaryProfile.ShiftType));
+            inputs.Add(new FormulaVariable("ShiftType", (int)salaryDecree.ShiftType));
 
         if (item.FormulaKey == FormulaKey.MarriageAllowancePay)
-            inputs.Add(new FormulaVariable("MaritalStatus", (int)salaryProfile.MaritalStatus));
+            inputs.Add(new FormulaVariable("MaritalStatus", (int)salaryDecree.MaritalStatus));
 
         return inputs.ToArray();
     }

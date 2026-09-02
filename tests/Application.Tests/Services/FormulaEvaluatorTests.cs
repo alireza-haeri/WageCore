@@ -79,7 +79,7 @@ public class FormulaEvaluatorTests
     public void Evaluate_WithBooleanVariable_ShouldUseItAsTheCondition()
     {
         var result = _evaluator.Evaluate(
-            "IF([IsDraft], 5, 9)",
+            "[IsDraft] ? 5 : 9",
             new FormulaVariable("IsDraft", true));
 
         result.ShouldBeSuccess().Should().Be(5m);
@@ -89,7 +89,7 @@ public class FormulaEvaluatorTests
     public void Evaluate_WithStringVariable_ShouldCompareItForEquality()
     {
         var result = _evaluator.Evaluate(
-            @"IF([Note] = ""مأموریت"", 2, 8)",
+            @"[Note] = ""مأموریت"" ? 2 : 8",
             new FormulaVariable("Note", "مأموریت"));
 
         result.ShouldBeSuccess().Should().Be(2m);
@@ -115,7 +115,7 @@ public class FormulaEvaluatorTests
         var period = new PayrollPeriod(new DateOnly(2025, 2, 1), new TimeOnly(8, 0));
 
         var result = _evaluator.Evaluate(
-            "IF([PayrollPeriodPeriodStart] = [RequestedPeriodStart], 12, 4)",
+            "[PayrollPeriodPeriodStart] = [RequestedPeriodStart] ? 12 : 4",
             period,
             new FormulaVariable("RequestedPeriodStart", new DateOnly(2025, 2, 1)));
 
@@ -128,7 +128,7 @@ public class FormulaEvaluatorTests
         var period = new PayrollPeriod(new DateOnly(2025, 2, 1), new TimeOnly(22, 30));
 
         var result = _evaluator.Evaluate(
-            "IF([PayrollPeriodStartTime] = [RequestedStartTime], 3, 7)",
+            "[PayrollPeriodStartTime] = [RequestedStartTime] ? 3 : 7",
             period,
             new FormulaVariable("RequestedStartTime", new TimeOnly(22, 30)));
 

@@ -50,7 +50,7 @@ public class FormulaEvaluator(ILogger<FormulaEvaluator> logger) : IFormulaEvalua
         value is null || !IsSupportedType(value) || parameters.TryAdd(name, value);
 
     // NCalc's equality/comparison operators do not understand DateOnly/TimeOnly natively,
-    // so IF([DateOnly] = [DateOnly]) fails at evaluation time. Normalize them to DateTime
+    // so [DateOnly] = [DateOnly] fails at evaluation time. Normalize them to DateTime
     // (a type NCalc compares by value) so equality checks work inside expressions.
     private static object? NormalizeParameterValue(object? value) =>
         value switch
