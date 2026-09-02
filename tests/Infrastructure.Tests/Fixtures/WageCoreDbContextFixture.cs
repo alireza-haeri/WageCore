@@ -61,6 +61,10 @@ public sealed class WageCoreDbContextFixture : IAsyncLifetime
         services.AddScoped<ISalaryDecreeRepository, SalaryDecreeRepository>();
         services.AddScoped<SalaryDecreeQuery>();
         services.AddScoped<ISalaryDecreeQuery, SalaryDecreeQuery>();
+        services.AddScoped<PayrollRecordRepository>();
+        services.AddScoped<IPayrollRecordRepository, PayrollRecordRepository>();
+        services.AddScoped<PayrollRecordQuery>();
+        services.AddScoped<IPayrollRecordQuery, PayrollRecordQuery>();
         services.AddScoped<LaborLawRuleRepository>();
         services.AddScoped<ILaborLawRuleRepository, LaborLawRuleRepository>();
         services.AddScoped<ILaborLawRuleQuery, LaborLawRuleQuery>();

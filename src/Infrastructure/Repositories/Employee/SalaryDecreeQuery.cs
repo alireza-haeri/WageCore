@@ -2,7 +2,9 @@ using Infrastructure.Persistence.Dapper;
 
 namespace Infrastructure.Repositories.Employee;
 
-public class SalaryDecreeQuery(IDbConnectionFactory dbConnectionFactory) : ISalaryDecreeQuery
+public class SalaryDecreeQuery(
+    IDbConnectionFactory dbConnectionFactory,
+    WageCoreDbContext context) : ISalaryDecreeQuery
 {
     public async Task<DateOnly?> GetLatestEffectiveFromAsync(
         Guid userId,
@@ -34,14 +36,29 @@ public class SalaryDecreeQuery(IDbConnectionFactory dbConnectionFactory) : ISala
         return latestEffectiveFrom is null ? null : DateOnly.FromDateTime(latestEffectiveFrom.Value);
     }
 
-    public Task<IReadOnlyList<SalaryDecree>> GetSalaryDecreesAffectingPeriodAsync(
+    // The full SalaryDecree aggregate (including its owned Insurance value object) is
+    // needed by the payroll calculation, so EF materializes it instead of Dapper.
+    public async Task<IReadOnlyList<SalaryDecree>> GetSalaryDecreesAffectingPeriodAsync(
         Guid userId,
         Guid employeeId,
         DateOnly periodStart,
         DateOnly periodEnd,
         CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var userWorkshopIds = context.Workshops
+            .Where(x => x.UserId == userId)
+            .Select(x => x.Id);
+
+        var userEmployeeIds = context.Employees
+            .Where(x => userWorkshopIds.Contains(x.WorkshopId))
+            .Select(x => x.Id);
+
+        return await context.SalaryDecrees
+            .Where(x => x.EmployeeId == employeeId &&
+                        userEmployeeIds.Contains(x.EmployeeId) &&
+                        x.EffectiveFrom <= periodEnd)
+            .OrderByDescending(x => x.EffectiveFrom)
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<PagedResult<SalaryDecreeResult>> GetSalaryDecreesAsync(

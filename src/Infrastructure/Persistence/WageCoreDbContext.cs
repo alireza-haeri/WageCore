@@ -7,6 +7,7 @@ public class WageCoreDbContext(DbContextOptions<WageCoreDbContext> options)
     public DbSet<Workshop> Workshops { get; set; }
     public DbSet<Employee> Employees { get; set; }
     public DbSet<SalaryDecree> SalaryDecrees { get; set; }
+    public DbSet<PayrollRecord> PayrollRecords { get; set; }
     public DbSet<LaborLawRuleItem> LaborLawRuleItems { get; set; }
     public DbSet<CalculationFormula> CalculationFormulas { get; set; }
 
