@@ -121,7 +121,8 @@
                 "AnnualBonusPay",
                 "CommutingAllowancePay",
                 "InsurancePay",
-                "TaxPay"
+                "TaxPay",
+                "TaxableAmountPay"
               ],
               "enum": [
                 0,
@@ -141,7 +142,8 @@
                 14,
                 15,
                 16,
-                17
+                17,
+                18
               ]
             }
           }
@@ -1365,7 +1367,7 @@
               "type": "integer",
               "format": "int32",
               "x-enumNames": [
-                "MinimumMonthlySalary",
+                "MinimumDailySalary",
                 "DailyWorkingHours",
                 "MaximumOvertimeHoursPerDay",
                 "MaximumNightShiftHoursPerDay",
@@ -1375,7 +1377,31 @@
                 "AnnualBonusMinimumAmount",
                 "AnnualBonusMaximumAmount",
                 "TaxExemptMonthlyAmount",
-                "TaxRatePercentage"
+                "TaxRatePercentage",
+                "StandardDailyWorkHours",
+                "NightShiftPercentage",
+                "HolidayWorkPercentage",
+                "OvertimePercentage",
+                "FridayWorkPercentage",
+                "ChildAllowanceMultiplier",
+                "EndOfServiceDaysPerYear",
+                "HousingAllowanceAmount",
+                "FoodAllowanceAmount",
+                "MarriageAllowanceAmount",
+                "ShiftWorkPercentageMorningEvening",
+                "ShiftWorkPercentageMorningNight",
+                "ShiftWorkPercentageEveningNight",
+                "ShiftWorkPercentageMorningEveningNight",
+                "TaxBracket1Threshold",
+                "TaxBracket2Threshold",
+                "TaxBracket2Rate",
+                "TaxBracket3Threshold",
+                "TaxBracket3Rate",
+                "TaxBracket4Threshold",
+                "TaxBracket4Rate",
+                "TaxBracket5Threshold",
+                "TaxBracket5Rate",
+                "TaxBracket6Rate"
               ],
               "enum": [
                 0,
@@ -1388,7 +1414,31 @@
                 7,
                 8,
                 9,
-                10
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                22,
+                23,
+                24,
+                25,
+                26,
+                27,
+                28,
+                29,
+                30,
+                31,
+                32,
+                33,
+                34
               ]
             }
           }
@@ -2589,7 +2639,8 @@
               "AnnualBonusPay",
               "CommutingAllowancePay",
               "InsurancePay",
-              "TaxPay"
+              "TaxPay",
+              "TaxableAmountPay"
             ],
             "enum": [
               0,
@@ -2609,7 +2660,8 @@
               14,
               15,
               16,
-              17
+              17,
+              18
             ]
           },
           "expression": {
@@ -2830,7 +2882,7 @@
             "type": "integer",
             "format": "int32",
             "x-enumNames": [
-              "MinimumMonthlySalary",
+              "MinimumDailySalary",
               "DailyWorkingHours",
               "MaximumOvertimeHoursPerDay",
               "MaximumNightShiftHoursPerDay",
@@ -2840,7 +2892,31 @@
               "AnnualBonusMinimumAmount",
               "AnnualBonusMaximumAmount",
               "TaxExemptMonthlyAmount",
-              "TaxRatePercentage"
+              "TaxRatePercentage",
+              "StandardDailyWorkHours",
+              "NightShiftPercentage",
+              "HolidayWorkPercentage",
+              "OvertimePercentage",
+              "FridayWorkPercentage",
+              "ChildAllowanceMultiplier",
+              "EndOfServiceDaysPerYear",
+              "HousingAllowanceAmount",
+              "FoodAllowanceAmount",
+              "MarriageAllowanceAmount",
+              "ShiftWorkPercentageMorningEvening",
+              "ShiftWorkPercentageMorningNight",
+              "ShiftWorkPercentageEveningNight",
+              "ShiftWorkPercentageMorningEveningNight",
+              "TaxBracket1Threshold",
+              "TaxBracket2Threshold",
+              "TaxBracket2Rate",
+              "TaxBracket3Threshold",
+              "TaxBracket3Rate",
+              "TaxBracket4Threshold",
+              "TaxBracket4Rate",
+              "TaxBracket5Threshold",
+              "TaxBracket5Rate",
+              "TaxBracket6Rate"
             ],
             "enum": [
               0,
@@ -2853,7 +2929,31 @@
               7,
               8,
               9,
-              10
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34
             ]
           },
           "value": {
@@ -3274,7 +3374,8 @@
               "AnnualBonusPay",
               "CommutingAllowancePay",
               "InsurancePay",
-              "TaxPay"
+              "TaxPay",
+              "TaxableAmountPay"
             ],
             "enum": [
               0,
@@ -3294,7 +3395,8 @@
               14,
               15,
               16,
-              17
+              17,
+              18
             ]
           },
           "expression": {
@@ -3380,7 +3482,8 @@
               "AnnualBonusPay",
               "CommutingAllowancePay",
               "InsurancePay",
-              "TaxPay"
+              "TaxPay",
+              "TaxableAmountPay"
             ],
             "enum": [
               0,
@@ -3400,7 +3503,8 @@
               14,
               15,
               16,
-              17
+              17,
+              18
             ]
           },
           "expression": {
@@ -3670,7 +3774,7 @@
             "type": "integer",
             "format": "int32",
             "x-enumNames": [
-              "MinimumMonthlySalary",
+              "MinimumDailySalary",
               "DailyWorkingHours",
               "MaximumOvertimeHoursPerDay",
               "MaximumNightShiftHoursPerDay",
@@ -3680,7 +3784,31 @@
               "AnnualBonusMinimumAmount",
               "AnnualBonusMaximumAmount",
               "TaxExemptMonthlyAmount",
-              "TaxRatePercentage"
+              "TaxRatePercentage",
+              "StandardDailyWorkHours",
+              "NightShiftPercentage",
+              "HolidayWorkPercentage",
+              "OvertimePercentage",
+              "FridayWorkPercentage",
+              "ChildAllowanceMultiplier",
+              "EndOfServiceDaysPerYear",
+              "HousingAllowanceAmount",
+              "FoodAllowanceAmount",
+              "MarriageAllowanceAmount",
+              "ShiftWorkPercentageMorningEvening",
+              "ShiftWorkPercentageMorningNight",
+              "ShiftWorkPercentageEveningNight",
+              "ShiftWorkPercentageMorningEveningNight",
+              "TaxBracket1Threshold",
+              "TaxBracket2Threshold",
+              "TaxBracket2Rate",
+              "TaxBracket3Threshold",
+              "TaxBracket3Rate",
+              "TaxBracket4Threshold",
+              "TaxBracket4Rate",
+              "TaxBracket5Threshold",
+              "TaxBracket5Rate",
+              "TaxBracket6Rate"
             ],
             "enum": [
               0,
@@ -3693,7 +3821,31 @@
               7,
               8,
               9,
-              10
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34
             ]
           },
           "value": {
@@ -3762,7 +3914,7 @@
             "type": "integer",
             "format": "int32",
             "x-enumNames": [
-              "MinimumMonthlySalary",
+              "MinimumDailySalary",
               "DailyWorkingHours",
               "MaximumOvertimeHoursPerDay",
               "MaximumNightShiftHoursPerDay",
@@ -3772,7 +3924,31 @@
               "AnnualBonusMinimumAmount",
               "AnnualBonusMaximumAmount",
               "TaxExemptMonthlyAmount",
-              "TaxRatePercentage"
+              "TaxRatePercentage",
+              "StandardDailyWorkHours",
+              "NightShiftPercentage",
+              "HolidayWorkPercentage",
+              "OvertimePercentage",
+              "FridayWorkPercentage",
+              "ChildAllowanceMultiplier",
+              "EndOfServiceDaysPerYear",
+              "HousingAllowanceAmount",
+              "FoodAllowanceAmount",
+              "MarriageAllowanceAmount",
+              "ShiftWorkPercentageMorningEvening",
+              "ShiftWorkPercentageMorningNight",
+              "ShiftWorkPercentageEveningNight",
+              "ShiftWorkPercentageMorningEveningNight",
+              "TaxBracket1Threshold",
+              "TaxBracket2Threshold",
+              "TaxBracket2Rate",
+              "TaxBracket3Threshold",
+              "TaxBracket3Rate",
+              "TaxBracket4Threshold",
+              "TaxBracket4Rate",
+              "TaxBracket5Threshold",
+              "TaxBracket5Rate",
+              "TaxBracket6Rate"
             ],
             "enum": [
               0,
@@ -3785,7 +3961,31 @@
               7,
               8,
               9,
-              10
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34
             ]
           },
           "value": {
@@ -5122,7 +5322,8 @@
               "AnnualBonusPay",
               "CommutingAllowancePay",
               "InsurancePay",
-              "TaxPay"
+              "TaxPay",
+              "TaxableAmountPay"
             ],
             "enum": [
               0,
@@ -5142,7 +5343,8 @@
               14,
               15,
               16,
-              17
+              17,
+              18
             ]
           },
           "expression": {
@@ -5193,7 +5395,7 @@
             "type": "integer",
             "format": "int32",
             "x-enumNames": [
-              "MinimumMonthlySalary",
+              "MinimumDailySalary",
               "DailyWorkingHours",
               "MaximumOvertimeHoursPerDay",
               "MaximumNightShiftHoursPerDay",
@@ -5203,7 +5405,31 @@
               "AnnualBonusMinimumAmount",
               "AnnualBonusMaximumAmount",
               "TaxExemptMonthlyAmount",
-              "TaxRatePercentage"
+              "TaxRatePercentage",
+              "StandardDailyWorkHours",
+              "NightShiftPercentage",
+              "HolidayWorkPercentage",
+              "OvertimePercentage",
+              "FridayWorkPercentage",
+              "ChildAllowanceMultiplier",
+              "EndOfServiceDaysPerYear",
+              "HousingAllowanceAmount",
+              "FoodAllowanceAmount",
+              "MarriageAllowanceAmount",
+              "ShiftWorkPercentageMorningEvening",
+              "ShiftWorkPercentageMorningNight",
+              "ShiftWorkPercentageEveningNight",
+              "ShiftWorkPercentageMorningEveningNight",
+              "TaxBracket1Threshold",
+              "TaxBracket2Threshold",
+              "TaxBracket2Rate",
+              "TaxBracket3Threshold",
+              "TaxBracket3Rate",
+              "TaxBracket4Threshold",
+              "TaxBracket4Rate",
+              "TaxBracket5Threshold",
+              "TaxBracket5Rate",
+              "TaxBracket6Rate"
             ],
             "enum": [
               0,
@@ -5216,7 +5442,31 @@
               7,
               8,
               9,
-              10
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34
             ]
           },
           "value": {

@@ -24,7 +24,10 @@
     <div class="toolbar">
         <select class="in tb-sel" @bind="_selectedKey" @bind:after="OnKeyChanged">
             <option value="">همهٔ کلیدها</option>
-            <option value="@CalculationFormulaKey.OvertimePay">اضافه‌کاری</option>
+            @foreach (var i in Enum.GetValues<CalculationFormulaKey>())
+            {
+                <option value="@i">@i</option>
+            }
         </select>
         <span class="chip c-grn ms-auto">
             <span class="c-dot"></span>@((_formulas?.TotalCount ?? 0).ToPersianNumber()) فرمول
@@ -269,7 +272,6 @@
 
     private static string GetKeyDisplayName(GetCalculationFormulasResponseKey key) => key switch
     {
-        GetCalculationFormulasResponseKey.OvertimePay => "اضافه‌کاری",
         _ => key.ToString()
     };
 
