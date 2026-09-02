@@ -7,9 +7,13 @@
     <div class="ph-t">
         <div class="crumb">
             پنل مدیر سایت
-            <svg class="ic"><use href="assets/img/icons.svg#i-chl"/></svg>
+            <svg class="ic">
+                <use href="assets/img/icons.svg#i-chl"/>
+            </svg>
             <a href="/site-manager/calculation-formulas">فرمول‌های محاسبه</a>
-            <svg class="ic"><use href="assets/img/icons.svg#i-chl"/></svg>
+            <svg class="ic">
+                <use href="assets/img/icons.svg#i-chl"/>
+            </svg>
             <span>@(IsEdit ? "ویرایش فرمول" : "فرمول جدید")</span>
         </div>
         <h1>@(IsEdit ? "ویرایش فرمول محاسبه" : "ثبت فرمول محاسبه جدید")</h1>
@@ -17,7 +21,9 @@
     </div>
     <div class="ph-actions">
         <a class="btn btn-g" href="/site-manager/calculation-formulas">
-            <svg class="ic"><use href="assets/img/icons.svg#i-x"/></svg>
+            <svg class="ic">
+                <use href="assets/img/icons.svg#i-x"/>
+            </svg>
             انصراف
         </a>
     </div>
@@ -29,7 +35,9 @@
             <ValidationMessage TValue="string" For="() => _formHelper.Model.General" class="f-help text-danger"/>
 
             <div class="sec">
-                <svg class="ic"><use href="assets/img/icons.svg#i-doc"/></svg>
+                <svg class="ic">
+                    <use href="assets/img/icons.svg#i-doc"/>
+                </svg>
                 مشخصات فرمول
             </div>
 
@@ -38,7 +46,10 @@
                     <label class="f-label" for="f-key"><span class="req-s">*</span>کلید فرمول</label>
                     <InputSelect @bind-Value="_formHelper.Model.Key" class="in" id="f-key" data-autofocus>
                         <option value="">انتخاب کنید...</option>
-                        <option value="@CalculationFormulaKey.OvertimePay">اضافه‌کاری</option>
+                        @foreach (var i in Enum.GetValues<CalculationFormulaKey>())
+                        {
+                            <option value="@i">@i</option>
+                        }
                     </InputSelect>
                     <ValidationMessage TValue="CalculationFormulaKey?" For="() => _formHelper.Model.Key"
                                        class="f-help text-danger"/>
@@ -71,7 +82,9 @@
                     }
                     else
                     {
-                        <svg class="ic"><use href="assets/img/icons.svg#i-check"/></svg>
+                        <svg class="ic">
+                            <use href="assets/img/icons.svg#i-check"/>
+                        </svg>
                         <span>@(IsEdit ? "ویرایش فرمول" : "ثبت فرمول")</span>
                     }
                 </button>
@@ -196,4 +209,5 @@
         [RegularExpression(@"^\d{4}/\d{2}/\d{2}$", ErrorMessage = "تاریخ را به فرمت ۱۴۰۵/۰۱/۰۱ وارد کنید.")]
         public string EffectiveFrom { get; set; } = null!;
     }
+
 }

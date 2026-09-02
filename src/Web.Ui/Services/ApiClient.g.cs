@@ -238,6 +238,38 @@ namespace Web.Ui.Services
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// CreatePayrollRecord
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<CreatePayrollRecordCommandResponseResult> CreatePayrollRecordAsync(CreatePayrollRecordRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// UpdatePayrollRecord
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BooleanResult> UpdatePayrollRecordAsync(System.Guid payrollRecordId, UpdatePayrollRecordRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// DeletePayrollRecord
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BooleanResult> DeletePayrollRecordAsync(System.Guid payrollRecordId, System.Guid? employeeId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// MarkPayrollRecordAsPaid
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BooleanResult> MarkPayrollRecordAsPaidAsync(System.Guid payrollRecordId, System.Guid? employeeId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// CreateSalaryDecree
         /// </summary>
         /// <returns>OK</returns>
@@ -2480,6 +2512,336 @@ namespace Web.Ui.Services
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// CreatePayrollRecord
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<CreatePayrollRecordCommandResponseResult> CreatePayrollRecordAsync(CreatePayrollRecordRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.StringContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/v1/payroll-records"
+                    urlBuilder_.Append("api/v1/payroll-records");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<CreatePayrollRecordCommandResponseResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// UpdatePayrollRecord
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<BooleanResult> UpdatePayrollRecordAsync(System.Guid payrollRecordId, UpdatePayrollRecordRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (payrollRecordId == null)
+                throw new System.ArgumentNullException("payrollRecordId");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.StringContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("PUT");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/v1/payroll-records/{payrollRecordId}"
+                    urlBuilder_.Append("api/v1/payroll-records/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(payrollRecordId, System.Globalization.CultureInfo.InvariantCulture)));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<BooleanResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// DeletePayrollRecord
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<BooleanResult> DeletePayrollRecordAsync(System.Guid payrollRecordId, System.Guid? employeeId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (payrollRecordId == null)
+                throw new System.ArgumentNullException("payrollRecordId");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("DELETE");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/v1/payroll-records/{payrollRecordId}"
+                    urlBuilder_.Append("api/v1/payroll-records/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(payrollRecordId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append('?');
+                    if (employeeId != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("employeeId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(employeeId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<BooleanResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// MarkPayrollRecordAsPaid
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<BooleanResult> MarkPayrollRecordAsPaidAsync(System.Guid payrollRecordId, System.Guid? employeeId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (payrollRecordId == null)
+                throw new System.ArgumentNullException("payrollRecordId");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/v1/payroll-records/{payrollRecordId}/mark-as-paid"
+                    urlBuilder_.Append("api/v1/payroll-records/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(payrollRecordId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/mark-as-paid");
+                    urlBuilder_.Append('?');
+                    if (employeeId != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("employeeId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(employeeId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<BooleanResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// CreateSalaryDecree
         /// </summary>
         /// <returns>OK</returns>
@@ -3821,6 +4183,72 @@ namespace Web.Ui.Services
 
         [Newtonsoft.Json.JsonProperty("effectiveFrom", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string EffectiveFrom { get; init; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record CreatePayrollRecordCommandResponse
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public CreatePayrollRecordCommandResponse(System.Guid @payrollRecordId)
+        {
+            this.PayrollRecordId = @payrollRecordId;
+        }
+
+        [Newtonsoft.Json.JsonProperty("payrollRecordId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid PayrollRecordId { get; init; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record CreatePayrollRecordCommandResponseResult
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public CreatePayrollRecordCommandResponseResult(CreatePayrollRecordCommandResponseResultBadResultType? @badResultType, System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<string>> @errors, bool @isSuccess, CreatePayrollRecordCommandResponse @response)
+        {
+            this.IsSuccess = @isSuccess;
+            this.BadResultType = @badResultType;
+            this.Response = @response;
+            this.Errors = @errors;
+        }
+
+        [Newtonsoft.Json.JsonProperty("isSuccess", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsSuccess { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("badResultType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public CreatePayrollRecordCommandResponseResultBadResultType? BadResultType { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("response", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public CreatePayrollRecordCommandResponse Response { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("errors", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<string>> Errors { get; init; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record CreatePayrollRecordRequest
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public CreatePayrollRecordRequest(System.Guid @employeeId, int @persianMonth, int @persianYear, PayrollWorkInputDto @work)
+        {
+            this.EmployeeId = @employeeId;
+            this.PersianYear = @persianYear;
+            this.PersianMonth = @persianMonth;
+            this.Work = @work;
+        }
+
+        [Newtonsoft.Json.JsonProperty("employeeId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid EmployeeId { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("persianYear", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int PersianYear { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("persianMonth", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int PersianMonth { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("work", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public PayrollWorkInputDto Work { get; init; }
 
     }
 
@@ -5243,6 +5671,80 @@ namespace Web.Ui.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record PayrollWorkInputDto
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public PayrollWorkInputDto(double? @absenceDaysCount, double? @annualBonusAmount, PayrollWorkInputDtoAnnualBonusType? @annualBonusType, double? @cashBenefitsAmount, double? @fridayWorkHours, double? @holidayWorkHours, bool @isEsfandPeriod, double? @leaveHours, double? @missionAmountOverride, double? @missionDaysCount, double? @missionHours, double? @nightShiftHours, double? @overtimeHours, double? @performanceBonusAmount, int? @standardWorkingDaysCount, double? @workedDaysCount)
+        {
+            this.WorkedDaysCount = @workedDaysCount;
+            this.OvertimeHours = @overtimeHours;
+            this.NightShiftHours = @nightShiftHours;
+            this.FridayWorkHours = @fridayWorkHours;
+            this.LeaveHours = @leaveHours;
+            this.AbsenceDaysCount = @absenceDaysCount;
+            this.MissionDaysCount = @missionDaysCount;
+            this.MissionHours = @missionHours;
+            this.HolidayWorkHours = @holidayWorkHours;
+            this.MissionAmountOverride = @missionAmountOverride;
+            this.StandardWorkingDaysCount = @standardWorkingDaysCount;
+            this.IsEsfandPeriod = @isEsfandPeriod;
+            this.AnnualBonusAmount = @annualBonusAmount;
+            this.AnnualBonusType = @annualBonusType;
+            this.PerformanceBonusAmount = @performanceBonusAmount;
+            this.CashBenefitsAmount = @cashBenefitsAmount;
+        }
+
+        [Newtonsoft.Json.JsonProperty("workedDaysCount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double? WorkedDaysCount { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("overtimeHours", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double? OvertimeHours { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("nightShiftHours", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double? NightShiftHours { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("fridayWorkHours", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double? FridayWorkHours { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("leaveHours", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double? LeaveHours { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("absenceDaysCount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double? AbsenceDaysCount { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("missionDaysCount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double? MissionDaysCount { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("missionHours", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double? MissionHours { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("holidayWorkHours", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double? HolidayWorkHours { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("missionAmountOverride", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double? MissionAmountOverride { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("standardWorkingDaysCount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? StandardWorkingDaysCount { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("isEsfandPeriod", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsEsfandPeriod { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("annualBonusAmount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double? AnnualBonusAmount { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("annualBonusType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public PayrollWorkInputDtoAnnualBonusType? AnnualBonusType { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("performanceBonusAmount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double? PerformanceBonusAmount { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("cashBenefitsAmount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double? CashBenefitsAmount { get; init; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial record RegisterUserCommandResponse
     {
         [Newtonsoft.Json.JsonConstructor]
@@ -5475,6 +5977,32 @@ namespace Web.Ui.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record UpdatePayrollRecordRequest
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public UpdatePayrollRecordRequest(System.Guid @employeeId, int @persianMonth, int @persianYear, PayrollWorkInputDto @work)
+        {
+            this.EmployeeId = @employeeId;
+            this.PersianYear = @persianYear;
+            this.PersianMonth = @persianMonth;
+            this.Work = @work;
+        }
+
+        [Newtonsoft.Json.JsonProperty("employeeId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid EmployeeId { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("persianYear", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int PersianYear { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("persianMonth", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int PersianMonth { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("work", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public PayrollWorkInputDto Work { get; init; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial record UpdateSalaryDecreeRequest
     {
         [Newtonsoft.Json.JsonConstructor]
@@ -5536,6 +6064,40 @@ namespace Web.Ui.Services
 
         OvertimePay = 0,
 
+        BaseSalaryPay = 1,
+
+        AttractionAllowancePay = 2,
+
+        SupervisionAllowancePay = 3,
+
+        NightShiftExtraPay = 4,
+
+        HolidayWorkPay = 5,
+
+        ChildAllowancePay = 6,
+
+        HousingAllowancePay = 7,
+
+        FoodAllowancePay = 8,
+
+        MarriageAllowancePay = 9,
+
+        ShiftWorkPay = 10,
+
+        DailyMissionPay = 11,
+
+        FridayWorkPay = 12,
+
+        EndOfServicePay = 13,
+
+        AnnualBonusPay = 14,
+
+        CommutingAllowancePay = 15,
+
+        InsurancePay = 16,
+
+        TaxPay = 17,
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -5559,6 +6121,20 @@ namespace Web.Ui.Services
         MaximumOvertimeHoursPerDay = 2,
 
         MaximumNightShiftHoursPerDay = 3,
+
+        MaximumOvertimeHoursPerMonth = 4,
+
+        MaximumFridayWorkHoursPerMonth = 5,
+
+        InsurancePercentage = 6,
+
+        AnnualBonusMinimumAmount = 7,
+
+        AnnualBonusMaximumAmount = 8,
+
+        TaxExemptMonthlyAmount = 9,
+
+        TaxRatePercentage = 10,
 
     }
 
@@ -5605,6 +6181,40 @@ namespace Web.Ui.Services
     {
 
         OvertimePay = 0,
+
+        BaseSalaryPay = 1,
+
+        AttractionAllowancePay = 2,
+
+        SupervisionAllowancePay = 3,
+
+        NightShiftExtraPay = 4,
+
+        HolidayWorkPay = 5,
+
+        ChildAllowancePay = 6,
+
+        HousingAllowancePay = 7,
+
+        FoodAllowancePay = 8,
+
+        MarriageAllowancePay = 9,
+
+        ShiftWorkPay = 10,
+
+        DailyMissionPay = 11,
+
+        FridayWorkPay = 12,
+
+        EndOfServicePay = 13,
+
+        AnnualBonusPay = 14,
+
+        CommutingAllowancePay = 15,
+
+        InsurancePay = 16,
+
+        TaxPay = 17,
 
     }
 
@@ -5661,6 +6271,34 @@ namespace Web.Ui.Services
         MaximumOvertimeHoursPerDay = 2,
 
         MaximumNightShiftHoursPerDay = 3,
+
+        MaximumOvertimeHoursPerMonth = 4,
+
+        MaximumFridayWorkHoursPerMonth = 5,
+
+        InsurancePercentage = 6,
+
+        AnnualBonusMinimumAmount = 7,
+
+        AnnualBonusMaximumAmount = 8,
+
+        TaxExemptMonthlyAmount = 9,
+
+        TaxRatePercentage = 10,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum CreatePayrollRecordCommandResponseResultBadResultType
+    {
+
+        NotFound = 0,
+
+        Validation = 1,
+
+        General = 2,
+
+        Unauthorized = 3,
 
     }
 
@@ -5728,6 +6366,40 @@ namespace Web.Ui.Services
 
         OvertimePay = 0,
 
+        BaseSalaryPay = 1,
+
+        AttractionAllowancePay = 2,
+
+        SupervisionAllowancePay = 3,
+
+        NightShiftExtraPay = 4,
+
+        HolidayWorkPay = 5,
+
+        ChildAllowancePay = 6,
+
+        HousingAllowancePay = 7,
+
+        FoodAllowancePay = 8,
+
+        MarriageAllowancePay = 9,
+
+        ShiftWorkPay = 10,
+
+        DailyMissionPay = 11,
+
+        FridayWorkPay = 12,
+
+        EndOfServicePay = 13,
+
+        AnnualBonusPay = 14,
+
+        CommutingAllowancePay = 15,
+
+        InsurancePay = 16,
+
+        TaxPay = 17,
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -5749,6 +6421,40 @@ namespace Web.Ui.Services
     {
 
         OvertimePay = 0,
+
+        BaseSalaryPay = 1,
+
+        AttractionAllowancePay = 2,
+
+        SupervisionAllowancePay = 3,
+
+        NightShiftExtraPay = 4,
+
+        HolidayWorkPay = 5,
+
+        ChildAllowancePay = 6,
+
+        HousingAllowancePay = 7,
+
+        FoodAllowancePay = 8,
+
+        MarriageAllowancePay = 9,
+
+        ShiftWorkPay = 10,
+
+        DailyMissionPay = 11,
+
+        FridayWorkPay = 12,
+
+        EndOfServicePay = 13,
+
+        AnnualBonusPay = 14,
+
+        CommutingAllowancePay = 15,
+
+        InsurancePay = 16,
+
+        TaxPay = 17,
 
     }
 
@@ -5826,6 +6532,20 @@ namespace Web.Ui.Services
 
         MaximumNightShiftHoursPerDay = 3,
 
+        MaximumOvertimeHoursPerMonth = 4,
+
+        MaximumFridayWorkHoursPerMonth = 5,
+
+        InsurancePercentage = 6,
+
+        AnnualBonusMinimumAmount = 7,
+
+        AnnualBonusMaximumAmount = 8,
+
+        TaxExemptMonthlyAmount = 9,
+
+        TaxRatePercentage = 10,
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -5853,6 +6573,20 @@ namespace Web.Ui.Services
         MaximumOvertimeHoursPerDay = 2,
 
         MaximumNightShiftHoursPerDay = 3,
+
+        MaximumOvertimeHoursPerMonth = 4,
+
+        MaximumFridayWorkHoursPerMonth = 5,
+
+        InsurancePercentage = 6,
+
+        AnnualBonusMinimumAmount = 7,
+
+        AnnualBonusMaximumAmount = 8,
+
+        TaxExemptMonthlyAmount = 9,
+
+        TaxRatePercentage = 10,
 
     }
 
@@ -6079,6 +6813,16 @@ namespace Web.Ui.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum PayrollWorkInputDtoAnnualBonusType
+    {
+
+        Minimum = 0,
+
+        Maximum = 1,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum RegisterUserCommandResponseResultBadResultType
     {
 
@@ -6140,6 +6884,40 @@ namespace Web.Ui.Services
 
         OvertimePay = 0,
 
+        BaseSalaryPay = 1,
+
+        AttractionAllowancePay = 2,
+
+        SupervisionAllowancePay = 3,
+
+        NightShiftExtraPay = 4,
+
+        HolidayWorkPay = 5,
+
+        ChildAllowancePay = 6,
+
+        HousingAllowancePay = 7,
+
+        FoodAllowancePay = 8,
+
+        MarriageAllowancePay = 9,
+
+        ShiftWorkPay = 10,
+
+        DailyMissionPay = 11,
+
+        FridayWorkPay = 12,
+
+        EndOfServicePay = 13,
+
+        AnnualBonusPay = 14,
+
+        CommutingAllowancePay = 15,
+
+        InsurancePay = 16,
+
+        TaxPay = 17,
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -6153,6 +6931,20 @@ namespace Web.Ui.Services
         MaximumOvertimeHoursPerDay = 2,
 
         MaximumNightShiftHoursPerDay = 3,
+
+        MaximumOvertimeHoursPerMonth = 4,
+
+        MaximumFridayWorkHoursPerMonth = 5,
+
+        InsurancePercentage = 6,
+
+        AnnualBonusMinimumAmount = 7,
+
+        AnnualBonusMaximumAmount = 8,
+
+        TaxExemptMonthlyAmount = 9,
+
+        TaxRatePercentage = 10,
 
     }
 
