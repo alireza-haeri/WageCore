@@ -27,6 +27,7 @@ public class CreateCalculationFormulaCommandHandlerTests
     private void SetupNoDuplicateEffectiveFrom()
     {
         _calculationFormulaQuery.IsExistEffectiveFrom(
+                Arg.Any<FormulaKey>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<Guid?>(),
                 Arg.Any<CancellationToken>())
@@ -62,6 +63,7 @@ public class CreateCalculationFormulaCommandHandlerTests
         var command = CreateValidCommand();
 
         _calculationFormulaQuery.IsExistEffectiveFrom(
+                FormulaKey.OvertimePay,
                 ValidEffectiveFrom,
                 null,
                 Arg.Any<CancellationToken>())

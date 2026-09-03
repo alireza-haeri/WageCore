@@ -165,7 +165,7 @@ public class CalculationFormulaQueryTests(WageCoreDbContextFixture fixture)
 
         await CreateFormulaAsync(scope, "Hours * Rate * 1.4", effectiveFrom);
 
-        var result = await query.IsExistEffectiveFrom(effectiveFrom);
+        var result = await query.IsExistEffectiveFrom(FormulaKey.OvertimePay, effectiveFrom);
 
         result.Should().BeTrue();
     }
@@ -178,7 +178,9 @@ public class CalculationFormulaQueryTests(WageCoreDbContextFixture fixture)
 
         await CreateFormulaAsync(scope, "Hours * Rate * 1.4", DateOnly.FromDateTime(DateTime.Now.AddDays(-7)));
 
-        var result = await query.IsExistEffectiveFrom(DateOnly.FromDateTime(DateTime.Now.AddDays(-1)));
+        var result = await query.IsExistEffectiveFrom(
+            FormulaKey.OvertimePay,
+            DateOnly.FromDateTime(DateTime.Now.AddDays(-1)));
 
         result.Should().BeFalse();
     }
@@ -191,7 +193,21 @@ public class CalculationFormulaQueryTests(WageCoreDbContextFixture fixture)
         var effectiveFrom = DateOnly.FromDateTime(DateTime.Now.AddDays(-7));
         var formula = await CreateFormulaAsync(scope, "Hours * Rate * 1.4", effectiveFrom);
 
-        var result = await query.IsExistEffectiveFrom(effectiveFrom, formula.Id);
+        var result = await query.IsExistEffectiveFrom(FormulaKey.OvertimePay, effectiveFrom, formula.Id);
+
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task IsExistEffectiveFrom_WhenDateExistsForAnotherKey_ShouldReturnFalse()
+    {
+        await using var scope = fixture.CreateScope();
+        var query = scope.ServiceProvider.GetRequiredService<ICalculationFormulaQuery>();
+        var effectiveFrom = DateOnly.FromDateTime(DateTime.Now.AddDays(-7));
+
+        await CreateFormulaAsync(scope, "Hours * Rate * 1.4", effectiveFrom);
+
+        var result = await query.IsExistEffectiveFrom(FormulaKey.BaseSalaryPay, effectiveFrom);
 
         result.Should().BeFalse();
     }

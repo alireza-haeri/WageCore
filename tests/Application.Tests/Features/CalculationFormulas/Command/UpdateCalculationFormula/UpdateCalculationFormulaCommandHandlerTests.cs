@@ -39,6 +39,7 @@ public class UpdateCalculationFormulaCommandHandlerTests
     private void SetupNoDuplicateEffectiveFrom()
     {
         _calculationFormulaQuery.IsExistEffectiveFrom(
+                Arg.Any<FormulaKey>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<Guid?>(),
                 Arg.Any<CancellationToken>())
@@ -92,6 +93,7 @@ public class UpdateCalculationFormulaCommandHandlerTests
         _calculationFormulaRepository.GetByIdAsync(ValidFormulaId, Arg.Any<CancellationToken>())
             .Returns(formula);
         _calculationFormulaQuery.IsExistEffectiveFrom(
+                FormulaKey.OvertimePay,
                 ValidEffectiveFrom,
                 ValidFormulaId,
                 Arg.Any<CancellationToken>())

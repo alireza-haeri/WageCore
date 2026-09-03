@@ -14,6 +14,7 @@ public class UpdateLaborLawRuleCommandHandler(
         if (request.EffectiveFrom is not null)
         {
             var existEffectiveFrom = await laborLawRuleQuery.IsExistEffectiveFrom(
+                request.Key!.Value,
                 request.EffectiveFrom.Value,
                 request.LaborLawRuleId,
                 cancellationToken);

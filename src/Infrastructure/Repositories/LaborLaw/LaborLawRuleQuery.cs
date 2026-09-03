@@ -91,14 +91,14 @@ public class LaborLawRuleQuery(IDbConnectionFactory dbConnectionFactory) : ILabo
                       SELECT CASE WHEN EXISTS (
                           SELECT 1
                           FROM {LaborLawRuleItem.TableName} r
-                          WHERE r.EffectiveFrom = @EffectiveFrom AND r.key = @Key
+                          WHERE r.EffectiveFrom = @EffectiveFrom AND r.[Key] = @Key
                           AND (@ExcludeRuleId IS NULL OR r.Id <> @ExcludeRuleId)
                       ) THEN 1 ELSE 0 END
                       """;
 
         var command = new CommandDefinition(sql, new
         {
-            Key = key,
+            Key = key.ToString(),
             EffectiveFrom = effectiveFrom,
             ExcludeRuleId = excludeRuleId
         }, cancellationToken: cancellationToken);

@@ -14,6 +14,7 @@ public class UpdateCalculationFormulaCommandHandler(
         if (request.EffectiveFrom is not null)
         {
             var existEffectiveFrom = await calculationFormulaQuery.IsExistEffectiveFrom(
+                request.Key!.Value,
                 request.EffectiveFrom.Value,
                 request.CalculationFormulaId,
                 cancellationToken);

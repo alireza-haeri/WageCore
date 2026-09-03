@@ -25,6 +25,7 @@ public class CreateLaborLawRuleCommandHandlerTests
     private void SetupNoDuplicateEffectiveFrom()
     {
         _laborLawRuleQuery.IsExistEffectiveFrom(
+                Arg.Any<LaborLawRuleKey>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<Guid?>(),
                 Arg.Any<CancellationToken>())
@@ -60,6 +61,7 @@ public class CreateLaborLawRuleCommandHandlerTests
         var command = CreateValidCommand();
 
         _laborLawRuleQuery.IsExistEffectiveFrom(
+                LaborLawRuleKey.MinimumDailySalary,
                 ValidEffectiveFrom,
                 null,
                 Arg.Any<CancellationToken>())
