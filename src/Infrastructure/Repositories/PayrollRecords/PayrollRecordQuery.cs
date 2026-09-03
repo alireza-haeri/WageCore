@@ -1,3 +1,4 @@
+using Core.Contracts.PayrollRecords;
 using Infrastructure.Persistence.Dapper;
 
 namespace Infrastructure.Repositories.PayrollRecords;

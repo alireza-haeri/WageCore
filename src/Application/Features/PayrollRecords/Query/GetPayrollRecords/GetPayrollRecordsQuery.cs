@@ -1,6 +1,6 @@
 using Core.Contracts;
 
-namespace Application.Features.PayrollRecords;
+namespace Application.Features.PayrollRecords.Query.GetPayrollRecords;
 
 public record GetPayrollRecordsQuery(
     Guid UserId,

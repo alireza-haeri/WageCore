@@ -15,6 +15,7 @@ public interface ILaborLawRuleQuery
         CancellationToken cancellationToken = default);
 
     Task<bool> IsExistEffectiveFrom(
+        LaborLawRuleKey key,
         DateOnly effectiveFrom,
         Guid? excludeRuleId = null,
         CancellationToken cancellationToken = default);

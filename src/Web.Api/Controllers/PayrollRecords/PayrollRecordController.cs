@@ -1,3 +1,4 @@
+using Application.Features.PayrollRecords.Query.GetPayrollRecords;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Web.Api.Controllers.PayrollRecords;

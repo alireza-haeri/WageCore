@@ -82,6 +82,7 @@ public class CalculationFormulaQuery(IDbConnectionFactory dbConnectionFactory) :
     }
 
     public async Task<bool> IsExistEffectiveFrom(
+        FormulaKey key,
         DateOnly effectiveFrom,
         Guid? excludeFormulaId = null,
         CancellationToken cancellationToken = default)
@@ -90,13 +91,14 @@ public class CalculationFormulaQuery(IDbConnectionFactory dbConnectionFactory) :
                       SELECT CASE WHEN EXISTS (
                           SELECT 1
                           FROM {CalculationFormula.TableName} f
-                          WHERE f.EffectiveFrom = @EffectiveFrom
+                          WHERE f.EffectiveFrom = @EffectiveFrom AND f.key == @Key
                           AND (@ExcludeFormulaId IS NULL OR f.Id <> @ExcludeFormulaId)
                       ) THEN 1 ELSE 0 END
                       """;
 
         var command = new CommandDefinition(sql, new
         {
+            Key = key,
             EffectiveFrom = effectiveFrom,
             ExcludeFormulaId = excludeFormulaId
         }, cancellationToken: cancellationToken);

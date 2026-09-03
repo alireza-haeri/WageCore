@@ -17,12 +17,12 @@ public class LaborLawRuleItemConfigurations : IEntityTypeConfiguration<LaborLawR
 
         builder.Property(x => x.Value)
             .IsRequired()
-            .HasPrecision(18, 0);
+            .HasPrecision(18, 3);
 
         builder.Property(x => x.EffectiveFrom)
             .IsRequired()
             .HasColumnType("date");
 
-        builder.HasIndex(x => x.EffectiveFrom).IsUnique();
+        builder.HasIndex(x => new {x.EffectiveFrom , x.Key}).IsUnique();
     }
 }

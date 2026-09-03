@@ -33,6 +33,12 @@ public static class SwaggerConfigurationExtension
             options.OperationFilter<SummaryFromOperationIdFilter>();
             
             options.AddPersianDateTimeMappings();
+            
+            options.MapType<decimal>(() => new OpenApiSchema 
+            { 
+                Type = JsonSchemaType.Number, 
+                Format = "decimal" 
+            });
         });
         
         return builder;

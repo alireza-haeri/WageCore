@@ -268,7 +268,7 @@
     private const int PageSize = 10;
     private int _totalPages => _payrollRecords is null
         ? 0
-        : (int)Math.Ceiling(_payrollRecords.TotalCount / (double)PageSize);
+        : (int)Math.Ceiling(_payrollRecords.TotalCount / (decimal)PageSize);
 
     private Timer? _debounceTimer;
     private GetPayrollRecordsResponse? _recordToDelete;
@@ -510,7 +510,7 @@
         }
     }
 
-    private static string FormatAmount(double amount) => ((long)amount).ToPersianNumber();
+    private static string FormatAmount(decimal amount) => ((long)amount).ToPersianNumber();
 
     private static string GetStatusDisplayName(int status) => status switch
     {

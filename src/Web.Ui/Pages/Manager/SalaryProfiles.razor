@@ -204,7 +204,7 @@
     private const int PageSize = 10;
     private int _totalPages => _salaryProfiles is null
         ? 0
-        : (int)Math.Ceiling(_salaryProfiles.TotalCount / (double)PageSize);
+        : (int)Math.Ceiling(_salaryProfiles.TotalCount / (decimal)PageSize);
 
     private Timer? _debounceTimer;
     private GetSalaryDecreesResponse? _profileToDelete;
@@ -389,7 +389,7 @@
         }
     }
 
-    private static string FormatAmount(double amount) => ((long)amount).ToPersianNumber();
+    private static string FormatAmount(decimal amount) => ((long)amount).ToPersianNumber();
 
     private static string GetStatusDisplayName(int status) => status switch
     {

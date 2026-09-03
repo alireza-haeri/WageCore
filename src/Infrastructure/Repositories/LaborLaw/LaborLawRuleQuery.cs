@@ -82,6 +82,7 @@ public class LaborLawRuleQuery(IDbConnectionFactory dbConnectionFactory) : ILabo
     }
 
     public async Task<bool> IsExistEffectiveFrom(
+        LaborLawRuleKey key,
         DateOnly effectiveFrom,
         Guid? excludeRuleId = null,
         CancellationToken cancellationToken = default)
@@ -90,13 +91,14 @@ public class LaborLawRuleQuery(IDbConnectionFactory dbConnectionFactory) : ILabo
                       SELECT CASE WHEN EXISTS (
                           SELECT 1
                           FROM {LaborLawRuleItem.TableName} r
-                          WHERE r.EffectiveFrom = @EffectiveFrom
+                          WHERE r.EffectiveFrom = @EffectiveFrom AND r.key = @Key
                           AND (@ExcludeRuleId IS NULL OR r.Id <> @ExcludeRuleId)
                       ) THEN 1 ELSE 0 END
                       """;
 
         var command = new CommandDefinition(sql, new
         {
+            Key = key,
             EffectiveFrom = effectiveFrom,
             ExcludeRuleId = excludeRuleId
         }, cancellationToken: cancellationToken);

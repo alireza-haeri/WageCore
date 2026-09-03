@@ -108,7 +108,7 @@
                     _formHelper.Model = new LaborLawRuleFormModel
                     {
                         Key = (LaborLawRuleKey)rule.Key,
-                        Value = ((long)rule.Value).ToString(),
+                        Value = rule.Value.ToString(),
                         EffectiveFrom = rule.EffectiveFrom
                     };
 
@@ -135,7 +135,7 @@
         _formHelper.ClearErrors();
 
         var model = _formHelper.Model;
-        if (!double.TryParse(model.Value, out var value))
+        if (!decimal.TryParse(model.Value, out var value))
         {
             _formHelper.SetServerErrors(new Dictionary<string, ICollection<string>>
             {

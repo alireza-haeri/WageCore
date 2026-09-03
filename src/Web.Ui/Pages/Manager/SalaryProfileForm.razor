@@ -444,11 +444,11 @@
         _isLoading = false;
     }
 
-    private static string FormatOptionalAmount(double? amount)
+    private static string FormatOptionalAmount(decimal? amount)
         => amount.HasValue ? ((long)amount.Value).ToString() : string.Empty;
 
-    private static double? ParseOptionalAmount(string? value)
-        => string.IsNullOrWhiteSpace(value) ? null : double.Parse(value);
+    private static decimal? ParseOptionalAmount(string? value)
+        => string.IsNullOrWhiteSpace(value) ? null : decimal.Parse(value);
 
     private static Dictionary<string, string> CreateFieldMapping() => new()
     {

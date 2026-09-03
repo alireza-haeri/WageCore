@@ -1,3 +1,4 @@
+using Application.Features.PayrollRecords.Query.GetPayrollRecords;
 using Core.Contracts;
 using Core.Contracts.PayrollRecords;
 using NSubstitute;
@@ -130,7 +131,7 @@ public class GetPayrollRecordsQueryHandlerTests
         var result = await _handler.Handle(CreateValidQuery(), CancellationToken.None);
 
         result.ShouldBeSuccess();
-        await _persianCalendarService.DidNotReceive()
+        _persianCalendarService.DidNotReceive()
             .GetMonthRange(Arg.Any<int>(), Arg.Any<int>());
         await _payrollRecordQuery.Received(1).GetPayrollRecordsAsync(
             ValidUserId,

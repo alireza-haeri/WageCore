@@ -15,6 +15,7 @@ public interface ICalculationFormulaQuery
         CancellationToken cancellationToken = default);
 
     Task<bool> IsExistEffectiveFrom(
+        FormulaKey key,
         DateOnly effectiveFrom,
         Guid? excludeFormulaId = null,
         CancellationToken cancellationToken = default);

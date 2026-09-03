@@ -1,4 +1,4 @@
-namespace Application.Features.PayrollRecords;
+namespace Application.Features.PayrollRecords.Query.GetPayrollRecords;
 
 public class GetPayrollRecordsQueryValidator : AbstractValidator<GetPayrollRecordsQuery>
 {
@@ -27,7 +27,7 @@ public class GetPayrollRecordsQueryValidator : AbstractValidator<GetPayrollRecor
             .InclusiveBetween(1, 12).WithMessage("ماه شمسی باید بین 1 تا 12 باشد.")
             .When(x => x.PersianMonth.HasValue);
 
-        RuleFor(x => x.PersianMonth)
+        RuleFor(x => x)
             .Must(x => x.PersianYear.HasValue)
             .WithMessage("ماه شمسی بدون سال شمسی قابل فیلتر نیست.")
             .When(x => x.PersianMonth.HasValue);
