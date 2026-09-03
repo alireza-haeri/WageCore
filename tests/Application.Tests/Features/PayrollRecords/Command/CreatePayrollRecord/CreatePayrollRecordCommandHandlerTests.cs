@@ -419,8 +419,6 @@ public class CreatePayrollRecordCommandHandlerTests
         using (new AssertionScope())
         {
             response.PayrollRecordId.Should().Be(createdId);
-            response.CalculatedAmounts.Should().NotBeNull();
-            response.Amounts.Should().NotBeNull();
         }
 
         _payrollCalculationService.Received(1).CalculateAsync(

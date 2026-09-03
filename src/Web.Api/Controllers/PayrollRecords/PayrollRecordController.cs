@@ -65,11 +65,70 @@ public class PayrollRecordController(IMediator mediator) : BaseController
             pr.PersianYear,
             pr.PersianMonth,
             pr.Work,
-            pr.OvertimeAmount,
-            pr.NightShiftExtraAmount,
-            pr.FridayWorkAllowance,
-            pr.Amounts,
             pr.Status));
+
+        return Result(response);
+    }
+
+    [HttpGet("{payrollRecordId:guid}/calculation-details")]
+    [SwaggerOperation(OperationId = "GetPayrollRecordCalculationDetails")]
+    public async Task<ActionResult<Result<GetPayrollRecordCalculationDetailsResponse>>> GetPayrollRecordCalculationDetails(
+        Guid payrollRecordId,
+        CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(new GetPayrollRecordCalculationDetailsQuery(
+            UserId: UserId,
+            PayrollRecordId: payrollRecordId
+        ), cancellationToken);
+
+        var response = result.Map(pr => new GetPayrollRecordCalculationDetailsResponse(
+            pr.PayrollRecordId,
+            pr.EmployeeId,
+            pr.EmployeeName,
+            pr.PersonalCode,
+            pr.EmployeeHireDate,
+            pr.Status,
+            pr.PersianYear,
+            pr.PersianMonth,
+            pr.PeriodStart,
+            pr.PeriodEnd,
+            pr.PeriodDaysCount,
+            pr.FridayCount,
+            pr.DaysInYear,
+            pr.StandardWorkingDaysCount,
+            pr.WorkedDaysCount,
+            pr.LeaveHours,
+            pr.AbsenceDaysCount,
+            pr.OvertimeHours,
+            pr.NightShiftHours,
+            pr.FridayWorkHours,
+            pr.HolidayWorkHours,
+            pr.MissionDaysCount,
+            pr.MissionHours,
+            pr.MissionAmountOverride,
+            pr.PerformanceBonusAmount,
+            pr.CashBenefitsAmount,
+            pr.AnnualBonusType,
+            pr.IsEsfandPeriod,
+            pr.PreviousAnnualWorkedDaysCount,
+            pr.AnnualWorkedDaysCount,
+            pr.MaxMonthlyOvertimeHours,
+            pr.MaxFridayHours,
+            pr.MaxNightShiftHours,
+            pr.DailyWorkingHours,
+            pr.DecreeEffectiveFrom,
+            pr.BaseDailySalary,
+            pr.AttractionAllowance,
+            pr.SupervisionAllowance,
+            pr.TransportationAllowanceNet,
+            pr.ChildrenCount,
+            pr.MaritalStatus,
+            pr.ShiftType,
+            pr.ContractType,
+            pr.IsTaxSubject,
+            pr.RuleValues.Select(rv => new PayrollCalculationRuleValueResponse(rv.Key, rv.Value)).ToList(),
+            pr.CalculatedAmounts,
+            pr.Amounts));
 
         return Result(response);
     }

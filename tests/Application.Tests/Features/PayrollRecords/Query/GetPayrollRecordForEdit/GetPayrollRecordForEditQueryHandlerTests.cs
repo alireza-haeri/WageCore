@@ -99,14 +99,6 @@ public class GetPayrollRecordForEditQueryHandlerTests
             response.Work.AbsenceDaysCount.Should().Be(0m);
             response.Work.MissionDays.Should().Be(1);
             response.Work.MissionHours.Should().Be(new WorkTimeInput(0, 0));
-            response.OvertimeAmount.Should().Be(800_000m);
-            response.NightShiftExtraAmount.Should().Be(300_000m);
-            response.FridayWorkAllowance.Should().Be(250_000m);
-            response.Amounts.CalculatedTaxAmount.Should().Be(1_500_000m);
-            response.Amounts.GrossAmount.Should().Be(17_900_000m);
-            response.Amounts.InsuranceAmount.Should().Be(1_400_000m);
-            response.Amounts.TotalDeductionsAmount.Should().Be(2_900_000m);
-            response.Amounts.NetPayableAmount.Should().Be(15_000_000m);
         }
     }
 

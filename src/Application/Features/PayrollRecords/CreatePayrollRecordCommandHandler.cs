@@ -102,9 +102,6 @@ public class CreatePayrollRecordCommandHandler(
             return Result<CreatePayrollRecordCommandResponse>.GeneralFailure("خطا در ایجاد فیش پرداختی");
 
         return Result<CreatePayrollRecordCommandResponse>.Success(
-            new CreatePayrollRecordCommandResponse(
-                payrollRecordId.Value,
-                calculation.CalculatedAmounts,
-                calculation.Amounts));
+            new CreatePayrollRecordCommandResponse(payrollRecordId.Value));
     }
 }

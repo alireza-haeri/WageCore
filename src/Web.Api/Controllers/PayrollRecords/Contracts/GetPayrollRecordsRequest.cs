@@ -31,8 +31,4 @@ public record GetPayrollRecordForEditResponse(
     int PersianYear,
     int PersianMonth,
     UserWorkInputDto Work,
-    decimal OvertimeAmount,
-    decimal NightShiftExtraAmount,
-    decimal FridayWorkAllowance,
-    PayrollRecordAmountsDto Amounts,
     PayrollRecordStatus Status);

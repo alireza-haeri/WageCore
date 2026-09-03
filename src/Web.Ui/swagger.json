@@ -1800,6 +1800,48 @@
         }
       }
     },
+    "/api/v1/payroll-records/{payrollRecordId}/calculation-details": {
+      "get": {
+        "tags": [
+          "PayrollRecord"
+        ],
+        "summary": "GetPayrollRecordCalculationDetails",
+        "operationId": "GetPayrollRecordCalculationDetails",
+        "parameters": [
+          {
+            "name": "payrollRecordId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPayrollRecordCalculationDetailsResponseResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPayrollRecordCalculationDetailsResponseResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPayrollRecordCalculationDetailsResponseResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/payroll-records/{payrollRecordId}": {
       "put": {
         "tags": [
@@ -3068,22 +3110,6 @@
           "payrollRecordId": {
             "type": "string",
             "format": "uuid"
-          },
-          "calculatedAmounts": {
-            "nullable": true,
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/PayrollCalculatedAmountsDto"
-              }
-            ]
-          },
-          "amounts": {
-            "nullable": true,
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/PayrollRecordAmountsDto"
-              }
-            ]
           }
         }
       },
@@ -4195,26 +4221,6 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/UserWorkInputDto"
-              }
-            ]
-          },
-          "overtimeAmount": {
-            "type": "number",
-            "format": "decimal"
-          },
-          "nightShiftExtraAmount": {
-            "type": "number",
-            "format": "decimal"
-          },
-          "fridayWorkAllowance": {
-            "type": "number",
-            "format": "decimal"
-          },
-          "amounts": {
-            "nullable": true,
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/PayrollRecordAmountsDto"
               }
             ]
           },
@@ -5999,6 +6005,380 @@
           "minutes": {
             "type": "integer",
             "format": "int32"
+          }
+        }
+      },
+      "PayrollCalculationRuleValueResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "MinimumDailySalary",
+              "DailyWorkingHours",
+              "MaximumOvertimeHoursPerDay",
+              "MaximumNightShiftHoursPerDay",
+              "MaximumOvertimeHoursPerMonth",
+              "MaximumFridayWorkHoursPerMonth",
+              "InsurancePercentage",
+              "AnnualBonusMinimumAmount",
+              "AnnualBonusMaximumAmount",
+              "TaxExemptMonthlyAmount",
+              "TaxRatePercentage",
+              "StandardDailyWorkHours",
+              "NightShiftPercentage",
+              "HolidayWorkPercentage",
+              "OvertimePercentage",
+              "FridayWorkPercentage",
+              "ChildAllowanceMultiplier",
+              "EndOfServiceDaysPerYear",
+              "HousingAllowanceAmount",
+              "FoodAllowanceAmount",
+              "MarriageAllowanceAmount",
+              "ShiftWorkPercentageMorningEvening",
+              "ShiftWorkPercentageMorningNight",
+              "ShiftWorkPercentageEveningNight",
+              "ShiftWorkPercentageMorningEveningNight"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24
+            ]
+          },
+          "value": {
+            "type": "number",
+            "format": "decimal"
+          }
+        }
+      },
+      "GetPayrollRecordCalculationDetailsResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "payrollRecordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "personalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "employeeHireDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "Draft",
+              "Paid"
+            ],
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "persianYear": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "persianMonth": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "periodStart": {
+            "type": "string",
+            "nullable": true
+          },
+          "periodEnd": {
+            "type": "string",
+            "nullable": true
+          },
+          "periodDaysCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fridayCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "daysInYear": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "standardWorkingDaysCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "workedDaysCount": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "leaveHours": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "absenceDaysCount": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "overtimeHours": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "nightShiftHours": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "fridayWorkHours": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "holidayWorkHours": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "missionDaysCount": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "missionHours": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "missionAmountOverride": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "performanceBonusAmount": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "cashBenefitsAmount": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "annualBonusType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "Minimum",
+              "Maximum"
+            ],
+            "enum": [
+              0,
+              1
+            ]
+          },
+          "isEsfandPeriod": {
+            "type": "boolean"
+          },
+          "previousAnnualWorkedDaysCount": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "annualWorkedDaysCount": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "maxMonthlyOvertimeHours": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "maxFridayHours": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "maxNightShiftHours": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "dailyWorkingHours": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "decreeEffectiveFrom": {
+            "type": "string",
+            "nullable": true
+          },
+          "baseDailySalary": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "attractionAllowance": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "supervisionAllowance": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "transportationAllowanceNet": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "childrenCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maritalStatus": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "Single",
+              "Married",
+              "Divorced",
+              "Widowed"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "shiftType": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "None",
+              "MorningEvening",
+              "MorningNight",
+              "EveningNight",
+              "MorningEveningNight"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3,
+              4
+            ]
+          },
+          "contractType": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "Permanent",
+              "Temporary",
+              "FixedTerm"
+            ],
+            "enum": [
+              1,
+              2,
+              3
+            ]
+          },
+          "isTaxSubject": {
+            "type": "boolean"
+          },
+          "ruleValues": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/PayrollCalculationRuleValueResponse"
+            }
+          },
+          "calculatedAmounts": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PayrollCalculatedAmountsDto"
+              }
+            ]
+          },
+          "amounts": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PayrollRecordAmountsDto"
+              }
+            ]
+          }
+        }
+      },
+      "GetPayrollRecordCalculationDetailsResponseResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GetPayrollRecordCalculationDetailsResponse"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         }
       }
