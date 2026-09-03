@@ -1391,17 +1391,7 @@
                 "ShiftWorkPercentageMorningEvening",
                 "ShiftWorkPercentageMorningNight",
                 "ShiftWorkPercentageEveningNight",
-                "ShiftWorkPercentageMorningEveningNight",
-                "TaxBracket1Threshold",
-                "TaxBracket2Threshold",
-                "TaxBracket2Rate",
-                "TaxBracket3Threshold",
-                "TaxBracket3Rate",
-                "TaxBracket4Threshold",
-                "TaxBracket4Rate",
-                "TaxBracket5Threshold",
-                "TaxBracket5Rate",
-                "TaxBracket6Rate"
+                "ShiftWorkPercentageMorningEveningNight"
               ],
               "enum": [
                 0,
@@ -1428,17 +1418,7 @@
                 21,
                 22,
                 23,
-                24,
-                25,
-                26,
-                27,
-                28,
-                29,
-                30,
-                31,
-                32,
-                33,
-                34
+                24
               ]
             }
           }
@@ -2906,17 +2886,7 @@
               "ShiftWorkPercentageMorningEvening",
               "ShiftWorkPercentageMorningNight",
               "ShiftWorkPercentageEveningNight",
-              "ShiftWorkPercentageMorningEveningNight",
-              "TaxBracket1Threshold",
-              "TaxBracket2Threshold",
-              "TaxBracket2Rate",
-              "TaxBracket3Threshold",
-              "TaxBracket3Rate",
-              "TaxBracket4Threshold",
-              "TaxBracket4Rate",
-              "TaxBracket5Threshold",
-              "TaxBracket5Rate",
-              "TaxBracket6Rate"
+              "ShiftWorkPercentageMorningEveningNight"
             ],
             "enum": [
               0,
@@ -2943,17 +2913,7 @@
               21,
               22,
               23,
-              24,
-              25,
-              26,
-              27,
-              28,
-              29,
-              30,
-              31,
-              32,
-              33,
-              34
+              24
             ]
           },
           "value": {
@@ -2972,6 +2932,22 @@
           "payrollRecordId": {
             "type": "string",
             "format": "uuid"
+          },
+          "calculatedAmounts": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PayrollCalculatedAmountsDto"
+              }
+            ]
+          },
+          "amounts": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PayrollRecordAmountsDto"
+              }
+            ]
           }
         }
       },
@@ -3039,7 +3015,7 @@
             "nullable": true,
             "allOf": [
               {
-                "$ref": "#/components/schemas/PayrollWorkInputDto"
+                "$ref": "#/components/schemas/UserWorkInputDto"
               }
             ]
           }
@@ -3201,6 +3177,24 @@
           "economicCode": {
             "type": "string",
             "nullable": true
+          }
+        }
+      },
+      "DayTimeInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "days": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hours": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minutes": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -3798,17 +3792,7 @@
               "ShiftWorkPercentageMorningEvening",
               "ShiftWorkPercentageMorningNight",
               "ShiftWorkPercentageEveningNight",
-              "ShiftWorkPercentageMorningEveningNight",
-              "TaxBracket1Threshold",
-              "TaxBracket2Threshold",
-              "TaxBracket2Rate",
-              "TaxBracket3Threshold",
-              "TaxBracket3Rate",
-              "TaxBracket4Threshold",
-              "TaxBracket4Rate",
-              "TaxBracket5Threshold",
-              "TaxBracket5Rate",
-              "TaxBracket6Rate"
+              "ShiftWorkPercentageMorningEveningNight"
             ],
             "enum": [
               0,
@@ -3835,17 +3819,7 @@
               21,
               22,
               23,
-              24,
-              25,
-              26,
-              27,
-              28,
-              29,
-              30,
-              31,
-              32,
-              33,
-              34
+              24
             ]
           },
           "value": {
@@ -3938,17 +3912,7 @@
               "ShiftWorkPercentageMorningEvening",
               "ShiftWorkPercentageMorningNight",
               "ShiftWorkPercentageEveningNight",
-              "ShiftWorkPercentageMorningEveningNight",
-              "TaxBracket1Threshold",
-              "TaxBracket2Threshold",
-              "TaxBracket2Rate",
-              "TaxBracket3Threshold",
-              "TaxBracket3Rate",
-              "TaxBracket4Threshold",
-              "TaxBracket4Rate",
-              "TaxBracket5Threshold",
-              "TaxBracket5Rate",
-              "TaxBracket6Rate"
+              "ShiftWorkPercentageMorningEveningNight"
             ],
             "enum": [
               0,
@@ -3975,17 +3939,7 @@
               21,
               22,
               23,
-              24,
-              25,
-              26,
-              27,
-              28,
-              29,
-              30,
-              31,
-              32,
-              33,
-              34
+              24
             ]
           },
           "value": {
@@ -5012,85 +4966,74 @@
           }
         }
       },
-      "PayrollWorkInputDto": {
+      "PayrollCalculatedAmountsDto": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "workedDaysCount": {
+          "baseSalaryAmount": {
             "type": "number",
-            "format": "double",
-            "nullable": true
+            "format": "double"
           },
-          "overtimeHours": {
+          "attractionAllowanceAmount": {
             "type": "number",
-            "format": "double",
-            "nullable": true
+            "format": "double"
           },
-          "nightShiftHours": {
+          "supervisionAllowanceAmount": {
             "type": "number",
-            "format": "double",
-            "nullable": true
+            "format": "double"
           },
-          "fridayWorkHours": {
+          "nightShiftExtraAmount": {
             "type": "number",
-            "format": "double",
-            "nullable": true
+            "format": "double"
           },
-          "leaveHours": {
+          "holidayWorkAmount": {
             "type": "number",
-            "format": "double",
-            "nullable": true
+            "format": "double"
           },
-          "absenceDaysCount": {
+          "childAllowanceAmount": {
             "type": "number",
-            "format": "double",
-            "nullable": true
+            "format": "double"
           },
-          "missionDaysCount": {
+          "housingAllowanceAmount": {
             "type": "number",
-            "format": "double",
-            "nullable": true
+            "format": "double"
           },
-          "missionHours": {
+          "foodAllowanceAmount": {
             "type": "number",
-            "format": "double",
-            "nullable": true
+            "format": "double"
           },
-          "holidayWorkHours": {
+          "marriageAllowanceAmount": {
             "type": "number",
-            "format": "double",
-            "nullable": true
+            "format": "double"
           },
-          "missionAmountOverride": {
+          "overtimeAmount": {
             "type": "number",
-            "format": "double",
-            "nullable": true
+            "format": "double"
           },
-          "standardWorkingDaysCount": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
+          "shiftWorkAmount": {
+            "type": "number",
+            "format": "double"
           },
-          "isEsfandPeriod": {
-            "type": "boolean"
+          "dailyMissionAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "fridayWorkAllowance": {
+            "type": "number",
+            "format": "double"
+          },
+          "endOfServiceAmount": {
+            "type": "number",
+            "format": "double"
           },
           "annualBonusAmount": {
             "type": "number",
             "format": "double",
             "nullable": true
           },
-          "annualBonusType": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true,
-            "x-enumNames": [
-              "Minimum",
-              "Maximum"
-            ],
-            "enum": [
-              0,
-              1
-            ]
+          "commutingAllowanceAmount": {
+            "type": "number",
+            "format": "double"
           },
           "performanceBonusAmount": {
             "type": "number",
@@ -5101,6 +5044,32 @@
             "type": "number",
             "format": "double",
             "nullable": true
+          }
+        }
+      },
+      "PayrollRecordAmountsDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "calculatedTaxAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "grossAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "insuranceAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "totalDeductionsAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "netPayableAmount": {
+            "type": "number",
+            "format": "double"
           }
         }
       },
@@ -5419,17 +5388,7 @@
               "ShiftWorkPercentageMorningEvening",
               "ShiftWorkPercentageMorningNight",
               "ShiftWorkPercentageEveningNight",
-              "ShiftWorkPercentageMorningEveningNight",
-              "TaxBracket1Threshold",
-              "TaxBracket2Threshold",
-              "TaxBracket2Rate",
-              "TaxBracket3Threshold",
-              "TaxBracket3Rate",
-              "TaxBracket4Threshold",
-              "TaxBracket4Rate",
-              "TaxBracket5Threshold",
-              "TaxBracket5Rate",
-              "TaxBracket6Rate"
+              "ShiftWorkPercentageMorningEveningNight"
             ],
             "enum": [
               0,
@@ -5456,17 +5415,7 @@
               21,
               22,
               23,
-              24,
-              25,
-              26,
-              27,
-              28,
-              29,
-              30,
-              31,
-              32,
-              33,
-              34
+              24
             ]
           },
           "value": {
@@ -5498,7 +5447,7 @@
             "nullable": true,
             "allOf": [
               {
-                "$ref": "#/components/schemas/PayrollWorkInputDto"
+                "$ref": "#/components/schemas/UserWorkInputDto"
               }
             ]
           }
@@ -5552,6 +5501,114 @@
           "economicCode": {
             "type": "string",
             "nullable": true
+          }
+        }
+      },
+      "UserWorkInputDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "workedDaysCount": {
+            "type": "number",
+            "format": "double"
+          },
+          "overtime": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/WorkTimeInput"
+              }
+            ]
+          },
+          "nightShift": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/WorkTimeInput"
+              }
+            ]
+          },
+          "fridayWork": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/WorkTimeInput"
+              }
+            ]
+          },
+          "holidayWork": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/WorkTimeInput"
+              }
+            ]
+          },
+          "leave": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DayTimeInput"
+              }
+            ]
+          },
+          "absenceDaysCount": {
+            "type": "number",
+            "format": "double"
+          },
+          "missionDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "missionHours": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/WorkTimeInput"
+              }
+            ]
+          },
+          "missionAmountOverride": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "performanceBonusAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "cashBenefitsAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "annualBonusType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "Minimum",
+              "Maximum"
+            ],
+            "enum": [
+              0,
+              1
+            ]
+          }
+        }
+      },
+      "WorkTimeInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "hours": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minutes": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       }

@@ -4190,13 +4190,21 @@ namespace Web.Ui.Services
     public partial record CreatePayrollRecordCommandResponse
     {
         [Newtonsoft.Json.JsonConstructor]
-        public CreatePayrollRecordCommandResponse(System.Guid @payrollRecordId)
+        public CreatePayrollRecordCommandResponse(PayrollRecordAmountsDto @amounts, PayrollCalculatedAmountsDto @calculatedAmounts, System.Guid @payrollRecordId)
         {
             this.PayrollRecordId = @payrollRecordId;
+            this.CalculatedAmounts = @calculatedAmounts;
+            this.Amounts = @amounts;
         }
 
         [Newtonsoft.Json.JsonProperty("payrollRecordId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Guid PayrollRecordId { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("calculatedAmounts", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public PayrollCalculatedAmountsDto CalculatedAmounts { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("amounts", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public PayrollRecordAmountsDto Amounts { get; init; }
 
     }
 
@@ -4230,7 +4238,7 @@ namespace Web.Ui.Services
     public partial record CreatePayrollRecordRequest
     {
         [Newtonsoft.Json.JsonConstructor]
-        public CreatePayrollRecordRequest(System.Guid @employeeId, int @persianMonth, int @persianYear, PayrollWorkInputDto @work)
+        public CreatePayrollRecordRequest(System.Guid @employeeId, int @persianMonth, int @persianYear, UserWorkInputDto @work)
         {
             this.EmployeeId = @employeeId;
             this.PersianYear = @persianYear;
@@ -4248,7 +4256,7 @@ namespace Web.Ui.Services
         public int PersianMonth { get; init; }
 
         [Newtonsoft.Json.JsonProperty("work", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public PayrollWorkInputDto Work { get; init; }
+        public UserWorkInputDto Work { get; init; }
 
     }
 
@@ -4385,6 +4393,28 @@ namespace Web.Ui.Services
 
         [Newtonsoft.Json.JsonProperty("economicCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string EconomicCode { get; init; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record DayTimeInput
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public DayTimeInput(int @days, int @hours, int @minutes)
+        {
+            this.Days = @days;
+            this.Hours = @hours;
+            this.Minutes = @minutes;
+        }
+
+        [Newtonsoft.Json.JsonProperty("days", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Days { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("hours", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Hours { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("minutes", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Minutes { get; init; }
 
     }
 
@@ -5671,76 +5701,114 @@ namespace Web.Ui.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial record PayrollWorkInputDto
+    public partial record PayrollCalculatedAmountsDto
     {
         [Newtonsoft.Json.JsonConstructor]
-        public PayrollWorkInputDto(double? @absenceDaysCount, double? @annualBonusAmount, PayrollWorkInputDtoAnnualBonusType? @annualBonusType, double? @cashBenefitsAmount, double? @fridayWorkHours, double? @holidayWorkHours, bool @isEsfandPeriod, double? @leaveHours, double? @missionAmountOverride, double? @missionDaysCount, double? @missionHours, double? @nightShiftHours, double? @overtimeHours, double? @performanceBonusAmount, int? @standardWorkingDaysCount, double? @workedDaysCount)
+        public PayrollCalculatedAmountsDto(double? @annualBonusAmount, double @attractionAllowanceAmount, double @baseSalaryAmount, double? @cashBenefitsAmount, double @childAllowanceAmount, double @commutingAllowanceAmount, double @dailyMissionAmount, double @endOfServiceAmount, double @foodAllowanceAmount, double @fridayWorkAllowance, double @holidayWorkAmount, double @housingAllowanceAmount, double @marriageAllowanceAmount, double @nightShiftExtraAmount, double @overtimeAmount, double? @performanceBonusAmount, double @shiftWorkAmount, double @supervisionAllowanceAmount)
         {
-            this.WorkedDaysCount = @workedDaysCount;
-            this.OvertimeHours = @overtimeHours;
-            this.NightShiftHours = @nightShiftHours;
-            this.FridayWorkHours = @fridayWorkHours;
-            this.LeaveHours = @leaveHours;
-            this.AbsenceDaysCount = @absenceDaysCount;
-            this.MissionDaysCount = @missionDaysCount;
-            this.MissionHours = @missionHours;
-            this.HolidayWorkHours = @holidayWorkHours;
-            this.MissionAmountOverride = @missionAmountOverride;
-            this.StandardWorkingDaysCount = @standardWorkingDaysCount;
-            this.IsEsfandPeriod = @isEsfandPeriod;
+            this.BaseSalaryAmount = @baseSalaryAmount;
+            this.AttractionAllowanceAmount = @attractionAllowanceAmount;
+            this.SupervisionAllowanceAmount = @supervisionAllowanceAmount;
+            this.NightShiftExtraAmount = @nightShiftExtraAmount;
+            this.HolidayWorkAmount = @holidayWorkAmount;
+            this.ChildAllowanceAmount = @childAllowanceAmount;
+            this.HousingAllowanceAmount = @housingAllowanceAmount;
+            this.FoodAllowanceAmount = @foodAllowanceAmount;
+            this.MarriageAllowanceAmount = @marriageAllowanceAmount;
+            this.OvertimeAmount = @overtimeAmount;
+            this.ShiftWorkAmount = @shiftWorkAmount;
+            this.DailyMissionAmount = @dailyMissionAmount;
+            this.FridayWorkAllowance = @fridayWorkAllowance;
+            this.EndOfServiceAmount = @endOfServiceAmount;
             this.AnnualBonusAmount = @annualBonusAmount;
-            this.AnnualBonusType = @annualBonusType;
+            this.CommutingAllowanceAmount = @commutingAllowanceAmount;
             this.PerformanceBonusAmount = @performanceBonusAmount;
             this.CashBenefitsAmount = @cashBenefitsAmount;
         }
 
-        [Newtonsoft.Json.JsonProperty("workedDaysCount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public double? WorkedDaysCount { get; init; }
+        [Newtonsoft.Json.JsonProperty("baseSalaryAmount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double BaseSalaryAmount { get; init; }
 
-        [Newtonsoft.Json.JsonProperty("overtimeHours", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public double? OvertimeHours { get; init; }
+        [Newtonsoft.Json.JsonProperty("attractionAllowanceAmount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double AttractionAllowanceAmount { get; init; }
 
-        [Newtonsoft.Json.JsonProperty("nightShiftHours", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public double? NightShiftHours { get; init; }
+        [Newtonsoft.Json.JsonProperty("supervisionAllowanceAmount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double SupervisionAllowanceAmount { get; init; }
 
-        [Newtonsoft.Json.JsonProperty("fridayWorkHours", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public double? FridayWorkHours { get; init; }
+        [Newtonsoft.Json.JsonProperty("nightShiftExtraAmount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double NightShiftExtraAmount { get; init; }
 
-        [Newtonsoft.Json.JsonProperty("leaveHours", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public double? LeaveHours { get; init; }
+        [Newtonsoft.Json.JsonProperty("holidayWorkAmount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double HolidayWorkAmount { get; init; }
 
-        [Newtonsoft.Json.JsonProperty("absenceDaysCount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public double? AbsenceDaysCount { get; init; }
+        [Newtonsoft.Json.JsonProperty("childAllowanceAmount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double ChildAllowanceAmount { get; init; }
 
-        [Newtonsoft.Json.JsonProperty("missionDaysCount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public double? MissionDaysCount { get; init; }
+        [Newtonsoft.Json.JsonProperty("housingAllowanceAmount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double HousingAllowanceAmount { get; init; }
 
-        [Newtonsoft.Json.JsonProperty("missionHours", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public double? MissionHours { get; init; }
+        [Newtonsoft.Json.JsonProperty("foodAllowanceAmount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double FoodAllowanceAmount { get; init; }
 
-        [Newtonsoft.Json.JsonProperty("holidayWorkHours", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public double? HolidayWorkHours { get; init; }
+        [Newtonsoft.Json.JsonProperty("marriageAllowanceAmount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double MarriageAllowanceAmount { get; init; }
 
-        [Newtonsoft.Json.JsonProperty("missionAmountOverride", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public double? MissionAmountOverride { get; init; }
+        [Newtonsoft.Json.JsonProperty("overtimeAmount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double OvertimeAmount { get; init; }
 
-        [Newtonsoft.Json.JsonProperty("standardWorkingDaysCount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public int? StandardWorkingDaysCount { get; init; }
+        [Newtonsoft.Json.JsonProperty("shiftWorkAmount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double ShiftWorkAmount { get; init; }
 
-        [Newtonsoft.Json.JsonProperty("isEsfandPeriod", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool IsEsfandPeriod { get; init; }
+        [Newtonsoft.Json.JsonProperty("dailyMissionAmount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double DailyMissionAmount { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("fridayWorkAllowance", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double FridayWorkAllowance { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("endOfServiceAmount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double EndOfServiceAmount { get; init; }
 
         [Newtonsoft.Json.JsonProperty("annualBonusAmount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double? AnnualBonusAmount { get; init; }
 
-        [Newtonsoft.Json.JsonProperty("annualBonusType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public PayrollWorkInputDtoAnnualBonusType? AnnualBonusType { get; init; }
+        [Newtonsoft.Json.JsonProperty("commutingAllowanceAmount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double CommutingAllowanceAmount { get; init; }
 
         [Newtonsoft.Json.JsonProperty("performanceBonusAmount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double? PerformanceBonusAmount { get; init; }
 
         [Newtonsoft.Json.JsonProperty("cashBenefitsAmount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double? CashBenefitsAmount { get; init; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record PayrollRecordAmountsDto
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public PayrollRecordAmountsDto(double @calculatedTaxAmount, double @grossAmount, double @insuranceAmount, double @netPayableAmount, double @totalDeductionsAmount)
+        {
+            this.CalculatedTaxAmount = @calculatedTaxAmount;
+            this.GrossAmount = @grossAmount;
+            this.InsuranceAmount = @insuranceAmount;
+            this.TotalDeductionsAmount = @totalDeductionsAmount;
+            this.NetPayableAmount = @netPayableAmount;
+        }
+
+        [Newtonsoft.Json.JsonProperty("calculatedTaxAmount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double CalculatedTaxAmount { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("grossAmount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double GrossAmount { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("insuranceAmount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double InsuranceAmount { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("totalDeductionsAmount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double TotalDeductionsAmount { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("netPayableAmount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double NetPayableAmount { get; init; }
 
     }
 
@@ -5980,7 +6048,7 @@ namespace Web.Ui.Services
     public partial record UpdatePayrollRecordRequest
     {
         [Newtonsoft.Json.JsonConstructor]
-        public UpdatePayrollRecordRequest(System.Guid @employeeId, int @persianMonth, int @persianYear, PayrollWorkInputDto @work)
+        public UpdatePayrollRecordRequest(System.Guid @employeeId, int @persianMonth, int @persianYear, UserWorkInputDto @work)
         {
             this.EmployeeId = @employeeId;
             this.PersianYear = @persianYear;
@@ -5998,7 +6066,7 @@ namespace Web.Ui.Services
         public int PersianMonth { get; init; }
 
         [Newtonsoft.Json.JsonProperty("work", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public PayrollWorkInputDto Work { get; init; }
+        public UserWorkInputDto Work { get; init; }
 
     }
 
@@ -6055,6 +6123,86 @@ namespace Web.Ui.Services
 
         [Newtonsoft.Json.JsonProperty("economicCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string EconomicCode { get; init; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record UserWorkInputDto
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public UserWorkInputDto(double @absenceDaysCount, UserWorkInputDtoAnnualBonusType? @annualBonusType, double? @cashBenefitsAmount, WorkTimeInput @fridayWork, WorkTimeInput @holidayWork, DayTimeInput @leave, double? @missionAmountOverride, int @missionDays, WorkTimeInput @missionHours, WorkTimeInput @nightShift, WorkTimeInput @overtime, double? @performanceBonusAmount, double @workedDaysCount)
+        {
+            this.WorkedDaysCount = @workedDaysCount;
+            this.Overtime = @overtime;
+            this.NightShift = @nightShift;
+            this.FridayWork = @fridayWork;
+            this.HolidayWork = @holidayWork;
+            this.Leave = @leave;
+            this.AbsenceDaysCount = @absenceDaysCount;
+            this.MissionDays = @missionDays;
+            this.MissionHours = @missionHours;
+            this.MissionAmountOverride = @missionAmountOverride;
+            this.PerformanceBonusAmount = @performanceBonusAmount;
+            this.CashBenefitsAmount = @cashBenefitsAmount;
+            this.AnnualBonusType = @annualBonusType;
+        }
+
+        [Newtonsoft.Json.JsonProperty("workedDaysCount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double WorkedDaysCount { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("overtime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public WorkTimeInput Overtime { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("nightShift", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public WorkTimeInput NightShift { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("fridayWork", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public WorkTimeInput FridayWork { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("holidayWork", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public WorkTimeInput HolidayWork { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("leave", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public DayTimeInput Leave { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("absenceDaysCount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double AbsenceDaysCount { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("missionDays", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int MissionDays { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("missionHours", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public WorkTimeInput MissionHours { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("missionAmountOverride", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double? MissionAmountOverride { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("performanceBonusAmount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double? PerformanceBonusAmount { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("cashBenefitsAmount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double? CashBenefitsAmount { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("annualBonusType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public UserWorkInputDtoAnnualBonusType? AnnualBonusType { get; init; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record WorkTimeInput
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public WorkTimeInput(int @hours, int @minutes)
+        {
+            this.Hours = @hours;
+            this.Minutes = @minutes;
+        }
+
+        [Newtonsoft.Json.JsonProperty("hours", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Hours { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("minutes", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Minutes { get; init; }
 
     }
 
@@ -6165,26 +6313,6 @@ namespace Web.Ui.Services
         ShiftWorkPercentageEveningNight = 23,
 
         ShiftWorkPercentageMorningEveningNight = 24,
-
-        TaxBracket1Threshold = 25,
-
-        TaxBracket2Threshold = 26,
-
-        TaxBracket2Rate = 27,
-
-        TaxBracket3Threshold = 28,
-
-        TaxBracket3Rate = 29,
-
-        TaxBracket4Threshold = 30,
-
-        TaxBracket4Rate = 31,
-
-        TaxBracket5Threshold = 32,
-
-        TaxBracket5Rate = 33,
-
-        TaxBracket6Rate = 34,
 
     }
 
@@ -6365,26 +6493,6 @@ namespace Web.Ui.Services
         ShiftWorkPercentageEveningNight = 23,
 
         ShiftWorkPercentageMorningEveningNight = 24,
-
-        TaxBracket1Threshold = 25,
-
-        TaxBracket2Threshold = 26,
-
-        TaxBracket2Rate = 27,
-
-        TaxBracket3Threshold = 28,
-
-        TaxBracket3Rate = 29,
-
-        TaxBracket4Threshold = 30,
-
-        TaxBracket4Rate = 31,
-
-        TaxBracket5Threshold = 32,
-
-        TaxBracket5Rate = 33,
-
-        TaxBracket6Rate = 34,
 
     }
 
@@ -6678,26 +6786,6 @@ namespace Web.Ui.Services
 
         ShiftWorkPercentageMorningEveningNight = 24,
 
-        TaxBracket1Threshold = 25,
-
-        TaxBracket2Threshold = 26,
-
-        TaxBracket2Rate = 27,
-
-        TaxBracket3Threshold = 28,
-
-        TaxBracket3Rate = 29,
-
-        TaxBracket4Threshold = 30,
-
-        TaxBracket4Rate = 31,
-
-        TaxBracket5Threshold = 32,
-
-        TaxBracket5Rate = 33,
-
-        TaxBracket6Rate = 34,
-
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -6767,26 +6855,6 @@ namespace Web.Ui.Services
         ShiftWorkPercentageEveningNight = 23,
 
         ShiftWorkPercentageMorningEveningNight = 24,
-
-        TaxBracket1Threshold = 25,
-
-        TaxBracket2Threshold = 26,
-
-        TaxBracket2Rate = 27,
-
-        TaxBracket3Threshold = 28,
-
-        TaxBracket3Rate = 29,
-
-        TaxBracket4Threshold = 30,
-
-        TaxBracket4Rate = 31,
-
-        TaxBracket5Threshold = 32,
-
-        TaxBracket5Rate = 33,
-
-        TaxBracket6Rate = 34,
 
     }
 
@@ -7013,16 +7081,6 @@ namespace Web.Ui.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum PayrollWorkInputDtoAnnualBonusType
-    {
-
-        Minimum = 0,
-
-        Maximum = 1,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum RegisterUserCommandResponseResultBadResultType
     {
 
@@ -7176,25 +7234,15 @@ namespace Web.Ui.Services
 
         ShiftWorkPercentageMorningEveningNight = 24,
 
-        TaxBracket1Threshold = 25,
+    }
 
-        TaxBracket2Threshold = 26,
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum UserWorkInputDtoAnnualBonusType
+    {
 
-        TaxBracket2Rate = 27,
+        Minimum = 0,
 
-        TaxBracket3Threshold = 28,
-
-        TaxBracket3Rate = 29,
-
-        TaxBracket4Threshold = 30,
-
-        TaxBracket4Rate = 31,
-
-        TaxBracket5Threshold = 32,
-
-        TaxBracket5Rate = 33,
-
-        TaxBracket6Rate = 34,
+        Maximum = 1,
 
     }
 
