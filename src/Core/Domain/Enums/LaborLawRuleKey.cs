@@ -33,14 +33,4 @@ public enum LaborLawRuleKey
     ShiftWorkPercentageEveningNight = 23,
     ShiftWorkPercentageMorningEveningNight = 24,
 
-    TaxBracket1Threshold = 25,
-    TaxBracket2Threshold = 26,
-    TaxBracket2Rate = 27,
-    TaxBracket3Threshold = 28,
-    TaxBracket3Rate = 29,
-    TaxBracket4Threshold = 30,
-    TaxBracket4Rate = 31,
-    TaxBracket5Threshold = 32,
-    TaxBracket5Rate = 33,
-    TaxBracket6Rate = 34
 }

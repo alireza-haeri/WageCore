@@ -1,3 +1,12 @@
+using Application.Features.PayrollRecords;
+using Core.Contracts.PayrollRecords;
+using Core.Domain;
+using Core.Domain.Enums;
+using FluentAssertions;
+using FluentAssertions.Execution;
+using NSubstitute;
+using Shared.Tests.Builders;
+
 namespace Application.Tests.Features.PayrollRecords.Command.UpdatePayrollRecord;
 
 public class UpdatePayrollRecordCommandHandlerTests
@@ -96,14 +105,14 @@ public class UpdatePayrollRecordCommandHandlerTests
             _payrollCalculationService);
     }
 
-    private UpdatePayrollRecordCommand CreateValidCommand(PayrollWorkInputDto? work = null) =>
+    private UpdatePayrollRecordCommand CreateValidCommand(UserWorkInputDto? work = null) =>
         new(
             ValidUserId,
             ValidEmployeeId,
             ValidPayrollRecordId,
             ValidPersianYear,
             ValidPersianMonth,
-            work ?? _payrollRecordBuilder.BuildDto());
+            work ?? _payrollRecordBuilder.BuildUserWorkInputDto());
 
     private void SetupPeriod(DateOnly startPeriod, DateOnly endPeriod) =>
         _persianCalendarService
@@ -126,7 +135,7 @@ public class UpdatePayrollRecordCommandHandlerTests
                 Arg.Any<IReadOnlyList<SalaryDecree>>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<DateOnly>(),
-                Arg.Any<PayrollWorkInputDto>(),
+                Arg.Any<PayrollWorkInput>(),
                 Arg.Any<CancellationToken>())
             .Returns(Result<PayrollCalculationResult>.Success(calculation));
 
@@ -138,7 +147,7 @@ public class UpdatePayrollRecordCommandHandlerTests
                 Arg.Any<IReadOnlyList<SalaryDecree>>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<DateOnly>(),
-                Arg.Any<PayrollWorkInputDto>(),
+                Arg.Any<PayrollWorkInput>(),
                 Arg.Any<CancellationToken>())
             .Returns(Result<PayrollCalculationResult>.GeneralFailure(message));
 
@@ -183,7 +192,7 @@ public class UpdatePayrollRecordCommandHandlerTests
                 Arg.Any<IReadOnlyList<SalaryDecree>>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<DateOnly>(),
-                Arg.Any<PayrollWorkInputDto>(),
+                Arg.Any<PayrollWorkInput>(),
                 Arg.Any<CancellationToken>());
 
     private Task DidNotReceiveUpdate() =>
@@ -471,12 +480,18 @@ public class UpdatePayrollRecordCommandHandlerTests
     [Fact]
     public async Task Handle_WithValidRequest_ShouldUpdateTheLoadedRecordFromTheCalculation()
     {
-        var work = _payrollRecordBuilder.BuildDto();
+        var work = _payrollRecordBuilder.BuildUserWorkInputDto();
         SetupPeriod(PeriodStart, PeriodEnd);
 
         var result = await _handler.Handle(CreateValidCommand(work), CancellationToken.None);
 
-        result.ShouldBeSuccess().Should().BeTrue();
+        var response = result.ShouldBeSuccess();
+        using (new AssertionScope())
+        {
+            response.PayrollRecordId.Should().Be(ValidPayrollRecordId);
+            response.CalculatedAmounts.Should().NotBeNull();
+            response.Amounts.Should().NotBeNull();
+        }
 
         _payrollCalculationService.Received(1).CalculateAsync(
             _employee,
@@ -484,12 +499,12 @@ public class UpdatePayrollRecordCommandHandlerTests
             _salaryProfiles,
             PeriodStart,
             PeriodEnd,
-            work with
-            {
-                StandardWorkingDaysCount = PeriodEnd.DayNumber - PeriodStart.DayNumber + 1,
-                IsEsfandPeriod = false
-            },
+            Arg.Is<PayrollWorkInput>(x =>
+                x.WorkedDaysCount == work.WorkedDaysCount &&
+                x.StandardWorkingDaysCount == PeriodEnd.DayNumber - PeriodStart.DayNumber + 1 &&
+                x.IsEsfandPeriod == false),
             Arg.Any<CancellationToken>());
+
         await _payrollRecordRepository.Received(1).UpdateAsync(
             Arg.Is<PayrollRecord>(x =>
                 x == _payrollRecord &&

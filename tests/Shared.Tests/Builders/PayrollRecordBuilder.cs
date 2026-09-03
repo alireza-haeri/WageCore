@@ -1,3 +1,7 @@
+using Core.Contracts.PayrollRecords;
+using Core.Domain;
+using Core.Domain.Enums;
+
 namespace Shared.Tests.Builders;
 
 public class PayrollRecordBuilder
@@ -9,19 +13,18 @@ public class PayrollRecordBuilder
     private decimal? _maxFridayHours = 12m;
     private DateOnly _periodStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-25));
     private DateOnly _periodEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(-1));
-    private decimal? _workedDaysCount = 24m;
-    private decimal? _overtimeHours = 4m;
-    private decimal? _nightShiftHours = 3m;
-    private decimal? _fridayWorkHours = 2m;
-    private decimal? _leaveHours = 2m;
-    private decimal? _absenceDaysCount = 0m;
-    private decimal? _missionDaysCount = 1m;
-    private decimal? _missionHours = 0m;
-    private decimal? _holidayWorkHours = 0m;
+    private decimal _workedDaysCount = 24m;
+    private decimal _overtimeHours = 4m;
+    private decimal _nightShiftHours = 3m;
+    private decimal _fridayWorkHours = 2m;
+    private decimal _leaveHours = 2m;
+    private decimal _absenceDaysCount = 0m;
+    private decimal _missionDaysCount = 1m;
+    private decimal _missionHours = 0m;
+    private decimal _holidayWorkHours = 0m;
     private decimal? _missionAmountOverride;
-    private int? _standardWorkingDaysCount = 31;
+    private int _standardWorkingDaysCount = 31;
     private bool _isEsfandPeriod;
-    private decimal? _annualBonusAmount;
     private AnnualBonusType? _annualBonusType;
     private decimal? _performanceBonusAmount;
     private decimal? _cashBenefitsAmount;
@@ -84,55 +87,55 @@ public class PayrollRecordBuilder
         return this;
     }
 
-    public PayrollRecordBuilder WithWorkedDaysCount(decimal? workedDaysCount)
+    public PayrollRecordBuilder WithWorkedDaysCount(decimal workedDaysCount)
     {
         _workedDaysCount = workedDaysCount;
         return this;
     }
 
-    public PayrollRecordBuilder WithOvertimeHours(decimal? overtimeHours)
+    public PayrollRecordBuilder WithOvertimeHours(decimal overtimeHours)
     {
         _overtimeHours = overtimeHours;
         return this;
     }
 
-    public PayrollRecordBuilder WithNightShiftHours(decimal? nightShiftHours)
+    public PayrollRecordBuilder WithNightShiftHours(decimal nightShiftHours)
     {
         _nightShiftHours = nightShiftHours;
         return this;
     }
 
-    public PayrollRecordBuilder WithFridayWorkHours(decimal? fridayWorkHours)
+    public PayrollRecordBuilder WithFridayWorkHours(decimal fridayWorkHours)
     {
         _fridayWorkHours = fridayWorkHours;
         return this;
     }
 
-    public PayrollRecordBuilder WithLeaveHours(decimal? leaveHours)
+    public PayrollRecordBuilder WithLeaveHours(decimal leaveHours)
     {
         _leaveHours = leaveHours;
         return this;
     }
 
-    public PayrollRecordBuilder WithAbsenceDaysCount(decimal? absenceDaysCount)
+    public PayrollRecordBuilder WithAbsenceDaysCount(decimal absenceDaysCount)
     {
         _absenceDaysCount = absenceDaysCount;
         return this;
     }
 
-    public PayrollRecordBuilder WithMissionDaysCount(decimal? missionDaysCount)
+    public PayrollRecordBuilder WithMissionDaysCount(decimal missionDaysCount)
     {
         _missionDaysCount = missionDaysCount;
         return this;
     }
 
-    public PayrollRecordBuilder WithMissionHours(decimal? missionHours)
+    public PayrollRecordBuilder WithMissionHours(decimal missionHours)
     {
         _missionHours = missionHours;
         return this;
     }
 
-    public PayrollRecordBuilder WithHolidayWorkHours(decimal? holidayWorkHours)
+    public PayrollRecordBuilder WithHolidayWorkHours(decimal holidayWorkHours)
     {
         _holidayWorkHours = holidayWorkHours;
         return this;
@@ -144,7 +147,7 @@ public class PayrollRecordBuilder
         return this;
     }
 
-    public PayrollRecordBuilder WithStandardWorkingDaysCount(int? standardWorkingDaysCount)
+    public PayrollRecordBuilder WithStandardWorkingDaysCount(int standardWorkingDaysCount)
     {
         _standardWorkingDaysCount = standardWorkingDaysCount;
         return this;
@@ -153,12 +156,6 @@ public class PayrollRecordBuilder
     public PayrollRecordBuilder WithIsEsfandPeriod(bool isEsfandPeriod)
     {
         _isEsfandPeriod = isEsfandPeriod;
-        return this;
-    }
-
-    public PayrollRecordBuilder WithAnnualBonusAmount(decimal? annualBonusAmount)
-    {
-        _annualBonusAmount = annualBonusAmount;
         return this;
     }
 
@@ -306,7 +303,23 @@ public class PayrollRecordBuilder
         return this;
     }
 
-    public PayrollWorkInputDto BuildDto() =>
+    public UserWorkInputDto BuildUserWorkInputDto() =>
+        new(
+            _workedDaysCount,
+            _overtimeHours,
+            _nightShiftHours,
+            _fridayWorkHours,
+            _leaveHours,
+            _absenceDaysCount,
+            _missionDaysCount,
+            _missionHours,
+            _holidayWorkHours,
+            _missionAmountOverride,
+            _performanceBonusAmount,
+            _cashBenefitsAmount,
+            _annualBonusType);
+
+    public PayrollWorkInput BuildPayrollWorkInput() =>
         new(
             _workedDaysCount,
             _overtimeHours,
@@ -320,10 +333,9 @@ public class PayrollRecordBuilder
             _missionAmountOverride,
             _standardWorkingDaysCount,
             _isEsfandPeriod,
-            _annualBonusAmount,
-            _annualBonusType,
             _performanceBonusAmount,
-            _cashBenefitsAmount);
+            _cashBenefitsAmount,
+            _annualBonusType);
 
     public PayrollRecordAmountsDto BuildAmountsDto() =>
         new(
@@ -364,7 +376,7 @@ public class PayrollRecordBuilder
             _employeeIsTaxSubject,
             _maxMonthlyOvertimeHours,
             _maxFridayHours,
-            BuildDto(),
+            BuildPayrollWorkInput(),
             BuildAmountsDto(),
             BuildCalculatedAmountsDto());
     }

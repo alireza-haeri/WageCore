@@ -47,7 +47,7 @@ public class PayrollRecord
         bool employeeIsTaxSubject,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
-        PayrollWorkInputDto? workInput,
+        PayrollWorkInput workInput,
         PayrollRecordAmountsDto? payrollAmounts,
         PayrollCalculatedAmountsDto? calculatedAmounts)
     {
@@ -72,17 +72,17 @@ public class PayrollRecord
             EmployeeId = employeeId,
             PeriodStart = periodStart,
             PeriodEnd = periodEnd,
-            WorkedDaysCount = workInput.WorkedDaysCount!.Value,
-            OvertimeHours = workInput.OvertimeHours!.Value,
-            NightShiftHours = workInput.NightShiftHours!.Value,
-            FridayWorkHours = workInput.FridayWorkHours!.Value,
-            LeaveHours = workInput.LeaveHours!.Value,
-            AbsenceDaysCount = workInput.AbsenceDaysCount!.Value,
-            MissionDaysCount = workInput.MissionDaysCount!.Value,
-            MissionHours = workInput.MissionHours!.Value,
-            HolidayWorkHours = workInput.HolidayWorkHours!.Value,
+            WorkedDaysCount = workInput.WorkedDaysCount,
+            OvertimeHours = workInput.OvertimeHours,
+            NightShiftHours = workInput.NightShiftHours,
+            FridayWorkHours = workInput.FridayWorkHours,
+            LeaveHours = workInput.LeaveHours,
+            AbsenceDaysCount = workInput.AbsenceDaysCount,
+            MissionDaysCount = workInput.MissionDaysCount,
+            MissionHours = workInput.MissionHours,
+            HolidayWorkHours = workInput.HolidayWorkHours,
             MissionAmountOverride = workInput.MissionAmountOverride,
-            StandardWorkingDaysCount = workInput.StandardWorkingDaysCount!.Value,
+            StandardWorkingDaysCount = workInput.StandardWorkingDaysCount,
             IsEsfandPeriod = workInput.IsEsfandPeriod,
             AnnualBonusType = workInput.AnnualBonusType,
             PerformanceBonusAmount = workInput.PerformanceBonusAmount,
@@ -106,7 +106,7 @@ public class PayrollRecord
         bool employeeIsTaxSubject,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
-        PayrollWorkInputDto? workInput,
+        PayrollWorkInput workInput,
         PayrollRecordAmountsDto? payrollAmounts,
         PayrollCalculatedAmountsDto? calculatedAmounts) =>
         Create(
@@ -127,7 +127,7 @@ public class PayrollRecord
         bool employeeIsTaxSubject,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
-        PayrollWorkInputDto? workInput,
+        PayrollWorkInput workInput,
         PayrollRecordAmountsDto? payrollAmounts,
         PayrollCalculatedAmountsDto? calculatedAmounts)
     {
@@ -150,17 +150,17 @@ public class PayrollRecord
 
         PeriodStart = periodStart;
         PeriodEnd = periodEnd;
-        WorkedDaysCount = workInput.WorkedDaysCount!.Value;
-        OvertimeHours = workInput.OvertimeHours!.Value;
-        NightShiftHours = workInput.NightShiftHours!.Value;
-        FridayWorkHours = workInput.FridayWorkHours!.Value;
-        LeaveHours = workInput.LeaveHours!.Value;
-        AbsenceDaysCount = workInput.AbsenceDaysCount!.Value;
-        MissionDaysCount = workInput.MissionDaysCount!.Value;
-        MissionHours = workInput.MissionHours!.Value;
-        HolidayWorkHours = workInput.HolidayWorkHours!.Value;
+        WorkedDaysCount = workInput.WorkedDaysCount;
+        OvertimeHours = workInput.OvertimeHours;
+        NightShiftHours = workInput.NightShiftHours;
+        FridayWorkHours = workInput.FridayWorkHours;
+        LeaveHours = workInput.LeaveHours;
+        AbsenceDaysCount = workInput.AbsenceDaysCount;
+        MissionDaysCount = workInput.MissionDaysCount;
+        MissionHours = workInput.MissionHours;
+        HolidayWorkHours = workInput.HolidayWorkHours;
         MissionAmountOverride = workInput.MissionAmountOverride;
-        StandardWorkingDaysCount = workInput.StandardWorkingDaysCount!.Value;
+        StandardWorkingDaysCount = workInput.StandardWorkingDaysCount;
         IsEsfandPeriod = workInput.IsEsfandPeriod;
         AnnualBonusType = workInput.AnnualBonusType;
         PerformanceBonusAmount = workInput.PerformanceBonusAmount;
@@ -210,7 +210,7 @@ public class PayrollRecord
         bool employeeIsTaxSubject,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
-        PayrollWorkInputDto? workInput,
+        PayrollWorkInput workInput,
         PayrollRecordAmountsDto? payrollAmounts,
         PayrollCalculatedAmountsDto? calculatedAmounts)
     {
@@ -237,7 +237,7 @@ public class PayrollRecord
         bool employeeIsTaxSubject,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
-        PayrollWorkInputDto? workInput,
+        PayrollWorkInput workInput,
         PayrollRecordAmountsDto? payrollAmounts,
         PayrollCalculatedAmountsDto? calculatedAmounts)
     {
@@ -270,7 +270,7 @@ public class PayrollRecord
     }
 
     private static DomainResult ValidateAttendance(
-        PayrollWorkInputDto workInput,
+        PayrollWorkInput workInput,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours)
     {
@@ -344,15 +344,12 @@ public class PayrollRecord
         return DomainResult.Success();
     }
 
-    private static DomainResult ValidateAnnualBonus(PayrollWorkInputDto workInput)
+    private static DomainResult ValidateAnnualBonus(PayrollWorkInput workInput)
     {
-        if (workInput.AnnualBonusAmount is null)
-            return DomainResult.Success();
-
-        if (!workInput.IsEsfandPeriod)
+        if (!workInput.IsEsfandPeriod && workInput.AnnualBonusType is not null)
             return DomainResult.Failure("عیدی سالانه فقط در ماه اسفند قابل ثبت است.");
 
-        if (workInput.AnnualBonusType is null)
+        if (workInput.IsEsfandPeriod && workInput.AnnualBonusType is null)
             return DomainResult.Failure("نوع عیدی سالانه نمیتواند خالی باشد.");
 
         return DomainResult.Success();
@@ -472,22 +469,16 @@ public class PayrollRecord
         return DomainResult.Success();
     }
 
-    private static DomainResult ValidateDaysCount(decimal? daysCount, string fieldName)
+    private static DomainResult ValidateDaysCount(decimal daysCount, string fieldName)
     {
-        if (daysCount is null)
-            return DomainResult.Failure($"{fieldName} نمیتواند خالی باشد.");
-
         if (daysCount < 0 || daysCount > MaxDaysCount)
             return DomainResult.Failure($"{fieldName} باید بین 0 تا {MaxDaysCount} روز باشد.");
 
         return DomainResult.Success();
     }
 
-    private static DomainResult ValidateStandardWorkingDaysCount(int? standardWorkingDaysCount)
+    private static DomainResult ValidateStandardWorkingDaysCount(int standardWorkingDaysCount)
     {
-        if (standardWorkingDaysCount is null)
-            return DomainResult.Failure("تعداد روزهای کارکرد استاندارد نمیتواند خالی باشد.");
-
         if (standardWorkingDaysCount < MinStandardWorkingDaysCount ||
             standardWorkingDaysCount > MaxStandardWorkingDaysCount)
             return DomainResult.Failure(
@@ -496,11 +487,8 @@ public class PayrollRecord
         return DomainResult.Success();
     }
 
-    private static DomainResult ValidateNonNegative(decimal? value, string fieldName)
+    private static DomainResult ValidateNonNegative(decimal value, string fieldName)
     {
-        if (value is null)
-            return DomainResult.Failure($"{fieldName} نمیتواند خالی باشد.");
-
         if (value < 0)
             return DomainResult.Failure($"{fieldName} نمیتواند منفی باشد.");
 

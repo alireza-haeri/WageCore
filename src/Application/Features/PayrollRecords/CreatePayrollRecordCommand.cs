@@ -5,7 +5,11 @@ public record CreatePayrollRecordCommand(
     Guid EmployeeId,
     int PersianYear,
     int PersianMonth,
-    PayrollWorkInputDto Work)
+    UserWorkInputDto Work)
     : IRequest<Result<CreatePayrollRecordCommandResponse>>;
 
-public record CreatePayrollRecordCommandResponse(Guid PayrollRecordId);
+
+public record CreatePayrollRecordCommandResponse(
+    Guid PayrollRecordId,
+    PayrollCalculatedAmountsDto CalculatedAmounts,
+    PayrollRecordAmountsDto Amounts);

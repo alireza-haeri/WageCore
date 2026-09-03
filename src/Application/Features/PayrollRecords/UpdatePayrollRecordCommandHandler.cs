@@ -9,49 +9,47 @@ public class UpdatePayrollRecordCommandHandler(
     IWorkShopRepository workShopRepository,
     ISalaryDecreeQuery salaryDecreeQuery,
     IPayrollCalculationService payrollCalculationService)
-    : IRequestHandler<UpdatePayrollRecordCommand, Result<bool>>
+    : IRequestHandler<UpdatePayrollRecordCommand, Result<UpdatePayrollRecordCommandResponse>>
 {
-    public async Task<Result<bool>> Handle(
+    public async Task<Result<UpdatePayrollRecordCommandResponse>> Handle(
         UpdatePayrollRecordCommand request,
         CancellationToken cancellationToken)
     {
         var period = persianCalendarService.GetMonthRange(request.PersianYear, request.PersianMonth);
 
         if (period.StartPeriod > DateOnly.FromDateTime(DateTime.Now))
-            return Result<bool>.GeneralFailure("تاریخ شروع دوره نباید برای آینده باشد.");
+            return Result<UpdatePayrollRecordCommandResponse>.GeneralFailure("تاریخ شروع دوره نباید برای آینده باشد.");
 
-        var workInput = request.Work with
-        {
-            StandardWorkingDaysCount = period.EndPeriod.DayNumber - period.StartPeriod.DayNumber + 1
-        };
+        var standardWorkingDaysCount = period.EndPeriod.DayNumber - period.StartPeriod.DayNumber + 1;
+        var isEsfandPeriod = request.PersianMonth == 12;
 
         var payrollRecord = await payrollRecordRepository.GetByIdAsync(
             request.UserId,
             request.PayrollRecordId,
             cancellationToken);
         if (payrollRecord is null || payrollRecord.EmployeeId != request.EmployeeId)
-            return Result<bool>.NotfoundFailure("فیش پرداختی مورد نظر یافت نشد.");
+            return Result<UpdatePayrollRecordCommandResponse>.NotfoundFailure("فیش پرداختی مورد نظر یافت نشد.");
 
         var canModifyResult = payrollRecord.EnsureCanModify();
         if (!canModifyResult.IsSuccess)
-            return Result<bool>.GeneralFailure(canModifyResult.ErrorMessage!);
+            return Result<UpdatePayrollRecordCommandResponse>.GeneralFailure(canModifyResult.ErrorMessage!);
 
         var limitsResult = await payrollLimitsResolver.ResolveAsync(
             period.StartPeriod,
             period.EndPeriod,
             cancellationToken);
         if (!limitsResult.IsSuccess)
-            return Result<bool>.ValidationFailure(limitsResult.Errors!);
+            return Result<UpdatePayrollRecordCommandResponse>.ValidationFailure(limitsResult.Errors!);
 
         var limits = limitsResult.Response!;
 
         var employee = await employeeRepository.GetByIdAsync(request.UserId, request.EmployeeId, cancellationToken);
         if (employee is null)
-            return Result<bool>.NotfoundFailure("کارمند مورد نظر یافت نشد.");
+            return Result<UpdatePayrollRecordCommandResponse>.NotfoundFailure("کارمند مورد نظر یافت نشد.");
 
         var employmentResult = employee.EnsureEmployedDuring(period.StartPeriod, period.EndPeriod);
         if (!employmentResult.IsSuccess)
-            return Result<bool>.GeneralFailure(employmentResult.ErrorMessage!);
+            return Result<UpdatePayrollRecordCommandResponse>.GeneralFailure(employmentResult.ErrorMessage!);
 
         var hasOverlappingPeriod = await payrollRecordQuery.HasOverlappingPeriodAsync(
             request.UserId,
@@ -61,7 +59,7 @@ public class UpdatePayrollRecordCommandHandler(
             request.PayrollRecordId,
             cancellationToken);
         if (hasOverlappingPeriod)
-            return Result<bool>.GeneralFailure("برای این کارمند در این بازه فیش پرداختی دیگری ثبت شده است.");
+            return Result<UpdatePayrollRecordCommandResponse>.GeneralFailure("برای این کارمند در این بازه فیش پرداختی دیگری ثبت شده است.");
 
         var workshopTask = workShopRepository.GetByIdAsync(request.UserId, employee.WorkshopId, cancellationToken);
         var salaryProfilesTask = salaryDecreeQuery.GetSalaryDecreesAffectingPeriodAsync(
@@ -77,10 +75,28 @@ public class UpdatePayrollRecordCommandHandler(
         var salaryProfiles = await salaryProfilesTask;
 
         if (workshop is null)
-            return Result<bool>.NotfoundFailure("کارگاه مورد نظر یافت نشد.");
+            return Result<UpdatePayrollRecordCommandResponse>.NotfoundFailure("کارگاه مورد نظر یافت نشد.");
 
         if (salaryProfiles.Count == 0)
-            return Result<bool>.NotfoundFailure("برای این بازه حکم حقوقی کارمند یافت نشد.");
+            return Result<UpdatePayrollRecordCommandResponse>.NotfoundFailure("برای این بازه حکم حقوقی کارمند یافت نشد.");
+
+        var workInput = new PayrollWorkInput(
+            request.Work.WorkedDaysCount,
+            request.Work.OvertimeHours,
+            request.Work.NightShiftHours,
+            request.Work.FridayWorkHours,
+            request.Work.LeaveHours,
+            request.Work.AbsenceDaysCount,
+            request.Work.MissionDaysCount,
+            request.Work.MissionHours,
+            request.Work.HolidayWorkHours,
+            request.Work.MissionAmountOverride,
+            standardWorkingDaysCount,
+            isEsfandPeriod,
+            request.Work.PerformanceBonusAmount,
+            request.Work.CashBenefitsAmount,
+            request.Work.AnnualBonusType
+        );
 
         var calculationResult = await payrollCalculationService.CalculateAsync(
             employee,
@@ -91,7 +107,7 @@ public class UpdatePayrollRecordCommandHandler(
             workInput,
             cancellationToken);
         if (!calculationResult.IsSuccess)
-            return Result<bool>.ValidationFailure(calculationResult.Errors!);
+            return Result<UpdatePayrollRecordCommandResponse>.ValidationFailure(calculationResult.Errors!);
 
         var calculation = calculationResult.Response!;
         var updateResult = payrollRecord.Update(
@@ -100,16 +116,20 @@ public class UpdatePayrollRecordCommandHandler(
             salaryProfiles[0].IsTaxSubject,
             limits.MaxMonthlyOvertimeHours,
             limits.MaxFridayHours,
-            workInput with { IsEsfandPeriod = calculation.IsEsfandPeriod },
+            workInput,
             calculation.Amounts,
             calculation.CalculatedAmounts);
         if (!updateResult.IsSuccess)
-            return Result<bool>.GeneralFailure(updateResult.ErrorMessage!);
+            return Result<UpdatePayrollRecordCommandResponse>.GeneralFailure(updateResult.ErrorMessage!);
 
         var isUpdated = await payrollRecordRepository.UpdateAsync(payrollRecord, cancellationToken);
         if (!isUpdated)
-            return Result<bool>.GeneralFailure("خطا در بروزرسانی فیش پرداختی");
+            return Result<UpdatePayrollRecordCommandResponse>.GeneralFailure("خطا در بروزرسانی فیش پرداختی");
 
-        return Result<bool>.Success(true);
+        return Result<UpdatePayrollRecordCommandResponse>.Success(
+            new UpdatePayrollRecordCommandResponse(
+                payrollRecord.Id,
+                calculation.CalculatedAmounts,
+                calculation.Amounts));
     }
 }

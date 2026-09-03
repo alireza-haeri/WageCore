@@ -8,6 +8,6 @@ public interface IPayrollCalculationService
         IReadOnlyList<SalaryDecree> salaryDecrees,
         DateOnly periodStart,
         DateOnly periodEnd,
-        PayrollWorkInputDto workInput,
+        PayrollWorkInput workInput,
         CancellationToken cancellationToken = default);
 }

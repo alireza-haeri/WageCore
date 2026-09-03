@@ -1,6 +1,3 @@
-using Core.Contracts.CalculationFormulas;
-using Microsoft.Extensions.Logging;
-
 namespace Application.Services;
 
 public class PayrollCalculationService(
@@ -12,10 +9,6 @@ public class PayrollCalculationService(
     ILogger<PayrollCalculationService> logger)
     : IPayrollCalculationService
 {
-    // Every monetary amount of a payroll period is derived from formulas: the item
-    // rows below declare, per component, which labor law rule values the formula
-    // receives (the formula itself is stored per FormulaKey and resolved at run
-    // time, so no business constant lives in this code).
     private static readonly CalculationItem[] Items =
     [
         new("پایه حقوق ماهانه", FormulaKey.BaseSalaryPay, []),
@@ -36,31 +29,19 @@ public class PayrollCalculationService(
         new("مبلغ ایاب و ذهاب", FormulaKey.CommutingAllowancePay, [])
     ];
 
-    private static readonly LaborLawRuleKey[] TaxBracketRuleKeys =
+    private static readonly HashSet<LaborLawRuleKey> DeprecatedRuleKeys =
     [
-        LaborLawRuleKey.TaxBracket1Threshold,
-        LaborLawRuleKey.TaxBracket2Threshold,
-        LaborLawRuleKey.TaxBracket2Rate,
-        LaborLawRuleKey.TaxBracket3Threshold,
-        LaborLawRuleKey.TaxBracket3Rate,
-        LaborLawRuleKey.TaxBracket4Threshold,
-        LaborLawRuleKey.TaxBracket4Rate,
-        LaborLawRuleKey.TaxBracket5Threshold,
-        LaborLawRuleKey.TaxBracket5Rate,
-        LaborLawRuleKey.TaxBracket6Rate
+        LaborLawRuleKey.TaxExemptMonthlyAmount,
+        LaborLawRuleKey.TaxRatePercentage
     ];
 
-    // Calculates every monetary amount of a payroll period: the salary decree
-    // effective for the period is selected first, then each payroll item is
-    // calculated from its formula, optional entered amounts are added, and
-    // finally insurance, tax and the totals are derived via formulas as well.
     public async Task<Result<PayrollCalculationResult>> CalculateAsync(
         Employee employee,
         Workshop workshop,
         IReadOnlyList<SalaryDecree> salaryDecrees,
         DateOnly periodStart,
         DateOnly periodEnd,
-        PayrollWorkInputDto workInput,
+        PayrollWorkInput workInput,
         CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -77,8 +58,6 @@ public class PayrollCalculationService(
         if (salaryDecrees is null || salaryDecrees.Count == 0)
             return Result<PayrollCalculationResult>.NotfoundFailure("برای این بازه حکم حقوقی کارمند یافت نشد.");
 
-        // A decree is in force for the whole period once its effective date has
-        // passed, so the latest decree effective by the period end is selected.
         var salaryDecree = salaryDecrees
             .Where(decree => decree.EffectiveFrom <= periodEnd)
             .OrderByDescending(decree => decree.EffectiveFrom)
@@ -111,11 +90,6 @@ public class PayrollCalculationService(
             periodStart,
             periodEnd);
 
-        // Annual context shared by the year-proportional items (end-of-service and
-        // annual bonus): the length of the Persian year containing the period and
-        // the days worked so far in that year. The query only aggregates closed
-        // (already-persisted) periods, so the current period's worked days are
-        // added in code to obtain the true annual total.
         var daysInYear = persianCalendarService.GetDaysInPersianYear(periodStart);
 
         var previousWorkedDaysCount = await payrollRecordQuery.GetAnnualWorkedDaysCountAsync(
@@ -124,7 +98,7 @@ public class PayrollCalculationService(
             periodStart,
             cancellationToken);
 
-        var annualWorkedDaysCount = previousWorkedDaysCount + (workInput.WorkedDaysCount ?? 0m);
+        var annualWorkedDaysCount = previousWorkedDaysCount + workInput.WorkedDaysCount;
 
         logger.LogInformation(
             "Annual context for employee {EmployeeId}: year has {DaysInYear} days and " +
@@ -133,11 +107,8 @@ public class PayrollCalculationService(
             daysInYear,
             annualWorkedDaysCount,
             previousWorkedDaysCount,
-            workInput.WorkedDaysCount ?? 0m);
+            workInput.WorkedDaysCount);
 
-        // Each CalculationItem maps one payroll component to its formula; when
-        // the item is not applicable for this period its result is null and it
-        // is skipped (a skipped item is not the same as a zero amount).
         var amounts = new Dictionary<FormulaKey, decimal>();
         foreach (var item in Items)
         {
@@ -175,35 +146,29 @@ public class PayrollCalculationService(
                 employee.Id);
         }
 
-        var optionalAmounts = new List<decimal>();
-        var performanceBonusResult = AddOptionalAmount(
-            workInput.PerformanceBonusAmount,
-            "کارانه",
-            employee.Id,
-            cancellationToken);
+        var performanceBonusResult = AddOptionalAmount(workInput.PerformanceBonusAmount, "کارانه", employee.Id, cancellationToken);
         if (!performanceBonusResult.IsSuccess)
             return ConvertFailure(performanceBonusResult);
-        if (performanceBonusResult.Response is { } performanceBonusAmount)
-            optionalAmounts.Add(performanceBonusAmount);
 
-        var cashBenefitsResult = AddOptionalAmount(
-            workInput.CashBenefitsAmount,
-            "مزایای نقدی",
-            employee.Id,
-            cancellationToken);
+        var cashBenefitsResult = AddOptionalAmount(workInput.CashBenefitsAmount, "مزایای نقدی", employee.Id, cancellationToken);
         if (!cashBenefitsResult.IsSuccess)
             return ConvertFailure(cashBenefitsResult);
-        if (cashBenefitsResult.Response is { } cashBenefitsAmount)
-            optionalAmounts.Add(cashBenefitsAmount);
 
-        var grossAmount = amounts.Values.Sum() + optionalAmounts.Sum();
+        var grossAmount = amounts.Values.Sum()
+                          + (performanceBonusResult.Response ?? 0m)
+                          + (cashBenefitsResult.Response ?? 0m);
+
         logger.LogInformation(
             "Gross amount calculated as {GrossAmount} for employee {EmployeeId}",
             grossAmount,
             employee.Id);
 
+        var allRuleVariables = await GetAllActiveRuleVariablesAsync(period, cancellationToken);
+        var itemVariables = BuildItemAmountVariables(amounts, performanceBonusResult.Response, cashBenefitsResult.Response);
+
         var insuranceResult = await CalculateInsuranceAmountAsync(
-            grossAmount,
+            itemVariables,
+            allRuleVariables,
             employee.Id,
             period,
             cancellationToken);
@@ -211,17 +176,14 @@ public class PayrollCalculationService(
             return ConvertFailure(insuranceResult);
 
         var taxResult = await CalculateTaxAmountAsync(
-            amounts,
-            performanceBonusResult.Response,
-            cashBenefitsResult.Response,
+            itemVariables,
+            allRuleVariables,
             employee.Id,
             period,
             cancellationToken);
         if (!taxResult.IsSuccess)
             return ConvertFailure(taxResult);
 
-        // The IsSuccess guards above guarantee these values are non-null; .Value is
-        // used instead of ?? 0m so a missing amount can never be silently masked as zero.
         var insuranceAmount = insuranceResult.Response!.Value;
         var calculatedTaxAmount = taxResult.Response!.Value;
         var totalDeductionsAmount = insuranceAmount + calculatedTaxAmount;
@@ -269,12 +231,67 @@ public class PayrollCalculationService(
             new PayrollCalculationResult(calculatedAmounts, payrollAmounts, isEsfandPeriod));
     }
 
+    private async Task<FormulaVariable[]> GetAllActiveRuleVariablesAsync(
+        PayrollPeriod period,
+        CancellationToken cancellationToken)
+    {
+        var variables = new List<FormulaVariable>();
+
+        foreach (var ruleKey in Enum.GetValues<LaborLawRuleKey>())
+        {
+            if (DeprecatedRuleKeys.Contains(ruleKey))
+                continue;
+
+            var ruleValue = await laborLawRuleQuery.GetActiveValueAsync(
+                ruleKey,
+                period.PeriodStart,
+                cancellationToken);
+
+            if (ruleValue is null)
+            {
+                logger.LogWarning(
+                    "Labor law rule {RuleKey} not found for period {PeriodStart}..{PeriodEnd}; skipping",
+                    ruleKey,
+                    period.PeriodStart,
+                    period.PeriodEnd);
+                continue;
+            }
+
+            variables.Add(new FormulaVariable(ruleKey.ToString(), ruleValue.Value));
+        }
+
+        return variables.ToArray();
+    }
+
+    private static FormulaVariable[] BuildItemAmountVariables(
+        IReadOnlyDictionary<FormulaKey, decimal> amounts,
+        decimal? performanceBonusAmount,
+        decimal? cashBenefitsAmount)
+    {
+        var variables = new List<FormulaVariable>();
+
+        foreach (var key in Enum.GetValues<FormulaKey>())
+        {
+            if (key == FormulaKey.InsurancePay ||
+                key == FormulaKey.TaxPay ||
+                key == FormulaKey.TaxableAmountPay)
+                continue;
+
+            variables.Add(new FormulaVariable(key.ToString(), GetAmount(amounts, key)));
+        }
+
+        variables.Add(new FormulaVariable("PerformanceBonusAmount", performanceBonusAmount ?? 0m));
+        variables.Add(new FormulaVariable("CashBenefitsAmount", cashBenefitsAmount ?? 0m));
+
+        return variables.ToArray();
+    }
+
     private async Task<Result<decimal?>> CalculateItemAsync(
         CalculationItem item,
         Employee employee,
         Workshop workshop,
         SalaryDecree salaryDecree,
-        PayrollWorkInputDto workInput,
+        PayrollWorkInput workInput,
         PayrollPeriod period,
         int daysInYear,
         decimal annualWorkedDaysCount,
@@ -312,9 +329,6 @@ public class PayrollCalculationService(
             return Result<decimal?>.Success(null);
         }
 
-        // Some components resolve their rule key from the payroll context instead
-        // of a fixed key: the annual bonus reads the minimum or maximum rule and
-        // shift work reads the rule of the decree's shift type.
         var ruleKeys = new List<LaborLawRuleKey>(item.RuleKeys);
         if (item.FormulaKey == FormulaKey.AnnualBonusPay)
         {
@@ -351,7 +365,6 @@ public class PayrollCalculationService(
             cancellationToken);
     }
 
-    // Maps a non-None shift type to its shift-work percentage rule key.
     private static LaborLawRuleKey GetShiftWorkRuleKey(ShiftType shiftType) =>
         shiftType switch
         {
@@ -362,9 +375,6 @@ public class PayrollCalculationService(
             _ => throw new ArgumentOutOfRangeException(nameof(shiftType), shiftType, null)
         };
 
-    // Rule values reach the formula under a stable variable name the expression can
-    // reference regardless of which specific rule row was resolved for the item
-    // (annual bonus and shift work each have several candidate rule keys).
     private static string GetRuleVariableName(FormulaKey formulaKey, LaborLawRuleKey ruleKey) =>
         formulaKey switch
         {
@@ -373,8 +383,6 @@ public class PayrollCalculationService(
             _ => ruleKey.ToString()
         };
 
-    // Fetches the active value of a labor law rule; a missing rule is reported
-    // as a not-found failure instead of silently calculating with zero.
     private async Task<Result<decimal>> GetRuleValueAsync(
         LaborLawRuleKey ruleKey,
         string displayName,
@@ -404,8 +412,6 @@ public class PayrollCalculationService(
         return Result<decimal>.Success(ruleValue.Value);
     }
 
-    // Shared by payroll items, insurance and tax: fetches the formula expression
-    // for a key and evaluates it with the given inputs.
     private async Task<Result<decimal?>> EvaluateFormulaAsync(
         FormulaKey formulaKey,
         string displayName,
@@ -452,7 +458,8 @@ public class PayrollCalculationService(
     }
 
     private async Task<Result<decimal?>> CalculateInsuranceAmountAsync(
-        decimal grossAmount,
+        FormulaVariable[] itemVariables,
+        FormulaVariable[] ruleVariables,
         Guid employeeId,
         PayrollPeriod period,
         CancellationToken cancellationToken)
@@ -463,50 +470,32 @@ public class PayrollCalculationService(
             period.PeriodStart,
             period.PeriodEnd);
 
-        var insurancePercentageResult = await GetRuleValueAsync(
-            LaborLawRuleKey.InsurancePercentage,
-            "بیمه",
-            employeeId,
-            period,
-            cancellationToken);
-        if (!insurancePercentageResult.IsSuccess)
-            return insurancePercentageResult.Map<decimal?>(value => value);
+        var inputs = itemVariables
+            .Concat(ruleVariables)
+            .Cast<object>()
+            .ToArray();
 
-        var insurancePercentage = insurancePercentageResult.Response;
-
-        // The insurance formula receives the gross amount and the insurance
-        // percentage rule value, e.g. "GrossAmount * InsurancePercentage / 100".
         var insuranceResult = await EvaluateFormulaAsync(
             FormulaKey.InsurancePay,
             "بیمه",
             employeeId,
             period,
-            [
-                new FormulaVariable("GrossAmount", grossAmount),
-                new FormulaVariable(nameof(LaborLawRuleKey.InsurancePercentage), insurancePercentage)
-            ],
+            inputs,
             cancellationToken);
         if (!insuranceResult.IsSuccess)
             return insuranceResult;
 
         logger.LogInformation(
-            "Insurance amount calculated as {InsuranceAmount} for employee {EmployeeId} " +
-            "(gross {GrossAmount} at {InsurancePercentage}%)",
+            "Insurance amount calculated as {InsuranceAmount} for employee {EmployeeId}",
             insuranceResult.Response,
-            employeeId,
-            grossAmount,
-            insurancePercentage);
+            employeeId);
 
         return insuranceResult;
     }
 
-    // Tax is fully formula-driven in two steps: the taxable base formula first
-    // sums the taxable item amounts, then the tax formula applies the progressive
-    // brackets whose thresholds/rates all come from labor law rules.
     private async Task<Result<decimal?>> CalculateTaxAmountAsync(
-        IReadOnlyDictionary<FormulaKey, decimal> amounts,
-        decimal? performanceBonusAmount,
-        decimal? cashBenefitsAmount,
+        FormulaVariable[] itemVariables,
+        FormulaVariable[] ruleVariables,
         Guid employeeId,
         PayrollPeriod period,
         CancellationToken cancellationToken)
@@ -517,38 +506,26 @@ public class PayrollCalculationService(
             period.PeriodStart,
             period.PeriodEnd);
 
+        var taxableInputs = itemVariables
+            .Concat(ruleVariables)
+            .Cast<object>()
+            .ToArray();
+
         var taxableAmountResult = await EvaluateFormulaAsync(
             FormulaKey.TaxableAmountPay,
-            "مالیات",
+            "مبلغ مشمول مالیات",
             employeeId,
             period,
-            BuildTaxableAmountInputs(amounts, performanceBonusAmount, cashBenefitsAmount),
+            taxableInputs,
             cancellationToken);
         if (!taxableAmountResult.IsSuccess)
             return taxableAmountResult;
 
         var taxableAmount = taxableAmountResult.Response!.Value;
 
-        var ruleValues = new List<(LaborLawRuleKey Key, decimal Value)>();
-        foreach (var ruleKey in TaxBracketRuleKeys)
-        {
-            var ruleResult = await GetRuleValueAsync(
-                ruleKey,
-                "مالیات",
-                employeeId,
-                period,
-                cancellationToken);
-            if (!ruleResult.IsSuccess)
-                return ruleResult.Map<decimal?>(value => value);
-
-            ruleValues.Add((ruleKey, ruleResult.Response));
-        }
-
-        // The tax formula receives the taxable base and every bracket threshold/
-        // rate rule, e.g. the progressive nested-ternary expression over
-        // "[TaxableAmount] <= [TaxBracket1Threshold] ? 0 : ...".
-        var taxInputs = new List<FormulaVariable> { new("TaxableAmount", taxableAmount) };
-        taxInputs.AddRange(ruleValues.Select(rule => new FormulaVariable(rule.Key.ToString(), rule.Value)));
+        var taxInputs = new List<object> { new FormulaVariable("TaxableAmount", taxableAmount) };
+        taxInputs.AddRange(itemVariables);
+        taxInputs.AddRange(ruleVariables);
 
         var taxResult = await EvaluateFormulaAsync(
             FormulaKey.TaxPay,
@@ -568,29 +545,6 @@ public class PayrollCalculationService(
             taxableAmount);
 
         return taxResult;
-    }
-
-    // Builds the inputs of the taxable-base formula: one variable per payroll
-    // item amount already computed (mission and end-of-service are excluded by
-    // the formula expression) plus the optional performance/cash amounts.
-    private static object[] BuildTaxableAmountInputs(
-        IReadOnlyDictionary<FormulaKey, decimal> amounts,
-        decimal? performanceBonusAmount,
-        decimal? cashBenefitsAmount)
-    {
-        var taxableItemKeys = Items
-            .Select(item => item.FormulaKey)
-            .Where(key => key != FormulaKey.DailyMissionPay && key != FormulaKey.EndOfServicePay);
-
-        var inputs = taxableItemKeys
-            .Select(key => new FormulaVariable(key.ToString(), GetAmount(amounts, key)))
-            .Cast<object>()
-            .ToList();
-
-        inputs.Add(new FormulaVariable("PerformanceBonusAmount", performanceBonusAmount ?? 0m));
-        inputs.Add(new FormulaVariable("CashBenefitsAmount", cashBenefitsAmount ?? 0m));
-
-        return inputs.ToArray();
     }
 
     private Result<decimal?> AddOptionalAmount(
@@ -625,7 +579,7 @@ public class PayrollCalculationService(
         Employee employee,
         Workshop workshop,
         SalaryDecree salaryDecree,
-        PayrollWorkInputDto workInput,
+        PayrollWorkInput workInput,
         PayrollPeriod period,
         IReadOnlyList<(LaborLawRuleKey Key, decimal Value)> ruleValues,
         int daysInYear,
@@ -646,7 +600,6 @@ public class PayrollCalculationService(
         if (item.FormulaKey == FormulaKey.MarriageAllowancePay)
             inputs.Add(new FormulaVariable("MaritalStatus", (int)salaryDecree.MaritalStatus));
 
-        // The year-proportional items receive the annual context as variables.
         if (item.FormulaKey is FormulaKey.EndOfServicePay or FormulaKey.AnnualBonusPay)
         {
             inputs.Add(new FormulaVariable("DaysInYear", daysInYear));

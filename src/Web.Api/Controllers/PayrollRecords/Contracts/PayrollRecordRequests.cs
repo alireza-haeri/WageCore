@@ -4,10 +4,10 @@ public record CreatePayrollRecordRequest(
     Guid EmployeeId,
     int PersianYear,
     int PersianMonth,
-    PayrollWorkInputDto Work);
+    UserWorkInputDto Work);
 
 public record UpdatePayrollRecordRequest(
     Guid EmployeeId,
     int PersianYear,
     int PersianMonth,
-    PayrollWorkInputDto Work);
+    UserWorkInputDto Work);

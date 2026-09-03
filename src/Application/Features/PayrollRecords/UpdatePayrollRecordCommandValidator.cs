@@ -22,6 +22,6 @@ public class UpdatePayrollRecordCommandValidator : AbstractValidator<UpdatePayro
 
         RuleFor(x => x.Work)
             .NotNull().WithMessage("اطلاعات کارکرد کارمند اجباری است.")
-            .SetValidator(new PayrollWorkInputValidator());
+            .SetValidator(new UserWorkInputValidator());
     }
 }

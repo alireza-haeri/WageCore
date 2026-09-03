@@ -15,7 +15,7 @@ public class UpdatePayrollRecordTests
             .CreateResult()
             .ShouldBeSuccess();
 
-    private static PayrollWorkInputDto BuildDto() =>
+    private static PayrollWorkInput BuildWorkInput() =>
         new(
             20m,
             3m,
@@ -29,7 +29,6 @@ public class UpdatePayrollRecordTests
             null,
             31,
             false,
-            null,
             null,
             null,
             null);
@@ -74,7 +73,7 @@ public class UpdatePayrollRecordTests
             false,
             20m,
             12m,
-            BuildDto(),
+            BuildWorkInput(),
             BuildAmounts(),
             BuildCalculatedAmounts());
 
@@ -122,7 +121,7 @@ public class UpdatePayrollRecordTests
             false,
             20m,
             12m,
-            BuildDto(),
+            BuildWorkInput(),
             BuildAmounts(),
             BuildCalculatedAmounts());
 
@@ -145,7 +144,7 @@ public class UpdatePayrollRecordTests
             false,
             20m,
             12m,
-            BuildDto(),
+            BuildWorkInput(),
             BuildAmounts(),
             BuildCalculatedAmounts());
 
@@ -165,7 +164,7 @@ public class UpdatePayrollRecordTests
             false,
             20m,
             12m,
-            BuildDto(),
+            BuildWorkInput(),
             BuildAmounts(),
             BuildCalculatedAmounts());
 
@@ -188,7 +187,7 @@ public class UpdatePayrollRecordTests
             false,
             20m,
             12m,
-            BuildDto(),
+            BuildWorkInput(),
             BuildAmounts(),
             BuildCalculatedAmounts());
 
@@ -206,7 +205,7 @@ public class UpdatePayrollRecordTests
             false,
             20m,
             12m,
-            BuildDto(),
+            BuildWorkInput(),
             BuildAmounts(),
             BuildCalculatedAmounts());
 
@@ -214,21 +213,11 @@ public class UpdatePayrollRecordTests
     }
 
     [Fact]
-    public void Update_WithNullPayrollRecord_ShouldFail()
-    {
-        var record = CreateRecord();
-
-        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, null, BuildAmounts(), BuildCalculatedAmounts());
-
-        result.ShouldBeFailure("اطلاعات فیش پرداختی");
-    }
-
-    [Fact]
     public void Update_WithNullPayrollAmounts_ShouldFail()
     {
         var record = CreateRecord();
 
-        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, BuildDto(), null, BuildCalculatedAmounts());
+        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, BuildWorkInput(), null, BuildCalculatedAmounts());
 
         result.ShouldBeFailure("مبالغ فیش پرداختی نمیتواند خالی باشد.");
     }
@@ -238,7 +227,7 @@ public class UpdatePayrollRecordTests
     {
         var record = CreateRecord();
 
-        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, BuildDto(), BuildAmounts(), null);
+        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, BuildWorkInput(), BuildAmounts(), null);
 
         result.ShouldBeFailure("مبالغ محاسبه شده فیش پرداختی نمیتواند خالی باشد.");
     }
@@ -247,9 +236,9 @@ public class UpdatePayrollRecordTests
     public void Update_WithNegativeHours_ShouldFail()
     {
         var record = CreateRecord();
-        var dto = BuildDto() with { NightShiftHours = -1m };
+        var workInput = BuildWorkInput() with { NightShiftHours = -1m };
 
-        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, dto, BuildAmounts(), BuildCalculatedAmounts());
+        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, workInput, BuildAmounts(), BuildCalculatedAmounts());
 
         result.ShouldBeFailure("ساعات شیفت شب نمیتواند منفی باشد.");
     }
@@ -258,9 +247,9 @@ public class UpdatePayrollRecordTests
     public void Update_WithNegativeMissionHours_ShouldFail()
     {
         var record = CreateRecord();
-        var dto = BuildDto() with { MissionHours = -1m };
+        var workInput = BuildWorkInput() with { MissionHours = -1m };
 
-        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, dto, BuildAmounts(), BuildCalculatedAmounts());
+        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, workInput, BuildAmounts(), BuildCalculatedAmounts());
 
         result.ShouldBeFailure("ساعات مأموریت نمیتواند منفی باشد.");
     }
@@ -269,9 +258,9 @@ public class UpdatePayrollRecordTests
     public void Update_WithOvertimeHoursAboveMaxMonthlyOvertimeHours_ShouldFail()
     {
         var record = CreateRecord();
-        var dto = BuildDto() with { OvertimeHours = 21m };
+        var workInput = BuildWorkInput() with { OvertimeHours = 21m };
 
-        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, dto, BuildAmounts(), BuildCalculatedAmounts());
+        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, workInput, BuildAmounts(), BuildCalculatedAmounts());
 
         result.ShouldBeFailure("ساعات اضافه‌کاری نباید بیشتر از حداکثر ساعات اضافه‌کاری ماهانه باشد.");
     }
@@ -280,9 +269,9 @@ public class UpdatePayrollRecordTests
     public void Update_WithFridayWorkHoursAboveMaxFridayHours_ShouldFail()
     {
         var record = CreateRecord();
-        var dto = BuildDto() with { FridayWorkHours = 13m };
+        var workInput = BuildWorkInput() with { FridayWorkHours = 13m };
 
-        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, dto, BuildAmounts(), BuildCalculatedAmounts());
+        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, workInput, BuildAmounts(), BuildCalculatedAmounts());
 
         result.ShouldBeFailure("ساعات کار جمعه نباید بیشتر از حداکثر ساعات کار جمعه باشد.");
     }
@@ -291,9 +280,9 @@ public class UpdatePayrollRecordTests
     public void Update_WithDaysCountOutOfRange_ShouldFail()
     {
         var record = CreateRecord();
-        var dto = BuildDto() with { AbsenceDaysCount = 32m };
+        var workInput = BuildWorkInput() with { AbsenceDaysCount = 32m };
 
-        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, dto, BuildAmounts(), BuildCalculatedAmounts());
+        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, workInput, BuildAmounts(), BuildCalculatedAmounts());
 
         result.ShouldBeFailure("تعداد روزهای غیبت باید بین 0 تا 31 روز باشد.");
     }
@@ -302,36 +291,35 @@ public class UpdatePayrollRecordTests
     public void Update_WithWorkedDaysCountExceedingStandardWorkingDaysCount_ShouldFail()
     {
         var record = CreateRecord();
-        var dto = BuildDto() with { WorkedDaysCount = 30m, StandardWorkingDaysCount = 29 };
+        var workInput = BuildWorkInput() with { WorkedDaysCount = 30m, StandardWorkingDaysCount = 29 };
 
-        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, dto, BuildAmounts(), BuildCalculatedAmounts());
+        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, workInput, BuildAmounts(), BuildCalculatedAmounts());
 
         result.ShouldBeFailure("تعداد روزهای کارکرد نمیتواند بیشتر از روزهای کارکرد استاندارد باشد.");
     }
 
     [Fact]
-    public void Update_WithAnnualBonusAmountOutsideEsfandPeriod_ShouldFail()
+    public void Update_WithAnnualBonusTypeOutsideEsfandPeriod_ShouldFail()
     {
         var record = CreateRecord();
-        var dto = BuildDto() with { AnnualBonusAmount = 1_000_000m, AnnualBonusType = AnnualBonusType.Minimum };
+        var workInput = BuildWorkInput() with { AnnualBonusType = AnnualBonusType.Minimum };
 
-        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, dto, BuildAmounts(), BuildCalculatedAmounts());
+        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, workInput, BuildAmounts(), BuildCalculatedAmounts());
 
         result.ShouldBeFailure("عیدی سالانه فقط در ماه اسفند قابل ثبت است.");
     }
 
     [Fact]
-    public void Update_WithAnnualBonusAmountInEsfandPeriod_ShouldReturnSuccess()
+    public void Update_WithEsfandPeriodAndAnnualBonusType_ShouldReturnSuccess()
     {
         var record = CreateRecord();
-        var dto = BuildDto() with
+        var workInput = BuildWorkInput() with
         {
             IsEsfandPeriod = true,
-            AnnualBonusAmount = 1_000_000m,
             AnnualBonusType = AnnualBonusType.Minimum
         };
 
-        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, dto, BuildAmounts(), BuildCalculatedAmounts());
+        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, workInput, BuildAmounts(), BuildCalculatedAmounts());
 
         result.ShouldBeSuccess();
         record.AnnualBonusType.Should().Be(AnnualBonusType.Minimum);
@@ -343,7 +331,7 @@ public class UpdatePayrollRecordTests
         var record = CreateRecord();
         var amounts = BuildAmounts(withZeroTax: true);
 
-        var result = record.Update(NewPeriodStart, NewPeriodEnd, true, 20m, 12m, BuildDto(), amounts, BuildCalculatedAmounts());
+        var result = record.Update(NewPeriodStart, NewPeriodEnd, true, 20m, 12m, BuildWorkInput(), amounts, BuildCalculatedAmounts());
 
         result.ShouldBeFailure("برای کارمند مشمول مالیات، مالیات محاسبه شده نمیتواند صفر باشد.");
     }
@@ -354,7 +342,7 @@ public class UpdatePayrollRecordTests
         var record = CreateRecord();
         var amounts = BuildAmounts(withZeroTax: true);
 
-        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, BuildDto(), amounts, BuildCalculatedAmounts());
+        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, BuildWorkInput(), amounts, BuildCalculatedAmounts());
 
         result.ShouldBeSuccess();
         record.CalculatedTaxAmount.Should().Be(0m);
@@ -366,7 +354,7 @@ public class UpdatePayrollRecordTests
         var record = CreateRecord();
         var calculatedAmounts = BuildCalculatedAmounts() with { OvertimeAmount = -1m };
 
-        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, BuildDto(), BuildAmounts(), calculatedAmounts);
+        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, BuildWorkInput(), BuildAmounts(), calculatedAmounts);
 
         result.ShouldBeFailure("مبلغ اضافه‌کاری نمیتواند منفی باشد.");
     }
@@ -377,7 +365,7 @@ public class UpdatePayrollRecordTests
         var record = CreateRecord();
         var amounts = BuildAmounts() with { GrossAmount = -1m };
 
-        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, BuildDto(), amounts, BuildCalculatedAmounts());
+        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, BuildWorkInput(), amounts, BuildCalculatedAmounts());
 
         result.ShouldBeFailure("جمع حقوق و مزایا نمیتواند منفی باشد.");
     }
@@ -388,7 +376,7 @@ public class UpdatePayrollRecordTests
         var record = CreateRecord();
         var amounts = BuildAmounts() with { NetPayableAmount = -125_000m };
 
-        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, BuildDto(), amounts, BuildCalculatedAmounts());
+        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, BuildWorkInput(), amounts, BuildCalculatedAmounts());
 
         result.ShouldBeFailure("حقوق نهایی نمیتواند منفی باشد.");
     }
@@ -397,9 +385,9 @@ public class UpdatePayrollRecordTests
     public void Update_WhenValidationFails_ShouldKeepPreviousValues()
     {
         var record = CreateRecord();
-        var dto = BuildDto() with { MissionDaysCount = 99m };
+        var workInput = BuildWorkInput() with { MissionDaysCount = 99m };
 
-        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, dto, BuildAmounts(), BuildCalculatedAmounts());
+        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, workInput, BuildAmounts(), BuildCalculatedAmounts());
 
         result.ShouldBeFailure("تعداد روزهای مأموریت باید بین 0 تا 31 روز باشد.");
         using (new AssertionScope())

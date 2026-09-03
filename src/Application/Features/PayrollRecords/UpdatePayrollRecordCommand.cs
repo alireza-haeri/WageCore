@@ -6,5 +6,10 @@ public record UpdatePayrollRecordCommand(
     Guid PayrollRecordId,
     int PersianYear,
     int PersianMonth,
-    PayrollWorkInputDto Work)
-    : IRequest<Result<bool>>;
+    UserWorkInputDto Work)
+    : IRequest<Result<UpdatePayrollRecordCommandResponse>>;
+
+public record UpdatePayrollRecordCommandResponse(
+    Guid PayrollRecordId,
+    PayrollCalculatedAmountsDto CalculatedAmounts,
+    PayrollRecordAmountsDto Amounts);
