@@ -7,6 +7,15 @@ public class PersianCalendarServiceTests
     #region GetMonthRange
 
     [Fact]
+    public void GetMonthRange_ForFarvardinOf1400_ShouldStartOnTheNowruzOf2021()
+    {
+        var result = _service.GetMonthRange(1400, 1);
+
+        result.StartPeriod.Should().Be(new DateOnly(2021, 3, 21));
+        result.EndPeriod.Should().Be(new DateOnly(2021, 4, 19));
+    }
+
+    [Fact]
     public void GetMonthRange_ForFarvardinOf1404_ShouldReturnItsGregorianBounds()
     {
         var result = _service.GetMonthRange(1404, 1);

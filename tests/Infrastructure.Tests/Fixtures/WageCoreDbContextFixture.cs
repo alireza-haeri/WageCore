@@ -50,6 +50,8 @@ public sealed class WageCoreDbContextFixture : IAsyncLifetime
         services.AddLogging();
         services.AddSingleton(TestApplicationSettings.Create());
         services.AddScoped<SiteManagerSeeder>();
+        services.AddScoped<IPersianCalendarService, PersianCalendarService>();
+        services.AddScoped<PayrollRulesSeeder>();
         services.AddScoped<UserRepository>();
         services.AddScoped<WorkshopRepository>();
         services.AddScoped<EmployeeRepository>();

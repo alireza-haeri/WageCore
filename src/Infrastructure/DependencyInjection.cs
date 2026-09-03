@@ -48,6 +48,7 @@ public static class DependencyInjection
         builder.Services.AddScoped<ICalculationFormulaRepository, CalculationFormulaRepository>();
         builder.Services.AddScoped<ICalculationFormulaQuery, CalculationFormulaQuery>();
         builder.Services.AddScoped<SiteManagerSeeder>();
+        builder.Services.AddScoped<PayrollRulesSeeder>();
 
         return builder;
     }
@@ -69,8 +70,15 @@ public static class DependencyInjection
             return;
 
         await using var scope = app.Services.CreateAsyncScope();
-        var seeder = scope.ServiceProvider.GetRequiredService<SiteManagerSeeder>();
-        await seeder.SeedAsync();
+
+        var siteManagerSeeder = scope.ServiceProvider.GetRequiredService<SiteManagerSeeder>();
+        await siteManagerSeeder.SeedAsync();
+
+        if (app.Environment.IsDevelopment())
+        {
+            var payrollRulesSeeder = scope.ServiceProvider.GetRequiredService<PayrollRulesSeeder>();
+            await payrollRulesSeeder.SeedAsync();
+        }
     }
 
     public static WebApplicationBuilder AddAuthentication(this WebApplicationBuilder builder)

@@ -1,6 +1,12 @@
-namespace Application.Tests.Services;
+namespace Core.Domain;
 
-internal static class PayrollFormulaCatalog
+/// <summary>
+/// Reference payroll data: the labor-law rule values and calculation formula
+/// expressions that a fresh installation needs before any payroll can be
+/// calculated. The development seeder uses it to seed the database
+/// automatically; the calculation service tests use it as their fixture.
+/// </summary>
+public static class PayrollFormulaCatalog
 {
     public const decimal MinimumDailySalary = 2_000_000m;
     public const decimal StandardDailyWorkHoursValue = 7.33m;
