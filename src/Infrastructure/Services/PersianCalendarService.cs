@@ -78,7 +78,7 @@ public class PersianCalendarService : IPersianCalendarService
     public int GetPersianMonth(DateOnly date)
     {
         var persianYear = GetPersianYear(date);
-        var daysIntoYear = (date - GetNowruz(persianYear)).Days;
+        var daysIntoYear = (date.ToTimeSpan() - GetNowruz(persianYear).ToTimeSpan()).Days;
 
         return daysIntoYear < DaysBeforeMehr
             ? 1 + daysIntoYear / 31
@@ -149,7 +149,7 @@ public class PersianCalendarService : IPersianCalendarService
     private static bool IsLeapYear(int persianYear) =>
         NowruzByPersianYear.TryGetValue(persianYear, out var nowruz)
         && NowruzByPersianYear.TryGetValue(persianYear + 1, out var nextNowruz)
-        && (nextNowruz - nowruz).Days == 366;
+        && (nextNowruz.ToTimeSpan() - nowruz.ToTimeSpan()).Days == 366;
 
     private static DateOnly GetNowruz(int persianYear) =>
         NowruzByPersianYear.TryGetValue(persianYear, out var nowruz)
