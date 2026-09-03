@@ -12,27 +12,27 @@ public class UserWorkInputValidator : AbstractValidator<UserWorkInputDto>
         RuleFor(x => x.Overtime)
             .Cascade(CascadeMode.Stop)
             .NotNull().WithMessage("اطلاعات اضافه‌کاری اجباری است.")
-            .SetValidator(new WorkTimeInputValidator("اضافه‌کاری"));
+            .SetValidator(new WorkTimeInputValidator());
 
         RuleFor(x => x.NightShift)
             .Cascade(CascadeMode.Stop)
             .NotNull().WithMessage("اطلاعات شیفت شب اجباری است.")
-            .SetValidator(new WorkTimeInputValidator("شیفت شب"));
+            .SetValidator(new WorkTimeInputValidator());
 
         RuleFor(x => x.FridayWork)
             .Cascade(CascadeMode.Stop)
             .NotNull().WithMessage("اطلاعات کار جمعه اجباری است.")
-            .SetValidator(new WorkTimeInputValidator("کار جمعه"));
+            .SetValidator(new WorkTimeInputValidator());
 
         RuleFor(x => x.HolidayWork)
             .Cascade(CascadeMode.Stop)
             .NotNull().WithMessage("اطلاعات تعطیل‌کاری اجباری است.")
-            .SetValidator(new WorkTimeInputValidator("تعطیل‌کاری"));
+            .SetValidator(new WorkTimeInputValidator());
 
         RuleFor(x => x.Leave)
             .Cascade(CascadeMode.Stop)
             .NotNull().WithMessage("اطلاعات مرخصی اجباری است.")
-            .SetValidator(new DayTimeInputValidator("مرخصی"));
+            .SetValidator(new DayTimeInputValidator());
 
         RuleFor(x => x.AbsenceDaysCount)
             .Cascade(CascadeMode.Stop)
@@ -47,7 +47,7 @@ public class UserWorkInputValidator : AbstractValidator<UserWorkInputDto>
         RuleFor(x => x.MissionHours)
             .Cascade(CascadeMode.Stop)
             .NotNull().WithMessage("اطلاعات ساعات مأموریت اجباری است.")
-            .SetValidator(new WorkTimeInputValidator("مأموریت"));
+            .SetValidator(new WorkTimeInputValidator());
 
         RuleFor(x => x.MissionAmountOverride)
             .GreaterThanOrEqualTo(0)
@@ -65,40 +65,32 @@ public class UserWorkInputValidator : AbstractValidator<UserWorkInputDto>
 
 public class WorkTimeInputValidator : AbstractValidator<WorkTimeInput>
 {
-    private readonly string _workFieldName;
-
-    public WorkTimeInputValidator(string workFieldName)
+    public WorkTimeInputValidator()
     {
-        _workFieldName = workFieldName;
-
         RuleFor(x => x.Hours)
             .GreaterThanOrEqualTo(0)
-            .WithMessage($"ساعات {_workFieldName} نمیتواند منفی باشد.");
+            .WithMessage("ساعت نمی‌تواند منفی باشد.");
 
         RuleFor(x => x.Minutes)
             .InclusiveBetween(0, 59)
-            .WithMessage($"دقیقه {_workFieldName} باید بین 0 تا 59 باشد.");
+            .WithMessage("دقیقه باید بین 0 تا 59 باشد.");
     }
 }
 
 public class DayTimeInputValidator : AbstractValidator<DayTimeInput>
 {
-    private readonly string _workFieldName;
-
-    public DayTimeInputValidator(string workFieldName)
+    public DayTimeInputValidator()
     {
-        _workFieldName = workFieldName;
-
         RuleFor(x => x.Days)
             .InclusiveBetween(0, 31)
-            .WithMessage($"روزهای {_workFieldName} باید بین 0 تا 31 روز باشد.");
+            .WithMessage("تعداد روز باید بین 0 تا 31 روز باشد.");
 
         RuleFor(x => x.Hours)
             .GreaterThanOrEqualTo(0)
-            .WithMessage($"ساعات {_workFieldName} نمیتواند منفی باشد.");
+            .WithMessage("ساعت نمی‌تواند منفی باشد.");
 
         RuleFor(x => x.Minutes)
             .InclusiveBetween(0, 59)
-            .WithMessage($"دقیقه {_workFieldName} باید بین 0 تا 59 باشد.");
+            .WithMessage("دقیقه باید بین 0 تا 59 باشد.");
     }
 }
