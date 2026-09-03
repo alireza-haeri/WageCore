@@ -11,6 +11,6 @@ public record EmployeeInformationRequest(
     string PhoneNumber,
     string? JobTitle,
     Region Region,
-    decimal? LeaveUsedInCurrentYear = null,
-    decimal? NetWorkedDaysBeforeCurrentMonth = null,
-    decimal? CarriedOverLeaveFromPreviousYear = null);
+    int? LeaveUsedInCurrentYear = null,
+    int? NetWorkedDaysBeforeCurrentMonth = null,
+    int? CarriedOverLeaveFromPreviousYear = null);

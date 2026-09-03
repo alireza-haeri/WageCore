@@ -3466,18 +3466,18 @@
             ]
           },
           "leaveUsedInCurrentYear": {
-            "type": "number",
-            "format": "decimal",
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           },
           "netWorkedDaysBeforeCurrentMonth": {
-            "type": "number",
-            "format": "decimal",
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           },
           "carriedOverLeaveFromPreviousYear": {
-            "type": "number",
-            "format": "decimal",
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           }
         }
@@ -3892,18 +3892,18 @@
             }
           },
           "leaveUsedInCurrentYear": {
-            "type": "number",
-            "format": "decimal",
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           },
           "netWorkedDaysBeforeCurrentMonth": {
-            "type": "number",
-            "format": "decimal",
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           },
           "carriedOverLeaveFromPreviousYear": {
-            "type": "number",
-            "format": "decimal",
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           }
         }
@@ -4976,18 +4976,18 @@
             ]
           },
           "leaveUsedInCurrentYear": {
-            "type": "number",
-            "format": "decimal",
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           },
           "netWorkedDaysBeforeCurrentMonth": {
-            "type": "number",
-            "format": "decimal",
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           },
           "carriedOverLeaveFromPreviousYear": {
-            "type": "number",
-            "format": "decimal",
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           }
         }

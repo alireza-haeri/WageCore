@@ -19,6 +19,6 @@ public record GetUserEmployeesResponse(
     string? JobTitle,
     EmployeeStatus Status,
     Region Region,
-    decimal? LeaveUsedInCurrentYear,
-    decimal? NetWorkedDaysBeforeCurrentMonth,
-    decimal? CarriedOverLeaveFromPreviousYear);
+    int? LeaveUsedInCurrentYear,
+    int? NetWorkedDaysBeforeCurrentMonth,
+    int? CarriedOverLeaveFromPreviousYear);

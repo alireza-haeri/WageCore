@@ -29,9 +29,9 @@ public class EmployeeBuilder
     private string _iban = "IR123456789012345678901234";
     private bool _isPersonalCodeUniqueForUser = true;
     private bool _isNationalCodeUniqueForUser = true;
-    private decimal? _leaveUsedInCurrentYear;
-    private decimal? _netWorkedDaysBeforeCurrentMonth;
-    private decimal? _carriedOverLeaveFromPreviousYear;
+    private int? _leaveUsedInCurrentYear;
+    private int? _netWorkedDaysBeforeCurrentMonth;
+    private int? _carriedOverLeaveFromPreviousYear;
     private IPersianCalendarService? _persianCalendarService;
 
     public EmployeeBuilder WithId(Guid id)
@@ -184,19 +184,19 @@ public class EmployeeBuilder
         return this;
     }
 
-    public EmployeeBuilder WithLeaveUsedInCurrentYear(decimal? leaveUsedInCurrentYear)
+    public EmployeeBuilder WithLeaveUsedInCurrentYear(int? leaveUsedInCurrentYear)
     {
         _leaveUsedInCurrentYear = leaveUsedInCurrentYear;
         return this;
     }
 
-    public EmployeeBuilder WithNetWorkedDaysBeforeCurrentMonth(decimal? netWorkedDaysBeforeCurrentMonth)
+    public EmployeeBuilder WithNetWorkedDaysBeforeCurrentMonth(int? netWorkedDaysBeforeCurrentMonth)
     {
         _netWorkedDaysBeforeCurrentMonth = netWorkedDaysBeforeCurrentMonth;
         return this;
     }
 
-    public EmployeeBuilder WithCarriedOverLeaveFromPreviousYear(decimal? carriedOverLeaveFromPreviousYear)
+    public EmployeeBuilder WithCarriedOverLeaveFromPreviousYear(int? carriedOverLeaveFromPreviousYear)
     {
         _carriedOverLeaveFromPreviousYear = carriedOverLeaveFromPreviousYear;
         return this;

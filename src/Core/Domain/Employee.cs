@@ -21,13 +21,13 @@ public class Employee
     public Region Region { get; private set; }
 
     /// <summary>تعداد مرخصی استفاده‌شده در سال جاری (سال استخدام) — فقط برای استخدام در سال جاری و قبل از ماه جاری.</summary>
-    public decimal? LeaveUsedInCurrentYear { get; private set; }
+    public int? LeaveUsedInCurrentYear { get; private set; }
 
     /// <summary>تعداد روز خالص کارکرد روزانه قبل از ماه جاری — فقط برای استخدام در سال جاری و قبل از ماه جاری.</summary>
-    public decimal? NetWorkedDaysBeforeCurrentMonth { get; private set; }
+    public int? NetWorkedDaysBeforeCurrentMonth { get; private set; }
 
     /// <summary>تعداد مرخصی انتقال‌یافته از سال قبل — فقط برای استخدام قبل از سال جاری.</summary>
-    public decimal? CarriedOverLeaveFromPreviousYear { get; private set; }
+    public int? CarriedOverLeaveFromPreviousYear { get; private set; }
 
     public bool IsTerminated => TerminationDate.HasValue;
 
@@ -341,9 +341,9 @@ public class Employee
     public static DomainResult ValidateOnboardingHistory(
         IPersianCalendarService persianCalendarService,
         DateOnly hireDate,
-        decimal? leaveUsedInCurrentYear,
-        decimal? netWorkedDaysBeforeCurrentMonth,
-        decimal? carriedOverLeaveFromPreviousYear)
+        int? leaveUsedInCurrentYear,
+        int? netWorkedDaysBeforeCurrentMonth,
+        int? carriedOverLeaveFromPreviousYear)
     {
         var today = DateOnly.FromDateTime(DateTime.Now);
         var hireYear = persianCalendarService.GetPersianYear(hireDate);

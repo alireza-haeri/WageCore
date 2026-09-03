@@ -174,9 +174,9 @@ public class EmployeeQuery(IDbConnectionFactory dbConnectionFactory) : IEmployee
         public string PhoneNumber { get; set; } = null!;
         public string? JobTitle { get; set; }
         public string Region { get; set; } = null!;
-        public decimal? LeaveUsedInCurrentYear { get; set; }
-        public decimal? NetWorkedDaysBeforeCurrentMonth { get; set; }
-        public decimal? CarriedOverLeaveFromPreviousYear { get; set; }
+        public int? LeaveUsedInCurrentYear { get; set; }
+        public int? NetWorkedDaysBeforeCurrentMonth { get; set; }
+        public int? CarriedOverLeaveFromPreviousYear { get; set; }
     }
 
     public async Task<bool> IsExistEmployeePersonalCode(Guid userId, string personalCode, Guid? excludeEmployeeId = null,

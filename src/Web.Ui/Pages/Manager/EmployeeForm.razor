@@ -148,7 +148,7 @@
                 <div class="row g-3">
                     <div class="col-md-4 field">
                         <label class="f-label" for="e-leaveUsedInCurrentYear"><span class="req-s">*</span>تعداد مرخصی استفاده‌شده در سال جاری</label>
-                        <InputText @bind-Value="_formHelper.Model.LeaveUsedInCurrentYear" class="in num" id="e-leaveUsedInCurrentYear" inputmode="decimal" placeholder="مثلاً 3"/>
+                        <InputText @bind-Value="_formHelper.Model.LeaveUsedInCurrentYear" class="in num" id="e-leaveUsedInCurrentYear" inputmode="numeric" placeholder="مثلاً 3"/>
                         <div class="f-help">مرخصی استفاده‌شده در سال جاری (همان سال استخدام).</div>
                         @foreach (var error in GetOnboardingHistoryError(nameof(EmployeeFormModel.LeaveUsedInCurrentYear)))
                         {
@@ -158,7 +158,7 @@
 
                     <div class="col-md-4 field">
                         <label class="f-label" for="e-netWorkedDays"><span class="req-s">*</span>تعداد روز خالص کارکرد قبل از ماه جاری</label>
-                        <InputText @bind-Value="_formHelper.Model.NetWorkedDaysBeforeCurrentMonth" class="in num" id="e-netWorkedDays" inputmode="decimal" placeholder="مثلاً 45"/>
+                        <InputText @bind-Value="_formHelper.Model.NetWorkedDaysBeforeCurrentMonth" class="in num" id="e-netWorkedDays" inputmode="numeric" placeholder="مثلاً 45"/>
                         <div class="f-help">روزهای خالص کارکرد در ماه‌های قبل از ماه جاری.</div>
                         @foreach (var error in GetOnboardingHistoryError(nameof(EmployeeFormModel.NetWorkedDaysBeforeCurrentMonth)))
                         {
@@ -170,7 +170,7 @@
                     {
                         <div class="col-md-4 field">
                             <label class="f-label" for="e-carriedOverLeave"><span class="req-s">*</span>تعداد مرخصی انتقال‌یافته از سال قبل</label>
-                            <InputText @bind-Value="_formHelper.Model.CarriedOverLeaveFromPreviousYear" class="in num" id="e-carriedOverLeave" inputmode="decimal" placeholder="مثلاً 5"/>
+                            <InputText @bind-Value="_formHelper.Model.CarriedOverLeaveFromPreviousYear" class="in num" id="e-carriedOverLeave" inputmode="numeric" placeholder="مثلاً 5"/>
                             <div class="f-help">چون استخدام قبل از سال جاری است، این فیلد هم لازم است.</div>
                             @foreach (var error in GetOnboardingHistoryError(nameof(EmployeeFormModel.CarriedOverLeaveFromPreviousYear)))
                             {
@@ -525,9 +525,9 @@
             return false;
         }
 
-        if (TryParseOptionalAmount(value, out var amount) is false)
+        if (TryParseOptionalInt(value, out var amount) is false)
         {
-            AddOnboardingHistoryError(fieldName, "مقدار باید عدد باشد.");
+            AddOnboardingHistoryError(fieldName, "مقدار باید عدد صحیح (بدون اعشار) باشد.");
             return false;
         }
 
@@ -540,16 +540,16 @@
         return true;
     }
 
-    private static bool TryParseOptionalAmount(string value, out decimal amount) =>
-        decimal.TryParse(value.Trim(), System.Globalization.NumberStyles.Number,
+    private static bool TryParseOptionalInt(string value, out int amount) =>
+        int.TryParse(value.Trim(), System.Globalization.NumberStyles.AllowLeadingSign,
             System.Globalization.CultureInfo.InvariantCulture, out amount);
 
-    private static decimal? ParseOptionalAmount(string? value)
+    private static int? ParseOptionalInt(string? value)
     {
         if (string.IsNullOrWhiteSpace(value))
             return null;
 
-        return decimal.TryParse(value.Trim(), System.Globalization.NumberStyles.Number,
+        return int.TryParse(value.Trim(), System.Globalization.NumberStyles.AllowLeadingSign,
             System.Globalization.CultureInfo.InvariantCulture, out var amount)
             ? amount
             : 0;
@@ -618,9 +618,9 @@
             personalCode: model.PersonalCode,
             phoneNumber: model.PhoneNumber,
             region: model.Region ?? EmployeeInformationRequestRegion.Normal,
-            leaveUsedInCurrentYear: ParseOptionalAmount(model.LeaveUsedInCurrentYear),
-            netWorkedDaysBeforeCurrentMonth: ParseOptionalAmount(model.NetWorkedDaysBeforeCurrentMonth),
-            carriedOverLeaveFromPreviousYear: ParseOptionalAmount(model.CarriedOverLeaveFromPreviousYear));
+            leaveUsedInCurrentYear: ParseOptionalInt(model.LeaveUsedInCurrentYear),
+            netWorkedDaysBeforeCurrentMonth: ParseOptionalInt(model.NetWorkedDaysBeforeCurrentMonth),
+            carriedOverLeaveFromPreviousYear: ParseOptionalInt(model.CarriedOverLeaveFromPreviousYear));
 
         var bankAccountsRequest = model.BankAccounts
             .Select(x => new EmployeeBankAccountRequest(

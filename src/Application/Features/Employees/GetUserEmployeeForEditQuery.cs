@@ -17,7 +17,7 @@ public record GetUserEmployeeForEditQueryResponse(
     string PhoneNumber,
     string? JobTitle,
     Region Region,
-    decimal? LeaveUsedInCurrentYear,
-    decimal? NetWorkedDaysBeforeCurrentMonth,
-    decimal? CarriedOverLeaveFromPreviousYear,
+    int? LeaveUsedInCurrentYear,
+    int? NetWorkedDaysBeforeCurrentMonth,
+    int? CarriedOverLeaveFromPreviousYear,
     List<EmployeeBankAccountDto> BankAccounts);
