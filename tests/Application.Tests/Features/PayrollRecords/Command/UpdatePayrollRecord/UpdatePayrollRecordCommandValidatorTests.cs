@@ -1,3 +1,8 @@
+using Application.Features.PayrollRecords;
+using Core.Contracts.PayrollRecords;
+using FluentValidation.TestHelper;
+using Shared.Tests.Builders;
+
 namespace Application.Tests.Features.PayrollRecords.Command.UpdatePayrollRecord;
 
 public class UpdatePayrollRecordCommandValidatorTests
@@ -12,7 +17,7 @@ public class UpdatePayrollRecordCommandValidatorTests
     private const int ValidPersianMonth = 6;
 
     private UpdatePayrollRecordCommand CreateValidCommand(
-        PayrollWorkInputDto? work = null,
+        UserWorkInputDto? work = null,
         Guid? userId = null,
         Guid? employeeId = null,
         Guid? payrollRecordId = null,
@@ -24,7 +29,7 @@ public class UpdatePayrollRecordCommandValidatorTests
             payrollRecordId ?? ValidPayrollRecordId,
             persianYear ?? ValidPersianYear,
             persianMonth ?? ValidPersianMonth,
-            work ?? _builder.BuildDto());
+            work ?? _builder.BuildUserWorkInputDto());
 
     [Fact]
     public void Validate_WithValidCommand_ShouldNotHaveAnyErrors()
@@ -116,10 +121,10 @@ public class UpdatePayrollRecordCommandValidatorTests
     {
         var work = fieldName switch
         {
-            "WorkedDaysCount" => _builder.BuildDto() with { WorkedDaysCount = 40m },
-            "LeaveHours" => _builder.BuildDto() with { LeaveHours = -1m },
-            "AbsenceDaysCount" => _builder.BuildDto() with { AbsenceDaysCount = 40m },
-            _ => _builder.BuildDto() with { MissionDaysCount = 40m }
+            "WorkedDaysCount" => _builder.BuildUserWorkInputDto() with { WorkedDaysCount = 40m },
+            "LeaveHours" => _builder.BuildUserWorkInputDto() with { LeaveHours = -1m },
+            "AbsenceDaysCount" => _builder.BuildUserWorkInputDto() with { AbsenceDaysCount = 40m },
+            _ => _builder.BuildUserWorkInputDto() with { MissionDaysCount = 40m }
         };
         var command = CreateValidCommand(work);
 
@@ -136,9 +141,9 @@ public class UpdatePayrollRecordCommandValidatorTests
     {
         var work = fieldName switch
         {
-            "OvertimeHours" => _builder.BuildDto() with { OvertimeHours = -1m },
-            "NightShiftHours" => _builder.BuildDto() with { NightShiftHours = -1m },
-            _ => _builder.BuildDto() with { FridayWorkHours = -1m }
+            "OvertimeHours" => _builder.BuildUserWorkInputDto() with { OvertimeHours = -1m },
+            "NightShiftHours" => _builder.BuildUserWorkInputDto() with { NightShiftHours = -1m },
+            _ => _builder.BuildUserWorkInputDto() with { FridayWorkHours = -1m }
         };
         var command = CreateValidCommand(work);
 

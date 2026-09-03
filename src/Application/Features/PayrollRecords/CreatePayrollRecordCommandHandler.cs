@@ -20,10 +20,8 @@ public class CreatePayrollRecordCommandHandler(
         if (period.StartPeriod > DateOnly.FromDateTime(DateTime.Now))
             return Result<CreatePayrollRecordCommandResponse>.GeneralFailure("تاریخ شروع دوره نباید برای آینده باشد.");
 
-        var workInput = request.Work with
-        {
-            StandardWorkingDaysCount = period.EndPeriod.DayNumber - period.StartPeriod.DayNumber + 1
-        };
+        var standardWorkingDaysCount = period.EndPeriod.DayNumber - period.StartPeriod.DayNumber + 1;
+        var isEsfandPeriod = request.PersianMonth == 12;
 
         var limitsResult = await payrollLimitsResolver.ResolveAsync(
             period.StartPeriod,
@@ -73,6 +71,24 @@ public class CreatePayrollRecordCommandHandler(
             return Result<CreatePayrollRecordCommandResponse>.NotfoundFailure(
                 "برای این بازه حکم حقوقی کارمند یافت نشد.");
 
+        var workInput = new PayrollWorkInput(
+            request.Work.WorkedDaysCount,
+            request.Work.OvertimeHours,
+            request.Work.NightShiftHours,
+            request.Work.FridayWorkHours,
+            request.Work.LeaveHours,
+            request.Work.AbsenceDaysCount,
+            request.Work.MissionDaysCount,
+            request.Work.MissionHours,
+            request.Work.HolidayWorkHours,
+            request.Work.MissionAmountOverride,
+            standardWorkingDaysCount,
+            isEsfandPeriod,
+            request.Work.PerformanceBonusAmount,
+            request.Work.CashBenefitsAmount,
+            request.Work.AnnualBonusType
+        );
+
         var calculationResult = await payrollCalculationService.CalculateAsync(
             employee,
             workshop,
@@ -85,6 +101,7 @@ public class CreatePayrollRecordCommandHandler(
             return Result<CreatePayrollRecordCommandResponse>.ValidationFailure(calculationResult.Errors!);
 
         var calculation = calculationResult.Response!;
+
         var payrollRecord = PayrollRecord.Create(
             request.EmployeeId,
             period.StartPeriod,
@@ -92,7 +109,7 @@ public class CreatePayrollRecordCommandHandler(
             salaryProfiles[0].IsTaxSubject,
             limits.MaxMonthlyOvertimeHours,
             limits.MaxFridayHours,
-            workInput with { IsEsfandPeriod = calculation.IsEsfandPeriod },
+            workInput,
             calculation.Amounts,
             calculation.CalculatedAmounts);
         if (!payrollRecord.IsSuccess)
@@ -103,6 +120,9 @@ public class CreatePayrollRecordCommandHandler(
             return Result<CreatePayrollRecordCommandResponse>.GeneralFailure("خطا در ایجاد فیش پرداختی");
 
         return Result<CreatePayrollRecordCommandResponse>.Success(
-            new CreatePayrollRecordCommandResponse(payrollRecordId.Value));
+            new CreatePayrollRecordCommandResponse(
+                payrollRecordId.Value,
+                calculation.CalculatedAmounts,
+                calculation.Amounts));
     }
 }

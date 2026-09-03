@@ -20,3 +20,5 @@ global using Core.Domain.Enums;
 global using Core.Contracts.Employees;
 global using Core.Contracts.PayrollRecords;
 global using Application.Services;
+global using Core.Contracts.CalculationFormulas;
+global using Microsoft.Extensions.Logging;

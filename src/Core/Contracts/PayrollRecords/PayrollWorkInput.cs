@@ -1,8 +1,6 @@
-using Core.Domain.Enums;
-
 namespace Core.Contracts.PayrollRecords;
 
-public record UserWorkInputDto(
+public record PayrollWorkInput(
     decimal WorkedDaysCount,
     decimal OvertimeHours,
     decimal NightShiftHours,
@@ -13,6 +11,8 @@ public record UserWorkInputDto(
     decimal MissionHours,
     decimal HolidayWorkHours,
     decimal? MissionAmountOverride,
+    int StandardWorkingDaysCount,
+    bool IsEsfandPeriod,
     decimal? PerformanceBonusAmount,
     decimal? CashBenefitsAmount,
     AnnualBonusType? AnnualBonusType

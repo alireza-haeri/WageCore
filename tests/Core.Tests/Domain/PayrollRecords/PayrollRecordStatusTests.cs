@@ -95,7 +95,7 @@ public class PayrollRecordStatusTests
         var record = CreateDraftRecord();
         var periodStart = new DateOnly(2025, 2, 1);
         var periodEnd = new DateOnly(2025, 2, 28);
-        var dto = new PayrollWorkInputDto(
+        var workInput = new PayrollWorkInput(
             20m,
             3m,
             2m,
@@ -108,7 +108,6 @@ public class PayrollRecordStatusTests
             null,
             31,
             false,
-            null,
             null,
             null,
             null);
@@ -140,7 +139,7 @@ public class PayrollRecordStatusTests
 
         using (new AssertionScope())
         {
-            record.Update(periodStart, periodEnd, false, 20m, 12m, dto, amounts, calculatedAmounts)
+            record.Update(periodStart, periodEnd, false, 20m, 12m, workInput, amounts, calculatedAmounts)
                 .IsSuccess.Should().BeTrue();
             record.EnsureCanDelete().IsSuccess.Should().BeTrue();
         }
@@ -154,7 +153,7 @@ public class PayrollRecordStatusTests
 
         var periodStart = new DateOnly(2025, 2, 1);
         var periodEnd = new DateOnly(2025, 2, 28);
-        var dto = new PayrollWorkInputDto(
+        var workInput = new PayrollWorkInput(
             20m,
             3m,
             2m,
@@ -167,7 +166,6 @@ public class PayrollRecordStatusTests
             null,
             31,
             false,
-            null,
             null,
             null,
             null);
@@ -199,7 +197,7 @@ public class PayrollRecordStatusTests
 
         using (new AssertionScope())
         {
-            record.Update(periodStart, periodEnd, false, 20m, 12m, dto, amounts, calculatedAmounts)
+            record.Update(periodStart, periodEnd, false, 20m, 12m, workInput, amounts, calculatedAmounts)
                 .IsSuccess.Should().BeFalse();
             record.EnsureCanDelete().IsSuccess.Should().BeFalse();
         }

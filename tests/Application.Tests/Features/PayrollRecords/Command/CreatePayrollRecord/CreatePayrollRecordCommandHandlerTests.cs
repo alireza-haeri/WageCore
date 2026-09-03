@@ -1,3 +1,12 @@
+using Application.Features.PayrollRecords;
+using Core.Contracts.PayrollRecords;
+using Core.Domain;
+using Core.Domain.Enums;
+using FluentAssertions;
+using FluentAssertions.Execution;
+using NSubstitute;
+using Shared.Tests.Builders;
+
 namespace Application.Tests.Features.PayrollRecords.Command.CreatePayrollRecord;
 
 public class CreatePayrollRecordCommandHandlerTests
@@ -82,13 +91,13 @@ public class CreatePayrollRecordCommandHandlerTests
             _payrollRecordRepository);
     }
 
-    private CreatePayrollRecordCommand CreateValidCommand(PayrollWorkInputDto? work = null) =>
+    private CreatePayrollRecordCommand CreateValidCommand(UserWorkInputDto? work = null) =>
         new(
             ValidUserId,
             ValidEmployeeId,
             ValidPersianYear,
             ValidPersianMonth,
-            work ?? _payrollRecordBuilder.BuildDto());
+            work ?? _payrollRecordBuilder.BuildUserWorkInputDto());
 
     private void SetupPeriod(DateOnly startPeriod, DateOnly endPeriod) =>
         _persianCalendarService
@@ -111,7 +120,7 @@ public class CreatePayrollRecordCommandHandlerTests
                 Arg.Any<IReadOnlyList<SalaryDecree>>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<DateOnly>(),
-                Arg.Any<PayrollWorkInputDto>(),
+                Arg.Any<PayrollWorkInput>(),
                 Arg.Any<CancellationToken>())
             .Returns(Result<PayrollCalculationResult>.Success(calculation));
 
@@ -123,7 +132,7 @@ public class CreatePayrollRecordCommandHandlerTests
                 Arg.Any<IReadOnlyList<SalaryDecree>>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<DateOnly>(),
-                Arg.Any<PayrollWorkInputDto>(),
+                Arg.Any<PayrollWorkInput>(),
                 Arg.Any<CancellationToken>())
             .Returns(Result<PayrollCalculationResult>.GeneralFailure(message));
 
@@ -156,7 +165,7 @@ public class CreatePayrollRecordCommandHandlerTests
                 Arg.Any<IReadOnlyList<SalaryDecree>>(),
                 Arg.Any<DateOnly>(),
                 Arg.Any<DateOnly>(),
-                Arg.Any<PayrollWorkInputDto>(),
+                Arg.Any<PayrollWorkInput>(),
                 Arg.Any<CancellationToken>());
 
     private Task DidNotReceiveSalaryProfiles() =>
@@ -398,7 +407,7 @@ public class CreatePayrollRecordCommandHandlerTests
     public async Task Handle_WithValidRequest_ShouldCreatePayrollRecordFromTheCalculation()
     {
         var createdId = Guid.NewGuid();
-        var work = _payrollRecordBuilder.BuildDto();
+        var work = _payrollRecordBuilder.BuildUserWorkInputDto();
         SetupPeriod(PeriodStart, PeriodEnd);
         _payrollRecordRepository
             .CreateAsync(Arg.Any<PayrollRecord>(), Arg.Any<CancellationToken>())
@@ -407,7 +416,12 @@ public class CreatePayrollRecordCommandHandlerTests
         var result = await _handler.Handle(CreateValidCommand(work), CancellationToken.None);
 
         var response = result.ShouldBeSuccess();
-        response.PayrollRecordId.Should().Be(createdId);
+        using (new AssertionScope())
+        {
+            response.PayrollRecordId.Should().Be(createdId);
+            response.CalculatedAmounts.Should().NotBeNull();
+            response.Amounts.Should().NotBeNull();
+        }
 
         _payrollCalculationService.Received(1).CalculateAsync(
             _employee,
@@ -415,12 +429,12 @@ public class CreatePayrollRecordCommandHandlerTests
             _salaryProfiles,
             PeriodStart,
             PeriodEnd,
-            work with
-            {
-                StandardWorkingDaysCount = PeriodEnd.DayNumber - PeriodStart.DayNumber + 1,
-                IsEsfandPeriod = false
-            },
+            Arg.Is<PayrollWorkInput>(x =>
+                x.WorkedDaysCount == work.WorkedDaysCount &&
+                x.StandardWorkingDaysCount == PeriodEnd.DayNumber - PeriodStart.DayNumber + 1 &&
+                x.IsEsfandPeriod == false),
             Arg.Any<CancellationToken>());
+
         await _payrollRecordRepository.Received(1).CreateAsync(
             Arg.Is<PayrollRecord>(x =>
                 x.EmployeeId == ValidEmployeeId &&

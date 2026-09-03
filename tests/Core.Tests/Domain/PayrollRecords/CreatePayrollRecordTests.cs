@@ -70,7 +70,6 @@ public class CreatePayrollRecordTests
             .WithMissionAmountOverride(500_000m)
             .WithStandardWorkingDaysCount(30)
             .WithIsEsfandPeriod(true)
-            .WithAnnualBonusAmount(5_000_000m)
             .WithAnnualBonusType(AnnualBonusType.Maximum)
             .WithPerformanceBonusAmount(2_000_000m)
             .WithCashBenefitsAmount(300_000m)
@@ -129,7 +128,7 @@ public class CreatePayrollRecordTests
             false,
             20m,
             12m,
-            _builder.WithPeriod(PeriodStart, PeriodEnd).BuildDto(),
+            _builder.WithPeriod(PeriodStart, PeriodEnd).BuildPayrollWorkInput(),
             _builder.BuildAmountsDto(),
             _builder.BuildCalculatedAmountsDto());
 
@@ -160,24 +159,6 @@ public class CreatePayrollRecordTests
     }
 
     [Fact]
-    public void Create_WithNullPayrollRecord_ShouldFail()
-    {
-        var result = PayrollRecord.Create(
-            Guid.NewGuid(),
-            Guid.NewGuid(),
-            PeriodStart,
-            PeriodEnd,
-            false,
-            20m,
-            12m,
-            null,
-            _builder.BuildAmountsDto(),
-            _builder.BuildCalculatedAmountsDto());
-
-        result.ShouldBeFailure("اطلاعات فیش پرداختی");
-    }
-
-    [Fact]
     public void Create_WithNullPayrollAmounts_ShouldFail()
     {
         var result = PayrollRecord.Create(
@@ -188,7 +169,7 @@ public class CreatePayrollRecordTests
             false,
             20m,
             12m,
-            _builder.BuildDto(),
+            _builder.BuildPayrollWorkInput(),
             null,
             _builder.BuildCalculatedAmountsDto());
 
@@ -206,7 +187,7 @@ public class CreatePayrollRecordTests
             false,
             20m,
             12m,
-            _builder.BuildDto(),
+            _builder.BuildPayrollWorkInput(),
             _builder.BuildAmountsDto(),
             null);
 
@@ -261,14 +242,6 @@ public class CreatePayrollRecordTests
         result.ShouldBeFailure("بازه دوره فیش پرداختی نباید بیشتر از 31 روز باشد.");
     }
 
-    [Fact]
-    public void Create_WithNullWorkedDaysCount_ShouldFail()
-    {
-        var result = _builder.WithWorkedDaysCount(null).CreateResult();
-
-        result.ShouldBeFailure("تعداد روزهای کارکرد");
-    }
-
     [Theory]
     [InlineData(-1)]
     [InlineData(32)]
@@ -289,14 +262,6 @@ public class CreatePayrollRecordTests
         var result = _builder.WithWorkedDaysCount((decimal)daysCount).CreateResult();
 
         result.ShouldBeSuccess();
-    }
-
-    [Fact]
-    public void Create_WithNullOvertimeHours_ShouldFail()
-    {
-        var result = _builder.WithOvertimeHours(null).CreateResult();
-
-        result.ShouldBeFailure("ساعات اضافه‌کاری");
     }
 
     [Fact]
@@ -338,14 +303,6 @@ public class CreatePayrollRecordTests
     }
 
     [Fact]
-    public void Create_WithNullNightShiftHours_ShouldFail()
-    {
-        var result = _builder.WithNightShiftHours(null).CreateResult();
-
-        result.ShouldBeFailure("ساعات شیفت شب");
-    }
-
-    [Fact]
     public void Create_WithNegativeNightShiftHours_ShouldFail()
     {
         var result = _builder.WithNightShiftHours(-1m).CreateResult();
@@ -359,14 +316,6 @@ public class CreatePayrollRecordTests
         var result = _builder.WithNightShiftHours(2.25m).CreateResult();
 
         result.ShouldBeSuccess().NightShiftHours.Should().Be(2.25m);
-    }
-
-    [Fact]
-    public void Create_WithNullFridayWorkHours_ShouldFail()
-    {
-        var result = _builder.WithFridayWorkHours(null).CreateResult();
-
-        result.ShouldBeFailure("ساعات کار جمعه");
     }
 
     [Fact]
@@ -408,14 +357,6 @@ public class CreatePayrollRecordTests
     }
 
     [Fact]
-    public void Create_WithNullLeaveHours_ShouldFail()
-    {
-        var result = _builder.WithLeaveHours(null).CreateResult();
-
-        result.ShouldBeFailure("ساعات مرخصی");
-    }
-
-    [Fact]
     public void Create_WithNegativeLeaveHours_ShouldFail()
     {
         var result = _builder.WithLeaveHours(-0.5m).CreateResult();
@@ -429,14 +370,6 @@ public class CreatePayrollRecordTests
         var result = _builder.WithLeaveHours(31.5m).CreateResult();
 
         result.ShouldBeSuccess().LeaveHours.Should().Be(31.5m);
-    }
-
-    [Fact]
-    public void Create_WithNullAbsenceDaysCount_ShouldFail()
-    {
-        var result = _builder.WithAbsenceDaysCount(null).CreateResult();
-
-        result.ShouldBeFailure("تعداد روزهای غیبت");
     }
 
     [Fact]
@@ -456,14 +389,6 @@ public class CreatePayrollRecordTests
     }
 
     [Fact]
-    public void Create_WithNullMissionDaysCount_ShouldFail()
-    {
-        var result = _builder.WithMissionDaysCount(null).CreateResult();
-
-        result.ShouldBeFailure("تعداد روزهای مأموریت");
-    }
-
-    [Fact]
     public void Create_WithNegativeMissionDaysCount_ShouldFail()
     {
         var result = _builder.WithMissionDaysCount(-3m).CreateResult();
@@ -480,14 +405,6 @@ public class CreatePayrollRecordTests
     }
 
     [Fact]
-    public void Create_WithNullMissionHours_ShouldFail()
-    {
-        var result = _builder.WithMissionHours(null).CreateResult();
-
-        result.ShouldBeFailure("ساعات مأموریت");
-    }
-
-    [Fact]
     public void Create_WithNegativeMissionHours_ShouldFail()
     {
         var result = _builder.WithMissionHours(-4m).CreateResult();
@@ -501,14 +418,6 @@ public class CreatePayrollRecordTests
         var result = _builder.WithMissionHours(8.5m).CreateResult();
 
         result.ShouldBeSuccess().MissionHours.Should().Be(8.5m);
-    }
-
-    [Fact]
-    public void Create_WithNullHolidayWorkHours_ShouldFail()
-    {
-        var result = _builder.WithHolidayWorkHours(null).CreateResult();
-
-        result.ShouldBeFailure("ساعات تعطیل‌کاری");
     }
 
     [Fact]
@@ -541,14 +450,6 @@ public class CreatePayrollRecordTests
         var result = _builder.WithMissionAmountOverride(750_000m).CreateResult();
 
         result.ShouldBeSuccess().MissionAmountOverride.Should().Be(750_000m);
-    }
-
-    [Fact]
-    public void Create_WithNullStandardWorkingDaysCount_ShouldFail()
-    {
-        var result = _builder.WithStandardWorkingDaysCount(null).CreateResult();
-
-        result.ShouldBeFailure("تعداد روزهای کارکرد استاندارد نمیتواند خالی باشد.");
     }
 
     [Theory]
@@ -601,11 +502,10 @@ public class CreatePayrollRecordTests
     }
 
     [Fact]
-    public void Create_WithAnnualBonusAmountOutsideEsfandPeriod_ShouldFail()
+    public void Create_WithAnnualBonusTypeOutsideEsfandPeriod_ShouldFail()
     {
         var result = _builder
             .WithIsEsfandPeriod(false)
-            .WithAnnualBonusAmount(5_000_000m)
             .WithAnnualBonusType(AnnualBonusType.Minimum)
             .CreateResult();
 
@@ -613,22 +513,21 @@ public class CreatePayrollRecordTests
     }
 
     [Fact]
-    public void Create_WithAnnualBonusAmountInEsfandPeriodWithoutType_ShouldFail()
+    public void Create_WithEsfandPeriodWithoutAnnualBonusType_ShouldFail()
     {
         var result = _builder
             .WithIsEsfandPeriod(true)
-            .WithAnnualBonusAmount(5_000_000m)
+            .WithAnnualBonusType(null)
             .CreateResult();
 
         result.ShouldBeFailure("نوع عیدی سالانه نمیتواند خالی باشد.");
     }
 
     [Fact]
-    public void Create_WithAnnualBonusAmountInEsfandPeriod_ShouldReturnSuccess()
+    public void Create_WithEsfandPeriodAndAnnualBonusType_ShouldReturnSuccess()
     {
         var result = _builder
             .WithIsEsfandPeriod(true)
-            .WithAnnualBonusAmount(5_000_000m)
             .WithAnnualBonusType(AnnualBonusType.Minimum)
             .CreateResult();
 
@@ -851,7 +750,7 @@ public class CreatePayrollRecordTests
             false,
             20m,
             12m,
-            _builder.BuildDto(),
+            _builder.BuildPayrollWorkInput(),
             _builder.BuildAmountsDto(),
             calculatedAmounts);
 
