@@ -71,23 +71,11 @@ public class CreatePayrollRecordCommandHandler(
             return Result<CreatePayrollRecordCommandResponse>.NotfoundFailure(
                 "برای این بازه حکم حقوقی کارمند یافت نشد.");
 
-        var workInput = new PayrollWorkInput(
-            request.Work.WorkedDaysCount,
-            request.Work.OvertimeHours,
-            request.Work.NightShiftHours,
-            request.Work.FridayWorkHours,
-            request.Work.LeaveHours,
-            request.Work.AbsenceDaysCount,
-            request.Work.MissionDaysCount,
-            request.Work.MissionHours,
-            request.Work.HolidayWorkHours,
-            request.Work.MissionAmountOverride,
+        var workInput = PayrollWorkInputMapper.Map(
+            request.Work,
             standardWorkingDaysCount,
             isEsfandPeriod,
-            request.Work.PerformanceBonusAmount,
-            request.Work.CashBenefitsAmount,
-            request.Work.AnnualBonusType
-        );
+            limits.DailyWorkingHours);
 
         var calculationResult = await payrollCalculationService.CalculateAsync(
             employee,

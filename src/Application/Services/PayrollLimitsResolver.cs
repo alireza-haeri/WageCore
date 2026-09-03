@@ -37,6 +37,7 @@ public class PayrollLimitsResolver(
         return Result<PayrollLimits>.Success(new PayrollLimits(
             maxOvertimeHoursPerDay.Value * periodDaysCount,
             dailyWorkingHours.Value * fridayDaysCount,
-            maxNightShiftHoursPerDay.Value * periodDaysCount));
+            maxNightShiftHoursPerDay.Value * periodDaysCount,
+            dailyWorkingHours.Value));
     }
 }

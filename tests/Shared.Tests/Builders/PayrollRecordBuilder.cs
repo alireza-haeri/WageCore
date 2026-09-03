@@ -306,18 +306,31 @@ public class PayrollRecordBuilder
     public UserWorkInputDto BuildUserWorkInputDto() =>
         new(
             _workedDaysCount,
-            _overtimeHours,
-            _nightShiftHours,
-            _fridayWorkHours,
-            _leaveHours,
+            ToWorkTimeInput(_overtimeHours),
+            ToWorkTimeInput(_nightShiftHours),
+            ToWorkTimeInput(_fridayWorkHours),
+            ToWorkTimeInput(_holidayWorkHours),
+            ToDayTimeInput(_leaveHours),
             _absenceDaysCount,
-            _missionDaysCount,
-            _missionHours,
-            _holidayWorkHours,
+            (int)_missionDaysCount,
+            ToWorkTimeInput(_missionHours),
             _missionAmountOverride,
             _performanceBonusAmount,
             _cashBenefitsAmount,
             _annualBonusType);
+
+    private static WorkTimeInput ToWorkTimeInput(decimal hours)
+    {
+        var wholeHours = (int)hours;
+        var minutes = (int)Math.Round((hours - wholeHours) * 60m, MidpointRounding.AwayFromZero);
+        return new WorkTimeInput(wholeHours, minutes);
+    }
+
+    private static DayTimeInput ToDayTimeInput(decimal hours)
+    {
+        var workTime = ToWorkTimeInput(hours);
+        return new DayTimeInput(0, workTime.Hours, workTime.Minutes);
+    }
 
     public PayrollWorkInput BuildPayrollWorkInput() =>
         new(

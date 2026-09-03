@@ -125,7 +125,7 @@ public class UpdatePayrollRecordCommandHandlerTests
             .Returns(Result<PayrollLimits>.Success(limits));
 
     private static PayrollLimits ValidLimits() =>
-        new(20m, 12m, 8m);
+        new(20m, 12m, 8m, 8m);
 
     private void SetupCalculation(PayrollCalculationResult calculation) =>
         _payrollCalculationService
@@ -454,7 +454,7 @@ public class UpdatePayrollRecordCommandHandlerTests
     public async Task Handle_WhenDomainRejectsTheUpdate_ShouldReturnGeneralFailure()
     {
         SetupPeriod(PeriodStart, PeriodEnd);
-        SetupLimits(new PayrollLimits(2m, 12m, 8m));
+        SetupLimits(new PayrollLimits(2m, 12m, 8m, 8m));
 
         var result = await _handler.Handle(CreateValidCommand(), CancellationToken.None);
 

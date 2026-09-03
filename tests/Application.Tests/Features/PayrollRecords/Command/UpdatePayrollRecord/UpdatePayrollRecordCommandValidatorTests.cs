@@ -114,17 +114,15 @@ public class UpdatePayrollRecordCommandValidatorTests
 
     [Theory]
     [InlineData("WorkedDaysCount")]
-    [InlineData("LeaveHours")]
     [InlineData("AbsenceDaysCount")]
-    [InlineData("MissionDaysCount")]
+    [InlineData("MissionDays")]
     public void Validate_ShouldRunTheNestedWorkValidatorOnDayCounts(string fieldName)
     {
         var work = fieldName switch
         {
             "WorkedDaysCount" => _builder.BuildUserWorkInputDto() with { WorkedDaysCount = 40m },
-            "LeaveHours" => _builder.BuildUserWorkInputDto() with { LeaveHours = -1m },
             "AbsenceDaysCount" => _builder.BuildUserWorkInputDto() with { AbsenceDaysCount = 40m },
-            _ => _builder.BuildUserWorkInputDto() with { MissionDaysCount = 40m }
+            _ => _builder.BuildUserWorkInputDto() with { MissionDays = 40 }
         };
         var command = CreateValidCommand(work);
 
@@ -134,21 +132,43 @@ public class UpdatePayrollRecordCommandValidatorTests
     }
 
     [Theory]
-    [InlineData("OvertimeHours")]
-    [InlineData("NightShiftHours")]
-    [InlineData("FridayWorkHours")]
+    [InlineData("Overtime")]
+    [InlineData("NightShift")]
+    [InlineData("FridayWork")]
     public void Validate_ShouldRunTheNestedWorkValidatorOnHourCounts(string fieldName)
     {
         var work = fieldName switch
         {
-            "OvertimeHours" => _builder.BuildUserWorkInputDto() with { OvertimeHours = -1m },
-            "NightShiftHours" => _builder.BuildUserWorkInputDto() with { NightShiftHours = -1m },
-            _ => _builder.BuildUserWorkInputDto() with { FridayWorkHours = -1m }
+            "Overtime" => _builder.BuildUserWorkInputDto() with { Overtime = new WorkTimeInput(-1, 0) },
+            "NightShift" => _builder.BuildUserWorkInputDto() with { NightShift = new WorkTimeInput(-1, 0) },
+            _ => _builder.BuildUserWorkInputDto() with { FridayWork = new WorkTimeInput(-1, 0) }
         };
         var command = CreateValidCommand(work);
 
         var result = _validator.TestValidate(command);
 
-        result.ShouldHaveValidationErrorFor($"Work.{fieldName}");
+        result.ShouldHaveValidationErrorFor($"Work.{fieldName}.Hours");
+    }
+
+    [Fact]
+    public void Validate_WithOutOfRangeLeaveDays_ShouldHaveValidationError()
+    {
+        var work = _builder.BuildUserWorkInputDto() with { Leave = new DayTimeInput(40, 0, 0) };
+        var command = CreateValidCommand(work);
+
+        var result = _validator.TestValidate(command);
+
+        result.ShouldHaveValidationErrorFor(x => x.Work.Leave.Days);
+    }
+
+    [Fact]
+    public void Validate_WithNegativeMissionHours_ShouldHaveValidationError()
+    {
+        var work = _builder.BuildUserWorkInputDto() with { MissionHours = new WorkTimeInput(-1, 0) };
+        var command = CreateValidCommand(work);
+
+        var result = _validator.TestValidate(command);
+
+        result.ShouldHaveValidationErrorFor(x => x.Work.MissionHours.Hours);
     }
 }
