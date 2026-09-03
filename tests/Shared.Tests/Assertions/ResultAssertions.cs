@@ -24,7 +24,7 @@ public static class ResultAssertions
         errorMessage.Should().NotBeNull();
 
         if (expectedMessagePart is not null)
-            errorMessage?.Any(e => e.Value.Contains(expectedMessagePart)).Should().BeTrue();
+            errorMessage?.Any(e => e.Value.Any(m => m.Contains(expectedMessagePart))).Should().BeTrue();
 
         if (expectedResultType is not null)
             result.BadResultType.Should().Be(expectedResultType);

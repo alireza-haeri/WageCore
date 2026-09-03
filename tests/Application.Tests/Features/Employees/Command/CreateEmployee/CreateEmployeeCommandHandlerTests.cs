@@ -367,7 +367,7 @@ public class CreateEmployeeCommandHandlerTests
             .WithHireDate(hireDate)
             .BuildEmployeeDto();
         var command = CreateValidCommand(employee: employee);
-        var workshop = CreateValidWorkshop();
+        var workshop = CreateValidWorkshop(registrationDate: DateOnly.FromDateTime(DateTime.Now.AddDays(-100)));
 
         _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
             .Returns(workshop);
@@ -394,7 +394,7 @@ public class CreateEmployeeCommandHandlerTests
             .WithNetWorkedDaysBeforeCurrentMonth(45)
             .BuildEmployeeDto();
         var command = CreateValidCommand(employee: employee);
-        var workshop = CreateValidWorkshop();
+        var workshop = CreateValidWorkshop(registrationDate: DateOnly.FromDateTime(DateTime.Now.AddDays(-100)));
         var createdEmployeeId = Guid.NewGuid();
 
         _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
