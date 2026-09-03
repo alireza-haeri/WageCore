@@ -1,6 +1,11 @@
 @page "/payrollform/{id:guid}"
 @page "/payrollform"
+@using Microsoft.AspNetCore.Components.Sections
 @layout ManagerLayout
+
+<SectionContent SectionName="Styles">
+    <link href="/assets/css/payslip.css" rel="stylesheet"/>
+</SectionContent>
 
 <div class="page-head">
     <div class="ph-t">
