@@ -51,22 +51,16 @@ public class CreatePayrollRecordCommandHandler(
             return Result<CreatePayrollRecordCommandResponse>.GeneralFailure(
                 "برای این کارمند در این بازه فیش پرداختی دیگری ثبت شده است.");
 
-        var workshopTask = workShopRepository.GetByIdAsync(request.UserId, employee.WorkshopId, cancellationToken);
-        var salaryProfilesTask = salaryDecreeQuery.GetSalaryDecreesAffectingPeriodAsync(
+        var workshop = await workShopRepository.GetByIdAsync(request.UserId, employee.WorkshopId, cancellationToken);
+        if (workshop is null)
+            return Result<CreatePayrollRecordCommandResponse>.NotfoundFailure("کارگاه مورد نظر یافت نشد.");
+   
+        var salaryProfiles = await salaryDecreeQuery.GetSalaryDecreesAffectingPeriodAsync(
             request.UserId,
             request.EmployeeId,
             period.StartPeriod,
             period.EndPeriod,
             cancellationToken);
-
-        await Task.WhenAll(workshopTask, salaryProfilesTask);
-
-        var workshop = await workshopTask;
-        var salaryProfiles = await salaryProfilesTask;
-
-        if (workshop is null)
-            return Result<CreatePayrollRecordCommandResponse>.NotfoundFailure("کارگاه مورد نظر یافت نشد.");
-
         if (salaryProfiles.Count == 0)
             return Result<CreatePayrollRecordCommandResponse>.NotfoundFailure(
                 "برای این بازه حکم حقوقی کارمند یافت نشد.");
