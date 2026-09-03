@@ -413,7 +413,7 @@ public class CreateEmployeeCommandHandlerTests
             Arg.Is<Employee>(x =>
                 x.LeaveUsedInCurrentYear == 3 &&
                 x.NetWorkedDaysBeforeCurrentMonth == 45 &&
-                x.CarriedOverLeaveFromPreviousYear is null),
+                x.CarriedOverLeaveFromPreviousYear == null),
             Arg.Any<CancellationToken>());
     }
 
