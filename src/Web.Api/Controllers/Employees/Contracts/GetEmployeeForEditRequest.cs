@@ -12,4 +12,7 @@ public record GetEmployeeForEditResponse(
     string PhoneNumber,
     string? JobTitle,
     Region Region,
+    decimal? LeaveUsedInCurrentYear,
+    decimal? NetWorkedDaysBeforeCurrentMonth,
+    decimal? CarriedOverLeaveFromPreviousYear,
     List<EmployeeBankAccountResponse> BankAccounts);

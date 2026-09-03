@@ -68,6 +68,12 @@ public class EmployeeConfigurations : IEntityTypeConfiguration<Employee>
             .IsUnicode(false)
             .HasConversion<string>();
 
+        builder.Property(x => x.LeaveUsedInCurrentYear);
+
+        builder.Property(x => x.NetWorkedDaysBeforeCurrentMonth);
+
+        builder.Property(x => x.CarriedOverLeaveFromPreviousYear);
+
         builder.HasOne<Workshop>()
             .WithMany()
             .HasForeignKey(x => x.WorkshopId)

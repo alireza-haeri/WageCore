@@ -5,6 +5,7 @@ public class UpdateEmployeeCommandHandlerTests
     private readonly IEmployeeRepository _employeeRepository;
     private readonly IEmployeeQuery _employeeQuery;
     private readonly IWorkShopRepository _workshopRepository;
+    private readonly IPersianCalendarService _persianCalendarService;
     private readonly UpdateEmployeeCommandHandler _handler;
     private readonly EmployeeBuilder _employeeBuilder;
     private readonly WorkshopBuilder _workshopBuilder;
@@ -21,9 +22,20 @@ public class UpdateEmployeeCommandHandlerTests
         _employeeRepository = Substitute.For<IEmployeeRepository>();
         _employeeQuery = Substitute.For<IEmployeeQuery>();
         _workshopRepository = Substitute.For<IWorkShopRepository>();
+        _persianCalendarService = Substitute.For<IPersianCalendarService>();
         _employeeBuilder = new EmployeeBuilder();
         _workshopBuilder = new WorkshopBuilder();
-        _handler = new UpdateEmployeeCommandHandler(_employeeRepository, _employeeQuery, _workshopRepository);
+
+        // Treat every date as the current Persian month so the default
+        // builder data (hired a few days ago, no history fields) stays valid.
+        _persianCalendarService.GetPersianYear(Arg.Any<DateOnly>()).Returns(1405);
+        _persianCalendarService.GetPersianMonth(Arg.Any<DateOnly>()).Returns(6);
+
+        _handler = new UpdateEmployeeCommandHandler(
+            _employeeRepository,
+            _employeeQuery,
+            _workshopRepository,
+            _persianCalendarService);
     }
 
     private Employee CreateValidEmployee(bool createBankAccounts = false)
@@ -433,5 +445,74 @@ public class UpdateEmployeeCommandHandlerTests
             .IsExistEmployeePersonalCode(Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<Guid?>(), Arg.Any<CancellationToken>());
         await _employeeQuery.DidNotReceive()
             .IsExistEmployeeNationalCode(Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<Guid?>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_WhenUpdatedHireDateIsEarlierThisYear_WithoutHistoryFields_ShouldReturnGeneralFailure()
+    {
+        var hireDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-60));
+        _persianCalendarService.GetPersianMonth(hireDate).Returns(3);
+
+        var employee = CreateValidEmployee();
+        var employeeDto = _employeeBuilder
+            .WithDepartmentId(UpdatedDepartmentId)
+            .WithHireDate(hireDate)
+            .BuildEmployeeDto();
+        var command = CreateValidCommand(employee: employeeDto);
+        var workshop = CreateValidWorkshop(registrationDate: DateOnly.FromDateTime(DateTime.Now.AddDays(-100)));
+
+        _employeeRepository.GetByIdAsync(ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
+            .Returns(employee);
+        _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        _workshopRepository.GetByDepartmentIdAsync(ValidUserId, UpdatedDepartmentId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        SetupNoDuplicates();
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.ShouldBeFailure("مرخصی استفاده‌شده در سال جاری اجباری", BadResultType.General);
+        await _employeeRepository.DidNotReceive().UpdateAsync(Arg.Any<Employee>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_WhenUpdatedHireDateIsEarlierThisYear_WithHistoryFields_ShouldUpdateEmployee()
+    {
+        var hireDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-60));
+        _persianCalendarService.GetPersianMonth(hireDate).Returns(3);
+
+        var employee = CreateValidEmployee(createBankAccounts: true);
+        var existingBankAccountIds = employee.BankAccounts.Select(x => x.Id).ToList();
+        var employeeDto = _employeeBuilder
+            .WithDepartmentId(UpdatedDepartmentId)
+            .WithHireDate(hireDate)
+            .WithLeaveUsedInCurrentYear(3)
+            .WithNetWorkedDaysBeforeCurrentMonth(45)
+            .BuildEmployeeDto();
+        var command = CreateValidCommand(
+            employee: employeeDto,
+            bankAccounts: [new EmployeeBankAccountDto("بانک ملی", "۱۰۲", "IR999999999999999999999999", existingBankAccountIds[0])]);
+        var workshop = CreateValidWorkshop(registrationDate: DateOnly.FromDateTime(DateTime.Now.AddDays(-100)));
+
+        _employeeRepository.GetByIdAsync(ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())
+            .Returns(employee);
+        _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        _workshopRepository.GetByDepartmentIdAsync(ValidUserId, UpdatedDepartmentId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        SetupNoDuplicates();
+        _employeeRepository.UpdateAsync(employee, Arg.Any<CancellationToken>())
+            .Returns(true);
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        var response = result.ShouldBeSuccess();
+        response.Should().BeTrue();
+        using (new AssertionScope())
+        {
+            employee.LeaveUsedInCurrentYear.Should().Be(3);
+            employee.NetWorkedDaysBeforeCurrentMonth.Should().Be(45);
+            employee.CarriedOverLeaveFromPreviousYear.Should().BeNull();
+        }
     }
 }

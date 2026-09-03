@@ -69,7 +69,7 @@
 
                 <div class="col-md-4 field">
                     <label class="f-label" for="e-hireDate"><span class="req-s">*</span>تاریخ استخدام</label>
-                    <InputText @bind-Value="_formHelper.Model.HireDate" class="in num" id="e-hireDate" inputmode="numeric" placeholder="۱۴۰۵/۰۵/۱۷"/>
+                    <InputText @bind-Value="_formHelper.Model.HireDate" @bind-Value:after="OnHireDateChanged" class="in num" id="e-hireDate" inputmode="numeric" placeholder="۱۴۰۵/۰۵/۱۷"/>
                     <ValidationMessage TValue="string" For="() => _formHelper.Model.HireDate" class="f-help text-danger"/>
                 </div>
 
@@ -129,6 +129,57 @@
                     <ValidationMessage TValue="string" For="() => _formHelper.Model.JobTitle" class="f-help text-danger"/>
                 </div>
             </div>
+
+            @if (_requiresOnboardingHistory)
+            {
+                <div class="sec mt-4">
+                    <svg class="ic"><use href="assets/img/icons.svg#i-calendar"/></svg>
+                    سوابق استخدام
+                </div>
+
+                <div class="note n-blu mt-2 mb-3">
+                    <svg class="ic"><use href="assets/img/icons.svg#i-info"/></svg>
+                    <div>
+                        چون تاریخ استخدام قبل از ماه جاری است، سوابق استخدامی کارمند باید ثبت شود.
+                        اگر کارمند همین ماه استخدام شده، این فیلدها لازم نیست.
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-4 field">
+                        <label class="f-label" for="e-leaveUsedInCurrentYear"><span class="req-s">*</span>تعداد مرخصی استفاده‌شده در سال جاری</label>
+                        <InputText @bind-Value="_formHelper.Model.LeaveUsedInCurrentYear" class="in num" id="e-leaveUsedInCurrentYear" inputmode="decimal" placeholder="مثلاً 3"/>
+                        <div class="f-help">مرخصی استفاده‌شده در سال جاری (همان سال استخدام).</div>
+                        @foreach (var error in GetOnboardingHistoryError(nameof(EmployeeFormModel.LeaveUsedInCurrentYear)))
+                        {
+                            <div class="f-help text-danger">@error</div>
+                        }
+                    </div>
+
+                    <div class="col-md-4 field">
+                        <label class="f-label" for="e-netWorkedDays"><span class="req-s">*</span>تعداد روز خالص کارکرد قبل از ماه جاری</label>
+                        <InputText @bind-Value="_formHelper.Model.NetWorkedDaysBeforeCurrentMonth" class="in num" id="e-netWorkedDays" inputmode="decimal" placeholder="مثلاً 45"/>
+                        <div class="f-help">روزهای خالص کارکرد در ماه‌های قبل از ماه جاری.</div>
+                        @foreach (var error in GetOnboardingHistoryError(nameof(EmployeeFormModel.NetWorkedDaysBeforeCurrentMonth)))
+                        {
+                            <div class="f-help text-danger">@error</div>
+                        }
+                    </div>
+
+                    @if (_requiresCarriedOverLeave)
+                    {
+                        <div class="col-md-4 field">
+                            <label class="f-label" for="e-carriedOverLeave"><span class="req-s">*</span>تعداد مرخصی انتقال‌یافته از سال قبل</label>
+                            <InputText @bind-Value="_formHelper.Model.CarriedOverLeaveFromPreviousYear" class="in num" id="e-carriedOverLeave" inputmode="decimal" placeholder="مثلاً 5"/>
+                            <div class="f-help">چون استخدام قبل از سال جاری است، این فیلد هم لازم است.</div>
+                            @foreach (var error in GetOnboardingHistoryError(nameof(EmployeeFormModel.CarriedOverLeaveFromPreviousYear)))
+                            {
+                                <div class="f-help text-danger">@error</div>
+                            }
+                        </div>
+                    }
+                </div>
+            }
 
             <div class="sec mt-4 d-flex align-items-center justify-content-between">
                 <span>
@@ -236,6 +287,22 @@
     private bool _isLoading;
     private bool IsEdit => Id.HasValue && Id.Value != Guid.Empty;
 
+    private enum OnboardingScenario
+    {
+        /// <summary>Hired in the current Persian month — no history fields needed.</summary>
+        CurrentMonth,
+        /// <summary>Hired earlier in the current Persian year — current-year fields required.</summary>
+        EarlierThisYear,
+        /// <summary>Hired before the current Persian year — carried-over leave required as well.</summary>
+        PreviousYear
+    }
+
+    private OnboardingScenario _onboardingScenario = OnboardingScenario.CurrentMonth;
+    private readonly Dictionary<string, List<string>> _onboardingHistoryErrors = [];
+
+    private bool _requiresOnboardingHistory => _onboardingScenario != OnboardingScenario.CurrentMonth;
+    private bool _requiresCarriedOverLeave => _onboardingScenario == OnboardingScenario.PreviousYear;
+
     protected override async Task OnInitializedAsync()
     {
         await LoadWorkshopsAsync();
@@ -265,6 +332,9 @@
                         HireDate = employee.HireDate,
                         PhoneNumber = employee.PhoneNumber,
                         JobTitle = employee.JobTitle,
+                        LeaveUsedInCurrentYear = employee.LeaveUsedInCurrentYear?.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                        NetWorkedDaysBeforeCurrentMonth = employee.NetWorkedDaysBeforeCurrentMonth?.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                        CarriedOverLeaveFromPreviousYear = employee.CarriedOverLeaveFromPreviousYear?.ToString(System.Globalization.CultureInfo.InvariantCulture),
                         BankAccounts = employee.BankAccounts?
                             .Select(x => new EmployeeBankAccountFormModel
                             {
@@ -278,6 +348,8 @@
 
                     if (_formHelper.Model.BankAccounts.Count == 0)
                         _formHelper.Model.BankAccounts.Add(new EmployeeBankAccountFormModel());
+
+                    RecalculateOnboardingScenario();
 
                     await LoadDepartmentsAsync(employee.WorkshopId);
                     _formHelper.RebuildEditContext();
@@ -331,6 +403,182 @@
         await LoadDepartmentsAsync(_formHelper.Model.WorkshopId.Value);
     }
 
+    private void OnHireDateChanged()
+    {
+        RecalculateOnboardingScenario();
+    }
+
+    private void RecalculateOnboardingScenario()
+    {
+        var hireDateText = _formHelper.Model.HireDate?.Trim() ?? string.Empty;
+
+        if (!TryParsePersianHireDate(hireDateText, out var hireYear, out var hireMonth))
+        {
+            _onboardingScenario = OnboardingScenario.CurrentMonth;
+            ClearInapplicableHistoryFields();
+            ClearOnboardingHistoryErrors();
+            StateHasChanged();
+            return;
+        }
+
+        var (currentYear, currentMonth) = PersianCalendarLite.GetPersianYearMonth(DateOnly.FromDateTime(DateTime.Now));
+
+        _onboardingScenario = hireYear == currentYear
+            ? (hireMonth == currentMonth
+                ? OnboardingScenario.CurrentMonth
+                : OnboardingScenario.EarlierThisYear)
+            : (hireYear < currentYear
+                ? OnboardingScenario.PreviousYear
+                : OnboardingScenario.CurrentMonth); // future dates are rejected by the server
+
+        ClearInapplicableHistoryFields();
+        ClearOnboardingHistoryErrors();
+        StateHasChanged();
+    }
+
+    private void ClearInapplicableHistoryFields()
+    {
+        if (!_requiresOnboardingHistory)
+        {
+            _formHelper.Model.LeaveUsedInCurrentYear = null;
+            _formHelper.Model.NetWorkedDaysBeforeCurrentMonth = null;
+            _formHelper.Model.CarriedOverLeaveFromPreviousYear = null;
+        }
+        else if (!_requiresCarriedOverLeave)
+        {
+            _formHelper.Model.CarriedOverLeaveFromPreviousYear = null;
+        }
+    }
+
+    private static bool TryParsePersianHireDate(string text, out int year, out int month)
+    {
+        year = 0;
+        month = 0;
+
+        var parts = text.Split('/');
+        if (parts.Length != 3)
+            return false;
+
+        return TryParsePersianDigits(parts[0], out year)
+               && year is >= 1399 and <= 1415
+               && TryParsePersianDigits(parts[1], out month)
+               && month is >= 1 and <= 12
+               && TryParsePersianDigits(parts[2], out var day)
+               && day is >= 1 and <= 31;
+    }
+
+    private static bool TryParsePersianDigits(string text, out int value)
+    {
+        value = 0;
+        if (string.IsNullOrEmpty(text))
+            return false;
+
+        foreach (var ch in text)
+        {
+            var digit = ch switch
+            {
+                >= '0' and <= '9' => ch - '0',
+                >= '\u0660' and <= '\u0669' => ch - '\u0660',
+                >= '\u06F0' and <= '\u06F9' => ch - '\u06F0',
+                _ => -1
+            };
+
+            if (digit is < 0 or > 9)
+                return false;
+
+            value = value * 10 + digit;
+        }
+
+        return true;
+    }
+
+    private bool ValidateOnboardingHistory()
+    {
+        ClearOnboardingHistoryErrors();
+
+        if (!_requiresOnboardingHistory)
+            return true;
+
+        var isValid = true;
+
+        isValid &= ValidateOnboardingHistoryField(
+            nameof(EmployeeFormModel.LeaveUsedInCurrentYear),
+            _formHelper.Model.LeaveUsedInCurrentYear);
+
+        isValid &= ValidateOnboardingHistoryField(
+            nameof(EmployeeFormModel.NetWorkedDaysBeforeCurrentMonth),
+            _formHelper.Model.NetWorkedDaysBeforeCurrentMonth);
+
+        if (_requiresCarriedOverLeave)
+            isValid &= ValidateOnboardingHistoryField(
+                nameof(EmployeeFormModel.CarriedOverLeaveFromPreviousYear),
+                _formHelper.Model.CarriedOverLeaveFromPreviousYear);
+
+        return isValid;
+    }
+
+    private static bool ValidateOnboardingHistoryField(string fieldName, string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            AddOnboardingHistoryError(fieldName, "این فیلد برای تاریخ انتخاب‌شده اجباری است.");
+            return false;
+        }
+
+        if (TryParseOptionalAmount(value, out var amount) is false)
+        {
+            AddOnboardingHistoryError(fieldName, "مقدار باید عدد باشد.");
+            return false;
+        }
+
+        if (amount < 0)
+        {
+            AddOnboardingHistoryError(fieldName, "مقدار نمی‌تواند منفی باشد.");
+            return false;
+        }
+
+        return true;
+    }
+
+    private static bool TryParseOptionalAmount(string value, out decimal amount) =>
+        decimal.TryParse(value.Trim(), System.Globalization.NumberStyles.Number,
+            System.Globalization.CultureInfo.InvariantCulture, out amount);
+
+    private static decimal? ParseOptionalAmount(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return null;
+
+        return decimal.TryParse(value.Trim(), System.Globalization.NumberStyles.Number,
+            System.Globalization.CultureInfo.InvariantCulture, out var amount)
+            ? amount
+            : 0;
+    }
+
+    private void AddOnboardingHistoryError(string fieldName, string error)
+    {
+        if (!_onboardingHistoryErrors.TryGetValue(fieldName, out var errors))
+        {
+            errors = [];
+            _onboardingHistoryErrors[fieldName] = errors;
+        }
+
+        if (!errors.Contains(error))
+            errors.Add(error);
+    }
+
+    private IEnumerable<string> GetOnboardingHistoryError(string fieldName)
+    {
+        return _onboardingHistoryErrors.TryGetValue(fieldName, out var errors)
+            ? errors
+            : [];
+    }
+
+    private void ClearOnboardingHistoryErrors()
+    {
+        _onboardingHistoryErrors.Clear();
+    }
+
     private void AddBankAccount()
     {
         _formHelper.Model.BankAccounts.Add(new EmployeeBankAccountFormModel());
@@ -351,7 +599,8 @@
 
         var isFormValid = _formHelper.Validate();
         var isBankAccountsValid = ValidateBankAccounts();
-        if (!isFormValid || !isBankAccountsValid)
+        var isOnboardingHistoryValid = ValidateOnboardingHistory();
+        if (!isFormValid || !isBankAccountsValid || !isOnboardingHistoryValid)
             return;
 
         _isLoading = true;
@@ -368,7 +617,10 @@
             nationalCode: model.NationalCode,
             personalCode: model.PersonalCode,
             phoneNumber: model.PhoneNumber,
-            region: model.Region ?? EmployeeInformationRequestRegion.Normal);
+            region: model.Region ?? EmployeeInformationRequestRegion.Normal,
+            leaveUsedInCurrentYear: ParseOptionalAmount(model.LeaveUsedInCurrentYear),
+            netWorkedDaysBeforeCurrentMonth: ParseOptionalAmount(model.NetWorkedDaysBeforeCurrentMonth),
+            carriedOverLeaveFromPreviousYear: ParseOptionalAmount(model.CarriedOverLeaveFromPreviousYear));
 
         var bankAccountsRequest = model.BankAccounts
             .Select(x => new EmployeeBankAccountRequest(
@@ -575,7 +827,13 @@
         ["PhoneNumber"] = nameof(EmployeeFormModel.PhoneNumber),
         ["Employee.PhoneNumber"] = nameof(EmployeeFormModel.PhoneNumber),
         ["JobTitle"] = nameof(EmployeeFormModel.JobTitle),
-        ["Employee.JobTitle"] = nameof(EmployeeFormModel.JobTitle)
+        ["Employee.JobTitle"] = nameof(EmployeeFormModel.JobTitle),
+        ["LeaveUsedInCurrentYear"] = nameof(EmployeeFormModel.LeaveUsedInCurrentYear),
+        ["Employee.LeaveUsedInCurrentYear"] = nameof(EmployeeFormModel.LeaveUsedInCurrentYear),
+        ["NetWorkedDaysBeforeCurrentMonth"] = nameof(EmployeeFormModel.NetWorkedDaysBeforeCurrentMonth),
+        ["Employee.NetWorkedDaysBeforeCurrentMonth"] = nameof(EmployeeFormModel.NetWorkedDaysBeforeCurrentMonth),
+        ["CarriedOverLeaveFromPreviousYear"] = nameof(EmployeeFormModel.CarriedOverLeaveFromPreviousYear),
+        ["Employee.CarriedOverLeaveFromPreviousYear"] = nameof(EmployeeFormModel.CarriedOverLeaveFromPreviousYear)
     };
 
     public class EmployeeFormModel : BaseModel
@@ -620,6 +878,15 @@
 
         [StringLength(100, ErrorMessage = "عنوان شغلی نمی‌تواند بیش از ۱۰۰ نویسه باشد.")]
         public string? JobTitle { get; set; }
+
+        [Display(Name = "تعداد مرخصی استفاده‌شده در سال جاری")]
+        public string? LeaveUsedInCurrentYear { get; set; }
+
+        [Display(Name = "تعداد روز خالص کارکرد قبل از ماه جاری")]
+        public string? NetWorkedDaysBeforeCurrentMonth { get; set; }
+
+        [Display(Name = "تعداد مرخصی انتقال‌یافته از سال قبل")]
+        public string? CarriedOverLeaveFromPreviousYear { get; set; }
 
         public List<EmployeeBankAccountFormModel> BankAccounts { get; set; } = [new()];
     }

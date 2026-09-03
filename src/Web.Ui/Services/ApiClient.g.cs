@@ -4756,7 +4756,7 @@ namespace Web.Ui.Services
     public partial record EmployeeInformationRequest
     {
         [Newtonsoft.Json.JsonConstructor]
-        public EmployeeInformationRequest(System.Guid @departmentId, string @fatherName, string @fullName, EmployeeInformationRequestGender @gender, string @hireDate, string @jobTitle, string @nationalCode, string @personalCode, string @phoneNumber, EmployeeInformationRequestRegion @region)
+        public EmployeeInformationRequest(decimal? @carriedOverLeaveFromPreviousYear, System.Guid @departmentId, string @fatherName, string @fullName, EmployeeInformationRequestGender @gender, string @hireDate, string @jobTitle, decimal? @leaveUsedInCurrentYear, string @nationalCode, decimal? @netWorkedDaysBeforeCurrentMonth, string @personalCode, string @phoneNumber, EmployeeInformationRequestRegion @region)
         {
             this.DepartmentId = @departmentId;
             this.PersonalCode = @personalCode;
@@ -4768,6 +4768,9 @@ namespace Web.Ui.Services
             this.PhoneNumber = @phoneNumber;
             this.JobTitle = @jobTitle;
             this.Region = @region;
+            this.LeaveUsedInCurrentYear = @leaveUsedInCurrentYear;
+            this.NetWorkedDaysBeforeCurrentMonth = @netWorkedDaysBeforeCurrentMonth;
+            this.CarriedOverLeaveFromPreviousYear = @carriedOverLeaveFromPreviousYear;
         }
 
         [Newtonsoft.Json.JsonProperty("departmentId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -4799,6 +4802,15 @@ namespace Web.Ui.Services
 
         [Newtonsoft.Json.JsonProperty("region", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public EmployeeInformationRequestRegion Region { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("leaveUsedInCurrentYear", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public decimal? LeaveUsedInCurrentYear { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("netWorkedDaysBeforeCurrentMonth", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public decimal? NetWorkedDaysBeforeCurrentMonth { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("carriedOverLeaveFromPreviousYear", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public decimal? CarriedOverLeaveFromPreviousYear { get; init; }
 
     }
 
@@ -5018,7 +5030,7 @@ namespace Web.Ui.Services
     public partial record GetEmployeeForEditResponse
     {
         [Newtonsoft.Json.JsonConstructor]
-        public GetEmployeeForEditResponse(System.Collections.Generic.ICollection<EmployeeBankAccountResponse> @bankAccounts, System.Guid @departmentId, string @fatherName, string @fullName, GetEmployeeForEditResponseGender @gender, string @hireDate, string @jobTitle, string @nationalCode, string @personalCode, string @phoneNumber, GetEmployeeForEditResponseRegion @region, System.Guid @workshopId)
+        public GetEmployeeForEditResponse(System.Collections.Generic.ICollection<EmployeeBankAccountResponse> @bankAccounts, decimal? @carriedOverLeaveFromPreviousYear, System.Guid @departmentId, string @fatherName, string @fullName, GetEmployeeForEditResponseGender @gender, string @hireDate, string @jobTitle, decimal? @leaveUsedInCurrentYear, string @nationalCode, decimal? @netWorkedDaysBeforeCurrentMonth, string @personalCode, string @phoneNumber, GetEmployeeForEditResponseRegion @region, System.Guid @workshopId)
         {
             this.WorkshopId = @workshopId;
             this.DepartmentId = @departmentId;
@@ -5032,6 +5044,9 @@ namespace Web.Ui.Services
             this.JobTitle = @jobTitle;
             this.Region = @region;
             this.BankAccounts = @bankAccounts;
+            this.LeaveUsedInCurrentYear = @leaveUsedInCurrentYear;
+            this.NetWorkedDaysBeforeCurrentMonth = @netWorkedDaysBeforeCurrentMonth;
+            this.CarriedOverLeaveFromPreviousYear = @carriedOverLeaveFromPreviousYear;
         }
 
         [Newtonsoft.Json.JsonProperty("workshopId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -5066,6 +5081,15 @@ namespace Web.Ui.Services
 
         [Newtonsoft.Json.JsonProperty("region", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public GetEmployeeForEditResponseRegion Region { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("leaveUsedInCurrentYear", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public decimal? LeaveUsedInCurrentYear { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("netWorkedDaysBeforeCurrentMonth", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public decimal? NetWorkedDaysBeforeCurrentMonth { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("carriedOverLeaveFromPreviousYear", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public decimal? CarriedOverLeaveFromPreviousYear { get; init; }
 
         [Newtonsoft.Json.JsonProperty("bankAccounts", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.ICollection<EmployeeBankAccountResponse> BankAccounts { get; init; }
@@ -6000,7 +6024,7 @@ namespace Web.Ui.Services
     public partial record GetUserEmployeesResponse
     {
         [Newtonsoft.Json.JsonConstructor]
-        public GetUserEmployeesResponse(string @departmentName, string @displayHireDate, string @fullName, System.Guid @id, string @jobTitle, string @nationalCode, string @personalCode, GetUserEmployeesResponseRegion @region, GetUserEmployeesResponseStatus @status, string @workshopName)
+        public GetUserEmployeesResponse(decimal? @carriedOverLeaveFromPreviousYear, string @departmentName, string @displayHireDate, string @fullName, System.Guid @id, string @jobTitle, decimal? @leaveUsedInCurrentYear, string @nationalCode, decimal? @netWorkedDaysBeforeCurrentMonth, string @personalCode, GetUserEmployeesResponseRegion @region, GetUserEmployeesResponseStatus @status, string @workshopName)
         {
             this.Id = @id;
             this.PersonalCode = @personalCode;
@@ -6012,6 +6036,9 @@ namespace Web.Ui.Services
             this.JobTitle = @jobTitle;
             this.Status = @status;
             this.Region = @region;
+            this.LeaveUsedInCurrentYear = @leaveUsedInCurrentYear;
+            this.NetWorkedDaysBeforeCurrentMonth = @netWorkedDaysBeforeCurrentMonth;
+            this.CarriedOverLeaveFromPreviousYear = @carriedOverLeaveFromPreviousYear;
         }
 
         [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -6043,6 +6070,15 @@ namespace Web.Ui.Services
 
         [Newtonsoft.Json.JsonProperty("region", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public GetUserEmployeesResponseRegion Region { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("leaveUsedInCurrentYear", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public decimal? LeaveUsedInCurrentYear { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("netWorkedDaysBeforeCurrentMonth", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public decimal? NetWorkedDaysBeforeCurrentMonth { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("carriedOverLeaveFromPreviousYear", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public decimal? CarriedOverLeaveFromPreviousYear { get; init; }
 
     }
 

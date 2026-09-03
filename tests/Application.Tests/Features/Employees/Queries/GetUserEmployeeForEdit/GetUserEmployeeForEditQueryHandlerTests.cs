@@ -34,6 +34,9 @@ public class GetUserEmployeeForEditQueryHandlerTests
             "09123456789",
             "حسابدار",
             Region.Normal,
+            3,
+            45,
+            5,
             [
                 new EmployeeBankAccountDto("بانک ملی", "۱۰۲", "123456789012345678901234", ValidBankAccountId),
                 new EmployeeBankAccountDto("بانک صادرات", "۳۰۳", "999999999999999999999999", Guid.NewGuid())
@@ -56,6 +59,9 @@ public class GetUserEmployeeForEditQueryHandlerTests
         response.PhoneNumber.Should().Be("09123456789");
         response.JobTitle.Should().Be("حسابدار");
         response.Region.Should().Be(Region.Normal);
+        response.LeaveUsedInCurrentYear.Should().Be(3);
+        response.NetWorkedDaysBeforeCurrentMonth.Should().Be(45);
+        response.CarriedOverLeaveFromPreviousYear.Should().Be(5);
         response.BankAccounts.Should().HaveCount(2);
         response.BankAccounts.Should().Contain(x => x.Id == ValidBankAccountId && x.BankName == "بانک ملی" && x.BranchCode == "۱۰۲" && x.Iban == "123456789012345678901234");
     }
@@ -77,6 +83,9 @@ public class GetUserEmployeeForEditQueryHandlerTests
             "09123456789",
             "حسابدار",
             Region.Normal,
+            null,
+            null,
+            null,
             []);
 
         _employeeQuery.GetUserEmployeeByIdAsync(ValidUserId, ValidEmployeeId, Arg.Any<CancellationToken>())

@@ -3464,6 +3464,21 @@
               0,
               1
             ]
+          },
+          "leaveUsedInCurrentYear": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "netWorkedDaysBeforeCurrentMonth": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "carriedOverLeaveFromPreviousYear": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
           }
         }
       },
@@ -3875,6 +3890,21 @@
             "items": {
               "$ref": "#/components/schemas/EmployeeBankAccountResponse"
             }
+          },
+          "leaveUsedInCurrentYear": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "netWorkedDaysBeforeCurrentMonth": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "carriedOverLeaveFromPreviousYear": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
           }
         }
       },
@@ -4944,6 +4974,21 @@
               0,
               1
             ]
+          },
+          "leaveUsedInCurrentYear": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "netWorkedDaysBeforeCurrentMonth": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "carriedOverLeaveFromPreviousYear": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
           }
         }
       },

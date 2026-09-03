@@ -1,4 +1,5 @@
 using Core.Abstractions.Repositories.Employees;
+using Core.Abstractions.Services;
 using Core.Contracts.Employees;
 
 namespace Application.Features.Employees;
@@ -6,7 +7,8 @@ namespace Application.Features.Employees;
 public class UpdateEmployeeCommandHandler(
     IEmployeeRepository employeeRepository,
     IEmployeeQuery employeeQuery,
-    IWorkShopRepository workshopRepository)
+    IWorkShopRepository workshopRepository,
+    IPersianCalendarService persianCalendarService)
     : IRequestHandler<UpdateEmployeeCommand, Result<bool>>
 {
     public async Task<Result<bool>> Handle(UpdateEmployeeCommand request, CancellationToken cancellationToken)
@@ -51,7 +53,12 @@ public class UpdateEmployeeCommandHandler(
                 { nameof(EmployeeDto.NationalCode), ["کد ملی در بین کارکنان این کاربر تکراری است"] }
             });
 
-        var domainResult = employee.Update(request.Employee, workshop.RegistrationDate);
+        var domainResult = employee.Update(
+            request.Employee,
+            workshop.RegistrationDate,
+            true,
+            true,
+            persianCalendarService);
         if (!domainResult.IsSuccess)
             return Result<bool>.GeneralFailure(domainResult.ErrorMessage!);
 

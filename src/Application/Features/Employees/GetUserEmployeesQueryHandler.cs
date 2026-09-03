@@ -28,7 +28,10 @@ public class GetUserEmployeesQueryHandler(IEmployeeQuery employeeQuery)
                 x.HireDate,
                 x.JobTitle,
                 x.Status,
-                x.Region)
+                x.Region,
+                x.LeaveUsedInCurrentYear,
+                x.NetWorkedDaysBeforeCurrentMonth,
+                x.CarriedOverLeaveFromPreviousYear)
         );
 
         return Result<PagedResult<GetUserEmployeesQueryResponse>>.Success(response);

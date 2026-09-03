@@ -25,6 +25,9 @@ public class GetUserEmployeeForEditQueryHandler(IEmployeeQuery employeeQuery)
                 employee.PhoneNumber,
                 employee.JobTitle,
                 employee.Region,
+                employee.LeaveUsedInCurrentYear,
+                employee.NetWorkedDaysBeforeCurrentMonth,
+                employee.CarriedOverLeaveFromPreviousYear,
                 employee.BankAccounts
             )
         );

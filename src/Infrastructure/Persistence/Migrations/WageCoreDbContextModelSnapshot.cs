@@ -76,6 +76,9 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<decimal>("CarriedOverLeaveFromPreviousYear")
+                        .HasColumnType("decimal(18, 2)");
+
                     b.Property<Guid>("DepartmentId")
                         .HasColumnType("uniqueidentifier");
 
@@ -104,11 +107,17 @@ namespace Infrastructure.Persistence.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<decimal>("LeaveUsedInCurrentYear")
+                        .HasColumnType("decimal(18, 2)");
+
                     b.Property<string>("NationalCode")
                         .IsRequired()
                         .HasMaxLength(10)
                         .IsUnicode(false)
                         .HasColumnType("varchar(10)");
+
+                    b.Property<decimal>("NetWorkedDaysBeforeCurrentMonth")
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("PersonalCode")
                         .IsRequired()

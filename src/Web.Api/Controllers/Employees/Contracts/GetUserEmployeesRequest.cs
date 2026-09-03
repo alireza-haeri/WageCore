@@ -18,4 +18,7 @@ public record GetUserEmployeesResponse(
     string DisplayHireDate,
     string? JobTitle,
     EmployeeStatus Status,
-    Region Region);
+    Region Region,
+    decimal? LeaveUsedInCurrentYear,
+    decimal? NetWorkedDaysBeforeCurrentMonth,
+    decimal? CarriedOverLeaveFromPreviousYear);

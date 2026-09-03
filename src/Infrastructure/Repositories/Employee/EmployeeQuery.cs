@@ -22,7 +22,10 @@ public class EmployeeQuery(IDbConnectionFactory dbConnectionFactory) : IEmployee
                                      WHEN e.TerminationDate IS NULL THEN {(int)EmployeeStatus.Employed}
                                      ELSE {(int)EmployeeStatus.Unemployed}
                                  END AS Status,
-                                 e.Region AS Region
+                                 e.Region AS Region,
+                                 e.LeaveUsedInCurrentYear AS LeaveUsedInCurrentYear,
+                                 e.NetWorkedDaysBeforeCurrentMonth AS NetWorkedDaysBeforeCurrentMonth,
+                                 e.CarriedOverLeaveFromPreviousYear AS CarriedOverLeaveFromPreviousYear
                              FROM {Core.Domain.Employee.TableName} e
                              INNER JOIN {Core.Domain.Workshop.TableName} w ON w.Id = e.WorkshopId
                              INNER JOIN {Core.Domain.Department.TableName} d ON d.Id = e.DepartmentId AND d.WorkshopId = e.WorkshopId
@@ -98,7 +101,10 @@ public class EmployeeQuery(IDbConnectionFactory dbConnectionFactory) : IEmployee
                           e.HireDate AS HireDate,
                           e.PhoneNumber AS PhoneNumber,
                           e.JobTitle AS JobTitle,
-                          e.Region AS Region
+                          e.Region AS Region,
+                          e.LeaveUsedInCurrentYear AS LeaveUsedInCurrentYear,
+                          e.NetWorkedDaysBeforeCurrentMonth AS NetWorkedDaysBeforeCurrentMonth,
+                          e.CarriedOverLeaveFromPreviousYear AS CarriedOverLeaveFromPreviousYear
                       FROM {Core.Domain.Employee.TableName} e
                       INNER JOIN {Core.Domain.Workshop.TableName} w ON w.Id = e.WorkshopId
                       WHERE w.UserId = @UserId AND e.Id = @EmployeeId;
@@ -141,6 +147,9 @@ public class EmployeeQuery(IDbConnectionFactory dbConnectionFactory) : IEmployee
             employee.PhoneNumber,
             employee.JobTitle,
             Enum.Parse<Region>(employee.Region),
+            employee.LeaveUsedInCurrentYear,
+            employee.NetWorkedDaysBeforeCurrentMonth,
+            employee.CarriedOverLeaveFromPreviousYear,
             bankAccounts);
     }
 
@@ -165,6 +174,9 @@ public class EmployeeQuery(IDbConnectionFactory dbConnectionFactory) : IEmployee
         public string PhoneNumber { get; set; } = null!;
         public string? JobTitle { get; set; }
         public string Region { get; set; } = null!;
+        public decimal? LeaveUsedInCurrentYear { get; set; }
+        public decimal? NetWorkedDaysBeforeCurrentMonth { get; set; }
+        public decimal? CarriedOverLeaveFromPreviousYear { get; set; }
     }
 
     public async Task<bool> IsExistEmployeePersonalCode(Guid userId, string personalCode, Guid? excludeEmployeeId = null,

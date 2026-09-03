@@ -10,4 +10,7 @@ public record EmployeeInformationRequest(
     PersianDate HireDate,
     string PhoneNumber,
     string? JobTitle,
-    Region Region);
+    Region Region,
+    decimal? LeaveUsedInCurrentYear = null,
+    decimal? NetWorkedDaysBeforeCurrentMonth = null,
+    decimal? CarriedOverLeaveFromPreviousYear = null);

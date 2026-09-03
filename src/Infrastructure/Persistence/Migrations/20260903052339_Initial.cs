@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -245,7 +245,10 @@ namespace Infrastructure.Persistence.Migrations
                     TerminationDate = table.Column<DateOnly>(type: "date", nullable: true),
                     PhoneNumber = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false),
                     JobTitle = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    Region = table.Column<string>(type: "varchar(max)", unicode: false, nullable: false)
+                    Region = table.Column<string>(type: "varchar(max)", unicode: false, nullable: false),
+                    LeaveUsedInCurrentYear = table.Column<decimal>(type: "decimal(18, 2)", nullable: true),
+                    NetWorkedDaysBeforeCurrentMonth = table.Column<decimal>(type: "decimal(18, 2)", nullable: true),
+                    CarriedOverLeaveFromPreviousYear = table.Column<decimal>(type: "decimal(18, 2)", nullable: true)
                 },
                 constraints: table =>
                 {

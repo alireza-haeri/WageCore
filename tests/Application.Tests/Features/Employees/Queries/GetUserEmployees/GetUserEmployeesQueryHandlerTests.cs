@@ -41,7 +41,10 @@ public class GetUserEmployeesQueryHandlerTests
                 DateOnly.FromDateTime(DateTime.Now.AddDays(-10)),
                 "حسابدار",
                 EmployeeStatus.Employed,
-                Region.Normal),
+                Region.Normal,
+                3,
+                45,
+                5),
             new(
                 Guid.NewGuid(),
                 "EMP002",
@@ -85,6 +88,9 @@ public class GetUserEmployeesQueryHandlerTests
         firstItem.HireDate.Should().Be(results[0].HireDate);
         firstItem.JobTitle.Should().Be("حسابدار");
         firstItem.Status.Should().Be(EmployeeStatus.Employed);
+        firstItem.LeaveUsedInCurrentYear.Should().Be(3);
+        firstItem.NetWorkedDaysBeforeCurrentMonth.Should().Be(45);
+        firstItem.CarriedOverLeaveFromPreviousYear.Should().Be(5);
 
         var secondItem = response.Items[1];
         secondItem.Id.Should().Be(results[1].EmployeeId);

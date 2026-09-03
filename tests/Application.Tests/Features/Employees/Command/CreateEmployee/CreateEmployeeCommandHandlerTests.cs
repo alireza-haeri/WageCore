@@ -5,6 +5,7 @@ public class CreateEmployeeCommandHandlerTests
     private readonly IEmployeeRepository _employeeRepository;
     private readonly IEmployeeQuery _employeeQuery;
     private readonly IWorkShopRepository _workshopRepository;
+    private readonly IPersianCalendarService _persianCalendarService;
     private readonly CreateEmployeeCommandHandler _handler;
     private readonly EmployeeBuilder _employeeBuilder;
     private readonly WorkshopBuilder _workshopBuilder;
@@ -19,9 +20,20 @@ public class CreateEmployeeCommandHandlerTests
         _employeeRepository = Substitute.For<IEmployeeRepository>();
         _employeeQuery = Substitute.For<IEmployeeQuery>();
         _workshopRepository = Substitute.For<IWorkShopRepository>();
+        _persianCalendarService = Substitute.For<IPersianCalendarService>();
         _employeeBuilder = new EmployeeBuilder();
         _workshopBuilder = new WorkshopBuilder();
-        _handler = new CreateEmployeeCommandHandler(_employeeRepository, _employeeQuery, _workshopRepository);
+
+        // Treat every date as the current Persian month so the default
+        // builder data (hired a few days ago, no history fields) stays valid.
+        _persianCalendarService.GetPersianYear(Arg.Any<DateOnly>()).Returns(1405);
+        _persianCalendarService.GetPersianMonth(Arg.Any<DateOnly>()).Returns(6);
+
+        _handler = new CreateEmployeeCommandHandler(
+            _employeeRepository,
+            _employeeQuery,
+            _workshopRepository,
+            _persianCalendarService);
     }
 
     private Workshop CreateValidWorkshop(Guid? workshopId = null, DateOnly? registrationDate = null)
@@ -341,6 +353,117 @@ public class CreateEmployeeCommandHandlerTests
 
         await _handler.Handle(command, CancellationToken.None);
 
+        await _employeeRepository.DidNotReceive().CreateAsync(Arg.Any<Employee>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_WhenHiredEarlierThisYear_WithoutHistoryFields_ShouldReturnGeneralFailure()
+    {
+        var hireDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-60));
+        _persianCalendarService.GetPersianMonth(hireDate).Returns(3);
+
+        var employee = _employeeBuilder
+            .WithDepartmentId(ValidDepartmentId)
+            .WithHireDate(hireDate)
+            .BuildEmployeeDto();
+        var command = CreateValidCommand(employee: employee);
+        var workshop = CreateValidWorkshop();
+
+        _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        _workshopRepository.GetByDepartmentIdAsync(ValidUserId, ValidDepartmentId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        SetupNoDuplicates();
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.ShouldBeFailure("مرخصی استفاده‌شده در سال جاری اجباری", BadResultType.General);
+        await _employeeRepository.DidNotReceive().CreateAsync(Arg.Any<Employee>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_WhenHiredEarlierThisYear_WithHistoryFields_ShouldCreateEmployee()
+    {
+        var hireDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-60));
+        _persianCalendarService.GetPersianMonth(hireDate).Returns(3);
+
+        var employee = _employeeBuilder
+            .WithDepartmentId(ValidDepartmentId)
+            .WithHireDate(hireDate)
+            .WithLeaveUsedInCurrentYear(3)
+            .WithNetWorkedDaysBeforeCurrentMonth(45)
+            .BuildEmployeeDto();
+        var command = CreateValidCommand(employee: employee);
+        var workshop = CreateValidWorkshop();
+        var createdEmployeeId = Guid.NewGuid();
+
+        _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        _workshopRepository.GetByDepartmentIdAsync(ValidUserId, ValidDepartmentId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        SetupNoDuplicates();
+        _employeeRepository.CreateAsync(Arg.Any<Employee>(), Arg.Any<CancellationToken>())
+            .Returns(createdEmployeeId);
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        var response = result.ShouldBeSuccess();
+        response.EmployeeId.Should().Be(createdEmployeeId);
+        await _employeeRepository.Received(1).CreateAsync(
+            Arg.Is<Employee>(x =>
+                x.LeaveUsedInCurrentYear == 3 &&
+                x.NetWorkedDaysBeforeCurrentMonth == 45 &&
+                x.CarriedOverLeaveFromPreviousYear is null),
+            Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_WhenHiredBeforeCurrentYear_WithoutCarriedOverLeave_ShouldReturnGeneralFailure()
+    {
+        var hireDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-400));
+        _persianCalendarService.GetPersianYear(hireDate).Returns(1404);
+
+        var employee = _employeeBuilder
+            .WithDepartmentId(ValidDepartmentId)
+            .WithHireDate(hireDate)
+            .WithWorkshopRegistrationDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-500)))
+            .WithLeaveUsedInCurrentYear(3)
+            .WithNetWorkedDaysBeforeCurrentMonth(45)
+            .BuildEmployeeDto();
+        var command = CreateValidCommand(employee: employee);
+        var workshop = CreateValidWorkshop(registrationDate: DateOnly.FromDateTime(DateTime.Now.AddDays(-500)));
+
+        _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        _workshopRepository.GetByDepartmentIdAsync(ValidUserId, ValidDepartmentId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        SetupNoDuplicates();
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.ShouldBeFailure("مرخصی انتقال‌یافته از سال قبل اجباری", BadResultType.General);
+        await _employeeRepository.DidNotReceive().CreateAsync(Arg.Any<Employee>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_WhenHiredInCurrentMonth_WithHistoryFields_ShouldReturnGeneralFailure()
+    {
+        var employee = _employeeBuilder
+            .WithDepartmentId(ValidDepartmentId)
+            .WithLeaveUsedInCurrentYear(3)
+            .BuildEmployeeDto();
+        var command = CreateValidCommand(employee: employee);
+        var workshop = CreateValidWorkshop();
+
+        _workshopRepository.GetByIdAsync(ValidUserId, ValidWorkshopId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        _workshopRepository.GetByDepartmentIdAsync(ValidUserId, ValidDepartmentId, Arg.Any<CancellationToken>())
+            .Returns(workshop);
+        SetupNoDuplicates();
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.ShouldBeFailure("همین ماه استخدام شده", BadResultType.General);
         await _employeeRepository.DidNotReceive().CreateAsync(Arg.Any<Employee>(), Arg.Any<CancellationToken>());
     }
 }

@@ -12,4 +12,7 @@ public record UserEmployeeByIdResult(
     string PhoneNumber,
     string? JobTitle,
     Region Region,
+    decimal? LeaveUsedInCurrentYear,
+    decimal? NetWorkedDaysBeforeCurrentMonth,
+    decimal? CarriedOverLeaveFromPreviousYear,
     List<EmployeeBankAccountDto> BankAccounts);

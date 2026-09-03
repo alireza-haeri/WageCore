@@ -1,4 +1,5 @@
 using Core.Abstractions.Repositories.Employees;
+using Core.Abstractions.Services;
 using Core.Contracts.Employees;
 
 namespace Application.Features.Employees;
@@ -6,7 +7,8 @@ namespace Application.Features.Employees;
 public class CreateEmployeeCommandHandler(
     IEmployeeRepository employeeRepository,
     IEmployeeQuery employeeQuery,
-    IWorkShopRepository workshopRepository)
+    IWorkShopRepository workshopRepository,
+    IPersianCalendarService persianCalendarService)
     : IRequestHandler<CreateEmployeeCommand, Result<CreateEmployeeCommandResponse>>
 {
     public async Task<Result<CreateEmployeeCommandResponse>> Handle(CreateEmployeeCommand request,
@@ -51,7 +53,10 @@ public class CreateEmployeeCommandHandler(
         var employee = Employee.Create(
             request.WorkshopId,
             workshop.RegistrationDate,
-            request.Employee);
+            request.Employee,
+            true,
+            true,
+            persianCalendarService);
 
         if (!employee.IsSuccess)
             return Result<CreateEmployeeCommandResponse>.GeneralFailure(employee.ErrorMessage!);

@@ -10,4 +10,7 @@ public record UserEmployeeResult(
     DateOnly HireDate,
     string? JobTitle,
     EmployeeStatus Status,
-    Region Region);
+    Region Region,
+    decimal? LeaveUsedInCurrentYear = null,
+    decimal? NetWorkedDaysBeforeCurrentMonth = null,
+    decimal? CarriedOverLeaveFromPreviousYear = null);

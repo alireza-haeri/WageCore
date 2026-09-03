@@ -28,7 +28,10 @@ public class EmployeeController(IMediator mediator) : BaseController
                 request.Employee.HireDate.ToDateOnly(),
                 request.Employee.PhoneNumber,
                 request.Employee.JobTitle,
-                request.Employee.Region),
+                request.Employee.Region,
+                request.Employee.LeaveUsedInCurrentYear,
+                request.Employee.NetWorkedDaysBeforeCurrentMonth,
+                request.Employee.CarriedOverLeaveFromPreviousYear),
             BankAccounts: request.BankAccounts
                 .Select(x => new EmployeeBankAccountDto(x.BankName, x.BranchCode, x.Iban, x.Id))
                 .ToList()
@@ -57,7 +60,10 @@ public class EmployeeController(IMediator mediator) : BaseController
                 request.Employee.HireDate.ToDateOnly(),
                 request.Employee.PhoneNumber,
                 request.Employee.JobTitle,
-                request.Employee.Region),
+                request.Employee.Region,
+                request.Employee.LeaveUsedInCurrentYear,
+                request.Employee.NetWorkedDaysBeforeCurrentMonth,
+                request.Employee.CarriedOverLeaveFromPreviousYear),
             BankAccounts: request.BankAccounts
                 .Select(x => new EmployeeBankAccountDto(x.BankName, x.BranchCode, x.Iban, x.Id))
                 .ToList()
@@ -140,7 +146,10 @@ public class EmployeeController(IMediator mediator) : BaseController
                     PersianDate.FromDateOnly(e.HireDate).ToDisplay(UserPersianDateFormat),
                     e.JobTitle,
                     e.Status,
-                    e.Region)
+                    e.Region,
+                    e.LeaveUsedInCurrentYear,
+                    e.NetWorkedDaysBeforeCurrentMonth,
+                    e.CarriedOverLeaveFromPreviousYear)
                 )
             );
 
@@ -170,6 +179,9 @@ public class EmployeeController(IMediator mediator) : BaseController
             e.PhoneNumber,
             e.JobTitle,
             e.Region,
+            e.LeaveUsedInCurrentYear,
+            e.NetWorkedDaysBeforeCurrentMonth,
+            e.CarriedOverLeaveFromPreviousYear,
             e.BankAccounts
                 .Select(x => new EmployeeBankAccountResponse(
                     x.BankName,

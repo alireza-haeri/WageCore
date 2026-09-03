@@ -1,3 +1,5 @@
+using Core.Abstractions.Services;
+
 namespace Shared.Tests.Builders;
 
 public class EmployeeBuilder
@@ -27,6 +29,10 @@ public class EmployeeBuilder
     private string _iban = "IR123456789012345678901234";
     private bool _isPersonalCodeUniqueForUser = true;
     private bool _isNationalCodeUniqueForUser = true;
+    private decimal? _leaveUsedInCurrentYear;
+    private decimal? _netWorkedDaysBeforeCurrentMonth;
+    private decimal? _carriedOverLeaveFromPreviousYear;
+    private IPersianCalendarService? _persianCalendarService;
 
     public EmployeeBuilder WithId(Guid id)
     {
@@ -178,6 +184,30 @@ public class EmployeeBuilder
         return this;
     }
 
+    public EmployeeBuilder WithLeaveUsedInCurrentYear(decimal? leaveUsedInCurrentYear)
+    {
+        _leaveUsedInCurrentYear = leaveUsedInCurrentYear;
+        return this;
+    }
+
+    public EmployeeBuilder WithNetWorkedDaysBeforeCurrentMonth(decimal? netWorkedDaysBeforeCurrentMonth)
+    {
+        _netWorkedDaysBeforeCurrentMonth = netWorkedDaysBeforeCurrentMonth;
+        return this;
+    }
+
+    public EmployeeBuilder WithCarriedOverLeaveFromPreviousYear(decimal? carriedOverLeaveFromPreviousYear)
+    {
+        _carriedOverLeaveFromPreviousYear = carriedOverLeaveFromPreviousYear;
+        return this;
+    }
+
+    public EmployeeBuilder WithPersianCalendarService(IPersianCalendarService? persianCalendarService)
+    {
+        _persianCalendarService = persianCalendarService;
+        return this;
+    }
+
     public EmployeeDto BuildEmployeeDto() =>
         new(
             _departmentId,
@@ -189,7 +219,10 @@ public class EmployeeBuilder
             _hireDate,
             _phoneNumber,
             _jobTitle,
-            _region);
+            _region,
+            _leaveUsedInCurrentYear,
+            _netWorkedDaysBeforeCurrentMonth,
+            _carriedOverLeaveFromPreviousYear);
 
     public EmployeeInsuranceDto BuildInsuranceDto() =>
         new(
@@ -212,6 +245,7 @@ public class EmployeeBuilder
             _workshopRegistrationDate,
             BuildEmployeeDto(),
             _isPersonalCodeUniqueForUser,
-            _isNationalCodeUniqueForUser);
+            _isNationalCodeUniqueForUser,
+            _persianCalendarService);
     }
 }
