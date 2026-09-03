@@ -38,6 +38,9 @@ public class GetPayrollRecordCalculationDetailsQueryHandlerTests
         _employee = new EmployeeBuilder()
             .WithId(ValidEmployeeId)
             .WithWorkshopId(ValidWorkshopId)
+            // The builder defaults the workshop registration date to "now - 30 days",
+            // which is after the fixed hire date below and would fail Employee.Create.
+            .WithWorkshopRegistrationDate(new DateOnly(2024, 1, 1))
             .WithHireDate(HireDate)
             .CreateResult()
             .ShouldBeSuccess();
@@ -272,11 +275,12 @@ public class GetPayrollRecordCalculationDetailsQueryHandlerTests
             Arg.Any<IReadOnlyList<SalaryDecree>>(),
             PeriodStart,
             PeriodEnd,
-            workInput => workInput.WorkedDaysCount == 24m &&
-                         workInput.OvertimeHours == 4m &&
-                         workInput.MissionDaysCount == 1m &&
-                         workInput.StandardWorkingDaysCount == 31 &&
-                         workInput.IsEsfandPeriod == false,
+            Arg.Is<PayrollWorkInput>(workInput =>
+                workInput.WorkedDaysCount == 24m &&
+                workInput.OvertimeHours == 4m &&
+                workInput.MissionDaysCount == 1m &&
+                workInput.StandardWorkingDaysCount == 31 &&
+                workInput.IsEsfandPeriod == false),
             Arg.Any<CancellationToken>());
     }
 

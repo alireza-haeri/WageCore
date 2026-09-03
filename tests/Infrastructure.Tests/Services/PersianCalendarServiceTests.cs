@@ -12,7 +12,7 @@ public class PersianCalendarServiceTests
         var result = _service.GetMonthRange(1400, 1);
 
         result.StartPeriod.Should().Be(new DateOnly(2021, 3, 21));
-        result.EndPeriod.Should().Be(new DateOnly(2021, 4, 19));
+        result.EndPeriod.Should().Be(new DateOnly(2021, 4, 20));
     }
 
     [Fact]
@@ -40,6 +40,23 @@ public class PersianCalendarServiceTests
 
         result.StartPeriod.Should().Be(new DateOnly(2026, 3, 20));
         result.EndPeriod.Should().Be(new DateOnly(2026, 4, 19));
+    }
+
+    [Fact]
+    public void GetMonthRange_ForEsfandOfLeapYear1405_ShouldReturnA30DayMonth()
+    {
+        var result = _service.GetMonthRange(1405, 12);
+
+        result.StartPeriod.Should().Be(new DateOnly(2027, 2, 19));
+        result.EndPeriod.Should().Be(new DateOnly(2027, 3, 20));
+    }
+
+    [Fact]
+    public void GetMonthRange_ForAnUnsupportedYear_ShouldThrow()
+    {
+        Action act = () => _service.GetMonthRange(1398, 1);
+
+        act.Should().Throw<ArgumentOutOfRangeException>();
     }
 
     #endregion
@@ -165,12 +182,8 @@ public class PersianCalendarServiceTests
     [Fact]
     public void GetDaysInPersianYear_ForADateInALeapYear_ShouldReturn366()
     {
-        var persianCalendar = new System.Globalization.PersianCalendar();
-        var leapYear = Enumerable.Range(1400, 100).First(year => persianCalendar.IsLeapYear(year));
-        var dateInLeapYear = DateOnly.FromDateTime(
-            persianCalendar.ToDateTime(leapYear, 6, 1, 0, 0, 0, 0));
-
-        var result = _service.GetDaysInPersianYear(dateInLeapYear);
+        // 1405 is a leap year: Nowruz 1405 = 2026-03-20, Nowruz 1406 = 2027-03-21.
+        var result = _service.GetDaysInPersianYear(new DateOnly(2026, 6, 1));
 
         result.Should().Be(366);
     }
@@ -178,12 +191,8 @@ public class PersianCalendarServiceTests
     [Fact]
     public void GetDaysInPersianYear_ForADateInACommonYear_ShouldReturn365()
     {
-        var persianCalendar = new System.Globalization.PersianCalendar();
-        var commonYear = Enumerable.Range(1400, 100).First(year => !persianCalendar.IsLeapYear(year));
-        var dateInCommonYear = DateOnly.FromDateTime(
-            persianCalendar.ToDateTime(commonYear, 6, 1, 0, 0, 0, 0));
-
-        var result = _service.GetDaysInPersianYear(dateInCommonYear);
+        // 1403 is a common year: Nowruz 1403 = 2024-03-20, Nowruz 1404 = 2025-03-20.
+        var result = _service.GetDaysInPersianYear(new DateOnly(2024, 6, 21));
 
         result.Should().Be(365);
     }
@@ -193,8 +202,7 @@ public class PersianCalendarServiceTests
     {
         var sampleDate = new DateOnly(2025, 8, 15);
 
-        var yearOfSample = new System.Globalization.PersianCalendar()
-            .GetYear(sampleDate.ToDateTime(TimeOnly.MinValue));
+        var yearOfSample = _service.GetPersianYear(sampleDate);
         var yearStart = _service.GetMonthRange(yearOfSample, 1).StartPeriod;
         var yearEnd = _service.GetMonthRange(yearOfSample, 12).EndPeriod;
         var yearLength = yearEnd.DayNumber - yearStart.DayNumber + 1;
