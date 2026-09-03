@@ -63,15 +63,6 @@ public class GetPayrollRecordForEditQueryHandler(
                 persianCalendarService.GetPersianYear(payrollRecord.PeriodStart),
                 persianCalendarService.GetPersianMonth(payrollRecord.PeriodStart),
                 work,
-                payrollRecord.OvertimeAmount,
-                payrollRecord.NightShiftExtraAmount,
-                payrollRecord.FridayWorkAllowance,
-                new PayrollRecordAmountsDto(
-                    payrollRecord.CalculatedTaxAmount,
-                    payrollRecord.GrossAmount,
-                    payrollRecord.InsuranceAmount,
-                    payrollRecord.TotalDeductionsAmount,
-                    payrollRecord.NetPayableAmount),
                 payrollRecord.Status));
     }
 }

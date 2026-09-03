@@ -9,7 +9,4 @@ public record CreatePayrollRecordCommand(
     : IRequest<Result<CreatePayrollRecordCommandResponse>>;
 
 
-public record CreatePayrollRecordCommandResponse(
-    Guid PayrollRecordId,
-    PayrollCalculatedAmountsDto CalculatedAmounts,
-    PayrollRecordAmountsDto Amounts);
+public record CreatePayrollRecordCommandResponse(Guid PayrollRecordId);

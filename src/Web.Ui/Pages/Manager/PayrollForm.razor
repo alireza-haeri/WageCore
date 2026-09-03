@@ -277,22 +277,102 @@
         </div>
     </div>
     <div class="col-lg-4">
-        <div class="calc-box">
+        <div class="calc-box @(_calculationDetails is not null ? "tall" : "")">
             <h4>
                 <svg class="ic"><use href="assets/img/icons.svg#i-receipt"/></svg>
-                @(IsEdit ? "مبالغ ثبت‌شدهٔ فیش" : "پیش‌نمایش محاسبه")
+                تفکیک محاسبه
             </h4>
-            @if (IsEdit && _recordForEdit is not null)
+            @if (_calculationDetails is { } details)
             {
-                <div class="crow"><span>اضافه‌کاری</span><span>@FormatAmount(_recordForEdit.OvertimeAmount)</span></div>
-                <div class="crow"><span>فوق‌العادهٔ شب‌کاری</span><span>@FormatAmount(_recordForEdit.NightShiftExtraAmount)</span></div>
-                <div class="crow"><span>حق جمعه‌کاری</span><span>@FormatAmount(_recordForEdit.FridayWorkAllowance)</span></div>
-                <div class="crow tot"><span>جمع ناخالص</span><span>@FormatAmount(_recordForEdit.Amounts?.GrossAmount ?? 0)</span></div>
-                <div class="crow ded"><span>کسورات (بیمه + مالیات)</span><span>−@FormatAmount(_recordForEdit.Amounts?.TotalDeductionsAmount ?? 0)</span></div>
-                <div class="cnet"><span>خالص پرداختی</span><b>@FormatAmount(_recordForEdit.Amounts?.NetPayableAmount ?? 0)</b></div>
-                <div class="calc-note">
+                <div class="crow"><span>وضعیت فیش</span><span>@(details.Status == GetPayrollRecordCalculationDetailsResponseStatus.Paid ? "پرداخت‌شده" : "پیش‌نویس")</span></div>
+                <div class="crow"><span>دوره</span><span>@details.PersianYear.ToString().ToPersianNumber() — @GetPersianMonthName(details.PersianMonth)</span></div>
+
+                <div class="calc-sec">ورودی‌های دوره</div>
+                <div class="crow"><span>روزهای ماه</span><span>@details.PeriodDaysCount.ToString().ToPersianNumber()</span></div>
+                <div class="crow"><span>روز کارکرد استاندارد ماه</span><span>@details.StandardWorkingDaysCount.ToString().ToPersianNumber()</span></div>
+                <div class="crow"><span>تعداد جمعه‌های ماه</span><span>@details.FridayCount.ToString().ToPersianNumber()</span></div>
+                <div class="crow"><span>روزهای سال خورشیدی</span><span>@details.DaysInYear.ToString().ToPersianNumber()</span></div>
+
+                <div class="calc-sec">کارکرد این ماه</div>
+                <div class="crow"><span>روزهای کارکرد</span><span>@FormatDecimal(details.WorkedDaysCount)</span></div>
+                <div class="crow"><span>روزهای غیبت</span><span>@FormatDecimal(details.AbsenceDaysCount)</span></div>
+                <div class="crow"><span>مرخصی</span><span>@FormatLeave(details.LeaveHours, details.DailyWorkingHours)</span></div>
+                <div class="crow"><span>مأموریت</span><span>@FormatDecimal(details.MissionDaysCount) روز و @FormatDecimal(details.MissionHours) ساعت</span></div>
+                <div class="crow sub"><span>مبلغ مأموریت (اختیاری)</span><span>@FormatAmountOptional(details.MissionAmountOverride)</span></div>
+                <div class="crow"><span>اضافه‌کاری</span><span>@FormatDecimal(details.OvertimeHours) ساعت</span></div>
+                <div class="crow"><span>شب‌کاری</span><span>@FormatDecimal(details.NightShiftHours) ساعت</span></div>
+                <div class="crow"><span>جمعه‌کاری</span><span>@FormatDecimal(details.FridayWorkHours) ساعت</span></div>
+                <div class="crow"><span>تعطیل‌کاری</span><span>@FormatDecimal(details.HolidayWorkHours) ساعت</span></div>
+                <div class="crow"><span>کارانه (اختیاری)</span><span>@FormatAmountOptional(details.PerformanceBonusAmount)</span></div>
+                <div class="crow"><span>مزایای نقدی (اختیاری)</span><span>@FormatAmountOptional(details.CashBenefitsAmount)</span></div>
+                @if (details.IsEsfandPeriod)
+                {
+                    <div class="crow"><span>نوع عیدی سالانه</span><span>@(details.AnnualBonusType == GetPayrollRecordCalculationDetailsResponseAnnualBonusType.Minimum ? "حداقل" : "حداکثر")</span></div>
+                }
+
+                <div class="calc-sec">سقف‌ها و ساعت‌های دوره</div>
+                <div class="crow"><span>ساعت کار روزانه</span><span>@FormatDecimal(details.DailyWorkingHours) ساعت</span></div>
+                <div class="crow"><span>سقف اضافه‌کاری ماهانه</span><span>@FormatDecimal(details.MaxMonthlyOvertimeHours) ساعت</span></div>
+                <div class="crow"><span>سقف جمعه‌کاری ماهانه</span><span>@FormatDecimal(details.MaxFridayHours) ساعت</span></div>
+                <div class="crow"><span>سقف شب‌کاری ماهانه</span><span>@FormatDecimal(details.MaxNightShiftHours) ساعت</span></div>
+
+                <div class="calc-sec">اطلاعات حکم حقوقی</div>
+                <div class="crow"><span>اعتبار حکم از</span><span>@ToPersianDate(details.DecreeEffectiveFrom)</span></div>
+                <div class="crow"><span>پایهٔ حقوق روزانه</span><span>@FormatAmount(details.BaseDailySalary)</span></div>
+                <div class="crow"><span>حق جذب</span><span>@FormatAmountOptional(details.AttractionAllowance)</span></div>
+                <div class="crow"><span>حق سرپرستی</span><span>@FormatAmountOptional(details.SupervisionAllowance)</span></div>
+                <div class="crow"><span>ایاب و ذهاب (روزانه)</span><span>@FormatAmountOptional(details.TransportationAllowanceNet)</span></div>
+                <div class="crow"><span>تعداد فرزندان</span><span>@details.ChildrenCount.ToString().ToPersianNumber()</span></div>
+                <div class="crow"><span>وضعیت تأهل</span><span>@GetMaritalStatusName(details.MaritalStatus)</span></div>
+                <div class="crow"><span>نوع شیفت</span><span>@GetShiftTypeName(details.ShiftType)</span></div>
+                <div class="crow"><span>نوع قرارداد</span><span>@GetContractTypeName(details.ContractType)</span></div>
+                <div class="crow"><span>مشمول مالیات</span><span>@(details.IsTaxSubject ? "بله" : "خیر")</span></div>
+
+                <div class="calc-sec">بازۀ سالانه</div>
+                <div class="crow"><span>روزهای کارکرد سال تا قبل از این ماه</span><span>@FormatDecimal(details.PreviousAnnualWorkedDaysCount)</span></div>
+                <div class="crow"><span>مجموع روزهای کارکرد سال با این ماه</span><span>@FormatDecimal(details.AnnualWorkedDaysCount)</span></div>
+
+                <div class="calc-sec">قوانین کار معتبر در این دوره</div>
+                <table class="rule-tbl">
+                    @foreach (var rule in details.RuleValues)
+                    {
+                        <tr>
+                            <td>@GetRuleLabel(rule.Key)</td>
+                            <td>@FormatDecimal(rule.Value)</td>
+                        </tr>
+                    }
+                </table>
+
+                <div class="calc-sec">تفکیک مبالغ محاسبه‌شده</div>
+                <div class="crow"><span>پایهٔ حقوق ماهانه</span><span>@FormatAmount(details.CalculatedAmounts.BaseSalaryAmount)</span></div>
+                <div class="crow"><span>حق جذب</span><span>@FormatAmount(details.CalculatedAmounts.AttractionAllowanceAmount)</span></div>
+                <div class="crow"><span>حق سرپرستی</span><span>@FormatAmount(details.CalculatedAmounts.SupervisionAllowanceAmount)</span></div>
+                <div class="crow"><span>فوق‌العادهٔ شب‌کاری</span><span>@FormatAmount(details.CalculatedAmounts.NightShiftExtraAmount)</span></div>
+                <div class="crow"><span>مبلغ تعطیل‌کاری</span><span>@FormatAmount(details.CalculatedAmounts.HolidayWorkAmount)</span></div>
+                <div class="crow"><span>حق اولاد</span><span>@FormatAmount(details.CalculatedAmounts.ChildAllowanceAmount)</span></div>
+                <div class="crow"><span>حق مسکن</span><span>@FormatAmount(details.CalculatedAmounts.HousingAllowanceAmount)</span></div>
+                <div class="crow"><span>حق بن و خوار و بار</span><span>@FormatAmount(details.CalculatedAmounts.FoodAllowanceAmount)</span></div>
+                <div class="crow"><span>حق تأهل</span><span>@FormatAmount(details.CalculatedAmounts.MarriageAllowanceAmount)</span></div>
+                <div class="crow"><span>اضافه‌کاری</span><span>@FormatAmount(details.CalculatedAmounts.OvertimeAmount)</span></div>
+                <div class="crow"><span>نوبت‌کاری</span><span>@FormatAmount(details.CalculatedAmounts.ShiftWorkAmount)</span></div>
+                <div class="crow"><span>مأموریت روزانه</span><span>@FormatAmount(details.CalculatedAmounts.DailyMissionAmount)</span></div>
+                <div class="crow"><span>حق کار جمعه</span><span>@FormatAmount(details.CalculatedAmounts.FridayWorkAllowance)</span></div>
+                <div class="crow"><span>سنوات پایان سال</span><span>@FormatAmount(details.CalculatedAmounts.EndOfServiceAmount)</span></div>
+                <div class="crow"><span>عیدی سالانه</span><span>@FormatAmountOptional(details.CalculatedAmounts.AnnualBonusAmount)</span></div>
+                <div class="crow"><span>ایاب و ذهاب</span><span>@FormatAmount(details.CalculatedAmounts.CommutingAllowanceAmount)</span></div>
+                <div class="crow"><span>کارانه</span><span>@FormatAmountOptional(details.CalculatedAmounts.PerformanceBonusAmount)</span></div>
+                <div class="crow"><span>مزایای نقدی</span><span>@FormatAmountOptional(details.CalculatedAmounts.CashBenefitsAmount)</span></div>
+                <div class="crow tot"><span>جمع حقوق و دستمزد</span><span>@FormatAmount(details.Amounts.GrossAmount)</span></div>
+                <div class="crow ded"><span>بیمهٔ ۷٪</span><span>−@FormatAmount(details.Amounts.InsuranceAmount)</span></div>
+                <div class="crow ded"><span>مالیات</span><span>−@FormatAmount(details.Amounts.CalculatedTaxAmount)</span></div>
+                <div class="crow"><span>مجموع کسورات</span><span>−@FormatAmount(details.Amounts.TotalDeductionsAmount)</span></div>
+                <div class="cnet"><span>خالص پرداختی</span><b>@FormatAmount(details.Amounts.NetPayableAmount)</b></div>
+            }
+            else if (_detailsError is not null)
+            {
+                <div class="calc-note err">
                     <svg class="ic"><use href="assets/img/icons.svg#i-info"/></svg>
-                    <div>با ذخیرهٔ تغییرات، محاسبات با کارکرد جدید بازآفرینی می‌شود.</div>
+                    <div>@_detailsError</div>
                 </div>
             }
             else
@@ -300,7 +380,7 @@
                 <div class="crow"><span>وضعیت فیش</span><span>پیش‌نویس</span></div>
                 <div class="calc-note">
                     <svg class="ic"><use href="assets/img/icons.svg#i-info"/></svg>
-                    <div>مبالغ و کسورات بعد از ثبت، مطابق فرمول‌ها و بخشنامه‌ی همان دوره سمت سرور محاسبه می‌شود.</div>
+                    <div>تفکیک کامل محاسبه — ورودی‌های حکم، قوانین و کسورات — بعد از ثبت فیش اینجا نمایش داده می‌شود.</div>
                 </div>
             }
         </div>
@@ -312,27 +392,29 @@
 
     private FormHelper<PayrollFormModel> _formHelper = new(fieldMapping: CreateFieldMapping());
     private List<GetUserEmployeesResponse>? _userEmployees;
-    private GetPayrollRecordForEditResponse? _recordForEdit;
+    private GetPayrollRecordCalculationDetailsResponse? _calculationDetails;
+    private string? _detailsError;
+    private Guid? _loadedRecordId;
     private bool _isLoading;
     private bool IsEdit => Id.HasValue && Id.Value != Guid.Empty;
 
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadEmployeesAsync();
+    protected override async Task OnInitializedAsync() => await LoadEmployeesAsync();
 
-        if (IsEdit)
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id is { } id && id != Guid.Empty && id != _loadedRecordId)
         {
+            _loadedRecordId = id;
             _isLoading = true;
             try
             {
                 var result = await ApiService.SendAsync(
-                    apiCall: () => ApiClient.GetPayrollRecordForEditAsync(Id!.Value)
+                    apiCall: () => ApiClient.GetPayrollRecordForEditAsync(id)
                 );
 
                 if (result is { IsSuccess: true })
                 {
                     var record = result.Response;
-                    _recordForEdit = record;
                     var work = record.Work;
                     _formHelper.Model = new PayrollFormModel
                     {
@@ -361,6 +443,7 @@
                         AnnualBonusType = work.AnnualBonusType
                     };
                     _formHelper.RebuildEditContext();
+                    await LoadCalculationDetailsAsync(id);
                 }
                 else
                 {
@@ -372,6 +455,29 @@
             {
                 _isLoading = false;
             }
+        }
+    }
+
+    private async Task LoadCalculationDetailsAsync(Guid payrollRecordId)
+    {
+        _detailsError = null;
+        _calculationDetails = null;
+
+        var result = await ApiService.SendAsync(
+            apiCall: () => ApiClient.GetPayrollRecordCalculationDetailsAsync(payrollRecordId)
+        );
+
+        if (result is { IsSuccess: true })
+        {
+            _calculationDetails = result.Response;
+        }
+        else if (result is { IsSuccess: false, Errors: { Count: > 0 } })
+        {
+            _detailsError = string.Join(" ", result.Errors.Values.SelectMany(m => m));
+        }
+        else
+        {
+            _detailsError = "تفکیک محاسبه در دسترس نیست.";
         }
     }
 
@@ -441,7 +547,8 @@
 
             if (result is { IsSuccess: true })
             {
-                NavigationManager.NavigateTo("/Payroll");
+                // Stay on the form page and refresh the calculation details.
+                await LoadCalculationDetailsAsync(Id!.Value);
             }
             else if (result != null)
             {
@@ -464,7 +571,9 @@
 
             if (result is { IsSuccess: true })
             {
-                NavigationManager.NavigateTo("/Payroll");
+                // Stay on the form page: navigating to the new record's url
+                // reloads the form and its calculation details in place.
+                NavigationManager.NavigateTo($"/payrollform/{result.Response.PayrollRecordId}");
             }
             else if (result != null)
             {
@@ -499,6 +608,100 @@
         => string.IsNullOrWhiteSpace(value) ? null : decimal.Parse(value);
 
     private static string FormatAmount(decimal amount) => ((long)amount).ToPersianNumber();
+
+    private static string FormatDecimal(decimal value) => value.ToString("0.##").ToPersianNumber();
+
+    private static string FormatAmountOptional(decimal? amount) => amount.HasValue ? FormatAmount(amount.Value) : "—";
+
+    private static string FormatLeave(decimal leaveHours, decimal dailyWorkingHours)
+    {
+        if (leaveHours <= 0)
+            return "—";
+
+        if (dailyWorkingHours <= 0)
+            return FormatDecimal(leaveHours) + " ساعت";
+
+        var days = (int)(leaveHours / dailyWorkingHours);
+        var remaining = leaveHours - days * dailyWorkingHours;
+        var hours = (int)remaining;
+        var minutes = (int)Math.Round((remaining - hours) * 60);
+        if (minutes == 60)
+        {
+            minutes = 0;
+            hours += 1;
+        }
+
+        return $"{days.ToString().ToPersianNumber()} روز {hours.ToString().ToPersianNumber()} ساعت {minutes.ToString().ToPersianNumber()} دقیقه";
+    }
+
+    private static string ToPersianDate(string? isoDate)
+    {
+        if (!DateTimeOffset.TryParse(isoDate, out var date))
+            return isoDate;
+
+        var calendar = new System.Globalization.PersianCalendar();
+        var dateTime = date.DateTime;
+        return $"{calendar.GetDayOfMonth(dateTime).ToString().ToPersianNumber()}" +
+               $"/{calendar.GetMonth(dateTime).ToString().ToPersianNumber()}" +
+               $"/{calendar.GetYear(dateTime).ToString().ToPersianNumber()}";
+    }
+
+    private static string GetMaritalStatusName(GetPayrollRecordCalculationDetailsResponseMaritalStatus status) => status switch
+    {
+        GetPayrollRecordCalculationDetailsResponseMaritalStatus.Single => "مجرد",
+        GetPayrollRecordCalculationDetailsResponseMaritalStatus.Married => "متأهل",
+        GetPayrollRecordCalculationDetailsResponseMaritalStatus.Divorced => "مطلقه",
+        GetPayrollRecordCalculationDetailsResponseMaritalStatus.Widowed => "یتیم",
+        _ => string.Empty
+    };
+
+    private static string GetShiftTypeName(GetPayrollRecordCalculationDetailsResponseShiftType type) => type switch
+    {
+        GetPayrollRecordCalculationDetailsResponseShiftType.None => "بدون شیفت",
+        GetPayrollRecordCalculationDetailsResponseShiftType.MorningEvening => "صبح-عصر",
+        GetPayrollRecordCalculationDetailsResponseShiftType.MorningNight => "صبح-شب",
+        GetPayrollRecordCalculationDetailsResponseShiftType.EveningNight => "عصر-شب",
+        GetPayrollRecordCalculationDetailsResponseShiftType.MorningEveningNight => "سه‌نوبت",
+        _ => string.Empty
+    };
+
+    private static string GetContractTypeName(GetPayrollRecordCalculationDetailsResponseContractType type) => type switch
+    {
+        GetPayrollRecordCalculationDetailsResponseContractType.Permanent => "دائمی",
+        GetPayrollRecordCalculationDetailsResponseContractType.Temporary => "موقتی",
+        GetPayrollRecordCalculationDetailsResponseContractType.FixedTerm => "معین",
+        _ => string.Empty
+    };
+
+    private static string GetRuleLabel(PayrollCalculationRuleValueResponseKey key) => key switch
+    {
+        PayrollCalculationRuleValueResponseKey.MinimumDailySalary => "حداقل دستمزد روزانه",
+        PayrollCalculationRuleValueResponseKey.DailyWorkingHours => "ساعت کار روزانه",
+        PayrollCalculationRuleValueResponseKey.MaximumOvertimeHoursPerDay => "سقف اضافه‌کاری در روز",
+        PayrollCalculationRuleValueResponseKey.MaximumNightShiftHoursPerDay => "سقف شب‌کاری در روز",
+        PayrollCalculationRuleValueResponseKey.MaximumOvertimeHoursPerMonth => "سقف اضافه‌کاری ماهانه",
+        PayrollCalculationRuleValueResponseKey.MaximumFridayWorkHoursPerMonth => "سقف جمعه‌کاری ماهانه",
+        PayrollCalculationRuleValueResponseKey.InsurancePercentage => "درصد بیمه",
+        PayrollCalculationRuleValueResponseKey.AnnualBonusMinimumAmount => "عیدی حداقل",
+        PayrollCalculationRuleValueResponseKey.AnnualBonusMaximumAmount => "عیدی حداکثر",
+        PayrollCalculationRuleValueResponseKey.TaxExemptMonthlyAmount => "مبلغ معاف مالیاتی (منسوخ)",
+        PayrollCalculationRuleValueResponseKey.TaxRatePercentage => "نرخ مالیات (منسوخ)",
+        PayrollCalculationRuleValueResponseKey.StandardDailyWorkHours => "ساعت استاندارد روز",
+        PayrollCalculationRuleValueResponseKey.NightShiftPercentage => "درصد شب‌کاری",
+        PayrollCalculationRuleValueResponseKey.HolidayWorkPercentage => "درصد تعطیل‌کاری",
+        PayrollCalculationRuleValueResponseKey.OvertimePercentage => "درصد اضافه‌کاری",
+        PayrollCalculationRuleValueResponseKey.FridayWorkPercentage => "درصد جمعه‌کاری",
+        PayrollCalculationRuleValueResponseKey.ChildAllowanceMultiplier => "ضریب حق اولاد",
+        PayrollCalculationRuleValueResponseKey.EndOfServiceDaysPerYear => "سنوات (روز در سال)",
+        PayrollCalculationRuleValueResponseKey.HousingAllowanceAmount => "حق مسکن ماهانه",
+        PayrollCalculationRuleValueResponseKey.FoodAllowanceAmount => "حق بن ماهانه",
+        PayrollCalculationRuleValueResponseKey.MarriageAllowanceAmount => "حق تأهل ماهانه",
+        PayrollCalculationRuleValueResponseKey.ShiftWorkPercentageMorningEvening => "درصد نوبت‌کاری صبح-عصر",
+        PayrollCalculationRuleValueResponseKey.ShiftWorkPercentageMorningNight => "درصد نوبت‌کاری صبح-شب",
+        PayrollCalculationRuleValueResponseKey.ShiftWorkPercentageEveningNight => "درصد نوبت‌کاری عصر-شب",
+        PayrollCalculationRuleValueResponseKey.ShiftWorkPercentageMorningEveningNight => "درصد نوبت‌کاری سه‌نوبت",
+        _ => key.ToString()
+    };
 
     private static Dictionary<string, string> CreateFieldMapping() => new()
     {
