@@ -68,7 +68,7 @@ public class PersianCalendarService : IPersianCalendarService
 
         for (var date = periodStart; date <= periodEnd; date = date.AddDays(1))
         {
-            if (date.DayOfWeek == DayOfWeek.Friday)
+            if (date.ToDateTime(TimeOnly.MinValue).DayOfWeek == DayOfWeek.Friday)
                 fridayCount++;
         }
 
@@ -78,7 +78,7 @@ public class PersianCalendarService : IPersianCalendarService
     public int GetPersianMonth(DateOnly date)
     {
         var persianYear = GetPersianYear(date);
-        var daysIntoYear = (date.ToTimeSpan() - GetNowruz(persianYear).ToTimeSpan()).Days;
+        var daysIntoYear = (date.ToDateTime(TimeOnly.MinValue) - GetNowruz(persianYear).ToDateTime(TimeOnly.MinValue)).Days;
 
         return daysIntoYear < DaysBeforeMehr
             ? 1 + daysIntoYear / 31
@@ -91,7 +91,7 @@ public class PersianCalendarService : IPersianCalendarService
         if (date < firstSupportedNowruz)
             throw new ArgumentOutOfRangeException(
                 nameof(date),
-                $"تقویم رسمی برای تاریخ {date:yyyy-MM-dd} در دسترس نیست.");
+                $"تقویم رسمی برای تاریخ {date} در دسترس نیست.");
 
         for (var i = SupportedYears.Length - 1; i >= 0; i--)
         {
@@ -112,12 +112,12 @@ public class PersianCalendarService : IPersianCalendarService
                 ? persianYear
                 : throw new ArgumentOutOfRangeException(
                     nameof(date),
-                    $"تقویم رسمی برای تاریخ {date:yyyy-MM-dd} در دسترس نیست.");
+                    $"تقویم رسمی برای تاریخ {date} در دسترس نیست.");
         }
 
         throw new ArgumentOutOfRangeException(
             nameof(date),
-            $"تقویم رسمی برای تاریخ {date:yyyy-MM-dd} در دسترس نیست.");
+            $"تقویم رسمی برای تاریخ {date} در دسترس نیست.");
     }
 
     public int GetDaysInPersianYear(DateOnly date) =>
@@ -149,7 +149,7 @@ public class PersianCalendarService : IPersianCalendarService
     private static bool IsLeapYear(int persianYear) =>
         NowruzByPersianYear.TryGetValue(persianYear, out var nowruz)
         && NowruzByPersianYear.TryGetValue(persianYear + 1, out var nextNowruz)
-        && (nextNowruz.ToTimeSpan() - nowruz.ToTimeSpan()).Days == 366;
+        && (nextNowruz.ToDateTime(TimeOnly.MinValue) - nowruz.ToDateTime(TimeOnly.MinValue)).Days == 366;
 
     private static DateOnly GetNowruz(int persianYear) =>
         NowruzByPersianYear.TryGetValue(persianYear, out var nowruz)
