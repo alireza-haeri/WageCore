@@ -32,6 +32,9 @@ public class PersianCalendarService : IPersianCalendarService
     public int GetPersianMonth(DateOnly date) =>
         PersianCalendar.GetMonth(date.ToDateTime(TimeOnly.MinValue));
 
+    public int GetPersianYear(DateOnly date) =>
+        PersianCalendar.GetYear(date.ToDateTime(TimeOnly.MinValue));
+
     public int GetDaysInPersianYear(DateOnly date)
     {
         var dateTime = date.ToDateTime(TimeOnly.MinValue);

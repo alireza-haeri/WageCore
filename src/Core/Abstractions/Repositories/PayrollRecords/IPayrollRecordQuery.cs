@@ -35,4 +35,21 @@ public interface IPayrollRecordQuery
         Guid employeeId,
         DateOnly periodStart,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Lists the user's payroll records. <paramref name="search"/> matches the employee
+    /// full name, personal code or national code. When <paramref name="periodStart"/> and
+    /// <paramref name="periodEnd"/> are provided, only records whose period starts inside
+    /// that range are returned (the Persian year/month filtering is resolved to a
+    /// Gregorian range by the caller).
+    /// </summary>
+    Task<PagedResult<PayrollRecordResult>> GetPayrollRecordsAsync(
+        Guid userId,
+        PaginationDto pagination,
+        string? search = null,
+        Guid? workshopId = null,
+        Guid? departmentId = null,
+        DateOnly? periodStart = null,
+        DateOnly? periodEnd = null,
+        CancellationToken cancellationToken = default);
 }

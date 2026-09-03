@@ -107,6 +107,34 @@ public class PersianCalendarServiceTests
 
     #endregion
 
+    #region GetPersianYear
+
+    [Fact]
+    public void GetPersianYear_OnNowruz_ShouldReturnTheNewYear()
+    {
+        var result = _service.GetPersianYear(new DateOnly(2026, 3, 20));
+
+        result.Should().Be(1405);
+    }
+
+    [Fact]
+    public void GetPersianYear_InTheMiddleOfTheYear_ShouldReturnTheYearNumber()
+    {
+        var result = _service.GetPersianYear(new DateOnly(2025, 11, 21));
+
+        result.Should().Be(1404);
+    }
+
+    [Fact]
+    public void GetPersianYear_OnTheLastDayOfTheYear_ShouldReturnThatYear()
+    {
+        var result = _service.GetPersianYear(new DateOnly(2026, 3, 19));
+
+        result.Should().Be(1404);
+    }
+
+    #endregion
+
     #region GetDaysInPersianYear
 
     [Fact]

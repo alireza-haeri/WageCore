@@ -270,6 +270,22 @@ namespace Web.Ui.Services
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
+        /// GetPayrollRecords
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<GetPayrollRecordsResponsePagedResultResult> GetPayrollRecordsAsync(int? pagination_PageNumber = null, int? pagination_PageSize = null, int? pagination_Offset = null, string search = null, System.Guid? workshopId = null, System.Guid? departmentId = null, int? persianYear = null, int? persianMonth = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// GetPayrollRecordForEdit
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<GetPayrollRecordForEditResponseResult> GetPayrollRecordForEditAsync(System.Guid payrollRecordId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
         /// CreateSalaryDecree
         /// </summary>
         /// <returns>OK</returns>
@@ -2814,6 +2830,198 @@ namespace Web.Ui.Services
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<BooleanResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// CreateSalaryDecree
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// GetPayrollRecords
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<GetPayrollRecordsResponsePagedResultResult> GetPayrollRecordsAsync(int? pagination_PageNumber = null, int? pagination_PageSize = null, int? pagination_Offset = null, string search = null, System.Guid? workshopId = null, System.Guid? departmentId = null, int? persianYear = null, int? persianMonth = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/v1/payroll-records"
+                    urlBuilder_.Append("api/v1/payroll-records");
+                    urlBuilder_.Append('?');
+                    if (pagination_PageNumber != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Pagination.PageNumber")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(pagination_PageNumber, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (pagination_PageSize != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Pagination.PageSize")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(pagination_PageSize, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (pagination_Offset != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Pagination.Offset")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(pagination_Offset, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (search != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("Search")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(search, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (workshopId != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("WorkshopId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(workshopId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (departmentId != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("DepartmentId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(departmentId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (persianYear != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("PersianYear")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(persianYear, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (persianMonth != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("PersianMonth")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(persianMonth, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<GetPayrollRecordsResponsePagedResultResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// GetPayrollRecordForEdit
+        /// </summary>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<GetPayrollRecordForEditResponseResult> GetPayrollRecordForEditAsync(System.Guid payrollRecordId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (payrollRecordId == null)
+                throw new System.ArgumentNullException("payrollRecordId");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/v1/payroll-records/{payrollRecordId}/edit"
+                    urlBuilder_.Append("api/v1/payroll-records/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(payrollRecordId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/edit");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<GetPayrollRecordForEditResponseResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -6203,6 +6411,256 @@ namespace Web.Ui.Services
 
         [Newtonsoft.Json.JsonProperty("minutes", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int Minutes { get; init; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum GetPayrollRecordsResponseStatus
+    {
+
+        Draft = 0,
+
+        Paid = 1,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record GetPayrollRecordsResponse
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public GetPayrollRecordsResponse(string @departmentName, string @displayPeriod, System.Guid @employeeId, string @employeeName, double @grossAmount, double @netPayableAmount, double @overtimeHours, System.Guid @payrollRecordId, string @personalCode, GetPayrollRecordsResponseStatus @status, double @totalDeductionsAmount, double @workedDaysCount, string @workshopName)
+        {
+            this.PayrollRecordId = @payrollRecordId;
+            this.EmployeeId = @employeeId;
+            this.EmployeeName = @employeeName;
+            this.PersonalCode = @personalCode;
+            this.WorkshopName = @workshopName;
+            this.DepartmentName = @departmentName;
+            this.DisplayPeriod = @displayPeriod;
+            this.WorkedDaysCount = @workedDaysCount;
+            this.OvertimeHours = @overtimeHours;
+            this.GrossAmount = @grossAmount;
+            this.TotalDeductionsAmount = @totalDeductionsAmount;
+            this.NetPayableAmount = @netPayableAmount;
+            this.Status = @status;
+        }
+
+        [Newtonsoft.Json.JsonProperty("payrollRecordId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid PayrollRecordId { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("employeeId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid EmployeeId { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("employeeName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string EmployeeName { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("personalCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string PersonalCode { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("workshopName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string WorkshopName { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("departmentName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string DepartmentName { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("displayPeriod", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string DisplayPeriod { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("workedDaysCount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double WorkedDaysCount { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("overtimeHours", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double OvertimeHours { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("grossAmount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double GrossAmount { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("totalDeductionsAmount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double TotalDeductionsAmount { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("netPayableAmount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double NetPayableAmount { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public GetPayrollRecordsResponseStatus Status { get; init; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record GetPayrollRecordsResponsePagedResult
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public GetPayrollRecordsResponsePagedResult(System.Collections.Generic.ICollection<GetPayrollRecordsResponse> @items, int @pageNumber, int @pageSize, int @totalCount, int @totalPages)
+        {
+            this.Items = @items;
+            this.TotalCount = @totalCount;
+            this.PageNumber = @pageNumber;
+            this.PageSize = @pageSize;
+            this.TotalPages = @totalPages;
+        }
+
+        [Newtonsoft.Json.JsonProperty("items", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<GetPayrollRecordsResponse> Items { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("totalCount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int TotalCount { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("pageNumber", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int PageNumber { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("pageSize", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int PageSize { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("totalPages", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int TotalPages { get; init; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record GetPayrollRecordsResponsePagedResultResult
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public GetPayrollRecordsResponsePagedResultResult(GetPayrollRecordsResponsePagedResultResultBadResultType? @badResultType, System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<string>> @errors, bool @isSuccess, GetPayrollRecordsResponsePagedResult @response)
+        {
+            this.IsSuccess = @isSuccess;
+            this.BadResultType = @badResultType;
+            this.Response = @response;
+            this.Errors = @errors;
+        }
+
+        [Newtonsoft.Json.JsonProperty("isSuccess", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsSuccess { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("badResultType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public GetPayrollRecordsResponsePagedResultResultBadResultType? BadResultType { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("response", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public GetPayrollRecordsResponsePagedResult Response { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("errors", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<string>> Errors { get; init; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum GetPayrollRecordsResponsePagedResultResultBadResultType
+    {
+
+        NotFound = 0,
+
+        Validation = 1,
+
+        General = 2,
+
+        Unauthorized = 3,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum GetPayrollRecordForEditResponseStatus
+    {
+
+        Draft = 0,
+
+        Paid = 1,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record GetPayrollRecordForEditResponse
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public GetPayrollRecordForEditResponse(PayrollRecordAmountsDto @amounts, System.Guid @employeeId, string @employeeName, double @fridayWorkAllowance, double @nightShiftExtraAmount, double @overtimeAmount, System.Guid @payrollRecordId, string @personalCode, int @persianMonth, int @persianYear, GetPayrollRecordForEditResponseStatus @status, UserWorkInputDto @work)
+        {
+            this.PayrollRecordId = @payrollRecordId;
+            this.EmployeeId = @employeeId;
+            this.EmployeeName = @employeeName;
+            this.PersonalCode = @personalCode;
+            this.PersianYear = @persianYear;
+            this.PersianMonth = @persianMonth;
+            this.Work = @work;
+            this.OvertimeAmount = @overtimeAmount;
+            this.NightShiftExtraAmount = @nightShiftExtraAmount;
+            this.FridayWorkAllowance = @fridayWorkAllowance;
+            this.Amounts = @amounts;
+            this.Status = @status;
+        }
+
+        [Newtonsoft.Json.JsonProperty("payrollRecordId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid PayrollRecordId { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("employeeId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid EmployeeId { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("employeeName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string EmployeeName { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("personalCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string PersonalCode { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("persianYear", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int PersianYear { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("persianMonth", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int PersianMonth { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("work", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public UserWorkInputDto Work { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("overtimeAmount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double OvertimeAmount { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("nightShiftExtraAmount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double NightShiftExtraAmount { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("fridayWorkAllowance", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double FridayWorkAllowance { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("amounts", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public PayrollRecordAmountsDto Amounts { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public GetPayrollRecordForEditResponseStatus Status { get; init; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial record GetPayrollRecordForEditResponseResult
+    {
+        [Newtonsoft.Json.JsonConstructor]
+        public GetPayrollRecordForEditResponseResult(GetPayrollRecordForEditResponseResultBadResultType? @badResultType, System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<string>> @errors, bool @isSuccess, GetPayrollRecordForEditResponse @response)
+        {
+            this.IsSuccess = @isSuccess;
+            this.BadResultType = @badResultType;
+            this.Response = @response;
+            this.Errors = @errors;
+        }
+
+        [Newtonsoft.Json.JsonProperty("isSuccess", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsSuccess { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("badResultType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public GetPayrollRecordForEditResponseResultBadResultType? BadResultType { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("response", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public GetPayrollRecordForEditResponse Response { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("errors", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<string>> Errors { get; init; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum GetPayrollRecordForEditResponseResultBadResultType
+    {
+
+        NotFound = 0,
+
+        Validation = 1,
+
+        General = 2,
+
+        Unauthorized = 3,
 
     }
 

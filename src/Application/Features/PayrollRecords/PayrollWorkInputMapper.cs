@@ -36,4 +36,38 @@ public static class PayrollWorkInputMapper
 
     public static decimal ToHours(DayTimeInput dayTime, decimal dailyWorkingHours) =>
         dayTime.Days * dailyWorkingHours + dayTime.Hours + dayTime.Minutes / 60m;
+
+    /// <summary>
+    /// Splits a decimal hours value back into hours and minutes, as the user would
+    /// have entered it. Values that were entered as hours+minutes round-trip exactly.
+    /// </summary>
+    public static WorkTimeInput FromHours(decimal hours)
+    {
+        var wholeHours = (int)hours;
+        var minutes = (int)Math.Round((hours - wholeHours) * 60m, MidpointRounding.AwayFromZero);
+
+        if (minutes == 60)
+        {
+            wholeHours++;
+            minutes = 0;
+        }
+
+        return new WorkTimeInput(wholeHours, minutes);
+    }
+
+    /// <summary>
+    /// Splits a decimal hours value back into days, hours and minutes. The day part is
+    /// derived with the labor-law daily working hours rule effective for the period, so
+    /// a value that was entered as days+hours+minutes round-trips exactly.
+    /// </summary>
+    public static DayTimeInput FromHours(decimal hours, decimal dailyWorkingHours)
+    {
+        if (dailyWorkingHours <= 0)
+            return new DayTimeInput(0, FromHours(hours).Hours, FromHours(hours).Minutes);
+
+        var days = (int)Math.Floor(hours / dailyWorkingHours);
+        var remainder = hours - days * dailyWorkingHours;
+        var workTime = FromHours(remainder);
+        return new DayTimeInput(days, workTime.Hours, workTime.Minutes);
+    }
 }

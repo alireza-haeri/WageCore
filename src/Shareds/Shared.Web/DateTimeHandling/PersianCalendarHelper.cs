@@ -27,6 +27,7 @@ public static class PersianCalendarHelper
         {
             "yyyy/MM/dd" => $"{Pc.GetYear(dt):0000}/{Pc.GetMonth(dt):00}/{Pc.GetDayOfMonth(dt):00}",
             "d MMMM yyyy" => $"{Pc.GetDayOfMonth(dt)} {PersianMonthName(Pc.GetMonth(dt))} {Pc.GetYear(dt)}",
+            "MMMM yyyy" => $"{PersianMonthName(Pc.GetMonth(dt))} {Pc.GetYear(dt)}",
             _ => throw new NotSupportedException($"فرمت {format} پشتیبانی نمی‌شود")
         };
     }

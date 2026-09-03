@@ -58,6 +58,16 @@ public class PersianCalendarHelperTests
     }
 
     [Fact]
+    public void FormatDate_ForMonthAndYearFormat_ShouldReturnPersianMonthAndYear()
+    {
+        var date = new DateOnly(2024, 3, 20);
+
+        var result = PersianCalendarHelper.FormatDate(date, "MMMM yyyy");
+
+        result.Should().Be("فروردین 1403");
+    }
+
+    [Fact]
     public void FormatDate_UnsupportedFormat_ThrowsNotSupportedException()
     {
         var date = new DateOnly(2024, 3, 20);

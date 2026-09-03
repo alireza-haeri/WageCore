@@ -1662,6 +1662,100 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "PayrollRecord"
+        ],
+        "summary": "GetPayrollRecords",
+        "operationId": "GetPayrollRecords",
+        "parameters": [
+          {
+            "name": "Pagination.PageNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Pagination.PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Pagination.Offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "WorkshopId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "DepartmentId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "PersianYear",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PersianMonth",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPayrollRecordsResponsePagedResultResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPayrollRecordsResponsePagedResultResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPayrollRecordsResponsePagedResultResult"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/v1/payroll-records/{payrollRecordId}": {
@@ -2465,6 +2559,48 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/GetWorkshopForEditResponseResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/payroll-records/{payrollRecordId}/edit": {
+      "get": {
+        "tags": [
+          "PayrollRecord"
+        ],
+        "summary": "GetPayrollRecordForEdit",
+        "operationId": "GetPayrollRecordForEdit",
+        "parameters": [
+          {
+            "name": "payrollRecordId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPayrollRecordForEditResponseResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPayrollRecordForEditResponseResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPayrollRecordForEditResponseResult"
                 }
               }
             }
@@ -5609,6 +5745,260 @@
           "minutes": {
             "type": "integer",
             "format": "int32"
+          }
+        }
+      },
+      "GetPayrollRecordsResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "payrollRecordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "personalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "workshopName": {
+            "type": "string",
+            "nullable": true
+          },
+          "departmentName": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayPeriod": {
+            "type": "string",
+            "nullable": true
+          },
+          "workedDaysCount": {
+            "type": "number",
+            "format": "double"
+          },
+          "overtimeHours": {
+            "type": "number",
+            "format": "double"
+          },
+          "grossAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "totalDeductionsAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "netPayableAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "Draft",
+              "Paid"
+            ],
+            "enum": [
+              0,
+              1
+            ]
+          }
+        }
+      },
+      "GetPayrollRecordsResponsePagedResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/GetPayrollRecordsResponse"
+            }
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "readOnly": true,
+            "format": "int32"
+          }
+        }
+      },
+      "GetPayrollRecordsResponsePagedResultResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GetPayrollRecordsResponsePagedResult"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "GetPayrollRecordForEditResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "payrollRecordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "personalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "persianYear": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "persianMonth": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "work": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserWorkInputDto"
+              }
+            ]
+          },
+          "overtimeAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "nightShiftExtraAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "fridayWorkAllowance": {
+            "type": "number",
+            "format": "double"
+          },
+          "amounts": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PayrollRecordAmountsDto"
+              }
+            ]
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "x-enumNames": [
+              "Draft",
+              "Paid"
+            ],
+            "enum": [
+              0,
+              1
+            ]
+          }
+        }
+      },
+      "GetPayrollRecordForEditResponseResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "badResultType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "x-enumNames": [
+              "NotFound",
+              "Validation",
+              "General",
+              "Unauthorized"
+            ],
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "response": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GetPayrollRecordForEditResponse"
+              }
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         }
       }

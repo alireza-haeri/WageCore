@@ -8,6 +8,8 @@ public interface IPersianCalendarService
 
     int GetPersianMonth(DateOnly date);
 
+    int GetPersianYear(DateOnly date);
+
     // Returns 365 or 366 depending on whether the Persian year that contains
     // the given date is a leap year.
     int GetDaysInPersianYear(DateOnly date);

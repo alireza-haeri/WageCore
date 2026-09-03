@@ -7,6 +7,72 @@ namespace Web.Api.Controllers.PayrollRecords;
 [Route("api/v1/payroll-records")]
 public class PayrollRecordController(IMediator mediator) : BaseController
 {
+    [HttpGet]
+    [SwaggerOperation(OperationId = "GetPayrollRecords")]
+    public async Task<ActionResult<Result<PagedResult<GetPayrollRecordsResponse>>>> GetPayrollRecords(
+        [FromQuery] GetPayrollRecordsRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(new GetPayrollRecordsQuery(
+            UserId: UserId,
+            Pagination: request.Pagination,
+            Search: request.Search,
+            WorkshopId: request.WorkshopId,
+            DepartmentId: request.DepartmentId,
+            PersianYear: request.PersianYear,
+            PersianMonth: request.PersianMonth
+        ), cancellationToken);
+
+        var response = result
+            .Map(paged => paged
+                .Map(pr => new GetPayrollRecordsResponse(
+                    pr.PayrollRecordId,
+                    pr.EmployeeId,
+                    pr.EmployeeName,
+                    pr.PersonalCode,
+                    pr.WorkshopName,
+                    pr.DepartmentName,
+                    PersianDate.FromDateOnly(pr.PeriodEnd).ToDisplay("MMMM yyyy"),
+                    pr.WorkedDaysCount,
+                    pr.OvertimeHours,
+                    pr.GrossAmount,
+                    pr.TotalDeductionsAmount,
+                    pr.NetPayableAmount,
+                    pr.Status)
+                )
+            );
+
+        return Result(response);
+    }
+
+    [HttpGet("{payrollRecordId:guid}/edit")]
+    [SwaggerOperation(OperationId = "GetPayrollRecordForEdit")]
+    public async Task<ActionResult<Result<GetPayrollRecordForEditResponse>>> GetPayrollRecordForEdit(
+        Guid payrollRecordId,
+        CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(new GetPayrollRecordForEditQuery(
+            UserId: UserId,
+            PayrollRecordId: payrollRecordId
+        ), cancellationToken);
+
+        var response = result.Map(pr => new GetPayrollRecordForEditResponse(
+            pr.PayrollRecordId,
+            pr.EmployeeId,
+            pr.EmployeeName,
+            pr.PersonalCode,
+            pr.PersianYear,
+            pr.PersianMonth,
+            pr.Work,
+            pr.OvertimeAmount,
+            pr.NightShiftExtraAmount,
+            pr.FridayWorkAllowance,
+            pr.Amounts,
+            pr.Status));
+
+        return Result(response);
+    }
+
     [HttpPost]
     [SwaggerOperation(OperationId = "CreatePayrollRecord")]
     public async Task<ActionResult<Result<CreatePayrollRecordCommandResponse>>> CreatePayrollRecord(

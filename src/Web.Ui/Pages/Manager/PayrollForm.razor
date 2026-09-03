@@ -1,217 +1,593 @@
-@page "/PayrollForm"
+@page "/payrollform/{id:guid}"
+@page "/payrollform"
 @layout ManagerLayout
-
 
 <div class="page-head">
     <div class="ph-t">
         <div class="crumb">پنل
-            <svg class="ic">
-                <use href="assets/img/icons.svg#i-chl"/>
-            </svg>
-            <a href="payslips.html">فیش‌های حقوقی</a>
-            <svg class="ic">
-                <use href="assets/img/icons.svg#i-chl"/>
-            </svg>
-            فیش جدید
+            <svg class="ic"><use href="assets/img/icons.svg#i-chl"/></svg>
+            <a href="/Payroll">فیش‌های حقوقی</a>
+            <svg class="ic"><use href="assets/img/icons.svg#i-chl"/></svg>
+            <span>@(IsEdit ? "ویرایش فیش" : "فیش جدید")</span>
         </div>
-        <h1>صدور فیش جدید</h1>
-        <p>فقط ورودی‌های کارکرد را وارد کنید — نتایج در پیاده‌سازی اصلی سمت سرور محاسبه می‌شود.</p>
+        <h1>@(IsEdit ? "ویرایش فیش حقوقی" : "صدور فیش جدید")</h1>
+        <p>فقط ورودی‌های کارکرد را وارد کنید — محاسبات سمت سرور انجام می‌شود.</p>
     </div>
     <div class="ph-actions">
-        <a class="btn btn-g" href="payslips.html">
-            <svg class="ic">
-                <use href="assets/img/icons.svg#i-x"/>
-            </svg>
+        <a class="btn btn-g" href="/Payroll">
+            <svg class="ic"><use href="assets/img/icons.svg#i-x"/></svg>
             انصراف</a>
-        <button class="btn btn-p" data-demo="فیش به‌صورت پیش‌نویس ثبت شد (نمایشی).">
-            <svg class="ic">
-                <use href="assets/img/icons.svg#i-check"/>
-            </svg>
-            صدور فیش
-        </button>
     </div>
 </div>
 <div class="row g-4">
     <div class="col-lg-8">
         <div class="panel">
             <div class="panel-b">
-                <form>
-                    <input type="hidden" name="Id">
+                <EditForm EditContext="@_formHelper.EditContext" OnSubmit="@HandleSubmit">
+                    <ValidationMessage TValue="string" For="() => _formHelper.Model.General" class="f-help text-danger"/>
+
                     <div class="sec">
-                        <svg class="ic">
-                            <use href="assets/img/icons.svg#i-calendar"/>
-                        </svg>
+                        <svg class="ic"><use href="assets/img/icons.svg#i-calendar"/></svg>
                         دوره و کارمند
                     </div>
                     <div class="row g-3">
                         <div class="col-md-6 field">
-                            <label class="f-label" for="r-emp"><span class="req-s">*</span>فیشِ چه کسی؟
-                                <span class="f-badge fb-grn">EmployeeId</span></label>
-                            <select class="in" id="r-emp" data-autofocus>
-                                <option>رضا محمدی — P-1001</option>
-                                <option>زهرا کریمی — P-1002</option>
-                                <option>حسین عباسی — P-1003</option>
-                                <option>فاطمه نادری — P-1004</option>
-                                <option>مریم صادقی — P-1005</option>
-                            </select>
+                            <label class="f-label" for="r-emp"><span class="req-s">*</span>فیشِ چه کسی؟</label>
+                            <InputSelect @bind-Value="_formHelper.Model.EmployeeId" class="in" id="r-emp"
+                                         data-autofocus disabled="@IsEdit">
+                                <option value="">انتخاب کنید...</option>
+                                @if (_userEmployees is not null)
+                                {
+                                    foreach (var employee in _userEmployees)
+                                    {
+                                        <option value="@employee.Id">@employee.FullName — @employee.PersonalCode</option>
+                                    }
+                                }
+                            </InputSelect>
+                            <ValidationMessage TValue="Guid?" For="() => _formHelper.Model.EmployeeId"
+                                               class="f-help text-danger"/>
                             <div class="f-help">ترکیب (کارمند، سال، ماه) یکتاست.</div>
                         </div>
                         <div class="col-md-3 field">
-                            <label class="f-label" for="r-year"><span class="req-s">*</span>سال <span
-                                    class="f-badge fb-grn">PeriodYear</span></label>
-                            <select class="in" id="r-year">
-                                <option>۱۴۰۴</option>
-                                <option selected>۱۴۰۵</option>
-                                <option>۱۴۰۶</option>
-                            </select>
+                            <label class="f-label" for="r-year"><span class="req-s">*</span>سال</label>
+                            <InputSelect @bind-Value="_formHelper.Model.PersianYear" class="in" id="r-year"
+                                         disabled="@IsEdit">
+                                @foreach (var year in GetPersianYearOptions())
+                                {
+                                    <option value="@year">@year.ToString().ToPersianNumber()</option>
+                                }
+                            </InputSelect>
+                            <ValidationMessage TValue="int" For="() => _formHelper.Model.PersianYear"
+                                               class="f-help text-danger"/>
                         </div>
                         <div class="col-md-3 field">
-                            <label class="f-label" for="r-month"><span class="req-s">*</span>ماه <span
-                                    class="f-badge fb-grn">PeriodMonth</span></label>
-                            <select class="in" id="r-month">
-                                <option>فروردین</option>
-                                <option>اردیبهشت</option>
-                                <option>خرداد</option>
-                                <option>تیر</option>
-                                <option selected>مرداد</option>
-                                <option>شهریور</option>
-                                <option>مهر</option>
-                                <option>آبان</option>
-                                <option>آذر</option>
-                                <option>دی</option>
-                                <option>بهمن</option>
-                                <option>اسفند</option>
-                            </select>
+                            <label class="f-label" for="r-month"><span class="req-s">*</span>ماه</label>
+                            <InputSelect @bind-Value="_formHelper.Model.PersianMonth" class="in" id="r-month"
+                                         disabled="@IsEdit">
+                                @for (var month = 1; month <= 12; month++)
+                                {
+                                    var monthValue = month;
+                                    <option value="@monthValue">@GetPersianMonthName(monthValue)</option>
+                                }
+                            </InputSelect>
+                            <ValidationMessage TValue="int" For="() => _formHelper.Model.PersianMonth"
+                                               class="f-help text-danger"/>
                         </div>
                     </div>
+
                     <div class="sec">
-                        <svg class="ic">
-                            <use href="assets/img/icons.svg#i-clock"/>
-                        </svg>
+                        <svg class="ic"><use href="assets/img/icons.svg#i-clock"/></svg>
                         کارکرد ماه — روزها
                     </div>
                     <div class="row g-3">
                         <div class="col-md-3 col-6 field">
-                            <label class="f-label" for="r-wdays"><span class="req-s">*</span>روزهای
-                                کارکرد <span class="f-badge fb-grn">WorkedDaysCount</span></label>
-                            <input type="number" class="in num" id="r-wdays" value="30" min="0" max="31"
-                                   step="0.5">
+                            <label class="f-label" for="r-wdays"><span class="req-s">*</span>روزهای کارکرد</label>
+                            <InputNumber @bind-Value="_formHelper.Model.WorkedDaysCount" class="in num"
+                                         id="r-wdays" min="0" max="31" step="0.5"/>
+                            <ValidationMessage TValue="decimal" For="() => _formHelper.Model.WorkedDaysCount"
+                                               class="f-help text-danger"/>
                         </div>
                         <div class="col-md-3 col-6 field">
-                            <label class="f-label" for="r-leave"><span class="req-s">*</span>روزهای
-                                مرخصی</label>
-                            <input type="number" class="in num" id="r-leave" value="0" min="0" max="31">
-                            <div class="f-help">استحقاقی با حقوق؛ جزو کارکرد است.</div>
-                        </div>
-                        <div class="col-md-3 col-6 field">
-                            <label class="f-label" for="r-abs"><span class="req-s">*</span>روزهای
-                                غیبت</label>
-                            <input type="number" class="in num" id="r-abs" value="0" min="0" max="31">
+                            <label class="f-label" for="r-abs"><span class="req-s">*</span>روزهای غیبت</label>
+                            <InputNumber @bind-Value="_formHelper.Model.AbsenceDaysCount" class="in num"
+                                         id="r-abs" min="0" max="31" step="0.5"/>
+                            <ValidationMessage TValue="decimal" For="() => _formHelper.Model.AbsenceDaysCount"
+                                               class="f-help text-danger"/>
                             <div class="f-help">هر روز = کسر حقوق همان روز.</div>
                         </div>
                         <div class="col-md-3 col-6 field">
-                            <label class="f-label" for="r-mission"><span class="req-s">*</span>روزهای
-                                مأموریت</label>
-                            <input type="number" class="in num" id="r-mission" value="0" min="0"
-                                   max="31">
+                            <label class="f-label" for="r-mission-days"><span class="req-s">*</span>روزهای مأموریت</label>
+                            <InputNumber @bind-Value="_formHelper.Model.MissionDays" class="in num"
+                                         id="r-mission-days" min="0" max="31"/>
+                            <ValidationMessage TValue="int" For="() => _formHelper.Model.MissionDays"
+                                               class="f-help text-danger"/>
+                        </div>
+                        <div class="col-md-3 col-6 field">
+                            <label class="f-label" for="r-mission-hours"><span class="req-s">*</span>ساعات مأموریت</label>
+                            <div class="d-flex gap-2">
+                                <InputNumber @bind-Value="_formHelper.Model.MissionTimeHours" class="in num"
+                                             id="r-mission-hours" min="0" max="23" style="flex:1"/>
+                                <InputNumber @bind-Value="_formHelper.Model.MissionTimeMinutes" class="in num"
+                                             min="0" max="59" style="flex:1"/>
+                            </div>
+                            <ValidationMessage TValue="int" For="() => _formHelper.Model.MissionTimeHours"
+                                               class="f-help text-danger"/>
+                            <ValidationMessage TValue="int" For="() => _formHelper.Model.MissionTimeMinutes"
+                                               class="f-help text-danger"/>
+                            <div class="f-help">ساعت و دقیقه</div>
                         </div>
                     </div>
+
                     <div class="sec">
-                        <svg class="ic">
-                            <use href="assets/img/icons.svg#i-clock"/>
-                        </svg>
+                        <svg class="ic"><use href="assets/img/icons.svg#i-clock"/></svg>
+                        مرخصی
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-4 col-6 field">
+                            <label class="f-label" for="r-leave-days"><span class="req-s">*</span>روز</label>
+                            <InputNumber @bind-Value="_formHelper.Model.LeaveDays" class="in num"
+                                         id="r-leave-days" min="0" max="31"/>
+                            <ValidationMessage TValue="int" For="() => _formHelper.Model.LeaveDays"
+                                               class="f-help text-danger"/>
+                        </div>
+                        <div class="col-md-4 col-6 field">
+                            <label class="f-label" for="r-leave-hours"><span class="req-s">*</span>ساعت</label>
+                            <InputNumber @bind-Value="_formHelper.Model.LeaveHours" class="in num"
+                                         id="r-leave-hours" min="0" max="23"/>
+                            <ValidationMessage TValue="int" For="() => _formHelper.Model.LeaveHours"
+                                               class="f-help text-danger"/>
+                        </div>
+                        <div class="col-md-4 col-6 field">
+                            <label class="f-label" for="r-leave-minutes"><span class="req-s">*</span>دقیقه</label>
+                            <InputNumber @bind-Value="_formHelper.Model.LeaveMinutes" class="in num"
+                                         id="r-leave-minutes" min="0" max="59"/>
+                            <ValidationMessage TValue="int" For="() => _formHelper.Model.LeaveMinutes"
+                                               class="f-help text-danger"/>
+                            <div class="f-help">استحقاقی با حقوق؛ جزو کارکرد است.</div>
+                        </div>
+                    </div>
+
+                    <div class="sec">
+                        <svg class="ic"><use href="assets/img/icons.svg#i-clock"/></svg>
                         کارکرد ماه — ساعت‌ها
                     </div>
                     <div class="row g-3">
-                        <div class="col-md-4 field">
-                            <label class="f-label" for="r-ot"><span class="req-s">*</span>ساعات
-                                اضافه‌کاری <span class="f-badge fb-grn">OvertimeHours</span></label>
-                            <input type="number" class="in num" id="r-ot" value="24" min="0">
-                            <div class="f-help">سقف قانونی: ۴ ساعت در روز.</div>
+                        <div class="col-md-3 col-6 field">
+                            <label class="f-label" for="r-ot"><span class="req-s">*</span>اضافه‌کاری</label>
+                            <div class="d-flex gap-2">
+                                <InputNumber @bind-Value="_formHelper.Model.OvertimeHours" class="in num"
+                                             id="r-ot" min="0" style="flex:1"/>
+                                <InputNumber @bind-Value="_formHelper.Model.OvertimeMinutes" class="in num"
+                                             min="0" max="59" style="flex:1"/>
+                            </div>
+                            <ValidationMessage TValue="int" For="() => _formHelper.Model.OvertimeHours"
+                                               class="f-help text-danger"/>
+                            <ValidationMessage TValue="int" For="() => _formHelper.Model.OvertimeMinutes"
+                                               class="f-help text-danger"/>
+                            <div class="f-help">ساعت و دقیقه؛ سقف قانونی ۴ ساعت در روز.</div>
                         </div>
-                        <div class="col-md-4 field">
-                            <label class="f-label" for="r-night"><span class="req-s">*</span>ساعات
-                                شب‌کاری <span class="f-badge fb-grn">NightShiftHours</span></label>
-                            <input type="number" class="in num" id="r-night" value="18" min="0">
+                        <div class="col-md-3 col-6 field">
+                            <label class="f-label" for="r-night"><span class="req-s">*</span>شب‌کاری</label>
+                            <div class="d-flex gap-2">
+                                <InputNumber @bind-Value="_formHelper.Model.NightShiftHours" class="in num"
+                                             id="r-night" min="0" style="flex:1"/>
+                                <InputNumber @bind-Value="_formHelper.Model.NightShiftMinutes" class="in num"
+                                             min="0" max="59" style="flex:1"/>
+                            </div>
+                            <ValidationMessage TValue="int" For="() => _formHelper.Model.NightShiftHours"
+                                               class="f-help text-danger"/>
+                            <ValidationMessage TValue="int" For="() => _formHelper.Model.NightShiftMinutes"
+                                               class="f-help text-danger"/>
                             <div class="f-help">شب = ساعت ۲۲ تا ۶.</div>
                         </div>
-                        <div class="col-md-4 field">
-                            <label class="f-label" for="r-fri"><span class="req-s">*</span>ساعات
-                                جمعه‌کاری <span class="f-badge fb-grn">FridayWorkHours</span></label>
-                            <input type="number" class="in num" id="r-fri" value="8" min="0">
+                        <div class="col-md-3 col-6 field">
+                            <label class="f-label" for="r-fri"><span class="req-s">*</span>جمعه‌کاری</label>
+                            <div class="d-flex gap-2">
+                                <InputNumber @bind-Value="_formHelper.Model.FridayWorkHours" class="in num"
+                                             id="r-fri" min="0" style="flex:1"/>
+                                <InputNumber @bind-Value="_formHelper.Model.FridayWorkMinutes" class="in num"
+                                             min="0" max="59" style="flex:1"/>
+                            </div>
+                            <ValidationMessage TValue="int" For="() => _formHelper.Model.FridayWorkHours"
+                                               class="f-help text-danger"/>
+                            <ValidationMessage TValue="int" For="() => _formHelper.Model.FridayWorkMinutes"
+                                               class="f-help text-danger"/>
+                        </div>
+                        <div class="col-md-3 col-6 field">
+                            <label class="f-label" for="r-holiday"><span class="req-s">*</span>تعطیل‌کاری</label>
+                            <div class="d-flex gap-2">
+                                <InputNumber @bind-Value="_formHelper.Model.HolidayWorkHours" class="in num"
+                                             id="r-holiday" min="0" style="flex:1"/>
+                                <InputNumber @bind-Value="_formHelper.Model.HolidayWorkMinutes" class="in num"
+                                             min="0" max="59" style="flex:1"/>
+                            </div>
+                            <ValidationMessage TValue="int" For="() => _formHelper.Model.HolidayWorkHours"
+                                               class="f-help text-danger"/>
+                            <ValidationMessage TValue="int" For="() => _formHelper.Model.HolidayWorkMinutes"
+                                               class="f-help text-danger"/>
                         </div>
                     </div>
+
                     <div class="sec">
-                        <svg class="ic">
-                            <use href="assets/img/icons.svg#i-percent"/>
-                        </svg>
-                        مالیات و وضعیت
+                        <svg class="ic"><use href="assets/img/icons.svg#i-percent"/></svg>
+                        مبالغ اختیاری و عیدی <small>مبالغ به ریال</small>
                     </div>
                     <div class="row g-3">
-                        <div class="col-md-5 field">
-                            <label class="f-label" for="r-tax">مبلغ مالیات <span
-                                    class="f-badge fb-blu">منشأ خارجی</span></label>
-                            <div class="amount"><input class="in" id="r-tax" value="0"
-                                                       inputmode="numeric"><span class="unit">ریال</span></div>
-                            <div class="f-help">از سامانهٔ مالیات حقوق می‌آید؛ اگر کارمند مشمول نباشد
-                                حتماً صفر است.
+                        <div class="col-md-4 field">
+                            <label class="f-label" for="r-mission-amount">مبلغ مأموریت <span class="f-badge fb-gold">اختیاری</span></label>
+                            <div class="amount">
+                                <InputText @bind-Value="_formHelper.Model.MissionAmountOverride" class="in in-ltr"
+                                           id="r-mission-amount" inputmode="numeric" placeholder="0"/>
+                                <span class="unit">ریال</span>
                             </div>
+                            <ValidationMessage TValue="string" For="() => _formHelper.Model.MissionAmountOverride"
+                                               class="f-help text-danger"/>
                         </div>
                         <div class="col-md-4 field">
-                            <label class="f-label" for="r-status"><span class="req-s">*</span>وضعیت فیش
-                                <span class="f-badge fb-grn">Status</span></label>
-                            <select class="in" id="r-status">
-                                <option>پیش‌نویس</option>
-                                <option disabled>نهایی</option>
-                                <option disabled>پرداخت‌شده</option>
-                            </select>
-                            <div class="f-help">فیش جدید همیشه پیش‌نویس ایجاد می‌شود.</div>
+                            <label class="f-label" for="r-performance">کارانه <span class="f-badge fb-gold">اختیاری</span></label>
+                            <div class="amount">
+                                <InputText @bind-Value="_formHelper.Model.PerformanceBonusAmount" class="in in-ltr"
+                                           id="r-performance" inputmode="numeric" placeholder="0"/>
+                                <span class="unit">ریال</span>
+                            </div>
+                            <ValidationMessage TValue="string" For="() => _formHelper.Model.PerformanceBonusAmount"
+                                               class="f-help text-danger"/>
                         </div>
+                        <div class="col-md-4 field">
+                            <label class="f-label" for="r-cash">مزایای نقدی <span class="f-badge fb-gold">اختیاری</span></label>
+                            <div class="amount">
+                                <InputText @bind-Value="_formHelper.Model.CashBenefitsAmount" class="in in-ltr"
+                                           id="r-cash" inputmode="numeric" placeholder="0"/>
+                                <span class="unit">ریال</span>
+                            </div>
+                            <ValidationMessage TValue="string" For="() => _formHelper.Model.CashBenefitsAmount"
+                                               class="f-help text-danger"/>
+                        </div>
+                        @if (_formHelper.Model.PersianMonth == 12)
+                        {
+                            <div class="col-md-4 field">
+                                <label class="f-label" for="r-bonus"><span class="req-s">*</span>نوع عیدی سالانه</label>
+                                <InputSelect @bind-Value="_formHelper.Model.AnnualBonusType" class="in" id="r-bonus">
+                                    <option value="">انتخاب کنید...</option>
+                                    <option value="@UserWorkInputDtoAnnualBonusType.Minimum">حداقل</option>
+                                    <option value="@UserWorkInputDtoAnnualBonusType.Maximum">حداکثر</option>
+                                </InputSelect>
+                                <ValidationMessage TValue="UserWorkInputDtoAnnualBonusType?"
+                                                   For="() => _formHelper.Model.AnnualBonusType"
+                                                   class="f-help text-danger"/>
+                                <div class="f-help">عیدی فقط در ماه اسفند قابل ثبت است.</div>
+                            </div>
+                        }
                     </div>
+
                     <div class="form-foot">
-                        <button type="button" class="btn btn-g"
-                                data-demo="فیش به‌عنوان پیش‌نویس ذخیره شد (نمایشی).">ذخیره پیش‌نویس
+                        <button type="submit" class="btn btn-p" disabled="@_isLoading">
+                            <svg class="ic"><use href="assets/img/icons.svg#i-check"/></svg>
+                            @(IsEdit ? "ذخیرهٔ تغییرات" : "صدور فیش")
                         </button>
-                        <button type="button" class="btn btn-p"
-                                data-demo="فیش به‌صورت نمایشی صادر شد.">
-                            <svg class="ic">
-                                <use href="assets/img/icons.svg#i-check"/>
-                            </svg>
-                            صدور فیش
-                        </button>
-                        <a class="btn btn-g ms-auto" href="payslips.html">انصراف</a>
+                        <a class="btn btn-g ms-auto" href="/Payroll">انصراف</a>
                     </div>
-                </form>
+                </EditForm>
             </div>
         </div>
     </div>
     <div class="col-lg-4">
         <div class="calc-box">
             <h4>
-                <svg class="ic">
-                    <use href="assets/img/icons.svg#i-receipt"/>
-                </svg>
-                پیش‌نمایش محاسبه
+                <svg class="ic"><use href="assets/img/icons.svg#i-receipt"/></svg>
+                @(IsEdit ? "مبالغ ثبت‌شدهٔ فیش" : "پیش‌نمایش محاسبه")
             </h4>
-            <div class="crow"><span>مزد هر ساعت (پایه ÷ ۲۲۰)</span><span>۵٬۸۱۸٬۱۸۲</span></div>
-            <div class="crow"><span>حقوق پایه (۳۰ روز)</span><span>۱٬۲۸۰٬۰۰۰٬۰۰۰</span></div>
-            <div class="crow"><span>اضافه‌کاری ×۱٫۴ (۲۴ ساعت)</span><span>۱۹۵٬۴۹۰٬۹۰۰</span></div>
-            <div class="crow"><span>مازاد شب‌کاری ۳۵٪ (۱۸ ساعت)</span><span>۳۶٬۶۵۴٬۵۰۰</span></div>
-            <div class="crow"><span>فوق‌العادهٔ جمعه‌کاری ۴۰٪ (۸ ساعت)</span><span>۱۸٬۶۱۸٬۲۰۰</span>
-            </div>
-            <div class="crow"><span>مسکن + بن + حق اولاد (۲ فرزند)</span><span>۵۶۸٬۹۳۷٬۳۲۸</span></div>
-            <div class="crow tot"><span>جمع ناخالص</span><span>۲٬۰۹۹٬۷۰۰٬۹۲۸</span></div>
-            <div class="crow ded"><span>بیمهٔ سهم کارگر ۷٪</span><span>−۱۱۴٬۸۰۰٬۰۰۰</span></div>
-            <div class="crow ded"><span>مالیات</span><span>۰</span></div>
-            <div class="cnet"><span>خالص پرداختی</span><b>۱٬۹۸۴٬۹۰۰٬۹۲۸</b></div>
-            <div class="calc-note">
-                <svg class="ic">
-                    <use href="assets/img/icons.svg#i-info"/>
-                </svg>
-                <div>این اعداد نمونه‌اند؛ فرمول‌ها مطابق سند دامنه و در پیاده‌سازی اصلی سمت سرور اجرا
-                    می‌شوند.
+            @if (IsEdit && _recordForEdit is not null)
+            {
+                <div class="crow"><span>اضافه‌کاری</span><span>@FormatAmount(_recordForEdit.OvertimeAmount)</span></div>
+                <div class="crow"><span>فوق‌العادهٔ شب‌کاری</span><span>@FormatAmount(_recordForEdit.NightShiftExtraAmount)</span></div>
+                <div class="crow"><span>حق جمعه‌کاری</span><span>@FormatAmount(_recordForEdit.FridayWorkAllowance)</span></div>
+                <div class="crow tot"><span>جمع ناخالص</span><span>@FormatAmount(_recordForEdit.Amounts?.GrossAmount ?? 0)</span></div>
+                <div class="crow ded"><span>کسورات (بیمه + مالیات)</span><span>−@FormatAmount(_recordForEdit.Amounts?.TotalDeductionsAmount ?? 0)</span></div>
+                <div class="cnet"><span>خالص پرداختی</span><b>@FormatAmount(_recordForEdit.Amounts?.NetPayableAmount ?? 0)</b></div>
+                <div class="calc-note">
+                    <svg class="ic"><use href="assets/img/icons.svg#i-info"/></svg>
+                    <div>با ذخیرهٔ تغییرات، محاسبات با کارکرد جدید بازآفرینی می‌شود.</div>
                 </div>
-            </div>
+            }
+            else
+            {
+                <div class="crow"><span>وضعیت فیش</span><span>پیش‌نویس</span></div>
+                <div class="calc-note">
+                    <svg class="ic"><use href="assets/img/icons.svg#i-info"/></svg>
+                    <div>مبالغ و کسورات بعد از ثبت، مطابق فرمول‌ها و بخشنامه‌ی همان دوره سمت سرور محاسبه می‌شود.</div>
+                </div>
+            }
         </div>
     </div>
 </div>
+
+@code {
+    [Parameter] public Guid? Id { get; set; }
+
+    private FormHelper<PayrollFormModel> _formHelper = new(fieldMapping: CreateFieldMapping());
+    private List<GetUserEmployeesResponse>? _userEmployees;
+    private GetPayrollRecordForEditResponse? _recordForEdit;
+    private bool _isLoading;
+    private bool IsEdit => Id.HasValue && Id.Value != Guid.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadEmployeesAsync();
+
+        if (IsEdit)
+        {
+            _isLoading = true;
+            try
+            {
+                var result = await ApiService.SendAsync(
+                    apiCall: () => ApiClient.GetPayrollRecordForEditAsync(Id!.Value)
+                );
+
+                if (result is { IsSuccess: true })
+                {
+                    var record = result.Response;
+                    _recordForEdit = record;
+                    var work = record.Work;
+                    _formHelper.Model = new PayrollFormModel
+                    {
+                        EmployeeId = record.EmployeeId,
+                        PersianYear = record.PersianYear,
+                        PersianMonth = record.PersianMonth,
+                        WorkedDaysCount = work.WorkedDaysCount,
+                        LeaveDays = work.Leave.Days,
+                        LeaveHours = work.Leave.Hours,
+                        LeaveMinutes = work.Leave.Minutes,
+                        AbsenceDaysCount = work.AbsenceDaysCount,
+                        MissionDays = work.MissionDays,
+                        MissionTimeHours = work.MissionHours.Hours,
+                        MissionTimeMinutes = work.MissionHours.Minutes,
+                        OvertimeHours = work.Overtime.Hours,
+                        OvertimeMinutes = work.Overtime.Minutes,
+                        NightShiftHours = work.NightShift.Hours,
+                        NightShiftMinutes = work.NightShift.Minutes,
+                        FridayWorkHours = work.FridayWork.Hours,
+                        FridayWorkMinutes = work.FridayWork.Minutes,
+                        HolidayWorkHours = work.HolidayWork.Hours,
+                        HolidayWorkMinutes = work.HolidayWork.Minutes,
+                        MissionAmountOverride = FormatOptionalAmount(work.MissionAmountOverride),
+                        PerformanceBonusAmount = FormatOptionalAmount(work.PerformanceBonusAmount),
+                        CashBenefitsAmount = FormatOptionalAmount(work.CashBenefitsAmount),
+                        AnnualBonusType = work.AnnualBonusType
+                    };
+                    _formHelper.RebuildEditContext();
+                }
+                else
+                {
+                    ToastService.ShowToastError("فیش مورد نظر یافت نشد.");
+                    NavigationManager.NavigateTo("/Payroll");
+                }
+            }
+            finally
+            {
+                _isLoading = false;
+            }
+        }
+    }
+
+    private async Task LoadEmployeesAsync()
+    {
+        var result = await ApiService.SendAsync(() => ApiClient.GetUserEmployeesAsync(1, 100, null, null, null, null, null));
+        if (result?.IsSuccess is true)
+        {
+            _userEmployees = result.Response.Items.ToList();
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (_isLoading) return;
+
+        _formHelper.ClearErrors();
+
+        var isFormValid = _formHelper.Validate();
+
+        if (_formHelper.Model.PersianMonth == 12 && _formHelper.Model.AnnualBonusType is null)
+        {
+            _formHelper.SetServerErrors(new Dictionary<string, ICollection<string>>
+            {
+                [nameof(PayrollFormModel.AnnualBonusType)] = ["در ماه اسفند، نوع عیدی سالانه اجباری است."]
+            });
+            isFormValid = false;
+        }
+
+        if (!isFormValid)
+        {
+            ToastService.ShowToastWarning("لطفاً خطاها را بررسی کنید.");
+            return;
+        }
+
+        var model = _formHelper.Model;
+        var work = new UserWorkInputDto(
+            absenceDaysCount: model.AbsenceDaysCount,
+            annualBonusType: model.AnnualBonusType,
+            cashBenefitsAmount: ParseOptionalAmount(model.CashBenefitsAmount),
+            fridayWork: new WorkTimeInput(model.FridayWorkHours, model.FridayWorkMinutes),
+            holidayWork: new WorkTimeInput(model.HolidayWorkHours, model.HolidayWorkMinutes),
+            leave: new DayTimeInput(model.LeaveDays, model.LeaveHours, model.LeaveMinutes),
+            missionAmountOverride: ParseOptionalAmount(model.MissionAmountOverride),
+            missionDays: model.MissionDays,
+            missionHours: new WorkTimeInput(model.MissionTimeHours, model.MissionTimeMinutes),
+            nightShift: new WorkTimeInput(model.NightShiftHours, model.NightShiftMinutes),
+            overtime: new WorkTimeInput(model.OvertimeHours, model.OvertimeMinutes),
+            performanceBonusAmount: ParseOptionalAmount(model.PerformanceBonusAmount),
+            workedDaysCount: model.WorkedDaysCount);
+
+        _isLoading = true;
+
+        if (IsEdit)
+        {
+            var result = await ApiService.SendAsync(
+                apiCall: () => ApiClient.UpdatePayrollRecordAsync(
+                    Id!.Value,
+                    new UpdatePayrollRecordRequest(
+                        employeeId: model.EmployeeId ?? Guid.Empty,
+                        persianYear: model.PersianYear,
+                        persianMonth: model.PersianMonth,
+                        work: work)),
+                successMessage: "فیش با موفقیت ویرایش شد.",
+                showErrorToastValidation: false
+            );
+
+            if (result is { IsSuccess: true })
+            {
+                NavigationManager.NavigateTo("/Payroll");
+            }
+            else if (result != null)
+            {
+                _formHelper.SetServerErrors(result.Errors);
+                ToastService.ShowToastWarning("لطفاً خطاها را بررسی کنید.");
+            }
+        }
+        else
+        {
+            var result = await ApiService.SendAsync(
+                apiCall: () => ApiClient.CreatePayrollRecordAsync(
+                    new CreatePayrollRecordRequest(
+                        employeeId: model.EmployeeId ?? Guid.Empty,
+                        persianYear: model.PersianYear,
+                        persianMonth: model.PersianMonth,
+                        work: work)),
+                successMessage: "فیش به‌صورت پیش‌نویس ثبت شد.",
+                showErrorToastValidation: false
+            );
+
+            if (result is { IsSuccess: true })
+            {
+                NavigationManager.NavigateTo("/Payroll");
+            }
+            else if (result != null)
+            {
+                _formHelper.SetServerErrors(result.Errors);
+                ToastService.ShowToastWarning("لطفاً خطاها را بررسی کنید.");
+            }
+        }
+
+        _isLoading = false;
+    }
+
+    private IEnumerable<int> GetPersianYearOptions()
+    {
+        var currentYear = new System.Globalization.PersianCalendar().GetYear(DateTime.Now);
+        yield return currentYear + 1;
+        yield return currentYear;
+        yield return currentYear - 1;
+    }
+
+    private static string GetPersianMonthName(int month) => month switch
+    {
+        1 => "فروردین", 2 => "اردیبهشت", 3 => "خرداد", 4 => "تیر",
+        5 => "مرداد", 6 => "شهریور", 7 => "مهر", 8 => "آبان",
+        9 => "آذر", 10 => "دی", 11 => "بهمن", 12 => "اسفند",
+        _ => string.Empty
+    };
+
+    private static string FormatOptionalAmount(double? amount)
+        => amount.HasValue ? ((long)amount.Value).ToString() : string.Empty;
+
+    private static double? ParseOptionalAmount(string? value)
+        => string.IsNullOrWhiteSpace(value) ? null : double.Parse(value);
+
+    private static string FormatAmount(double amount) => ((long)amount).ToPersianNumber();
+
+    private static Dictionary<string, string> CreateFieldMapping() => new()
+    {
+        ["EmployeeId"] = nameof(PayrollFormModel.EmployeeId),
+        ["Work.WorkedDaysCount"] = nameof(PayrollFormModel.WorkedDaysCount),
+        ["Work.AbsenceDaysCount"] = nameof(PayrollFormModel.AbsenceDaysCount),
+        ["Work.MissionDays"] = nameof(PayrollFormModel.MissionDays),
+        ["Work.Overtime.Hours"] = nameof(PayrollFormModel.OvertimeHours),
+        ["Work.Overtime.Minutes"] = nameof(PayrollFormModel.OvertimeMinutes),
+        ["Work.NightShift.Hours"] = nameof(PayrollFormModel.NightShiftHours),
+        ["Work.NightShift.Minutes"] = nameof(PayrollFormModel.NightShiftMinutes),
+        ["Work.FridayWork.Hours"] = nameof(PayrollFormModel.FridayWorkHours),
+        ["Work.FridayWork.Minutes"] = nameof(PayrollFormModel.FridayWorkMinutes),
+        ["Work.HolidayWork.Hours"] = nameof(PayrollFormModel.HolidayWorkHours),
+        ["Work.HolidayWork.Minutes"] = nameof(PayrollFormModel.HolidayWorkMinutes),
+        ["Work.Leave.Days"] = nameof(PayrollFormModel.LeaveDays),
+        ["Work.Leave.Hours"] = nameof(PayrollFormModel.LeaveHours),
+        ["Work.Leave.Minutes"] = nameof(PayrollFormModel.LeaveMinutes),
+        ["Work.MissionHours.Hours"] = nameof(PayrollFormModel.MissionTimeHours),
+        ["Work.MissionHours.Minutes"] = nameof(PayrollFormModel.MissionTimeMinutes),
+        ["Work.MissionAmountOverride"] = nameof(PayrollFormModel.MissionAmountOverride),
+        ["Work.PerformanceBonusAmount"] = nameof(PayrollFormModel.PerformanceBonusAmount),
+        ["Work.CashBenefitsAmount"] = nameof(PayrollFormModel.CashBenefitsAmount),
+        ["Work.AnnualBonusType"] = nameof(PayrollFormModel.AnnualBonusType)
+    };
+
+    public class PayrollFormModel : BaseModel
+    {
+        [Required(ErrorMessage = "انتخاب کارمند اجباری است.")]
+        public Guid? EmployeeId { get; set; }
+
+        [Range(1300, 1500, ErrorMessage = "سال شمسی نامعتبر است.")]
+        public int PersianYear { get; set; } = new System.Globalization.PersianCalendar().GetYear(DateTime.Now);
+
+        [Range(1, 12, ErrorMessage = "ماه شمسی نامعتبر است.")]
+        public int PersianMonth { get; set; }
+
+        [Range(0, 31, ErrorMessage = "روزهای کارکرد باید بین 0 تا 31 باشد.")]
+        public decimal WorkedDaysCount { get; set; }
+
+        [Range(0, 31, ErrorMessage = "روزهای مرخصی باید بین 0 تا 31 باشد.")]
+        public int LeaveDays { get; set; }
+
+        [Range(0, 23, ErrorMessage = "ساعات مرخصی باید بین 0 تا 23 باشد.")]
+        public int LeaveHours { get; set; }
+
+        [Range(0, 59, ErrorMessage = "دقیقهٔ مرخصی باید بین 0 تا 59 باشد.")]
+        public int LeaveMinutes { get; set; }
+
+        [Range(0, 31, ErrorMessage = "روزهای غیبت باید بین 0 تا 31 باشد.")]
+        public decimal AbsenceDaysCount { get; set; }
+
+        [Range(0, 31, ErrorMessage = "روزهای مأموریت باید بین 0 تا 31 باشد.")]
+        public int MissionDays { get; set; }
+
+        [Range(0, 23, ErrorMessage = "ساعات مأموریت باید بین 0 تا 23 باشد.")]
+        public int MissionTimeHours { get; set; }
+
+        [Range(0, 59, ErrorMessage = "دقیقهٔ مأموریت باید بین 0 تا 59 باشد.")]
+        public int MissionTimeMinutes { get; set; }
+
+        [Range(0, int.MaxValue, ErrorMessage = "ساعات اضافه‌کاری نمی‌تواند منفی باشد.")]
+        public int OvertimeHours { get; set; }
+
+        [Range(0, 59, ErrorMessage = "دقیقهٔ اضافه‌کاری باید بین 0 تا 59 باشد.")]
+        public int OvertimeMinutes { get; set; }
+
+        [Range(0, int.MaxValue, ErrorMessage = "ساعات شب‌کاری نمی‌تواند منفی باشد.")]
+        public int NightShiftHours { get; set; }
+
+        [Range(0, 59, ErrorMessage = "دقیقهٔ شب‌کاری باید بین 0 تا 59 باشد.")]
+        public int NightShiftMinutes { get; set; }
+
+        [Range(0, int.MaxValue, ErrorMessage = "ساعات جمعه‌کاری نمی‌تواند منفی باشد.")]
+        public int FridayWorkHours { get; set; }
+
+        [Range(0, 59, ErrorMessage = "دقیقهٔ جمعه‌کاری باید بین 0 تا 59 باشد.")]
+        public int FridayWorkMinutes { get; set; }
+
+        [Range(0, int.MaxValue, ErrorMessage = "ساعات تعطیل‌کاری نمی‌تواند منفی باشد.")]
+        public int HolidayWorkHours { get; set; }
+
+        [Range(0, 59, ErrorMessage = "دقیقهٔ تعطیل‌کاری باید بین 0 تا 59 باشد.")]
+        public int HolidayWorkMinutes { get; set; }
+
+        [RegularExpression(@"^(\d+)?$", ErrorMessage = "مبلغ مأموریت باید عدد صحیح ریال باشد.")]
+        public string? MissionAmountOverride { get; set; }
+
+        [RegularExpression(@"^(\d+)?$", ErrorMessage = "کارانه باید عدد صحیح ریال باشد.")]
+        public string? PerformanceBonusAmount { get; set; }
+
+        [RegularExpression(@"^(\d+)?$", ErrorMessage = "مزایای نقدی باید عدد صحیح ریال باشد.")]
+        public string? CashBenefitsAmount { get; set; }
+
+        public UserWorkInputDtoAnnualBonusType? AnnualBonusType { get; set; }
+    }
+}
