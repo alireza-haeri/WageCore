@@ -149,10 +149,12 @@ public class GetPayrollRecordCalculationDetailsQueryHandlerTests
             response.IsTaxSubject.Should().Be(_salaryDecree.IsTaxSubject);
             response.CalculatedAmounts.BaseSalaryAmount.Should().Be(10_000_000m);
             response.CalculatedAmounts.OvertimeAmount.Should().Be(800_000m);
-            response.Amounts.GrossAmount.Should().Be(41_600_000m);
-            response.Amounts.InsuranceAmount.Should().Be(2_500_000m);
+            // The amounts are read from the persisted record columns (the
+            // builder defaults), not from any re-run calculation.
+            response.Amounts.GrossAmount.Should().Be(17_900_000m);
+            response.Amounts.InsuranceAmount.Should().Be(1_400_000m);
             response.Amounts.CalculatedTaxAmount.Should().Be(1_500_000m);
-            response.Amounts.NetPayableAmount.Should().Be(37_600_000m);
+            response.Amounts.NetPayableAmount.Should().Be(15_000_000m);
         }
     }
 
