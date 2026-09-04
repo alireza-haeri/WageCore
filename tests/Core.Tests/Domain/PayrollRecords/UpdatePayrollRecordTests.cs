@@ -343,7 +343,7 @@ public class UpdatePayrollRecordTests
         var record = CreateRecord();
         var amounts = BuildAmounts(withZeroTax: true);
 
-        var result = record.Update(NewPeriodStart, NewPeriodEnd, true, 20m, 12m, BuildWorkInput(), amounts, BuildCalculatedAmounts());
+        var result = record.Update(NewPeriodStart, NewPeriodEnd, true, 20m, 12m, 3m, 8m, BuildWorkInput(), amounts, BuildCalculatedAmounts());
 
         result.ShouldBeFailure("برای کارمند مشمول مالیات، مالیات محاسبه شده نمیتواند صفر باشد.");
     }
