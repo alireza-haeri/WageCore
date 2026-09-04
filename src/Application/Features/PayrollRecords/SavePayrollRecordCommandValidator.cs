@@ -1,8 +1,8 @@
 namespace Application.Features.PayrollRecords;
 
-public class CreatePayrollRecordCommandValidator : AbstractValidator<CreatePayrollRecordCommand>
+public class SavePayrollRecordCommandValidator : AbstractValidator<SavePayrollRecordCommand>
 {
-    public CreatePayrollRecordCommandValidator()
+    public SavePayrollRecordCommandValidator()
     {
         RuleFor(x => x.UserId)
             .NotEmpty().WithMessage("شناسه کاربر نمیتواند خالی باشد.");

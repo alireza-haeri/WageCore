@@ -1,7 +1,5 @@
 namespace Web.Api.Controllers.PayrollRecords.Contracts;
 
-public record PayrollCalculationRuleValueResponse(LaborLawRuleKey Key, decimal Value);
-
 public record GetPayrollRecordCalculationDetailsResponse(
     Guid PayrollRecordId,
     Guid EmployeeId,
@@ -31,8 +29,6 @@ public record GetPayrollRecordCalculationDetailsResponse(
     decimal? CashBenefitsAmount,
     AnnualBonusType? AnnualBonusType,
     bool IsEsfandPeriod,
-    decimal PreviousAnnualWorkedDaysCount,
-    decimal AnnualWorkedDaysCount,
     decimal MaxMonthlyOvertimeHours,
     decimal MaxFridayHours,
     decimal MaxNightShiftHours,
@@ -47,6 +43,5 @@ public record GetPayrollRecordCalculationDetailsResponse(
     ShiftType ShiftType,
     ContractType ContractType,
     bool IsTaxSubject,
-    IReadOnlyList<PayrollCalculationRuleValueResponse> RuleValues,
     PayrollCalculatedAmountsDto CalculatedAmounts,
     PayrollRecordAmountsDto Amounts);

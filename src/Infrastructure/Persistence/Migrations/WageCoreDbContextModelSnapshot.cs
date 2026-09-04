@@ -179,6 +179,10 @@ namespace Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Core.Domain.PayrollRecord", b =>
                 {
+                    b.Property<decimal>("HousingAllowanceAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
@@ -186,10 +190,22 @@ namespace Infrastructure.Persistence.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<decimal>("AnnualBonusAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("AnnualBonusType")
                         .HasMaxLength(100)
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
+
+                    b.Property<decimal>("AttractionAllowanceAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("BaseSalaryAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("CalculatedTaxAmount")
                         .HasPrecision(18, 2)
@@ -199,8 +215,32 @@ namespace Infrastructure.Persistence.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<decimal>("ChildAllowanceAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CommutingAllowanceAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("DailyMissionAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("DailyWorkingHours")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<Guid>("EmployeeId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("EndOfServiceAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("FoodAllowanceAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("FridayWorkAllowance")
                         .HasPrecision(18, 2)
@@ -211,6 +251,10 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("GrossAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("HolidayWorkAmount")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
@@ -230,6 +274,22 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal?>("MissionAmountOverride")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("MarriageAllowanceAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("MaxFridayHours")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("MaxMonthlyOvertimeHours")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("MaxNightShiftHours")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
@@ -271,6 +331,10 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<DateOnly>("PeriodStart")
                         .HasColumnType("date");
 
+                    b.Property<decimal>("ShiftWorkAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<int>("StandardWorkingDaysCount")
                         .HasColumnType("int");
 
@@ -279,6 +343,10 @@ namespace Infrastructure.Persistence.Migrations
                         .HasMaxLength(100)
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
+
+                    b.Property<decimal>("SupervisionAllowanceAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("TotalDeductionsAmount")
                         .HasPrecision(18, 2)

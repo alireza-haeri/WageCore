@@ -110,8 +110,6 @@ public class PayrollRecordController(IMediator mediator) : BaseController
             pr.CashBenefitsAmount,
             pr.AnnualBonusType,
             pr.IsEsfandPeriod,
-            pr.PreviousAnnualWorkedDaysCount,
-            pr.AnnualWorkedDaysCount,
             pr.MaxMonthlyOvertimeHours,
             pr.MaxFridayHours,
             pr.MaxNightShiftHours,
@@ -126,41 +124,21 @@ public class PayrollRecordController(IMediator mediator) : BaseController
             pr.ShiftType,
             pr.ContractType,
             pr.IsTaxSubject,
-            pr.RuleValues.Select(rv => new PayrollCalculationRuleValueResponse(rv.Key, rv.Value)).ToList(),
             pr.CalculatedAmounts,
             pr.Amounts));
 
         return Result(response);
     }
 
-    [HttpPost]
-    [SwaggerOperation(OperationId = "CreatePayrollRecord")]
-    public async Task<ActionResult<Result<CreatePayrollRecordCommandResponse>>> CreatePayrollRecord(
-        [FromBody] CreatePayrollRecordRequest request,
+    [HttpPut]
+    [SwaggerOperation(OperationId = "SavePayrollRecord")]
+    public async Task<ActionResult<Result<SavePayrollRecordCommandResponse>>> SavePayrollRecord(
+        [FromBody] SavePayrollRecordRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new CreatePayrollRecordCommand(
+        var result = await mediator.Send(new SavePayrollRecordCommand(
             UserId: UserId,
             EmployeeId: request.EmployeeId,
-            PersianYear: request.PersianYear,
-            PersianMonth: request.PersianMonth,
-            Work: request.Work
-        ), cancellationToken);
-
-        return Result(result);
-    }
-
-    [HttpPut("{payrollRecordId:guid}")]
-    [SwaggerOperation(OperationId = "UpdatePayrollRecord")]
-    public async Task<ActionResult<Result<bool>>> UpdatePayrollRecord(
-        Guid payrollRecordId,
-        [FromBody] UpdatePayrollRecordRequest request,
-        CancellationToken cancellationToken)
-    {
-        var result = await mediator.Send(new UpdatePayrollRecordCommand(
-            UserId: UserId,
-            EmployeeId: request.EmployeeId,
-            PayrollRecordId: payrollRecordId,
             PersianYear: request.PersianYear,
             PersianMonth: request.PersianMonth,
             Work: request.Work

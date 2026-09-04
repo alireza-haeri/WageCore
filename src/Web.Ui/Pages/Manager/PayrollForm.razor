@@ -325,21 +325,6 @@
                 <div class="crow"><span>نوع قرارداد</span><span>@GetContractTypeName(details.ContractType)</span></div>
                 <div class="crow"><span>مشمول مالیات</span><span>@(details.IsTaxSubject ? "بله" : "خیر")</span></div>
 
-                <div class="calc-sec">بازۀ سالانه</div>
-                <div class="crow"><span>روزهای کارکرد سال تا قبل از این ماه</span><span>@FormatDecimal(details.PreviousAnnualWorkedDaysCount)</span></div>
-                <div class="crow"><span>مجموع روزهای کارکرد سال با این ماه</span><span>@FormatDecimal(details.AnnualWorkedDaysCount)</span></div>
-
-                <div class="calc-sec">قوانین کار معتبر در این دوره</div>
-                <table class="rule-tbl">
-                    @foreach (var rule in details.RuleValues)
-                    {
-                        <tr>
-                            <td>@GetRuleLabel(rule.Key)</td>
-                            <td>@FormatDecimal(rule.Value)</td>
-                        </tr>
-                    }
-                </table>
-
                 <div class="calc-sec">تفکیک مبالغ محاسبه‌شده</div>
                 <div class="crow"><span>پایهٔ حقوق ماهانه</span><span>@FormatAmount(details.CalculatedAmounts.BaseSalaryAmount)</span></div>
                 <div class="crow"><span>حق جذب</span><span>@FormatAmount(details.CalculatedAmounts.AttractionAllowanceAmount)</span></div>
@@ -531,9 +516,8 @@
         if (IsEdit)
         {
             var result = await ApiService.SendAsync(
-                apiCall: () => ApiClient.UpdatePayrollRecordAsync(
-                    Id!.Value,
-                    new UpdatePayrollRecordRequest(
+                apiCall: () => ApiClient.SavePayrollRecordAsync(
+                    new SavePayrollRecordRequest(
                         employeeId: model.EmployeeId ?? Guid.Empty,
                         persianYear: model.PersianYear,
                         persianMonth: model.PersianMonth,
@@ -556,8 +540,8 @@
         else
         {
             var result = await ApiService.SendAsync(
-                apiCall: () => ApiClient.CreatePayrollRecordAsync(
-                    new CreatePayrollRecordRequest(
+                apiCall: () => ApiClient.SavePayrollRecordAsync(
+                    new SavePayrollRecordRequest(
                         employeeId: model.EmployeeId ?? Guid.Empty,
                         persianYear: model.PersianYear,
                         persianMonth: model.PersianMonth,
@@ -668,36 +652,6 @@
         GetPayrollRecordCalculationDetailsResponseContractType.Temporary => "موقتی",
         GetPayrollRecordCalculationDetailsResponseContractType.FixedTerm => "معین",
         _ => string.Empty
-    };
-
-    private static string GetRuleLabel(PayrollCalculationRuleValueResponseKey key) => key switch
-    {
-        PayrollCalculationRuleValueResponseKey.MinimumDailySalary => "حداقل دستمزد روزانه",
-        PayrollCalculationRuleValueResponseKey.DailyWorkingHours => "ساعت کار روزانه",
-        PayrollCalculationRuleValueResponseKey.MaximumOvertimeHoursPerDay => "سقف اضافه‌کاری در روز",
-        PayrollCalculationRuleValueResponseKey.MaximumNightShiftHoursPerDay => "سقف شب‌کاری در روز",
-        PayrollCalculationRuleValueResponseKey.MaximumOvertimeHoursPerMonth => "سقف اضافه‌کاری ماهانه",
-        PayrollCalculationRuleValueResponseKey.MaximumFridayWorkHoursPerMonth => "سقف جمعه‌کاری ماهانه",
-        PayrollCalculationRuleValueResponseKey.InsurancePercentage => "درصد بیمه",
-        PayrollCalculationRuleValueResponseKey.AnnualBonusMinimumAmount => "عیدی حداقل",
-        PayrollCalculationRuleValueResponseKey.AnnualBonusMaximumAmount => "عیدی حداکثر",
-        PayrollCalculationRuleValueResponseKey.TaxExemptMonthlyAmount => "مبلغ معاف مالیاتی (منسوخ)",
-        PayrollCalculationRuleValueResponseKey.TaxRatePercentage => "نرخ مالیات (منسوخ)",
-        PayrollCalculationRuleValueResponseKey.StandardDailyWorkHours => "ساعت استاندارد روز",
-        PayrollCalculationRuleValueResponseKey.NightShiftPercentage => "درصد شب‌کاری",
-        PayrollCalculationRuleValueResponseKey.HolidayWorkPercentage => "درصد تعطیل‌کاری",
-        PayrollCalculationRuleValueResponseKey.OvertimePercentage => "درصد اضافه‌کاری",
-        PayrollCalculationRuleValueResponseKey.FridayWorkPercentage => "درصد جمعه‌کاری",
-        PayrollCalculationRuleValueResponseKey.ChildAllowanceMultiplier => "ضریب حق اولاد",
-        PayrollCalculationRuleValueResponseKey.EndOfServiceDaysPerYear => "سنوات (روز در سال)",
-        PayrollCalculationRuleValueResponseKey.HousingAllowanceAmount => "حق مسکن ماهانه",
-        PayrollCalculationRuleValueResponseKey.FoodAllowanceAmount => "حق بن ماهانه",
-        PayrollCalculationRuleValueResponseKey.MarriageAllowanceAmount => "حق تأهل ماهانه",
-        PayrollCalculationRuleValueResponseKey.ShiftWorkPercentageMorningEvening => "درصد نوبت‌کاری صبح-عصر",
-        PayrollCalculationRuleValueResponseKey.ShiftWorkPercentageMorningNight => "درصد نوبت‌کاری صبح-شب",
-        PayrollCalculationRuleValueResponseKey.ShiftWorkPercentageEveningNight => "درصد نوبت‌کاری عصر-شب",
-        PayrollCalculationRuleValueResponseKey.ShiftWorkPercentageMorningEveningNight => "درصد نوبت‌کاری سه‌نوبت",
-        _ => key.ToString()
     };
 
     private static Dictionary<string, string> CreateFieldMapping() => new()

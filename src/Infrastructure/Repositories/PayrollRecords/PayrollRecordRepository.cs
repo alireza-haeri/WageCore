@@ -43,6 +43,30 @@ public class PayrollRecordRepository(
                 cancellationToken);
     }
 
+    public async Task<PayrollRecord?> GetByEmployeeAndPeriodAsync(
+        Guid userId,
+        Guid employeeId,
+        DateOnly periodStart,
+        DateOnly periodEnd,
+        CancellationToken cancellationToken = default)
+    {
+        var userWorkshopIds = context.Workshops
+            .Where(x => x.UserId == userId)
+            .Select(x => x.Id);
+
+        var userEmployeeIds = context.Employees
+            .Where(x => userWorkshopIds.Contains(x.WorkshopId))
+            .Select(x => x.Id);
+
+        return await context.PayrollRecords
+            .FirstOrDefaultAsync(
+                x => x.EmployeeId == employeeId &&
+                     x.PeriodStart == periodStart &&
+                     x.PeriodEnd == periodEnd &&
+                     userEmployeeIds.Contains(x.EmployeeId),
+                cancellationToken);
+    }
+
     public async Task<bool> UpdateAsync(
         PayrollRecord payrollRecord,
         CancellationToken cancellationToken = default)

@@ -94,6 +94,73 @@ public class PayrollRecordConfigurations : IEntityTypeConfiguration<PayrollRecor
             .IsRequired()
             .HasPrecision(18, 2);
 
+        builder.Property(x => x.BaseSalaryAmount)
+            .IsRequired()
+            .HasPrecision(18, 2);
+
+        builder.Property(x => x.AttractionAllowanceAmount)
+            .IsRequired()
+            .HasPrecision(18, 2);
+
+        builder.Property(x => x.SupervisionAllowanceAmount)
+            .IsRequired()
+            .HasPrecision(18, 2);
+
+        builder.Property(x => x.HolidayWorkAmount)
+            .IsRequired()
+            .HasPrecision(18, 2);
+
+        builder.Property(x => x.ChildAllowanceAmount)
+            .IsRequired()
+            .HasPrecision(18, 2);
+
+        builder.Property(x => x.HousingAllowanceAmount)
+            .IsRequired()
+            .HasPrecision(18, 2);
+
+        builder.Property(x => x.FoodAllowanceAmount)
+            .IsRequired()
+            .HasPrecision(18, 2);
+
+        builder.Property(x => x.MarriageAllowanceAmount)
+            .IsRequired()
+            .HasPrecision(18, 2);
+
+        builder.Property(x => x.ShiftWorkAmount)
+            .IsRequired()
+            .HasPrecision(18, 2);
+
+        builder.Property(x => x.DailyMissionAmount)
+            .IsRequired()
+            .HasPrecision(18, 2);
+
+        builder.Property(x => x.EndOfServiceAmount)
+            .IsRequired()
+            .HasPrecision(18, 2);
+
+        builder.Property(x => x.AnnualBonusAmount)
+            .HasPrecision(18, 2);
+
+        builder.Property(x => x.CommutingAllowanceAmount)
+            .IsRequired()
+            .HasPrecision(18, 2);
+
+        builder.Property(x => x.MaxMonthlyOvertimeHours)
+            .IsRequired()
+            .HasPrecision(18, 2);
+
+        builder.Property(x => x.MaxFridayHours)
+            .IsRequired()
+            .HasPrecision(18, 2);
+
+        builder.Property(x => x.MaxNightShiftHours)
+            .IsRequired()
+            .HasPrecision(18, 2);
+
+        builder.Property(x => x.DailyWorkingHours)
+            .IsRequired()
+            .HasPrecision(18, 2);
+
         builder.Property(x => x.CalculatedTaxAmount)
             .IsRequired()
             .HasPrecision(18, 2);

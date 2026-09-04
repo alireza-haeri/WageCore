@@ -4,11 +4,11 @@ using FluentAssertions.Execution;
 using FluentValidation.TestHelper;
 using Shared.Tests.Builders;
 
-namespace Application.Tests.Features.PayrollRecords.Command.CreatePayrollRecord;
+namespace Application.Tests.Features.PayrollRecords.Command.SavePayrollRecord;
 
-public class CreatePayrollRecordCommandValidatorTests
+public class SavePayrollRecordCommandValidatorTests
 {
-    private readonly CreatePayrollRecordCommandValidator _validator = new();
+    private readonly SavePayrollRecordCommandValidator _validator = new();
     private readonly PayrollRecordBuilder _builder = new();
 
     private static readonly Guid ValidUserId = Guid.NewGuid();
@@ -16,7 +16,7 @@ public class CreatePayrollRecordCommandValidatorTests
     private const int ValidPersianYear = 1404;
     private const int ValidPersianMonth = 6;
 
-    private CreatePayrollRecordCommand CreateValidCommand(
+    private SavePayrollRecordCommand CreateValidCommand(
         UserWorkInputDto? work = null,
         Guid? userId = null,
         Guid? employeeId = null,
@@ -70,7 +70,7 @@ public class CreatePayrollRecordCommandValidatorTests
     [Fact]
     public void Validate_WithNullWork_ShouldHaveValidationError()
     {
-        var command = new CreatePayrollRecordCommand(
+        var command = new SavePayrollRecordCommand(
             ValidUserId,
             ValidEmployeeId,
             ValidPersianYear,

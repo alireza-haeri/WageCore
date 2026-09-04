@@ -128,6 +128,8 @@ public class CreatePayrollRecordTests
             false,
             20m,
             12m,
+            3m,
+            8m,
             _builder.WithPeriod(PeriodStart, PeriodEnd).BuildPayrollWorkInput(),
             _builder.BuildAmountsDto(),
             _builder.BuildCalculatedAmountsDto());
@@ -169,6 +171,8 @@ public class CreatePayrollRecordTests
             false,
             20m,
             12m,
+            3m,
+            8m,
             _builder.BuildPayrollWorkInput(),
             null,
             _builder.BuildCalculatedAmountsDto());
@@ -187,6 +191,8 @@ public class CreatePayrollRecordTests
             false,
             20m,
             12m,
+            3m,
+            8m,
             _builder.BuildPayrollWorkInput(),
             _builder.BuildAmountsDto(),
             null);
@@ -750,6 +756,8 @@ public class CreatePayrollRecordTests
             false,
             20m,
             12m,
+            3m,
+            8m,
             _builder.BuildPayrollWorkInput(),
             _builder.BuildAmountsDto(),
             calculatedAmounts);

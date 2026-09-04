@@ -11,6 +11,8 @@ public class PayrollRecordBuilder
     private bool _employeeIsTaxSubject;
     private decimal? _maxMonthlyOvertimeHours = 20m;
     private decimal? _maxFridayHours = 12m;
+    private decimal? _maxNightShiftHours = 3m;
+    private decimal? _dailyWorkingHours = 8m;
     private DateOnly _periodStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-25));
     private DateOnly _periodEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(-1));
     private decimal _workedDaysCount = 24m;
@@ -77,6 +79,18 @@ public class PayrollRecordBuilder
     public PayrollRecordBuilder WithMaxFridayHours(decimal? maxFridayHours)
     {
         _maxFridayHours = maxFridayHours;
+        return this;
+    }
+
+    public PayrollRecordBuilder WithMaxNightShiftHours(decimal? maxNightShiftHours)
+    {
+        _maxNightShiftHours = maxNightShiftHours;
+        return this;
+    }
+
+    public PayrollRecordBuilder WithDailyWorkingHours(decimal? dailyWorkingHours)
+    {
+        _dailyWorkingHours = dailyWorkingHours;
         return this;
     }
 
@@ -389,6 +403,8 @@ public class PayrollRecordBuilder
             _employeeIsTaxSubject,
             _maxMonthlyOvertimeHours,
             _maxFridayHours,
+            _maxNightShiftHours,
+            _dailyWorkingHours,
             BuildPayrollWorkInput(),
             BuildAmountsDto(),
             BuildCalculatedAmountsDto());

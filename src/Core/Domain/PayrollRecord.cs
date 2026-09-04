@@ -30,6 +30,23 @@ public class PayrollRecord
     public decimal OvertimeAmount { get; private set; }
     public decimal NightShiftExtraAmount { get; private set; }
     public decimal FridayWorkAllowance { get; private set; }
+    public decimal BaseSalaryAmount { get; private set; }
+    public decimal AttractionAllowanceAmount { get; private set; }
+    public decimal SupervisionAllowanceAmount { get; private set; }
+    public decimal HolidayWorkAmount { get; private set; }
+    public decimal ChildAllowanceAmount { get; private set; }
+    public decimal HousingAllowanceAmount { get; private set; }
+    public decimal FoodAllowanceAmount { get; private set; }
+    public decimal MarriageAllowanceAmount { get; private set; }
+    public decimal ShiftWorkAmount { get; private set; }
+    public decimal DailyMissionAmount { get; private set; }
+    public decimal EndOfServiceAmount { get; private set; }
+    public decimal? AnnualBonusAmount { get; private set; }
+    public decimal CommutingAllowanceAmount { get; private set; }
+    public decimal MaxMonthlyOvertimeHours { get; private set; }
+    public decimal MaxFridayHours { get; private set; }
+    public decimal MaxNightShiftHours { get; private set; }
+    public decimal DailyWorkingHours { get; private set; }
     public decimal CalculatedTaxAmount { get; private set; }
     public decimal GrossAmount { get; private set; }
     public decimal InsuranceAmount { get; private set; }
@@ -47,6 +64,8 @@ public class PayrollRecord
         bool employeeIsTaxSubject,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
+        decimal? maxNightShiftHours,
+        decimal? dailyWorkingHours,
         PayrollWorkInput workInput,
         PayrollRecordAmountsDto? payrollAmounts,
         PayrollCalculatedAmountsDto? calculatedAmounts)
@@ -59,6 +78,8 @@ public class PayrollRecord
             employeeIsTaxSubject,
             maxMonthlyOvertimeHours,
             maxFridayHours,
+            maxNightShiftHours,
+            dailyWorkingHours,
             workInput,
             payrollAmounts,
             calculatedAmounts);
@@ -90,6 +111,23 @@ public class PayrollRecord
             OvertimeAmount = calculatedAmounts!.OvertimeAmount,
             NightShiftExtraAmount = calculatedAmounts.NightShiftExtraAmount,
             FridayWorkAllowance = calculatedAmounts.FridayWorkAllowance,
+            BaseSalaryAmount = calculatedAmounts.BaseSalaryAmount,
+            AttractionAllowanceAmount = calculatedAmounts.AttractionAllowanceAmount,
+            SupervisionAllowanceAmount = calculatedAmounts.SupervisionAllowanceAmount,
+            HolidayWorkAmount = calculatedAmounts.HolidayWorkAmount,
+            ChildAllowanceAmount = calculatedAmounts.ChildAllowanceAmount,
+            HousingAllowanceAmount = calculatedAmounts.HousingAllowanceAmount,
+            FoodAllowanceAmount = calculatedAmounts.FoodAllowanceAmount,
+            MarriageAllowanceAmount = calculatedAmounts.MarriageAllowanceAmount,
+            ShiftWorkAmount = calculatedAmounts.ShiftWorkAmount,
+            DailyMissionAmount = calculatedAmounts.DailyMissionAmount,
+            EndOfServiceAmount = calculatedAmounts.EndOfServiceAmount,
+            AnnualBonusAmount = calculatedAmounts.AnnualBonusAmount,
+            CommutingAllowanceAmount = calculatedAmounts.CommutingAllowanceAmount,
+            MaxMonthlyOvertimeHours = maxMonthlyOvertimeHours!.Value,
+            MaxFridayHours = maxFridayHours!.Value,
+            MaxNightShiftHours = maxNightShiftHours!.Value,
+            DailyWorkingHours = dailyWorkingHours!.Value,
             CalculatedTaxAmount = payrollAmounts!.CalculatedTaxAmount,
             GrossAmount = payrollAmounts.GrossAmount,
             InsuranceAmount = payrollAmounts.InsuranceAmount,
@@ -106,6 +144,8 @@ public class PayrollRecord
         bool employeeIsTaxSubject,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
+        decimal? maxNightShiftHours,
+        decimal? dailyWorkingHours,
         PayrollWorkInput workInput,
         PayrollRecordAmountsDto? payrollAmounts,
         PayrollCalculatedAmountsDto? calculatedAmounts) =>
@@ -117,6 +157,8 @@ public class PayrollRecord
             employeeIsTaxSubject,
             maxMonthlyOvertimeHours,
             maxFridayHours,
+            maxNightShiftHours,
+            dailyWorkingHours,
             workInput,
             payrollAmounts,
             calculatedAmounts);
@@ -127,6 +169,8 @@ public class PayrollRecord
         bool employeeIsTaxSubject,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
+        decimal? maxNightShiftHours,
+        decimal? dailyWorkingHours,
         PayrollWorkInput workInput,
         PayrollRecordAmountsDto? payrollAmounts,
         PayrollCalculatedAmountsDto? calculatedAmounts)
@@ -141,6 +185,8 @@ public class PayrollRecord
             employeeIsTaxSubject,
             maxMonthlyOvertimeHours,
             maxFridayHours,
+            maxNightShiftHours,
+            dailyWorkingHours,
             workInput,
             payrollAmounts,
             calculatedAmounts);
@@ -168,6 +214,23 @@ public class PayrollRecord
         OvertimeAmount = calculatedAmounts!.OvertimeAmount;
         NightShiftExtraAmount = calculatedAmounts.NightShiftExtraAmount;
         FridayWorkAllowance = calculatedAmounts.FridayWorkAllowance;
+        BaseSalaryAmount = calculatedAmounts.BaseSalaryAmount;
+        AttractionAllowanceAmount = calculatedAmounts.AttractionAllowanceAmount;
+        SupervisionAllowanceAmount = calculatedAmounts.SupervisionAllowanceAmount;
+        HolidayWorkAmount = calculatedAmounts.HolidayWorkAmount;
+        ChildAllowanceAmount = calculatedAmounts.ChildAllowanceAmount;
+        HousingAllowanceAmount = calculatedAmounts.HousingAllowanceAmount;
+        FoodAllowanceAmount = calculatedAmounts.FoodAllowanceAmount;
+        MarriageAllowanceAmount = calculatedAmounts.MarriageAllowanceAmount;
+        ShiftWorkAmount = calculatedAmounts.ShiftWorkAmount;
+        DailyMissionAmount = calculatedAmounts.DailyMissionAmount;
+        EndOfServiceAmount = calculatedAmounts.EndOfServiceAmount;
+        AnnualBonusAmount = calculatedAmounts.AnnualBonusAmount;
+        CommutingAllowanceAmount = calculatedAmounts.CommutingAllowanceAmount;
+        MaxMonthlyOvertimeHours = maxMonthlyOvertimeHours!.Value;
+        MaxFridayHours = maxFridayHours!.Value;
+        MaxNightShiftHours = maxNightShiftHours!.Value;
+        DailyWorkingHours = dailyWorkingHours!.Value;
         CalculatedTaxAmount = payrollAmounts!.CalculatedTaxAmount;
         GrossAmount = payrollAmounts.GrossAmount;
         InsuranceAmount = payrollAmounts.InsuranceAmount;
@@ -210,6 +273,8 @@ public class PayrollRecord
         bool employeeIsTaxSubject,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
+        decimal? maxNightShiftHours,
+        decimal? dailyWorkingHours,
         PayrollWorkInput workInput,
         PayrollRecordAmountsDto? payrollAmounts,
         PayrollCalculatedAmountsDto? calculatedAmounts)
@@ -226,6 +291,8 @@ public class PayrollRecord
             employeeIsTaxSubject,
             maxMonthlyOvertimeHours,
             maxFridayHours,
+            maxNightShiftHours,
+            dailyWorkingHours,
             workInput,
             payrollAmounts,
             calculatedAmounts);
@@ -237,6 +304,8 @@ public class PayrollRecord
         bool employeeIsTaxSubject,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
+        decimal? maxNightShiftHours,
+        decimal? dailyWorkingHours,
         PayrollWorkInput workInput,
         PayrollRecordAmountsDto? payrollAmounts,
         PayrollCalculatedAmountsDto? calculatedAmounts)
@@ -254,7 +323,12 @@ public class PayrollRecord
         if (!periodResult.IsSuccess)
             return periodResult;
 
-        var attendanceResult = ValidateAttendance(workInput, maxMonthlyOvertimeHours, maxFridayHours);
+        var attendanceResult = ValidateAttendance(
+            workInput,
+            maxMonthlyOvertimeHours,
+            maxFridayHours,
+            maxNightShiftHours,
+            dailyWorkingHours);
         if (!attendanceResult.IsSuccess)
             return attendanceResult;
 
@@ -272,7 +346,9 @@ public class PayrollRecord
     private static DomainResult ValidateAttendance(
         PayrollWorkInput workInput,
         decimal? maxMonthlyOvertimeHours,
-        decimal? maxFridayHours)
+        decimal? maxFridayHours,
+        decimal? maxNightShiftHours,
+        decimal? dailyWorkingHours)
     {
         var daysCountResult = ValidateDaysCount(workInput.WorkedDaysCount, "تعداد روزهای کارکرد");
         if (!daysCountResult.IsSuccess)
@@ -334,6 +410,15 @@ public class PayrollRecord
 
         if (maxFridayHours is null)
             return DomainResult.Failure("حداکثر ساعات کار جمعه نمیتواند خالی باشد.");
+
+        if (maxNightShiftHours is null)
+            return DomainResult.Failure("حداکثر ساعات شب‌کاری ماهانه نمیتواند خالی باشد.");
+
+        if (dailyWorkingHours is null)
+            return DomainResult.Failure("ساعات کار روزانه نمیتواند خالی باشد.");
+
+        if (dailyWorkingHours.Value <= 0)
+            return DomainResult.Failure("ساعات کار روزانه باید بزرگ‌تر از صفر باشد.");
 
         if (workInput.OvertimeHours > maxMonthlyOvertimeHours)
             return DomainResult.Failure("ساعات اضافه‌کاری نباید بیشتر از حداکثر ساعات اضافه‌کاری ماهانه باشد.");

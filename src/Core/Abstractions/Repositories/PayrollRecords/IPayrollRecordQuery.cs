@@ -16,20 +16,6 @@ public interface IPayrollRecordQuery
         DateOnly effectiveFrom,
         CancellationToken cancellationToken = default);
 
-    Task<bool> HasOverlappingPeriodAsync(
-        Guid userId,
-        Guid employeeId,
-        DateOnly periodStart,
-        DateOnly periodEnd,
-        Guid? excludePayrollRecordId = null,
-        CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Sums <c>WorkedDaysCount</c> across the employee's already-persisted payroll
-    /// records that fall inside the same Persian year as <paramref name="periodStart"/>
-    /// and end before it (i.e. every closed period of that year except the current
-    /// period being calculated). Pure aggregation; no business calculation is applied.
-    /// </summary>
     Task<decimal> GetAnnualWorkedDaysCountAsync(
         Guid userId,
         Guid employeeId,

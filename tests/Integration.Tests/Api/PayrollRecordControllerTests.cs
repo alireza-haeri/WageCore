@@ -10,19 +10,9 @@ public class PayrollRecordControllerTests(ApiFixture fixture) : IClassFixture<Ap
     public Task DisposeAsync() => Task.CompletedTask;
 
     [Fact]
-    public async Task CreatePayrollRecord_WithoutToken_ShouldReturnUnauthorized()
+    public async Task SavePayrollRecord_WithoutToken_ShouldReturnUnauthorized()
     {
-        var response = await _client.PostAsJsonAsync(PayrollRecordsUrl, new { });
-
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
-    }
-
-    [Fact]
-    public async Task UpdatePayrollRecord_WithoutToken_ShouldReturnUnauthorized()
-    {
-        var payrollRecordId = Guid.NewGuid();
-
-        var response = await _client.PutAsJsonAsync($"{PayrollRecordsUrl}/{payrollRecordId}", new { });
+        var response = await _client.PutAsJsonAsync(PayrollRecordsUrl, new { });
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
