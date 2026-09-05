@@ -59,7 +59,7 @@ public class CreatePayrollRecordTests
             .WithMaxFridayHours(24m)
             .WithWorkedDaysCount(26.5m)
             .WithOvertimeHours(36m)
-            .WithNightShiftHours(7.25m)
+            .WithNightShiftHours(3m)
             .WithFridayWorkHours(24m)
             .WithLeaveHours(2.5m)
             .WithAbsenceDaysCount(1.5m)
@@ -91,7 +91,7 @@ public class CreatePayrollRecordTests
             response.PeriodEnd.Should().Be(PeriodEnd);
             response.WorkedDaysCount.Should().Be(26.5m);
             response.OvertimeHours.Should().Be(36m);
-            response.NightShiftHours.Should().Be(7.25m);
+            response.NightShiftHours.Should().Be(3m);
             response.FridayWorkHours.Should().Be(24m);
             response.LeaveHours.Should().Be(2.5m);
             response.AbsenceDaysCount.Should().Be(1.5m);

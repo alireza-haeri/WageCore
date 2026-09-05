@@ -42,3 +42,5 @@ global using DotNet.Testcontainers.Containers;
 global using Respawn;
 global using Core.Abstractions.Services;
 global using Infrastructure.Persistence.Dapper;
+global using Dapper;
+global using FluentAssertions.Execution;
