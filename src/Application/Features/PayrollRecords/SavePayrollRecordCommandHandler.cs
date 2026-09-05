@@ -56,18 +56,13 @@ public class SavePayrollRecordCommandHandler(
             return Result<SavePayrollRecordCommandResponse>.GeneralFailure(
                 "این فیش پرداخت شده است و قابل ویرایش نیست.");
 
-        var workshopTask = workShopRepository.GetByIdAsync(request.UserId, employee.WorkshopId, cancellationToken);
-        var salaryProfilesTask = salaryDecreeQuery.GetSalaryDecreesAffectingPeriodAsync(
+        var workshop = await workShopRepository.GetByIdAsync(request.UserId, employee.WorkshopId, cancellationToken);
+        var salaryProfiles = await salaryDecreeQuery.GetSalaryDecreesAffectingPeriodAsync(
             request.UserId,
             request.EmployeeId,
             period.StartPeriod,
             period.EndPeriod,
             cancellationToken);
-
-        await Task.WhenAll(workshopTask, salaryProfilesTask);
-
-        var workshop = await workshopTask;
-        var salaryProfiles = await salaryProfilesTask;
 
         if (workshop is null)
             return Result<SavePayrollRecordCommandResponse>.NotfoundFailure("کارگاه مورد نظر یافت نشد.");
@@ -97,7 +92,7 @@ public class SavePayrollRecordCommandHandler(
 
         if (existingPayrollRecord is not null)
         {
-            var updateResult = existingPayrollRecord.Update(
+            var updateDomainResult = existingPayrollRecord.Update(
                 period.StartPeriod,
                 period.EndPeriod,
                 salaryProfiles[0].IsTaxSubject,
@@ -108,9 +103,13 @@ public class SavePayrollRecordCommandHandler(
                 workInput,
                 calculation.Amounts,
                 calculation.CalculatedAmounts);
-            if (!updateResult.IsSuccess)
-                return Result<SavePayrollRecordCommandResponse>.GeneralFailure(updateResult.ErrorMessage!);
+            if (!updateDomainResult.IsSuccess)
+                return Result<SavePayrollRecordCommandResponse>.GeneralFailure(updateDomainResult.ErrorMessage!);
 
+            var updateResult = await payrollRecordRepository.UpdateAsync(existingPayrollRecord, cancellationToken);
+            if (!updateResult)
+                return Result<SavePayrollRecordCommandResponse>.GeneralFailure("خطا در ویرایش فیش پرداختی");
+            
             return Result<SavePayrollRecordCommandResponse>.Success(
                 new SavePayrollRecordCommandResponse(existingPayrollRecord.Id));
         }
