@@ -15,7 +15,7 @@ public class PayrollLimitsResolverTests
         _laborLawRuleQuery = Substitute.For<ILaborLawRuleQuery>();
         _resolver = new PayrollLimitsResolver(_persianCalendarService, _laborLawRuleQuery);
 
-        SetupRule(LaborLawRuleKey.DailyWorkingHours, 7m);
+        SetupRule(LaborLawRuleKey.StandardDailyWorkHours, 7m);
         SetupRule(LaborLawRuleKey.MaximumOvertimeHoursPerDay, 4m);
         SetupRule(LaborLawRuleKey.MaximumNightShiftHoursPerDay, 3m);
         _persianCalendarService
@@ -23,10 +23,23 @@ public class PayrollLimitsResolverTests
             .Returns(4);
     }
 
-    private void SetupRule(LaborLawRuleKey key, decimal? value) =>
+    private void SetupRule(LaborLawRuleKey key, decimal? value)
+    {
+        var values = new Dictionary<LaborLawRuleKey, decimal>
+        {
+            [LaborLawRuleKey.StandardDailyWorkHours] = 7m,
+            [LaborLawRuleKey.MaximumOvertimeHoursPerDay] = 4m,
+            [LaborLawRuleKey.MaximumNightShiftHoursPerDay] = 3m
+        };
+        if (value is null)
+            values.Remove(key);
+        else
+            values[key] = value.Value;
+
         _laborLawRuleQuery
-            .GetActiveValueAsync(key, Arg.Any<DateOnly>(), Arg.Any<CancellationToken>())
-            .Returns(value);
+            .GetActiveRuleValuesAsync(Arg.Any<DateOnly>(), Arg.Any<CancellationToken>())
+            .Returns<IReadOnlyDictionary<LaborLawRuleKey, decimal>>(values);
+    }
 
     private Task<Result<PayrollLimits>> Resolve(DateOnly? periodEnd = null) =>
         _resolver.ResolveAsync(PeriodStart, periodEnd ?? PeriodEnd, CancellationToken.None);
@@ -77,15 +90,25 @@ public class PayrollLimitsResolverTests
         await Resolve();
 
         await _laborLawRuleQuery.Received(1)
-            .GetActiveValueAsync(LaborLawRuleKey.MaximumOvertimeHoursPerDay, PeriodStart, Arg.Any<CancellationToken>());
-        await _laborLawRuleQuery.DidNotReceive()
-            .GetActiveValueAsync(LaborLawRuleKey.MaximumOvertimeHoursPerDay, PeriodEnd, Arg.Any<CancellationToken>());
+            .GetActiveRuleValuesAsync(PeriodStart, Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task ResolveAsync_ShouldLoadTheRulesInASingleQuery()
+    {
+        SetupRule(LaborLawRuleKey.MaximumOvertimeHoursPerDay, null);
+
+        var result = await Resolve();
+
+        result.ShouldBeFailure("حداکثر ساعات اضافه‌کاری روزانه یافت نشد.", BadResultType.NotFound);
+        await _laborLawRuleQuery.Received(1)
+            .GetActiveRuleValuesAsync(PeriodStart, Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task ResolveAsync_WhenAFridayWorkedDayIsZeroHours_ShouldAllowNoFridayHours()
     {
-        SetupRule(LaborLawRuleKey.DailyWorkingHours, 0m);
+        SetupRule(LaborLawRuleKey.StandardDailyWorkHours, 0m);
 
         var result = await Resolve();
 
@@ -116,7 +139,7 @@ public class PayrollLimitsResolverTests
 
     [Theory]
     [InlineData(LaborLawRuleKey.MaximumOvertimeHoursPerDay, "حداکثر ساعات اضافه‌کاری روزانه یافت نشد.")]
-    [InlineData(LaborLawRuleKey.DailyWorkingHours, "ساعات کار روزانه یافت نشد.")]
+    [InlineData(LaborLawRuleKey.StandardDailyWorkHours, "ساعات کار روزانه یافت نشد.")]
     [InlineData(LaborLawRuleKey.MaximumNightShiftHoursPerDay, "حداکثر ساعات شیفت شب روزانه یافت نشد.")]
     public async Task ResolveAsync_WhenARuleIsNotConfigured_ShouldReturnNotfoundFailure(
         LaborLawRuleKey missingKey,
@@ -128,22 +151,5 @@ public class PayrollLimitsResolverTests
 
         result.ShouldBeFailure(expectedMessage, BadResultType.NotFound);
         _persianCalendarService.DidNotReceive().GetFridayCount(Arg.Any<DateOnly>(), Arg.Any<DateOnly>());
-    }
-
-    [Fact]
-    public async Task ResolveAsync_WhenTheFirstRuleIsMissing_ShouldNotReadTheOtherRules()
-    {
-        SetupRule(LaborLawRuleKey.MaximumOvertimeHoursPerDay, null);
-
-        var result = await Resolve();
-
-        result.ShouldBeFailure("حداکثر ساعات اضافه‌کاری روزانه یافت نشد.", BadResultType.NotFound);
-        await _laborLawRuleQuery.DidNotReceive()
-            .GetActiveValueAsync(LaborLawRuleKey.DailyWorkingHours, Arg.Any<DateOnly>(), Arg.Any<CancellationToken>());
-        await _laborLawRuleQuery.DidNotReceive()
-            .GetActiveValueAsync(
-                LaborLawRuleKey.MaximumNightShiftHoursPerDay,
-                Arg.Any<DateOnly>(),
-                Arg.Any<CancellationToken>());
     }
 }

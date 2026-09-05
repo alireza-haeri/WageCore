@@ -95,7 +95,6 @@ public class SavePayrollRecordCommandHandler(
             var updateDomainResult = existingPayrollRecord.Update(
                 period.StartPeriod,
                 period.EndPeriod,
-                salaryProfiles[0].IsTaxSubject,
                 limits.MaxMonthlyOvertimeHours,
                 limits.MaxFridayHours,
                 limits.MaxNightShiftHours,
@@ -118,7 +117,6 @@ public class SavePayrollRecordCommandHandler(
             request.EmployeeId,
             period.StartPeriod,
             period.EndPeriod,
-            salaryProfiles[0].IsTaxSubject,
             limits.MaxMonthlyOvertimeHours,
             limits.MaxFridayHours,
             limits.MaxNightShiftHours,

@@ -13,7 +13,8 @@ public class PayrollRecordConfigurations : IEntityTypeConfiguration<PayrollRecor
 
         builder.Ignore(x => x.IsPaid);
 
-        builder.HasIndex(x => new { x.EmployeeId, x.PeriodStart });
+        builder.HasIndex(x => new { x.EmployeeId, x.PeriodStart, x.PeriodEnd })
+            .IsUnique();
 
         builder.Property(x => x.EmployeeId)
             .IsRequired();

@@ -72,7 +72,6 @@ public class PayrollRecordRepositoryTests(WageCoreDbContextFixture fixture)
             .WithId(Guid.NewGuid())
             .WithEmployeeId(employee.Id)
             .WithPeriod(periodStart, periodEnd)
-            .WithEmployeeIsTaxSubject(true)
             .CreateResult()
             .ShouldBeSuccess();
     }

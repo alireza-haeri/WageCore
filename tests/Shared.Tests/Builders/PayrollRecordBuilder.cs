@@ -8,7 +8,6 @@ public class PayrollRecordBuilder
 {
     private Guid _id = Guid.NewGuid();
     private Guid _employeeId = Guid.NewGuid();
-    private bool _employeeIsTaxSubject;
     private decimal? _maxMonthlyOvertimeHours = 20m;
     private decimal? _maxFridayHours = 12m;
     private decimal? _maxNightShiftHours = 3m;
@@ -61,12 +60,6 @@ public class PayrollRecordBuilder
     public PayrollRecordBuilder WithEmployeeId(Guid employeeId)
     {
         _employeeId = employeeId;
-        return this;
-    }
-
-    public PayrollRecordBuilder WithEmployeeIsTaxSubject(bool employeeIsTaxSubject)
-    {
-        _employeeIsTaxSubject = employeeIsTaxSubject;
         return this;
     }
 
@@ -400,7 +393,6 @@ public class PayrollRecordBuilder
             _employeeId,
             _periodStart,
             _periodEnd,
-            _employeeIsTaxSubject,
             _maxMonthlyOvertimeHours,
             _maxFridayHours,
             _maxNightShiftHours,

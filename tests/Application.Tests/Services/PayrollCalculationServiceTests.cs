@@ -85,14 +85,24 @@ public class PayrollCalculationServiceTests
 
     private void SetupRules()
     {
-        foreach (var (key, value) in PayrollFormulaCatalog.RuleValues)
-            SetupRule(key, value);
+        _laborLawRuleQuery
+            .GetActiveRuleValuesAsync(Arg.Any<DateOnly>(), Arg.Any<CancellationToken>())
+            .Returns<IReadOnlyDictionary<LaborLawRuleKey, decimal>>(
+                new Dictionary<LaborLawRuleKey, decimal>(PayrollFormulaCatalog.RuleValues));
     }
 
-    private void SetupRule(LaborLawRuleKey key, decimal? value) =>
+    private void SetupRule(LaborLawRuleKey key, decimal? value)
+    {
+        var values = new Dictionary<LaborLawRuleKey, decimal>(PayrollFormulaCatalog.RuleValues);
+        if (value is null)
+            values.Remove(key);
+        else
+            values[key] = value.Value;
+
         _laborLawRuleQuery
-            .GetActiveValueAsync(key, Arg.Any<DateOnly>(), Arg.Any<CancellationToken>())
-            .Returns(value);
+            .GetActiveRuleValuesAsync(Arg.Any<DateOnly>(), Arg.Any<CancellationToken>())
+            .Returns<IReadOnlyDictionary<LaborLawRuleKey, decimal>>(values);
+    }
 
     private void SetupFormulas()
     {
@@ -204,15 +214,12 @@ public class PayrollCalculationServiceTests
     }
 
     [Fact]
-    public async Task CalculateAsync_ShouldFetchAllRulesOnce()
+    public async Task CalculateAsync_ShouldFetchAllRuleValuesInASingleQuery()
     {
         await Calculate();
 
-        foreach (var ruleKey in Enum.GetValues<LaborLawRuleKey>())
-        {
-            await _laborLawRuleQuery.ReceivedWithAnyArgs()
-                .GetActiveValueAsync(ruleKey, Arg.Any<DateOnly>(), Arg.Any<CancellationToken>());
-        }
+        await _laborLawRuleQuery.Received(1)
+            .GetActiveRuleValuesAsync(PeriodStart, Arg.Any<CancellationToken>());
     }
 
     [Fact]

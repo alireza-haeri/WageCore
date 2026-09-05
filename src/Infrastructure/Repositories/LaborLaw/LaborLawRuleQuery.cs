@@ -25,6 +25,41 @@ public class LaborLawRuleQuery(IDbConnectionFactory dbConnectionFactory) : ILabo
         return await connection.QueryFirstOrDefaultAsync<decimal?>(command);
     }
 
+    public async Task<IReadOnlyDictionary<LaborLawRuleKey, decimal>> GetActiveRuleValuesAsync(
+        DateOnly date, CancellationToken cancellationToken = default)
+    {
+        string sql = $"""
+                      SELECT r.[Key], r.Value
+                      FROM {LaborLawRuleItem.TableName} r
+                      WHERE r.EffectiveFrom <= @Date
+                      ORDER BY r.EffectiveFrom DESC, r.Id DESC;
+                      """;
+
+        var command = new CommandDefinition(sql, new
+        {
+            Date = date
+        }, cancellationToken: cancellationToken);
+
+        using var connection = dbConnectionFactory.CreateConnection();
+        var rows = (await connection.QueryAsync<(string Key, decimal Value)>(command)).ToList();
+
+        var values = new Dictionary<LaborLawRuleKey, decimal>();
+        foreach (var (key, value) in rows)
+        {
+            // Rows holding a removed or unknown key name are skipped so legacy
+            // data cannot break the lookup.
+            if (!Enum.TryParse<LaborLawRuleKey>(key, out var ruleKey))
+                continue;
+
+            // Rows are ordered newest first, so the first occurrence of a key
+            // is the one active at the requested date.
+            if (!values.ContainsKey(ruleKey))
+                values[ruleKey] = value;
+        }
+
+        return values;
+    }
+
     public async Task<PagedResult<LaborLawRuleResult>> GetLaborLawRulesAsync(
         PaginationDto pagination,
         LaborLawRuleKey? key = null,

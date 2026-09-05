@@ -61,7 +61,6 @@ public class PayrollRecord
         Guid employeeId,
         DateOnly periodStart,
         DateOnly periodEnd,
-        bool employeeIsTaxSubject,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
         decimal? maxNightShiftHours,
@@ -75,7 +74,6 @@ public class PayrollRecord
             employeeId,
             periodStart,
             periodEnd,
-            employeeIsTaxSubject,
             maxMonthlyOvertimeHours,
             maxFridayHours,
             maxNightShiftHours,
@@ -141,7 +139,6 @@ public class PayrollRecord
         Guid employeeId,
         DateOnly periodStart,
         DateOnly periodEnd,
-        bool employeeIsTaxSubject,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
         decimal? maxNightShiftHours,
@@ -154,7 +151,6 @@ public class PayrollRecord
             employeeId,
             periodStart,
             periodEnd,
-            employeeIsTaxSubject,
             maxMonthlyOvertimeHours,
             maxFridayHours,
             maxNightShiftHours,
@@ -166,7 +162,6 @@ public class PayrollRecord
     public DomainResult Update(
         DateOnly periodStart,
         DateOnly periodEnd,
-        bool employeeIsTaxSubject,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
         decimal? maxNightShiftHours,
@@ -182,7 +177,6 @@ public class PayrollRecord
         var validationResult = ValidateCommon(
             periodStart,
             periodEnd,
-            employeeIsTaxSubject,
             maxMonthlyOvertimeHours,
             maxFridayHours,
             maxNightShiftHours,
@@ -270,7 +264,6 @@ public class PayrollRecord
         Guid employeeId,
         DateOnly periodStart,
         DateOnly periodEnd,
-        bool employeeIsTaxSubject,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
         decimal? maxNightShiftHours,
@@ -288,7 +281,6 @@ public class PayrollRecord
         return ValidateCommon(
             periodStart,
             periodEnd,
-            employeeIsTaxSubject,
             maxMonthlyOvertimeHours,
             maxFridayHours,
             maxNightShiftHours,
@@ -301,7 +293,6 @@ public class PayrollRecord
     private static DomainResult ValidateCommon(
         DateOnly periodStart,
         DateOnly periodEnd,
-        bool employeeIsTaxSubject,
         decimal? maxMonthlyOvertimeHours,
         decimal? maxFridayHours,
         decimal? maxNightShiftHours,
@@ -336,7 +327,7 @@ public class PayrollRecord
         if (!annualBonusResult.IsSuccess)
             return annualBonusResult;
 
-        var amountsResult = ValidateAmounts(payrollAmounts, employeeIsTaxSubject);
+        var amountsResult = ValidateAmounts(payrollAmounts);
         if (!amountsResult.IsSuccess)
             return amountsResult;
 
@@ -444,15 +435,11 @@ public class PayrollRecord
     }
 
     private static DomainResult ValidateAmounts(
-        PayrollRecordAmountsDto payrollAmounts,
-        bool employeeIsTaxSubject)
+        PayrollRecordAmountsDto payrollAmounts)
     {
         var taxAmountResult = ValidateNonNegativeAmount(payrollAmounts.CalculatedTaxAmount, "مالیات محاسبه شده");
         if (!taxAmountResult.IsSuccess)
             return taxAmountResult;
-
-        if (employeeIsTaxSubject && payrollAmounts.CalculatedTaxAmount == 0)
-            return DomainResult.Failure("برای کارمند مشمول مالیات، مالیات محاسبه شده نمیتواند صفر باشد.");
 
         var grossAmountResult = ValidateNonNegativeAmount(payrollAmounts.GrossAmount, "جمع حقوق و مزایا");
         if (!grossAmountResult.IsSuccess)

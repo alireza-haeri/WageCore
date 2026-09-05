@@ -103,6 +103,24 @@ public class PayrollCalculationService(
             previousWorkedDaysCount,
             workInput.WorkedDaysCount);
 
+        // Every rule value active at the period start, loaded in a single
+        // query and reused by all items and by the insurance/tax formulas.
+        var ruleValues = await laborLawRuleQuery.GetActiveRuleValuesAsync(
+            period.PeriodStart,
+            cancellationToken);
+
+        foreach (var ruleKey in Enum.GetValues<LaborLawRuleKey>())
+        {
+            if (!ruleValues.ContainsKey(ruleKey))
+            {
+                logger.LogWarning(
+                    "Labor law rule {RuleKey} not found for period {PeriodStart}..{PeriodEnd}; it will not be available to formulas",
+                    ruleKey,
+                    period.PeriodStart,
+                    period.PeriodEnd);
+            }
+        }
+
         var amounts = new Dictionary<FormulaKey, decimal>();
         foreach (var item in Items)
         {
@@ -124,6 +142,7 @@ public class PayrollCalculationService(
                 period,
                 daysInYear,
                 annualWorkedDaysCount,
+                ruleValues,
                 cancellationToken);
             if (!itemResult.IsSuccess)
                 return ConvertFailure(itemResult);
@@ -157,7 +176,7 @@ public class PayrollCalculationService(
             grossAmount,
             employee.Id);
 
-        var allRuleVariables = await GetAllActiveRuleVariablesAsync(period, cancellationToken);
+        var allRuleVariables = BuildRuleVariables(ruleValues);
         var itemVariables = BuildItemAmountVariables(amounts, performanceBonusResult.Response, cashBenefitsResult.Response);
 
         var insuranceResult = await CalculateInsuranceAmountAsync(
@@ -225,30 +244,15 @@ public class PayrollCalculationService(
             new PayrollCalculationResult(calculatedAmounts, payrollAmounts, isEsfandPeriod));
     }
 
-    private async Task<FormulaVariable[]> GetAllActiveRuleVariablesAsync(
-        PayrollPeriod period,
-        CancellationToken cancellationToken)
+    private static FormulaVariable[] BuildRuleVariables(
+        IReadOnlyDictionary<LaborLawRuleKey, decimal> ruleValues)
     {
         var variables = new List<FormulaVariable>();
 
         foreach (var ruleKey in Enum.GetValues<LaborLawRuleKey>())
         {
-            var ruleValue = await laborLawRuleQuery.GetActiveValueAsync(
-                ruleKey,
-                period.PeriodStart,
-                cancellationToken);
-
-            if (ruleValue is null)
-            {
-                logger.LogWarning(
-                    "Labor law rule {RuleKey} not found for period {PeriodStart}..{PeriodEnd}; skipping",
-                    ruleKey,
-                    period.PeriodStart,
-                    period.PeriodEnd);
-                continue;
-            }
-
-            variables.Add(new FormulaVariable(ruleKey.ToString(), ruleValue.Value));
+            if (ruleValues.TryGetValue(ruleKey, out var ruleValue))
+                variables.Add(new FormulaVariable(ruleKey.ToString(), ruleValue));
         }
 
         return variables.ToArray();
@@ -286,6 +290,7 @@ public class PayrollCalculationService(
         PayrollPeriod period,
         int daysInYear,
         decimal annualWorkedDaysCount,
+        IReadOnlyDictionary<LaborLawRuleKey, decimal> activeRuleValues,
         CancellationToken cancellationToken)
     {
         if (item.FormulaKey == FormulaKey.DailyMissionPay && workInput.MissionAmountOverride is not null)
@@ -335,16 +340,22 @@ public class PayrollCalculationService(
         var ruleValues = new List<(LaborLawRuleKey Key, decimal Value)>();
         foreach (var ruleKey in ruleKeys)
         {
-            var ruleResult = await GetRuleValueAsync(
-                ruleKey,
-                item.DisplayName,
-                employee.Id,
-                period,
-                cancellationToken);
-            if (!ruleResult.IsSuccess)
-                return ruleResult.Map<decimal?>(value => value);
+            if (!activeRuleValues.TryGetValue(ruleKey, out var ruleValue))
+            {
+                logger.LogWarning(
+                    "Labor law rule {RuleKey} was not found for {ItemName} of employee {EmployeeId} " +
+                    "in period {PeriodStart}..{PeriodEnd}",
+                    ruleKey,
+                    item.DisplayName,
+                    employee.Id,
+                    period.PeriodStart,
+                    period.PeriodEnd);
 
-            ruleValues.Add((ruleKey, ruleResult.Response));
+                return Result<decimal?>.NotfoundFailure(
+                    $"قانون {ruleKey} برای محاسبه {item.DisplayName} یافت نشد.");
+            }
+
+            ruleValues.Add((ruleKey, ruleValue));
         }
 
         return await EvaluateFormulaAsync(
@@ -373,35 +384,6 @@ public class PayrollCalculationService(
             FormulaKey.ShiftWorkPay => "ShiftWorkPercentage",
             _ => ruleKey.ToString()
         };
-
-    private async Task<Result<decimal>> GetRuleValueAsync(
-        LaborLawRuleKey ruleKey,
-        string displayName,
-        Guid employeeId,
-        PayrollPeriod period,
-        CancellationToken cancellationToken)
-    {
-        var ruleValue = await laborLawRuleQuery.GetActiveValueAsync(
-            ruleKey,
-            period.PeriodStart,
-            cancellationToken);
-        if (ruleValue is null)
-        {
-            logger.LogWarning(
-                "Labor law rule {RuleKey} was not found for {ItemName} of employee {EmployeeId} " +
-                "in period {PeriodStart}..{PeriodEnd}",
-                ruleKey,
-                displayName,
-                employeeId,
-                period.PeriodStart,
-                period.PeriodEnd);
-
-            return Result<decimal>.NotfoundFailure(
-                $"قانون {ruleKey} برای محاسبه {displayName} یافت نشد.");
-        }
-
-        return Result<decimal>.Success(ruleValue.Value);
-    }
 
     private async Task<Result<decimal?>> EvaluateFormulaAsync(
         FormulaKey formulaKey,

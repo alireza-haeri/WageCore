@@ -196,7 +196,7 @@ public class LaborLawRuleQueryTests(WageCoreDbContextFixture fixture)
 
         await CreateRuleAsync(scope, 71_661_840m, effectiveFrom);
 
-        var result = await query.IsExistEffectiveFrom(LaborLawRuleKey.DailyWorkingHours, effectiveFrom);
+        var result = await query.IsExistEffectiveFrom(LaborLawRuleKey.StandardDailyWorkHours, effectiveFrom);
 
         result.Should().BeFalse();
     }
@@ -210,5 +210,97 @@ public class LaborLawRuleQueryTests(WageCoreDbContextFixture fixture)
         var result = await query.GetLaborLawRuleByIdAsync(Guid.NewGuid());
 
         result.Should().BeNull();
+    }
+
+    private async Task<LaborLawRuleItem> CreateRuleAsync(
+        AsyncServiceScope scope,
+        LaborLawRuleKey key,
+        decimal value,
+        DateOnly effectiveFrom)
+    {
+        var repository = scope.ServiceProvider.GetRequiredService<LaborLawRuleRepository>();
+        var rule = _builder
+            .WithId(Guid.NewGuid())
+            .WithKey(key)
+            .WithValue(value)
+            .WithEffectiveFrom(effectiveFrom)
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        var result = await repository.CreateAsync(rule);
+        result.Should().Be(rule.Id);
+
+        return rule;
+    }
+
+    [Fact]
+    public async Task GetActiveRuleValuesAsync_WhenNoRuleExists_ShouldReturnEmpty()
+    {
+        await using var scope = fixture.CreateScope();
+        var query = scope.ServiceProvider.GetRequiredService<ILaborLawRuleQuery>();
+
+        var result = await query.GetActiveRuleValuesAsync(DateOnly.FromDateTime(DateTime.Now));
+
+        result.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task GetActiveRuleValuesAsync_ShouldReturnTheLatestValueForEachKeyNotAfterDate()
+    {
+        await using var scope = fixture.CreateScope();
+        var query = scope.ServiceProvider.GetRequiredService<ILaborLawRuleQuery>();
+
+        var olderDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-40));
+        var newerDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-10));
+        var futureDate = DateOnly.FromDateTime(DateTime.Now.AddDays(10));
+
+        await CreateRuleAsync(scope, LaborLawRuleKey.MinimumDailySalary, 71_661_840m, olderDate);
+        await CreateRuleAsync(scope, LaborLawRuleKey.MinimumDailySalary, 103_909_680m, newerDate);
+        await CreateRuleAsync(scope, LaborLawRuleKey.MinimumDailySalary, 999_999_999m, futureDate);
+        await CreateRuleAsync(scope, LaborLawRuleKey.StandardDailyWorkHours, 7.33m, newerDate);
+
+        var result = await query.GetActiveRuleValuesAsync(DateOnly.FromDateTime(DateTime.Now));
+
+        using (new AssertionScope())
+        {
+            result.Should().HaveCount(2);
+            result[LaborLawRuleKey.MinimumDailySalary].Should().Be(103_909_680m);
+            result[LaborLawRuleKey.StandardDailyWorkHours].Should().Be(7.33m);
+        }
+    }
+
+    [Fact]
+    public async Task GetActiveRuleValuesAsync_ShouldIgnoreRowsWithUnknownKeys()
+    {
+        await using var scope = fixture.CreateScope();
+        var query = scope.ServiceProvider.GetRequiredService<ILaborLawRuleQuery>();
+        var effectiveFrom = DateOnly.FromDateTime(DateTime.Now.AddDays(-10));
+
+        var dbConnectionFactory = scope.ServiceProvider.GetRequiredService<IDbConnectionFactory>();
+        using (var connection = dbConnectionFactory.CreateConnection())
+        {
+            await connection.ExecuteAsync(
+                """
+                INSERT INTO LaborLawRuleItems (Id, [Key], Value, EffectiveFrom)
+                VALUES (@Id, @Key, @Value, @EffectiveFrom);
+                """,
+                new
+                {
+                    Id = Guid.NewGuid(),
+                    Key = "DailyWorkingHours",
+                    Value = 7.5m,
+                    EffectiveFrom = effectiveFrom
+                });
+        }
+
+        await CreateRuleAsync(scope, LaborLawRuleKey.MinimumDailySalary, 71_661_840m, effectiveFrom);
+
+        var result = await query.GetActiveRuleValuesAsync(DateOnly.FromDateTime(DateTime.Now));
+
+        using (new AssertionScope())
+        {
+            result.Should().ContainSingle();
+            result[LaborLawRuleKey.MinimumDailySalary].Should().Be(71_661_840m);
+        }
     }
 }

@@ -54,7 +54,6 @@ public class CreatePayrollRecordTests
         var result = _builder
             .WithId(id)
             .WithEmployeeId(employeeId)
-            .WithEmployeeIsTaxSubject(true)
             .WithPeriod(PeriodStart, PeriodEnd)
             .WithMaxMonthlyOvertimeHours(36m)
             .WithMaxFridayHours(24m)
@@ -125,7 +124,6 @@ public class CreatePayrollRecordTests
             employeeId,
             PeriodStart,
             PeriodEnd,
-            false,
             20m,
             12m,
             3m,
@@ -168,7 +166,6 @@ public class CreatePayrollRecordTests
             Guid.NewGuid(),
             PeriodStart,
             PeriodEnd,
-            false,
             20m,
             12m,
             3m,
@@ -188,7 +185,6 @@ public class CreatePayrollRecordTests
             Guid.NewGuid(),
             PeriodStart,
             PeriodEnd,
-            false,
             20m,
             12m,
             3m,
@@ -626,10 +622,9 @@ public class CreatePayrollRecordTests
     }
 
     [Fact]
-    public void Create_WithZeroTaxForNonTaxSubjectEmployee_ShouldReturnSuccess()
+    public void Create_WithZeroCalculatedTaxAmount_ShouldReturnSuccess()
     {
         var result = _builder
-            .WithEmployeeIsTaxSubject(false)
             .WithCalculatedTaxAmount(0m)
             .CreateResult();
 
@@ -637,25 +632,13 @@ public class CreatePayrollRecordTests
     }
 
     [Fact]
-    public void Create_WithZeroTaxForTaxSubjectEmployee_ShouldFail()
+    public void Create_WithPositiveCalculatedTaxAmount_ShouldReturnSuccess()
     {
         var result = _builder
-            .WithEmployeeIsTaxSubject(true)
-            .WithCalculatedTaxAmount(0m)
-            .CreateResult();
-
-        result.ShouldBeFailure("برای کارمند مشمول مالیات، مالیات محاسبه شده نمیتواند صفر باشد.");
-    }
-
-    [Fact]
-    public void Create_WithPositiveTaxForTaxSubjectEmployee_ShouldReturnSuccess()
-    {
-        var result = _builder
-            .WithEmployeeIsTaxSubject(true)
             .WithCalculatedTaxAmount(1_000m)
             .CreateResult();
 
-        result.ShouldBeSuccess();
+        result.ShouldBeSuccess().CalculatedTaxAmount.Should().Be(1_000m);
     }
 
     [Fact]
@@ -775,7 +758,6 @@ public class CreatePayrollRecordTests
             Guid.NewGuid(),
             PeriodStart,
             PeriodEnd,
-            false,
             20m,
             12m,
             3m,
