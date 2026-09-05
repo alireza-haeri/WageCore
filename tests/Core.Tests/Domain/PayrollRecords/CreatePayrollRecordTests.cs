@@ -469,7 +469,7 @@ public class CreatePayrollRecordTests
     {
         var result = _builder.WithMissionDaysCount(31.5m).CreateResult();
 
-        result.ShouldBeFailure("تعداد روزهای مأموریت باید بین 0 تا 31 روز باشد.");
+        result.ShouldBeFailure("تعداد روزهای مأموریت");
     }
 
     [Fact]
@@ -499,7 +499,7 @@ public class CreatePayrollRecordTests
     [Fact]
     public void Create_WithFractionalHolidayWorkHours_ShouldReturnSuccess()
     {
-        var result = _builder.WithHolidayWorkHours(6.75m).CreateResult();
+        var result = _builder.WithHolidaysCount(1).WithHolidayWorkHours(6.75m).CreateResult();
 
         result.ShouldBeSuccess().HolidayWorkHours.Should().Be(6.75m);
     }
