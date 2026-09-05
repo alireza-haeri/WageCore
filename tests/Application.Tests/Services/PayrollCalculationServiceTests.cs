@@ -204,16 +204,12 @@ public class PayrollCalculationServiceTests
     }
 
     [Fact]
-    public async Task CalculateAsync_ShouldFetchAllNonDeprecatedRulesOnce()
+    public async Task CalculateAsync_ShouldFetchAllRulesOnce()
     {
         await Calculate();
 
         foreach (var ruleKey in Enum.GetValues<LaborLawRuleKey>())
         {
-            if (ruleKey == LaborLawRuleKey.TaxExemptMonthlyAmount ||
-                ruleKey == LaborLawRuleKey.TaxRatePercentage)
-                continue;
-
             await _laborLawRuleQuery.ReceivedWithAnyArgs()
                 .GetActiveValueAsync(ruleKey, Arg.Any<DateOnly>(), Arg.Any<CancellationToken>());
         }

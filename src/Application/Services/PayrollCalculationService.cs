@@ -29,12 +29,6 @@ public class PayrollCalculationService(
         new("مبلغ ایاب و ذهاب", FormulaKey.CommutingAllowancePay, [])
     ];
 
-    private static readonly HashSet<LaborLawRuleKey> DeprecatedRuleKeys =
-    [
-        LaborLawRuleKey.TaxExemptMonthlyAmount,
-        LaborLawRuleKey.TaxRatePercentage
-    ];
-
     public async Task<Result<PayrollCalculationResult>> CalculateAsync(
         Employee employee,
         Workshop workshop,
@@ -239,9 +233,6 @@ public class PayrollCalculationService(
 
         foreach (var ruleKey in Enum.GetValues<LaborLawRuleKey>())
         {
-            if (DeprecatedRuleKeys.Contains(ruleKey))
-                continue;
-
             var ruleValue = await laborLawRuleQuery.GetActiveValueAsync(
                 ruleKey,
                 period.PeriodStart,

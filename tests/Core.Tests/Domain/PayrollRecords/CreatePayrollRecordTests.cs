@@ -325,6 +325,28 @@ public class CreatePayrollRecordTests
     }
 
     [Fact]
+    public void Create_WithNightShiftHoursAboveMaxNightShiftHours_ShouldFail()
+    {
+        var result = _builder
+            .WithNightShiftHours(3.5m)
+            .WithMaxNightShiftHours(3m)
+            .CreateResult();
+
+        result.ShouldBeFailure("ساعات شب‌کاری نباید بیشتر از حداکثر ساعات شب‌کاری ماهانه باشد.");
+    }
+
+    [Fact]
+    public void Create_WithNightShiftHoursEqualToMaxNightShiftHours_ShouldReturnSuccess()
+    {
+        var result = _builder
+            .WithNightShiftHours(3m)
+            .WithMaxNightShiftHours(3m)
+            .CreateResult();
+
+        result.ShouldBeSuccess();
+    }
+
+    [Fact]
     public void Create_WithNegativeFridayWorkHours_ShouldFail()
     {
         var result = _builder.WithFridayWorkHours(-2m).CreateResult();

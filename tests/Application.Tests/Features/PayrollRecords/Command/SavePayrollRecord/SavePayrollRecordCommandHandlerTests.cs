@@ -382,6 +382,9 @@ public class SavePayrollRecordCommandHandlerTests
             .CreateResult()
             .ShouldBeSuccess();
         SetupExistingRecord(existingRecord);
+        _payrollRecordRepository
+            .UpdateAsync(existingRecord, Arg.Any<CancellationToken>())
+            .Returns(true);
 
         var result = await _handler.Handle(CreateValidCommand(), CancellationToken.None);
 
@@ -403,6 +406,31 @@ public class SavePayrollRecordCommandHandlerTests
             Arg.Any<PayrollWorkInput>(),
             Arg.Any<CancellationToken>());
 
+        // The recalculated record must be persisted, not just mutated in memory.
+        await _payrollRecordRepository.Received(1)
+            .UpdateAsync(existingRecord, Arg.Any<CancellationToken>());
+        await _payrollRecordRepository.DidNotReceive()
+            .CreateAsync(Arg.Any<PayrollRecord>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_WhenTheRepositoryUpdateFails_ShouldReturnGeneralFailure()
+    {
+        SetupPeriod(PeriodStart, PeriodEnd);
+        var existingRecord = _payrollRecordBuilder
+            .WithId(Guid.NewGuid())
+            .WithEmployeeId(ValidEmployeeId)
+            .WithPeriod(PeriodStart, PeriodEnd)
+            .CreateResult()
+            .ShouldBeSuccess();
+        SetupExistingRecord(existingRecord);
+        _payrollRecordRepository
+            .UpdateAsync(existingRecord, Arg.Any<CancellationToken>())
+            .Returns(false);
+
+        var result = await _handler.Handle(CreateValidCommand(), CancellationToken.None);
+
+        result.ShouldBeFailure("خطا در ویرایش فیش پرداختی", BadResultType.General);
         await _payrollRecordRepository.DidNotReceive()
             .CreateAsync(Arg.Any<PayrollRecord>(), Arg.Any<CancellationToken>());
     }
@@ -481,6 +509,8 @@ public class SavePayrollRecordCommandHandlerTests
                 x.NetPayableAmount == 15_000_000m &&
                 x.IsEsfandPeriod == false),
             Arg.Any<CancellationToken>());
+        await _payrollRecordRepository.DidNotReceive()
+            .UpdateAsync(Arg.Any<PayrollRecord>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]

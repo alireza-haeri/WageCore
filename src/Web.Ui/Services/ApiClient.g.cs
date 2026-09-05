@@ -6878,47 +6878,40 @@ namespace Web.Ui.Services
 
         MaximumNightShiftHoursPerDay = 3,
 
-        MaximumOvertimeHoursPerMonth = 4,
+        InsurancePercentage = 4,
 
-        MaximumFridayWorkHoursPerMonth = 5,
+        AnnualBonusMinimumAmount = 5,
 
-        InsurancePercentage = 6,
+        AnnualBonusMaximumAmount = 6,
 
-        AnnualBonusMinimumAmount = 7,
+        StandardDailyWorkHours = 7,
 
-        AnnualBonusMaximumAmount = 8,
+        NightShiftPercentage = 8,
 
-        TaxExemptMonthlyAmount = 9,
+        HolidayWorkPercentage = 9,
 
-        TaxRatePercentage = 10,
+        OvertimePercentage = 10,
 
-        StandardDailyWorkHours = 11,
+        FridayWorkPercentage = 11,
 
-        NightShiftPercentage = 12,
+        ChildAllowanceMultiplier = 12,
 
-        HolidayWorkPercentage = 13,
+        EndOfServiceDaysPerYear = 13,
 
-        OvertimePercentage = 14,
+        HousingAllowanceAmount = 14,
 
-        FridayWorkPercentage = 15,
+        FoodAllowanceAmount = 15,
 
-        ChildAllowanceMultiplier = 16,
+        MarriageAllowanceAmount = 16,
 
-        EndOfServiceDaysPerYear = 17,
+        ShiftWorkPercentageMorningEvening = 17,
 
-        HousingAllowanceAmount = 18,
+        ShiftWorkPercentageMorningNight = 18,
 
-        FoodAllowanceAmount = 19,
+        ShiftWorkPercentageEveningNight = 19,
 
-        MarriageAllowanceAmount = 20,
+        ShiftWorkPercentageMorningEveningNight = 20
 
-        ShiftWorkPercentageMorningEvening = 21,
-
-        ShiftWorkPercentageMorningNight = 22,
-
-        ShiftWorkPercentageEveningNight = 23,
-
-        ShiftWorkPercentageMorningEveningNight = 24,
 
     }
 
@@ -7058,47 +7051,40 @@ namespace Web.Ui.Services
 
         MaximumNightShiftHoursPerDay = 3,
 
-        MaximumOvertimeHoursPerMonth = 4,
+        InsurancePercentage = 4,
 
-        MaximumFridayWorkHoursPerMonth = 5,
+        AnnualBonusMinimumAmount = 5,
 
-        InsurancePercentage = 6,
+        AnnualBonusMaximumAmount = 6,
 
-        AnnualBonusMinimumAmount = 7,
+        StandardDailyWorkHours = 7,
 
-        AnnualBonusMaximumAmount = 8,
+        NightShiftPercentage = 8,
 
-        TaxExemptMonthlyAmount = 9,
+        HolidayWorkPercentage = 9,
 
-        TaxRatePercentage = 10,
+        OvertimePercentage = 10,
 
-        StandardDailyWorkHours = 11,
+        FridayWorkPercentage = 11,
 
-        NightShiftPercentage = 12,
+        ChildAllowanceMultiplier = 12,
 
-        HolidayWorkPercentage = 13,
+        EndOfServiceDaysPerYear = 13,
 
-        OvertimePercentage = 14,
+        HousingAllowanceAmount = 14,
 
-        FridayWorkPercentage = 15,
+        FoodAllowanceAmount = 15,
 
-        ChildAllowanceMultiplier = 16,
+        MarriageAllowanceAmount = 16,
 
-        EndOfServiceDaysPerYear = 17,
+        ShiftWorkPercentageMorningEvening = 17,
 
-        HousingAllowanceAmount = 18,
+        ShiftWorkPercentageMorningNight = 18,
 
-        FoodAllowanceAmount = 19,
+        ShiftWorkPercentageEveningNight = 19,
 
-        MarriageAllowanceAmount = 20,
+        ShiftWorkPercentageMorningEveningNight = 20
 
-        ShiftWorkPercentageMorningEvening = 21,
-
-        ShiftWorkPercentageMorningNight = 22,
-
-        ShiftWorkPercentageEveningNight = 23,
-
-        ShiftWorkPercentageMorningEveningNight = 24,
 
     }
 
@@ -7350,47 +7336,40 @@ namespace Web.Ui.Services
 
         MaximumNightShiftHoursPerDay = 3,
 
-        MaximumOvertimeHoursPerMonth = 4,
+        InsurancePercentage = 4,
 
-        MaximumFridayWorkHoursPerMonth = 5,
+        AnnualBonusMinimumAmount = 5,
 
-        InsurancePercentage = 6,
+        AnnualBonusMaximumAmount = 6,
 
-        AnnualBonusMinimumAmount = 7,
+        StandardDailyWorkHours = 7,
 
-        AnnualBonusMaximumAmount = 8,
+        NightShiftPercentage = 8,
 
-        TaxExemptMonthlyAmount = 9,
+        HolidayWorkPercentage = 9,
 
-        TaxRatePercentage = 10,
+        OvertimePercentage = 10,
 
-        StandardDailyWorkHours = 11,
+        FridayWorkPercentage = 11,
 
-        NightShiftPercentage = 12,
+        ChildAllowanceMultiplier = 12,
 
-        HolidayWorkPercentage = 13,
+        EndOfServiceDaysPerYear = 13,
 
-        OvertimePercentage = 14,
+        HousingAllowanceAmount = 14,
 
-        FridayWorkPercentage = 15,
+        FoodAllowanceAmount = 15,
 
-        ChildAllowanceMultiplier = 16,
+        MarriageAllowanceAmount = 16,
 
-        EndOfServiceDaysPerYear = 17,
+        ShiftWorkPercentageMorningEvening = 17,
 
-        HousingAllowanceAmount = 18,
+        ShiftWorkPercentageMorningNight = 18,
 
-        FoodAllowanceAmount = 19,
+        ShiftWorkPercentageEveningNight = 19,
 
-        MarriageAllowanceAmount = 20,
+        ShiftWorkPercentageMorningEveningNight = 20
 
-        ShiftWorkPercentageMorningEvening = 21,
-
-        ShiftWorkPercentageMorningNight = 22,
-
-        ShiftWorkPercentageEveningNight = 23,
-
-        ShiftWorkPercentageMorningEveningNight = 24,
 
     }
 
@@ -7420,47 +7399,40 @@ namespace Web.Ui.Services
 
         MaximumNightShiftHoursPerDay = 3,
 
-        MaximumOvertimeHoursPerMonth = 4,
+        InsurancePercentage = 4,
 
-        MaximumFridayWorkHoursPerMonth = 5,
+        AnnualBonusMinimumAmount = 5,
 
-        InsurancePercentage = 6,
+        AnnualBonusMaximumAmount = 6,
 
-        AnnualBonusMinimumAmount = 7,
+        StandardDailyWorkHours = 7,
 
-        AnnualBonusMaximumAmount = 8,
+        NightShiftPercentage = 8,
 
-        TaxExemptMonthlyAmount = 9,
+        HolidayWorkPercentage = 9,
 
-        TaxRatePercentage = 10,
+        OvertimePercentage = 10,
 
-        StandardDailyWorkHours = 11,
+        FridayWorkPercentage = 11,
 
-        NightShiftPercentage = 12,
+        ChildAllowanceMultiplier = 12,
 
-        HolidayWorkPercentage = 13,
+        EndOfServiceDaysPerYear = 13,
 
-        OvertimePercentage = 14,
+        HousingAllowanceAmount = 14,
 
-        FridayWorkPercentage = 15,
+        FoodAllowanceAmount = 15,
 
-        ChildAllowanceMultiplier = 16,
+        MarriageAllowanceAmount = 16,
 
-        EndOfServiceDaysPerYear = 17,
+        ShiftWorkPercentageMorningEvening = 17,
 
-        HousingAllowanceAmount = 18,
+        ShiftWorkPercentageMorningNight = 18,
 
-        FoodAllowanceAmount = 19,
+        ShiftWorkPercentageEveningNight = 19,
 
-        MarriageAllowanceAmount = 20,
+        ShiftWorkPercentageMorningEveningNight = 20
 
-        ShiftWorkPercentageMorningEvening = 21,
-
-        ShiftWorkPercentageMorningNight = 22,
-
-        ShiftWorkPercentageEveningNight = 23,
-
-        ShiftWorkPercentageMorningEveningNight = 24,
 
     }
 
@@ -7924,47 +7896,40 @@ namespace Web.Ui.Services
 
         MaximumNightShiftHoursPerDay = 3,
 
-        MaximumOvertimeHoursPerMonth = 4,
+        InsurancePercentage = 4,
 
-        MaximumFridayWorkHoursPerMonth = 5,
+        AnnualBonusMinimumAmount = 5,
 
-        InsurancePercentage = 6,
+        AnnualBonusMaximumAmount = 6,
 
-        AnnualBonusMinimumAmount = 7,
+        StandardDailyWorkHours = 7,
 
-        AnnualBonusMaximumAmount = 8,
+        NightShiftPercentage = 8,
 
-        TaxExemptMonthlyAmount = 9,
+        HolidayWorkPercentage = 9,
 
-        TaxRatePercentage = 10,
+        OvertimePercentage = 10,
 
-        StandardDailyWorkHours = 11,
+        FridayWorkPercentage = 11,
 
-        NightShiftPercentage = 12,
+        ChildAllowanceMultiplier = 12,
 
-        HolidayWorkPercentage = 13,
+        EndOfServiceDaysPerYear = 13,
 
-        OvertimePercentage = 14,
+        HousingAllowanceAmount = 14,
 
-        FridayWorkPercentage = 15,
+        FoodAllowanceAmount = 15,
 
-        ChildAllowanceMultiplier = 16,
+        MarriageAllowanceAmount = 16,
 
-        EndOfServiceDaysPerYear = 17,
+        ShiftWorkPercentageMorningEvening = 17,
 
-        HousingAllowanceAmount = 18,
+        ShiftWorkPercentageMorningNight = 18,
 
-        FoodAllowanceAmount = 19,
+        ShiftWorkPercentageEveningNight = 19,
 
-        MarriageAllowanceAmount = 20,
+        ShiftWorkPercentageMorningEveningNight = 20
 
-        ShiftWorkPercentageMorningEvening = 21,
-
-        ShiftWorkPercentageMorningNight = 22,
-
-        ShiftWorkPercentageEveningNight = 23,
-
-        ShiftWorkPercentageMorningEveningNight = 24,
 
     }
 

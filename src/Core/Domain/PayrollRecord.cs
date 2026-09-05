@@ -423,6 +423,9 @@ public class PayrollRecord
         if (workInput.OvertimeHours > maxMonthlyOvertimeHours)
             return DomainResult.Failure("ساعات اضافه‌کاری نباید بیشتر از حداکثر ساعات اضافه‌کاری ماهانه باشد.");
 
+        if (workInput.NightShiftHours > maxNightShiftHours)
+            return DomainResult.Failure("ساعات شب‌کاری نباید بیشتر از حداکثر ساعات شب‌کاری ماهانه باشد.");
+
         if (workInput.FridayWorkHours > maxFridayHours)
             return DomainResult.Failure("ساعات کار جمعه نباید بیشتر از حداکثر ساعات کار جمعه باشد.");
 

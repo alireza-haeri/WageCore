@@ -6,31 +6,21 @@ public enum LaborLawRuleKey
     DailyWorkingHours = 1,
     MaximumOvertimeHoursPerDay = 2,
     MaximumNightShiftHoursPerDay = 3,
-    MaximumOvertimeHoursPerMonth = 4,
-    MaximumFridayWorkHoursPerMonth = 5,
-    InsurancePercentage = 6,
-    AnnualBonusMinimumAmount = 7,
-    AnnualBonusMaximumAmount = 8,
-
-    // Deprecated: kept for historical rows only; tax is fully bracket-driven now
-    // (see the TaxBracket* keys below), so these two are no longer read anywhere.
-    TaxExemptMonthlyAmount = 9,
-    TaxRatePercentage = 10,
-
-    StandardDailyWorkHours = 11,
-    NightShiftPercentage = 12,
-    HolidayWorkPercentage = 13,
-    OvertimePercentage = 14,
-    FridayWorkPercentage = 15,
-    ChildAllowanceMultiplier = 16,
-    EndOfServiceDaysPerYear = 17,
-    HousingAllowanceAmount = 18,
-    FoodAllowanceAmount = 19,
-    MarriageAllowanceAmount = 20,
-
-    ShiftWorkPercentageMorningEvening = 21,
-    ShiftWorkPercentageMorningNight = 22,
-    ShiftWorkPercentageEveningNight = 23,
-    ShiftWorkPercentageMorningEveningNight = 24,
-
+    InsurancePercentage = 4,
+    AnnualBonusMinimumAmount = 5,
+    AnnualBonusMaximumAmount = 6,
+    StandardDailyWorkHours = 7,
+    NightShiftPercentage = 8,
+    HolidayWorkPercentage = 9,
+    OvertimePercentage = 10,
+    FridayWorkPercentage = 11,
+    ChildAllowanceMultiplier = 12,
+    EndOfServiceDaysPerYear = 13,
+    HousingAllowanceAmount = 14,
+    FoodAllowanceAmount = 15,
+    MarriageAllowanceAmount = 16,
+    ShiftWorkPercentageMorningEvening = 17,
+    ShiftWorkPercentageMorningNight = 18,
+    ShiftWorkPercentageEveningNight = 19,
+    ShiftWorkPercentageMorningEveningNight = 20
 }

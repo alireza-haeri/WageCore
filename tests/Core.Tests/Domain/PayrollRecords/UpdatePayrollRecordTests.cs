@@ -289,6 +289,17 @@ public class UpdatePayrollRecordTests
     }
 
     [Fact]
+    public void Update_WithNightShiftHoursAboveMaxNightShiftHours_ShouldFail()
+    {
+        var record = CreateRecord();
+        var workInput = BuildWorkInput() with { NightShiftHours = 4m };
+
+        var result = record.Update(NewPeriodStart, NewPeriodEnd, false, 20m, 12m, 3m, 8m, workInput, BuildAmounts(), BuildCalculatedAmounts());
+
+        result.ShouldBeFailure("ساعات شب‌کاری نباید بیشتر از حداکثر ساعات شب‌کاری ماهانه باشد.");
+    }
+
+    [Fact]
     public void Update_WithDaysCountOutOfRange_ShouldFail()
     {
         var record = CreateRecord();
