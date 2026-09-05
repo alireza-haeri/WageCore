@@ -28,8 +28,7 @@ public class PayrollRecordConfigurations : IEntityTypeConfiguration<PayrollRecor
             .HasColumnType("date");
 
         builder.Property(x => x.WorkedDaysCount)
-            .IsRequired()
-            .HasPrecision(18, 2);
+            .IsRequired();
 
         builder.Property(x => x.OvertimeHours)
             .IsRequired()
@@ -47,9 +46,8 @@ public class PayrollRecordConfigurations : IEntityTypeConfiguration<PayrollRecor
             .IsRequired()
             .HasPrecision(18, 2);
 
-        builder.Property(x => x.AbsenceDaysCount)
-            .IsRequired()
-            .HasPrecision(18, 2);
+        builder.Property(x => x.HolidaysCount)
+            .IsRequired();
 
         builder.Property(x => x.MissionDaysCount)
             .IsRequired()

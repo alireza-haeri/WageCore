@@ -5167,7 +5167,7 @@ namespace Web.Ui.Services
     public partial record GetPayrollRecordCalculationDetailsResponse
     {
         [Newtonsoft.Json.JsonConstructor]
-        public GetPayrollRecordCalculationDetailsResponse(decimal @absenceDaysCount, PayrollRecordAmountsDto @amounts, GetPayrollRecordCalculationDetailsResponseAnnualBonusType? @annualBonusType, decimal? @attractionAllowance, decimal @baseDailySalary, PayrollCalculatedAmountsDto @calculatedAmounts, decimal? @cashBenefitsAmount, int @childrenCount, GetPayrollRecordCalculationDetailsResponseContractType @contractType, decimal @dailyWorkingHours, int @daysInYear, string @decreeEffectiveFrom, string @employeeHireDate, System.Guid @employeeId, string @employeeName, int @fridayCount, decimal @fridayWorkHours, decimal @holidayWorkHours, bool @isEsfandPeriod, bool @isTaxSubject, decimal @leaveHours, GetPayrollRecordCalculationDetailsResponseMaritalStatus @maritalStatus, decimal @maxFridayHours, decimal @maxMonthlyOvertimeHours, decimal @maxNightShiftHours, decimal? @missionAmountOverride, decimal @missionDaysCount, decimal @missionHours, decimal @nightShiftHours, decimal @overtimeHours, System.Guid @payrollRecordId, decimal? @performanceBonusAmount, int @periodDaysCount, string @periodEnd, string @periodStart, int @persianMonth, int @persianYear, string @personalCode, GetPayrollRecordCalculationDetailsResponseShiftType @shiftType, int @standardWorkingDaysCount, GetPayrollRecordCalculationDetailsResponseStatus @status, decimal? @supervisionAllowance, decimal? @transportationAllowanceNet, decimal @workedDaysCount)
+        public GetPayrollRecordCalculationDetailsResponse(PayrollRecordAmountsDto @amounts, GetPayrollRecordCalculationDetailsResponseAnnualBonusType? @annualBonusType, decimal? @attractionAllowance, decimal @baseDailySalary, PayrollCalculatedAmountsDto @calculatedAmounts, decimal? @cashBenefitsAmount, int @childrenCount, GetPayrollRecordCalculationDetailsResponseContractType @contractType, decimal @dailyWorkingHours, int @daysInYear, string @decreeEffectiveFrom, string @employeeHireDate, System.Guid @employeeId, string @employeeName, int @fridayCount, decimal @fridayWorkHours, decimal @holidayWorkHours, int @holidaysCount, bool @isEsfandPeriod, bool @isTaxSubject, decimal @leaveHours, GetPayrollRecordCalculationDetailsResponseMaritalStatus @maritalStatus, decimal @maxFridayHours, decimal @maxMonthlyOvertimeHours, decimal @maxNightShiftHours, decimal? @missionAmountOverride, decimal @missionDaysCount, decimal @missionHours, decimal @nightShiftHours, decimal @overtimeHours, System.Guid @payrollRecordId, decimal? @performanceBonusAmount, int @periodDaysCount, string @periodEnd, string @periodStart, int @persianMonth, int @persianYear, string @personalCode, GetPayrollRecordCalculationDetailsResponseShiftType @shiftType, int @standardWorkingDaysCount, GetPayrollRecordCalculationDetailsResponseStatus @status, decimal? @supervisionAllowance, decimal? @transportationAllowanceNet, int @workedDaysCount)
         {
             this.PayrollRecordId = @payrollRecordId;
             this.EmployeeId = @employeeId;
@@ -5184,8 +5184,8 @@ namespace Web.Ui.Services
             this.DaysInYear = @daysInYear;
             this.StandardWorkingDaysCount = @standardWorkingDaysCount;
             this.WorkedDaysCount = @workedDaysCount;
+            this.HolidaysCount = @holidaysCount;
             this.LeaveHours = @leaveHours;
-            this.AbsenceDaysCount = @absenceDaysCount;
             this.OvertimeHours = @overtimeHours;
             this.NightShiftHours = @nightShiftHours;
             this.FridayWorkHours = @fridayWorkHours;
@@ -5258,13 +5258,10 @@ namespace Web.Ui.Services
         public int StandardWorkingDaysCount { get; init; }
 
         [Newtonsoft.Json.JsonProperty("workedDaysCount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public decimal WorkedDaysCount { get; init; }
+        public int WorkedDaysCount { get; init; }
 
         [Newtonsoft.Json.JsonProperty("leaveHours", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public decimal LeaveHours { get; init; }
-
-        [Newtonsoft.Json.JsonProperty("absenceDaysCount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public decimal AbsenceDaysCount { get; init; }
 
         [Newtonsoft.Json.JsonProperty("overtimeHours", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public decimal OvertimeHours { get; init; }
@@ -5277,6 +5274,9 @@ namespace Web.Ui.Services
 
         [Newtonsoft.Json.JsonProperty("holidayWorkHours", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public decimal HolidayWorkHours { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("holidaysCount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int HolidaysCount { get; init; }
 
         [Newtonsoft.Json.JsonProperty("missionDaysCount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public decimal MissionDaysCount { get; init; }
@@ -5448,7 +5448,7 @@ namespace Web.Ui.Services
     public partial record GetPayrollRecordsResponse
     {
         [Newtonsoft.Json.JsonConstructor]
-        public GetPayrollRecordsResponse(string @departmentName, string @displayPeriod, System.Guid @employeeId, string @employeeName, decimal @grossAmount, decimal @netPayableAmount, decimal @overtimeHours, System.Guid @payrollRecordId, string @personalCode, GetPayrollRecordsResponseStatus @status, decimal @totalDeductionsAmount, decimal @workedDaysCount, string @workshopName)
+        public GetPayrollRecordsResponse(string @departmentName, string @displayPeriod, System.Guid @employeeId, string @employeeName, decimal @grossAmount, decimal @netPayableAmount, decimal @overtimeHours, System.Guid @payrollRecordId, string @personalCode, GetPayrollRecordsResponseStatus @status, decimal @totalDeductionsAmount, int @workedDaysCount, string @workshopName)
         {
             this.PayrollRecordId = @payrollRecordId;
             this.EmployeeId = @employeeId;
@@ -5487,7 +5487,7 @@ namespace Web.Ui.Services
         public string DisplayPeriod { get; init; }
 
         [Newtonsoft.Json.JsonProperty("workedDaysCount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public decimal WorkedDaysCount { get; init; }
+        public int WorkedDaysCount { get; init; }
 
         [Newtonsoft.Json.JsonProperty("overtimeHours", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public decimal OvertimeHours { get; init; }
@@ -6736,15 +6736,15 @@ namespace Web.Ui.Services
     public partial record UserWorkInputDto
     {
         [Newtonsoft.Json.JsonConstructor]
-        public UserWorkInputDto(decimal @absenceDaysCount, UserWorkInputDtoAnnualBonusType? @annualBonusType, decimal? @cashBenefitsAmount, WorkTimeInput @fridayWork, WorkTimeInput @holidayWork, DayTimeInput @leave, decimal? @missionAmountOverride, int @missionDays, WorkTimeInput @missionHours, WorkTimeInput @nightShift, WorkTimeInput @overtime, decimal? @performanceBonusAmount, decimal @workedDaysCount)
+        public UserWorkInputDto(UserWorkInputDtoAnnualBonusType? @annualBonusType, decimal? @cashBenefitsAmount, WorkTimeInput @fridayWork, WorkTimeInput @holidayWork, int @holidaysCount, DayTimeInput @leave, decimal? @missionAmountOverride, int @missionDays, WorkTimeInput @missionHours, WorkTimeInput @nightShift, WorkTimeInput @overtime, decimal? @performanceBonusAmount, int @workedDaysCount)
         {
             this.WorkedDaysCount = @workedDaysCount;
             this.Overtime = @overtime;
             this.NightShift = @nightShift;
             this.FridayWork = @fridayWork;
             this.HolidayWork = @holidayWork;
+            this.HolidaysCount = @holidaysCount;
             this.Leave = @leave;
-            this.AbsenceDaysCount = @absenceDaysCount;
             this.MissionDays = @missionDays;
             this.MissionHours = @missionHours;
             this.MissionAmountOverride = @missionAmountOverride;
@@ -6754,7 +6754,7 @@ namespace Web.Ui.Services
         }
 
         [Newtonsoft.Json.JsonProperty("workedDaysCount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public decimal WorkedDaysCount { get; init; }
+        public int WorkedDaysCount { get; init; }
 
         [Newtonsoft.Json.JsonProperty("overtime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public WorkTimeInput Overtime { get; init; }
@@ -6768,11 +6768,11 @@ namespace Web.Ui.Services
         [Newtonsoft.Json.JsonProperty("holidayWork", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public WorkTimeInput HolidayWork { get; init; }
 
+        [Newtonsoft.Json.JsonProperty("holidaysCount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int HolidaysCount { get; init; }
+
         [Newtonsoft.Json.JsonProperty("leave", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public DayTimeInput Leave { get; init; }
-
-        [Newtonsoft.Json.JsonProperty("absenceDaysCount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public decimal AbsenceDaysCount { get; init; }
 
         [Newtonsoft.Json.JsonProperty("missionDays", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int MissionDays { get; init; }
@@ -6872,9 +6872,9 @@ namespace Web.Ui.Services
 
         MinimumDailySalary = 0,
 
-        MaximumOvertimeHoursPerDay = 1,
+        MaximumOvertimeHoursPerMonth = 1,
 
-        MaximumNightShiftHoursPerDay = 2,
+        NightShiftHoursPerDay = 2,
 
         InsurancePercentage = 3,
 
@@ -6908,7 +6908,9 @@ namespace Web.Ui.Services
 
         ShiftWorkPercentageEveningNight = 18,
 
-        ShiftWorkPercentageMorningEveningNight = 19
+        ShiftWorkPercentageMorningEveningNight = 19,
+
+        FridayWorkHoursPerDay = 20
 
 
     }
@@ -7043,9 +7045,9 @@ namespace Web.Ui.Services
 
         MinimumDailySalary = 0,
 
-        MaximumOvertimeHoursPerDay = 1,
+        MaximumOvertimeHoursPerMonth = 1,
 
-        MaximumNightShiftHoursPerDay = 2,
+        NightShiftHoursPerDay = 2,
 
         InsurancePercentage = 3,
 
@@ -7079,7 +7081,9 @@ namespace Web.Ui.Services
 
         ShiftWorkPercentageEveningNight = 18,
 
-        ShiftWorkPercentageMorningEveningNight = 19
+        ShiftWorkPercentageMorningEveningNight = 19,
+
+        FridayWorkHoursPerDay = 20
 
 
     }
@@ -7326,9 +7330,9 @@ namespace Web.Ui.Services
 
         MinimumDailySalary = 0,
 
-        MaximumOvertimeHoursPerDay = 1,
+        MaximumOvertimeHoursPerMonth = 1,
 
-        MaximumNightShiftHoursPerDay = 2,
+        NightShiftHoursPerDay = 2,
 
         InsurancePercentage = 3,
 
@@ -7362,7 +7366,9 @@ namespace Web.Ui.Services
 
         ShiftWorkPercentageEveningNight = 18,
 
-        ShiftWorkPercentageMorningEveningNight = 19
+        ShiftWorkPercentageMorningEveningNight = 19,
+
+        FridayWorkHoursPerDay = 20
 
 
     }
@@ -7387,9 +7393,9 @@ namespace Web.Ui.Services
 
         MinimumDailySalary = 0,
 
-        MaximumOvertimeHoursPerDay = 1,
+        MaximumOvertimeHoursPerMonth = 1,
 
-        MaximumNightShiftHoursPerDay = 2,
+        NightShiftHoursPerDay = 2,
 
         InsurancePercentage = 3,
 
@@ -7423,7 +7429,9 @@ namespace Web.Ui.Services
 
         ShiftWorkPercentageEveningNight = 18,
 
-        ShiftWorkPercentageMorningEveningNight = 19
+        ShiftWorkPercentageMorningEveningNight = 19,
+
+        FridayWorkHoursPerDay = 20
 
 
     }
@@ -7882,9 +7890,9 @@ namespace Web.Ui.Services
 
         MinimumDailySalary = 0,
 
-        MaximumOvertimeHoursPerDay = 1,
+        MaximumOvertimeHoursPerMonth = 1,
 
-        MaximumNightShiftHoursPerDay = 2,
+        NightShiftHoursPerDay = 2,
 
         InsurancePercentage = 3,
 
@@ -7918,7 +7926,9 @@ namespace Web.Ui.Services
 
         ShiftWorkPercentageEveningNight = 18,
 
-        ShiftWorkPercentageMorningEveningNight = 19
+        ShiftWorkPercentageMorningEveningNight = 19,
+
+        FridayWorkHoursPerDay = 20
 
 
     }

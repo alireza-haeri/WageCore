@@ -16,7 +16,7 @@ public record GetPayrollRecordsResponse(
     string WorkshopName,
     string DepartmentName,
     string DisplayPeriod,
-    decimal WorkedDaysCount,
+    int WorkedDaysCount,
     decimal OvertimeHours,
     decimal GrossAmount,
     decimal TotalDeductionsAmount,

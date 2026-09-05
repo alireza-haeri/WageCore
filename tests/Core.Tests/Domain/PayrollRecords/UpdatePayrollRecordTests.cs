@@ -17,15 +17,15 @@ public class UpdatePayrollRecordTests
 
     private static PayrollWorkInput BuildWorkInput() =>
         new(
-            20m,
+            20,
             3m,
             2m,
             1m,
             4m,
-            1m,
             2m,
             0m,
             0m,
+            1,
             null,
             31,
             false,
@@ -83,12 +83,12 @@ public class UpdatePayrollRecordTests
         {
             record.PeriodStart.Should().Be(NewPeriodStart);
             record.PeriodEnd.Should().Be(NewPeriodEnd);
-            record.WorkedDaysCount.Should().Be(20m);
+            record.WorkedDaysCount.Should().Be(20);
             record.OvertimeHours.Should().Be(3m);
             record.NightShiftHours.Should().Be(2m);
             record.FridayWorkHours.Should().Be(1m);
             record.LeaveHours.Should().Be(4m);
-            record.AbsenceDaysCount.Should().Be(1m);
+            record.HolidaysCount.Should().Be(1);
             record.MissionDaysCount.Should().Be(2m);
             record.MissionHours.Should().Be(0m);
             record.HolidayWorkHours.Should().Be(0m);
@@ -176,7 +176,7 @@ public class UpdatePayrollRecordTests
         using (new AssertionScope())
         {
             record.PeriodStart.Should().Be(PeriodStart);
-            record.WorkedDaysCount.Should().Be(24m);
+            record.WorkedDaysCount.Should().Be(24);
         }
     }
 
@@ -297,18 +297,18 @@ public class UpdatePayrollRecordTests
     public void Update_WithDaysCountOutOfRange_ShouldFail()
     {
         var record = CreateRecord();
-        var workInput = BuildWorkInput() with { AbsenceDaysCount = 32m };
+        var workInput = BuildWorkInput() with { HolidaysCount = 32 };
 
         var result = record.Update(NewPeriodStart, NewPeriodEnd, 20m, 12m, 3m, 8m, workInput, BuildAmounts(), BuildCalculatedAmounts());
 
-        result.ShouldBeFailure("تعداد روزهای غیبت باید بین 0 تا 31 روز باشد.");
+        result.ShouldBeFailure("تعداد روزهای تعطیل باید بین 0 تا 31 روز باشد.");
     }
 
     [Fact]
     public void Update_WithWorkedDaysCountExceedingStandardWorkingDaysCount_ShouldFail()
     {
         var record = CreateRecord();
-        var workInput = BuildWorkInput() with { WorkedDaysCount = 30m, StandardWorkingDaysCount = 29 };
+        var workInput = BuildWorkInput() with { WorkedDaysCount = 30, StandardWorkingDaysCount = 29 };
 
         var result = record.Update(NewPeriodStart, NewPeriodEnd, 20m, 12m, 3m, 8m, workInput, BuildAmounts(), BuildCalculatedAmounts());
 
@@ -400,7 +400,7 @@ public class UpdatePayrollRecordTests
         {
             record.PeriodStart.Should().Be(PeriodStart);
             record.PeriodEnd.Should().Be(PeriodEnd);
-            record.WorkedDaysCount.Should().Be(24m);
+            record.WorkedDaysCount.Should().Be(24);
             record.LeaveHours.Should().Be(2m);
             record.OvertimeAmount.Should().Be(800_000m);
             record.NetPayableAmount.Should().Be(15_000_000m);

@@ -15,22 +15,28 @@ public class PayrollLimitsResolver(
             periodStart,
             cancellationToken);
 
-        if (!ruleValues.TryGetValue(LaborLawRuleKey.MaximumOvertimeHoursPerDay, out var maxOvertimeHoursPerDay))
-            return Result<PayrollLimits>.NotfoundFailure("حداکثر ساعات اضافه‌کاری روزانه یافت نشد.");
+        // Monthly overtime cap: a direct monthly value from the labor law.
+        if (!ruleValues.TryGetValue(LaborLawRuleKey.MaximumOvertimeHoursPerMonth, out var maxOvertimeHoursPerMonth))
+            return Result<PayrollLimits>.NotfoundFailure("حداکثر ساعات اضافه‌کاری ماهانه یافت نشد.");
+
+        // Hours counted as Friday work on a single Friday.
+        if (!ruleValues.TryGetValue(LaborLawRuleKey.FridayWorkHoursPerDay, out var fridayWorkHoursPerDay))
+            return Result<PayrollLimits>.NotfoundFailure("ساعات کار روز جمعه یافت نشد.");
+
+        // Hours counted as night shift work on a single day.
+        if (!ruleValues.TryGetValue(LaborLawRuleKey.NightShiftHoursPerDay, out var nightShiftHoursPerDay))
+            return Result<PayrollLimits>.NotfoundFailure("ساعات شیفت شب در روز یافت نشد.");
 
         if (!ruleValues.TryGetValue(LaborLawRuleKey.StandardDailyWorkHours, out var dailyWorkingHours))
             return Result<PayrollLimits>.NotfoundFailure("ساعات کار روزانه یافت نشد.");
-
-        if (!ruleValues.TryGetValue(LaborLawRuleKey.MaximumNightShiftHoursPerDay, out var maxNightShiftHoursPerDay))
-            return Result<PayrollLimits>.NotfoundFailure("حداکثر ساعات شیفت شب روزانه یافت نشد.");
 
         var periodDaysCount = periodEnd.DayNumber - periodStart.DayNumber + 1;
         var fridayDaysCount = persianCalendarService.GetFridayCount(periodStart, periodEnd);
 
         return Result<PayrollLimits>.Success(new PayrollLimits(
-            maxOvertimeHoursPerDay * periodDaysCount,
-            dailyWorkingHours * fridayDaysCount,
-            maxNightShiftHoursPerDay * periodDaysCount,
+            maxOvertimeHoursPerMonth,
+            fridayWorkHoursPerDay * fridayDaysCount,
+            nightShiftHoursPerDay * periodDaysCount,
             dailyWorkingHours));
     }
 }

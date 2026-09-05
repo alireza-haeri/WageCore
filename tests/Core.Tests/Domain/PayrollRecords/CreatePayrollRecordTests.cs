@@ -17,12 +17,12 @@ public class CreatePayrollRecordTests
         {
             response.Id.Should().NotBeEmpty();
             response.EmployeeId.Should().NotBeEmpty();
-            response.WorkedDaysCount.Should().Be(24m);
+            response.WorkedDaysCount.Should().Be(24);
             response.OvertimeHours.Should().Be(4m);
             response.NightShiftHours.Should().Be(3m);
             response.FridayWorkHours.Should().Be(2m);
             response.LeaveHours.Should().Be(2m);
-            response.AbsenceDaysCount.Should().Be(0m);
+            response.HolidaysCount.Should().Be(0);
             response.MissionDaysCount.Should().Be(1m);
             response.MissionHours.Should().Be(0m);
             response.HolidayWorkHours.Should().Be(0m);
@@ -57,12 +57,12 @@ public class CreatePayrollRecordTests
             .WithPeriod(PeriodStart, PeriodEnd)
             .WithMaxMonthlyOvertimeHours(36m)
             .WithMaxFridayHours(24m)
-            .WithWorkedDaysCount(26.5m)
+            .WithWorkedDaysCount(26)
             .WithOvertimeHours(36m)
             .WithNightShiftHours(3m)
             .WithFridayWorkHours(24m)
             .WithLeaveHours(2.5m)
-            .WithAbsenceDaysCount(1.5m)
+            .WithHolidaysCount(2)
             .WithMissionDaysCount(3.75m)
             .WithMissionHours(4m)
             .WithHolidayWorkHours(3m)
@@ -89,12 +89,12 @@ public class CreatePayrollRecordTests
             response.EmployeeId.Should().Be(employeeId);
             response.PeriodStart.Should().Be(PeriodStart);
             response.PeriodEnd.Should().Be(PeriodEnd);
-            response.WorkedDaysCount.Should().Be(26.5m);
+            response.WorkedDaysCount.Should().Be(26);
             response.OvertimeHours.Should().Be(36m);
             response.NightShiftHours.Should().Be(3m);
             response.FridayWorkHours.Should().Be(24m);
             response.LeaveHours.Should().Be(2.5m);
-            response.AbsenceDaysCount.Should().Be(1.5m);
+            response.HolidaysCount.Should().Be(2);
             response.MissionDaysCount.Should().Be(3.75m);
             response.MissionHours.Should().Be(4m);
             response.HolidayWorkHours.Should().Be(3m);
@@ -211,7 +211,7 @@ public class CreatePayrollRecordTests
     {
         var result = _builder
             .WithPeriod(PeriodStart, PeriodStart)
-            .WithWorkedDaysCount(1m)
+            .WithWorkedDaysCount(1)
             .WithLeaveHours(0m)
             .WithMissionDaysCount(0m)
             .CreateResult();
@@ -257,11 +257,11 @@ public class CreatePayrollRecordTests
 
     [Theory]
     [InlineData(0)]
-    [InlineData(15.5)]
+    [InlineData(15)]
     [InlineData(31)]
-    public void Create_WithValidWorkedDaysCount_ShouldReturnSuccess(double daysCount)
+    public void Create_WithValidWorkedDaysCount_ShouldReturnSuccess(int daysCount)
     {
-        var result = _builder.WithWorkedDaysCount((decimal)daysCount).CreateResult();
+        var result = _builder.WithWorkedDaysCount(daysCount).CreateResult();
 
         result.ShouldBeSuccess();
     }
@@ -397,19 +397,63 @@ public class CreatePayrollRecordTests
     }
 
     [Fact]
-    public void Create_WithNegativeAbsenceDaysCount_ShouldFail()
+    public void Create_WithNegativeHolidaysCount_ShouldFail()
     {
-        var result = _builder.WithAbsenceDaysCount(-1m).CreateResult();
+        var result = _builder.WithHolidaysCount(-1).CreateResult();
 
-        result.ShouldBeFailure("تعداد روزهای غیبت باید بین 0 تا 31 روز باشد.");
+        result.ShouldBeFailure("تعداد روزهای تعطیل باید بین 0 تا 31 روز باشد.");
     }
 
     [Fact]
-    public void Create_WithAbsenceDaysCountAboveMax_ShouldFail()
+    public void Create_WithHolidaysCountAboveMax_ShouldFail()
     {
-        var result = _builder.WithAbsenceDaysCount(32m).CreateResult();
+        var result = _builder.WithHolidaysCount(32).CreateResult();
 
-        result.ShouldBeFailure("تعداد روزهای غیبت باید بین 0 تا 31 روز باشد.");
+        result.ShouldBeFailure("تعداد روزهای تعطیل باید بین 0 تا 31 روز باشد.");
+    }
+
+    [Fact]
+    public void Create_WhenHolidayWorkHoursExceedTheHolidayLimit_ShouldFail()
+    {
+        var result = _builder
+            .WithHolidaysCount(1)
+            .WithHolidayWorkHours(25m)
+            .CreateResult();
+
+        result.ShouldBeFailure("ساعات تعطیل‌کاری نباید بیشتر از ۲۴ ساعت در هر روز تعطیل باشد.");
+    }
+
+    [Fact]
+    public void Create_WhenHolidayWorkHoursMatchTheHolidayLimit_ShouldReturnSuccess()
+    {
+        var result = _builder
+            .WithHolidaysCount(1)
+            .WithHolidayWorkHours(24m)
+            .CreateResult();
+
+        result.ShouldBeSuccess().HolidayWorkHours.Should().Be(24m);
+    }
+
+    [Fact]
+    public void Create_WhenMissionDaysExceedStandardDays_ShouldFail()
+    {
+        var result = _builder
+            .WithStandardWorkingDaysCount(30)
+            .WithMissionDaysCount(31m)
+            .CreateResult();
+
+        result.ShouldBeFailure("تعداد روزهای مأموریت نمیتواند بیشتر از روزهای کارکرد استاندارد باشد.");
+    }
+
+    [Fact]
+    public void Create_WhenMissionDaysMatchStandardDays_ShouldReturnSuccess()
+    {
+        var result = _builder
+            .WithStandardWorkingDaysCount(30)
+            .WithMissionDaysCount(30m)
+            .CreateResult();
+
+        result.ShouldBeSuccess().MissionDaysCount.Should().Be(30m);
     }
 
     [Fact]
@@ -507,7 +551,7 @@ public class CreatePayrollRecordTests
     public void Create_WithWorkedDaysCountExceedingStandardWorkingDaysCount_ShouldFail()
     {
         var result = _builder
-            .WithWorkedDaysCount(30m)
+            .WithWorkedDaysCount(30)
             .WithStandardWorkingDaysCount(29)
             .CreateResult();
 
@@ -518,7 +562,7 @@ public class CreatePayrollRecordTests
     public void Create_WithWorkedDaysCountEqualToStandardWorkingDaysCount_ShouldReturnSuccess()
     {
         var result = _builder
-            .WithWorkedDaysCount(29m)
+            .WithWorkedDaysCount(29)
             .WithStandardWorkingDaysCount(29)
             .CreateResult();
 
@@ -599,12 +643,12 @@ public class CreatePayrollRecordTests
     public void Create_WithZeroDayCounts_ShouldReturnSuccess()
     {
         var result = _builder
-            .WithWorkedDaysCount(0m)
+            .WithWorkedDaysCount(0)
             .WithOvertimeHours(0m)
             .WithNightShiftHours(0m)
             .WithFridayWorkHours(0m)
             .WithLeaveHours(0m)
-            .WithAbsenceDaysCount(0m)
+            .WithHolidaysCount(0)
             .WithMissionDaysCount(0m)
             .WithMissionHours(0m)
             .WithHolidayWorkHours(0m)

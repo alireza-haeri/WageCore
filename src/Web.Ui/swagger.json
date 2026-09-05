@@ -1368,8 +1368,8 @@
               "format": "int32",
               "x-enumNames": [
                 "MinimumDailySalary",
-                "MaximumOvertimeHoursPerDay",
-                "MaximumNightShiftHoursPerDay",
+                "MaximumOvertimeHoursPerMonth",
+                "NightShiftHoursPerDay",
                 "InsurancePercentage",
                 "AnnualBonusMinimumAmount",
                 "AnnualBonusMaximumAmount",
@@ -1386,7 +1386,8 @@
                 "ShiftWorkPercentageMorningEvening",
                 "ShiftWorkPercentageMorningNight",
                 "ShiftWorkPercentageEveningNight",
-                "ShiftWorkPercentageMorningEveningNight"
+                "ShiftWorkPercentageMorningEveningNight",
+                "FridayWorkHoursPerDay"
               ],
               "enum": [
                 0,
@@ -1408,7 +1409,8 @@
                 16,
                 17,
                 18,
-                19
+                19,
+                20
               ]
             }
           }
@@ -2960,8 +2962,8 @@
             "format": "int32",
             "x-enumNames": [
               "MinimumDailySalary",
-              "MaximumOvertimeHoursPerDay",
-              "MaximumNightShiftHoursPerDay",
+              "MaximumOvertimeHoursPerMonth",
+              "NightShiftHoursPerDay",
               "InsurancePercentage",
               "AnnualBonusMinimumAmount",
               "AnnualBonusMaximumAmount",
@@ -2978,7 +2980,8 @@
               "ShiftWorkPercentageMorningEvening",
               "ShiftWorkPercentageMorningNight",
               "ShiftWorkPercentageEveningNight",
-              "ShiftWorkPercentageMorningEveningNight"
+              "ShiftWorkPercentageMorningEveningNight",
+              "FridayWorkHoursPerDay"
             ],
             "enum": [
               0,
@@ -3000,7 +3003,8 @@
               16,
               17,
               18,
-              19
+              19,
+              20
             ]
           },
           "value": {
@@ -3790,8 +3794,8 @@
             "format": "int32",
             "x-enumNames": [
               "MinimumDailySalary",
-              "MaximumOvertimeHoursPerDay",
-              "MaximumNightShiftHoursPerDay",
+              "MaximumOvertimeHoursPerMonth",
+              "NightShiftHoursPerDay",
               "InsurancePercentage",
               "AnnualBonusMinimumAmount",
               "AnnualBonusMaximumAmount",
@@ -3808,7 +3812,8 @@
               "ShiftWorkPercentageMorningEvening",
               "ShiftWorkPercentageMorningNight",
               "ShiftWorkPercentageEveningNight",
-              "ShiftWorkPercentageMorningEveningNight"
+              "ShiftWorkPercentageMorningEveningNight",
+              "FridayWorkHoursPerDay"
             ],
             "enum": [
               0,
@@ -3830,7 +3835,8 @@
               16,
               17,
               18,
-              19
+              19,
+              20
             ]
           },
           "value": {
@@ -3900,8 +3906,8 @@
             "format": "int32",
             "x-enumNames": [
               "MinimumDailySalary",
-              "MaximumOvertimeHoursPerDay",
-              "MaximumNightShiftHoursPerDay",
+              "MaximumOvertimeHoursPerMonth",
+              "NightShiftHoursPerDay",
               "InsurancePercentage",
               "AnnualBonusMinimumAmount",
               "AnnualBonusMaximumAmount",
@@ -3918,7 +3924,8 @@
               "ShiftWorkPercentageMorningEvening",
               "ShiftWorkPercentageMorningNight",
               "ShiftWorkPercentageEveningNight",
-              "ShiftWorkPercentageMorningEveningNight"
+              "ShiftWorkPercentageMorningEveningNight",
+              "FridayWorkHoursPerDay"
             ],
             "enum": [
               0,
@@ -3940,7 +3947,8 @@
               16,
               17,
               18,
-              19
+              19,
+              20
             ]
           },
           "value": {
@@ -4154,8 +4162,8 @@
             "nullable": true
           },
           "workedDaysCount": {
-            "type": "number",
-            "format": "decimal"
+            "type": "integer",
+            "format": "int32"
           },
           "overtimeHours": {
             "type": "number",
@@ -5615,8 +5623,8 @@
             "format": "int32",
             "x-enumNames": [
               "MinimumDailySalary",
-              "MaximumOvertimeHoursPerDay",
-              "MaximumNightShiftHoursPerDay",
+              "MaximumOvertimeHoursPerMonth",
+              "NightShiftHoursPerDay",
               "InsurancePercentage",
               "AnnualBonusMinimumAmount",
               "AnnualBonusMaximumAmount",
@@ -5633,7 +5641,8 @@
               "ShiftWorkPercentageMorningEvening",
               "ShiftWorkPercentageMorningNight",
               "ShiftWorkPercentageEveningNight",
-              "ShiftWorkPercentageMorningEveningNight"
+              "ShiftWorkPercentageMorningEveningNight",
+              "FridayWorkHoursPerDay"
             ],
             "enum": [
               0,
@@ -5655,7 +5664,8 @@
               16,
               17,
               18,
-              19
+              19,
+              20
             ]
           },
           "value": {
@@ -5723,8 +5733,8 @@
         "additionalProperties": false,
         "properties": {
           "workedDaysCount": {
-            "type": "number",
-            "format": "decimal"
+            "type": "integer",
+            "format": "int32"
           },
           "overtime": {
             "nullable": true,
@@ -5766,10 +5776,6 @@
               }
             ]
           },
-          "absenceDaysCount": {
-            "type": "number",
-            "format": "decimal"
-          },
           "missionDays": {
             "type": "integer",
             "format": "int32"
@@ -5809,6 +5815,10 @@
               0,
               1
             ]
+          },
+          "holidaysCount": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -5895,14 +5905,10 @@
             "format": "int32"
           },
           "workedDaysCount": {
-            "type": "number",
-            "format": "decimal"
+            "type": "integer",
+            "format": "int32"
           },
           "leaveHours": {
-            "type": "number",
-            "format": "decimal"
-          },
-          "absenceDaysCount": {
             "type": "number",
             "format": "decimal"
           },
@@ -6070,6 +6076,10 @@
                 "$ref": "#/components/schemas/PayrollRecordAmountsDto"
               }
             ]
+          },
+          "holidaysCount": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },

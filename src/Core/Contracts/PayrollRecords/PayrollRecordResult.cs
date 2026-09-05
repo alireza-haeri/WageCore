@@ -9,7 +9,7 @@ public record PayrollRecordResult(
     string DepartmentName,
     DateOnly PeriodStart,
     DateOnly PeriodEnd,
-    decimal WorkedDaysCount,
+    int WorkedDaysCount,
     decimal OvertimeHours,
     decimal GrossAmount,
     decimal TotalDeductionsAmount,

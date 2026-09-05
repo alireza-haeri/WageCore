@@ -90,13 +90,13 @@ public class GetPayrollRecordForEditQueryHandlerTests
             response.PersianYear.Should().Be(1404);
             response.PersianMonth.Should().Be(6);
             response.Status.Should().Be(PayrollRecordStatus.Draft);
-            response.Work.WorkedDaysCount.Should().Be(24m);
+            response.Work.WorkedDaysCount.Should().Be(24);
             response.Work.Overtime.Should().Be(new WorkTimeInput(4, 0));
             response.Work.NightShift.Should().Be(new WorkTimeInput(3, 0));
             response.Work.FridayWork.Should().Be(new WorkTimeInput(2, 0));
             response.Work.HolidayWork.Should().Be(new WorkTimeInput(0, 0));
             response.Work.Leave.Should().Be(new DayTimeInput(0, 2, 0));
-            response.Work.AbsenceDaysCount.Should().Be(0m);
+            response.Work.HolidaysCount.Should().Be(0);
             response.Work.MissionDays.Should().Be(1);
             response.Work.MissionHours.Should().Be(new WorkTimeInput(0, 0));
         }

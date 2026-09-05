@@ -3,8 +3,8 @@ namespace Core.Domain.Enums;
 public enum LaborLawRuleKey
 {
     MinimumDailySalary = 0,
-    MaximumOvertimeHoursPerDay = 1,
-    MaximumNightShiftHoursPerDay = 2,
+    MaximumOvertimeHoursPerMonth = 1,
+    NightShiftHoursPerDay = 2,
     InsurancePercentage = 3,
     AnnualBonusMinimumAmount = 4,
     AnnualBonusMaximumAmount = 5,
@@ -21,5 +21,6 @@ public enum LaborLawRuleKey
     ShiftWorkPercentageMorningEvening = 16,
     ShiftWorkPercentageMorningNight = 17,
     ShiftWorkPercentageEveningNight = 18,
-    ShiftWorkPercentageMorningEveningNight = 19
+    ShiftWorkPercentageMorningEveningNight = 19,
+    FridayWorkHoursPerDay = 20
 }

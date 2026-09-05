@@ -14,12 +14,12 @@ public class PayrollRecordBuilder
     private decimal? _dailyWorkingHours = 8m;
     private DateOnly _periodStart = DateOnly.FromDateTime(DateTime.Now.AddDays(-25));
     private DateOnly _periodEnd = DateOnly.FromDateTime(DateTime.Now.AddDays(-1));
-    private decimal _workedDaysCount = 24m;
+    private int _workedDaysCount = 24;
     private decimal _overtimeHours = 4m;
     private decimal _nightShiftHours = 3m;
     private decimal _fridayWorkHours = 2m;
     private decimal _leaveHours = 2m;
-    private decimal _absenceDaysCount = 0m;
+    private int _holidaysCount = 0;
     private decimal _missionDaysCount = 1m;
     private decimal _missionHours = 0m;
     private decimal _holidayWorkHours = 0m;
@@ -94,7 +94,7 @@ public class PayrollRecordBuilder
         return this;
     }
 
-    public PayrollRecordBuilder WithWorkedDaysCount(decimal workedDaysCount)
+    public PayrollRecordBuilder WithWorkedDaysCount(int workedDaysCount)
     {
         _workedDaysCount = workedDaysCount;
         return this;
@@ -124,9 +124,9 @@ public class PayrollRecordBuilder
         return this;
     }
 
-    public PayrollRecordBuilder WithAbsenceDaysCount(decimal absenceDaysCount)
+    public PayrollRecordBuilder WithHolidaysCount(int holidaysCount)
     {
-        _absenceDaysCount = absenceDaysCount;
+        _holidaysCount = holidaysCount;
         return this;
     }
 
@@ -318,9 +318,9 @@ public class PayrollRecordBuilder
             ToWorkTimeInput(_fridayWorkHours),
             ToWorkTimeInput(_holidayWorkHours),
             ToDayTimeInput(_leaveHours),
-            _absenceDaysCount,
             (int)_missionDaysCount,
             ToWorkTimeInput(_missionHours),
+            _holidaysCount,
             _missionAmountOverride,
             _performanceBonusAmount,
             _cashBenefitsAmount,
@@ -346,10 +346,10 @@ public class PayrollRecordBuilder
             _nightShiftHours,
             _fridayWorkHours,
             _leaveHours,
-            _absenceDaysCount,
             _missionDaysCount,
             _missionHours,
             _holidayWorkHours,
+            _holidaysCount,
             _missionAmountOverride,
             _standardWorkingDaysCount,
             _isEsfandPeriod,

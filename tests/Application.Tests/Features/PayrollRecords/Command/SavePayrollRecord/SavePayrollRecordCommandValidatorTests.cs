@@ -134,7 +134,7 @@ public class SavePayrollRecordCommandValidatorTests
     [InlineData(-1)]
     [InlineData(32)]
     [InlineData(100)]
-    public void Validate_WithWorkedDaysCountOutOfRange_ShouldHaveValidationError(decimal daysCount)
+    public void Validate_WithWorkedDaysCountOutOfRange_ShouldHaveValidationError(int daysCount)
     {
         var work = _builder.BuildUserWorkInputDto() with { WorkedDaysCount = daysCount };
         var command = CreateValidCommand(work);
@@ -147,7 +147,7 @@ public class SavePayrollRecordCommandValidatorTests
     [Theory]
     [InlineData(0)]
     [InlineData(31)]
-    public void Validate_WithWorkedDaysCountOnRangeBoundary_ShouldNotHaveValidationError(decimal daysCount)
+    public void Validate_WithWorkedDaysCountOnRangeBoundary_ShouldNotHaveValidationError(int daysCount)
     {
         var work = _builder.BuildUserWorkInputDto() with { WorkedDaysCount = daysCount };
         var command = CreateValidCommand(work);
@@ -213,14 +213,14 @@ public class SavePayrollRecordCommandValidatorTests
     }
 
     [Fact]
-    public void Validate_WithAbsenceDaysCountOutOfRange_ShouldHaveValidationError()
+    public void Validate_WithHolidaysCountOutOfRange_ShouldHaveValidationError()
     {
-        var work = _builder.BuildUserWorkInputDto() with { AbsenceDaysCount = 35m };
+        var work = _builder.BuildUserWorkInputDto() with { HolidaysCount = 35 };
         var command = CreateValidCommand(work);
 
         var result = _validator.TestValidate(command);
 
-        result.ShouldHaveValidationErrorFor(x => x.Work.AbsenceDaysCount);
+        result.ShouldHaveValidationErrorFor(x => x.Work.HolidaysCount);
     }
 
     [Fact]
@@ -246,11 +246,11 @@ public class SavePayrollRecordCommandValidatorTests
     }
 
     [Fact]
-    public void Validate_WithFractionalWorkedDaysAndTimeInMinutes_ShouldNotHaveValidationError()
+    public void Validate_WithWorkedDaysAndTimeInMinutes_ShouldNotHaveValidationError()
     {
         var work = _builder.BuildUserWorkInputDto() with
         {
-            WorkedDaysCount = 12.5m,
+            WorkedDaysCount = 12,
             Leave = new DayTimeInput(0, 1, 30),
             MissionDays = 1
         };

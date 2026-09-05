@@ -9,9 +9,10 @@ namespace Core.Domain;
 public static class PayrollFormulaCatalog
 {
     public const decimal MinimumDailySalary = 2_000_000m;
-    public const decimal MaximumOvertimeHoursPerDay = 2m;
-    public const decimal MaximumNightShiftHoursPerDay = 2m;
+    public const decimal MaximumOvertimeHoursPerMonth = 120m;
+    public const decimal NightShiftHoursPerDay = 8m;
     public const decimal StandardDailyWorkHoursValue = 7.33m;
+    public const decimal FridayWorkHoursPerDay = 16m;
     public const decimal NightShiftPercentage = 35m;
     public const decimal HolidayWorkPercentage = 180m;
     public const decimal OvertimePercentage = 140m;
@@ -33,9 +34,10 @@ public static class PayrollFormulaCatalog
         new Dictionary<LaborLawRuleKey, decimal>
         {
             [LaborLawRuleKey.MinimumDailySalary] = MinimumDailySalary,
-            [LaborLawRuleKey.MaximumOvertimeHoursPerDay] = MaximumOvertimeHoursPerDay,
-            [LaborLawRuleKey.MaximumNightShiftHoursPerDay] = MaximumNightShiftHoursPerDay,
+            [LaborLawRuleKey.MaximumOvertimeHoursPerMonth] = MaximumOvertimeHoursPerMonth,
+            [LaborLawRuleKey.NightShiftHoursPerDay] = NightShiftHoursPerDay,
             [LaborLawRuleKey.StandardDailyWorkHours] = StandardDailyWorkHoursValue,
+            [LaborLawRuleKey.FridayWorkHoursPerDay] = FridayWorkHoursPerDay,
             [LaborLawRuleKey.NightShiftPercentage] = NightShiftPercentage,
             [LaborLawRuleKey.HolidayWorkPercentage] = HolidayWorkPercentage,
             [LaborLawRuleKey.OvertimePercentage] = OvertimePercentage,

@@ -119,9 +119,9 @@ public class GetPayrollRecordCalculationDetailsQueryHandlerTests
             response.FridayCount.Should().Be(5);
             response.DaysInYear.Should().Be(365);
             response.StandardWorkingDaysCount.Should().Be(31);
-            response.WorkedDaysCount.Should().Be(24m);
+            response.WorkedDaysCount.Should().Be(24);
             response.LeaveHours.Should().Be(2m);
-            response.AbsenceDaysCount.Should().Be(0m);
+            response.HolidaysCount.Should().Be(0);
             response.OvertimeHours.Should().Be(4m);
             response.NightShiftHours.Should().Be(3m);
             response.FridayWorkHours.Should().Be(2m);

@@ -85,17 +85,17 @@
                         <div class="col-md-3 col-6 field">
                             <label class="f-label" for="r-wdays"><span class="req-s">*</span>روزهای کارکرد</label>
                             <InputNumber @bind-Value="_formHelper.Model.WorkedDaysCount" class="in num"
-                                         id="r-wdays" min="0" max="31" step="0.5"/>
-                            <ValidationMessage TValue="decimal" For="() => _formHelper.Model.WorkedDaysCount"
+                                         id="r-wdays" min="0" max="31"/>
+                            <ValidationMessage TValue="int" For="() => _formHelper.Model.WorkedDaysCount"
                                                class="f-help text-danger"/>
                         </div>
                         <div class="col-md-3 col-6 field">
-                            <label class="f-label" for="r-abs"><span class="req-s">*</span>روزهای غیبت</label>
-                            <InputNumber @bind-Value="_formHelper.Model.AbsenceDaysCount" class="in num"
-                                         id="r-abs" min="0" max="31" step="0.5"/>
-                            <ValidationMessage TValue="decimal" For="() => _formHelper.Model.AbsenceDaysCount"
+                            <label class="f-label" for="r-holidays"><span class="req-s">*</span>تعداد روزهای تعطیل</label>
+                            <InputNumber @bind-Value="_formHelper.Model.HolidaysCount" class="in num"
+                                         id="r-holidays" min="0" max="31"/>
+                            <ValidationMessage TValue="int" For="() => _formHelper.Model.HolidaysCount"
                                                class="f-help text-danger"/>
-                            <div class="f-help">هر روز = کسر حقوق همان روز.</div>
+                            <div class="f-help">تعطیلی‌های رسمی و حوادث — جمعه‌ها را شمرده نشود.</div>
                         </div>
                         <div class="col-md-3 col-6 field">
                             <label class="f-label" for="r-mission-days"><span class="req-s">*</span>روزهای مأموریت</label>
@@ -292,7 +292,6 @@
 
                 <div class="calc-sec">کارکرد این ماه</div>
                 <div class="crow"><span>روزهای کارکرد</span><span>@FormatDecimal(details.WorkedDaysCount)</span></div>
-                <div class="crow"><span>روزهای غیبت</span><span>@FormatDecimal(details.AbsenceDaysCount)</span></div>
                 <div class="crow"><span>مرخصی</span><span>@FormatLeave(details.LeaveHours, details.DailyWorkingHours)</span></div>
                 <div class="crow"><span>مأموریت</span><span>@FormatDecimal(details.MissionDaysCount) روز و @FormatDecimal(details.MissionHours) ساعت</span></div>
                 <div class="crow sub"><span>مبلغ مأموریت (اختیاری)</span><span>@FormatAmountOptional(details.MissionAmountOverride)</span></div>
@@ -300,6 +299,7 @@
                 <div class="crow"><span>شب‌کاری</span><span>@FormatDecimal(details.NightShiftHours) ساعت</span></div>
                 <div class="crow"><span>جمعه‌کاری</span><span>@FormatDecimal(details.FridayWorkHours) ساعت</span></div>
                 <div class="crow"><span>تعطیل‌کاری</span><span>@FormatDecimal(details.HolidayWorkHours) ساعت</span></div>
+                <div class="crow"><span>روزهای تعطیل</span><span>@details.HolidaysCount.ToString().ToPersianNumber()</span></div>
                 <div class="crow"><span>کارانه (اختیاری)</span><span>@FormatAmountOptional(details.PerformanceBonusAmount)</span></div>
                 <div class="crow"><span>مزایای نقدی (اختیاری)</span><span>@FormatAmountOptional(details.CashBenefitsAmount)</span></div>
                 @if (details.IsEsfandPeriod)
@@ -407,8 +407,8 @@
                         LeaveDays = work.Leave.Days,
                         LeaveHours = work.Leave.Hours,
                         LeaveMinutes = work.Leave.Minutes,
-                        AbsenceDaysCount = work.AbsenceDaysCount,
                         MissionDays = work.MissionDays,
+                        HolidaysCount = work.HolidaysCount,
                         MissionTimeHours = work.MissionHours.Hours,
                         MissionTimeMinutes = work.MissionHours.Minutes,
                         OvertimeHours = work.Overtime.Hours,
@@ -497,7 +497,6 @@
 
         var model = _formHelper.Model;
         var work = new UserWorkInputDto(
-            absenceDaysCount: model.AbsenceDaysCount,
             annualBonusType: model.AnnualBonusType,
             cashBenefitsAmount: ParseOptionalAmount(model.CashBenefitsAmount),
             fridayWork: new WorkTimeInput(model.FridayWorkHours, model.FridayWorkMinutes),
@@ -506,6 +505,7 @@
             missionAmountOverride: ParseOptionalAmount(model.MissionAmountOverride),
             missionDays: model.MissionDays,
             missionHours: new WorkTimeInput(model.MissionTimeHours, model.MissionTimeMinutes),
+            holidaysCount: model.HolidaysCount,
             nightShift: new WorkTimeInput(model.NightShiftHours, model.NightShiftMinutes),
             overtime: new WorkTimeInput(model.OvertimeHours, model.OvertimeMinutes),
             performanceBonusAmount: ParseOptionalAmount(model.PerformanceBonusAmount),
@@ -658,8 +658,8 @@
     {
         ["EmployeeId"] = nameof(PayrollFormModel.EmployeeId),
         ["Work.WorkedDaysCount"] = nameof(PayrollFormModel.WorkedDaysCount),
-        ["Work.AbsenceDaysCount"] = nameof(PayrollFormModel.AbsenceDaysCount),
         ["Work.MissionDays"] = nameof(PayrollFormModel.MissionDays),
+        ["Work.HolidaysCount"] = nameof(PayrollFormModel.HolidaysCount),
         ["Work.Overtime.Hours"] = nameof(PayrollFormModel.OvertimeHours),
         ["Work.Overtime.Minutes"] = nameof(PayrollFormModel.OvertimeMinutes),
         ["Work.NightShift.Hours"] = nameof(PayrollFormModel.NightShiftHours),
@@ -691,7 +691,7 @@
         public int PersianMonth { get; set; }
 
         [Range(0, 31, ErrorMessage = "روزهای کارکرد باید بین 0 تا 31 باشد.")]
-        public decimal WorkedDaysCount { get; set; }
+        public int WorkedDaysCount { get; set; }
 
         [Range(0, 31, ErrorMessage = "روزهای مرخصی باید بین 0 تا 31 باشد.")]
         public int LeaveDays { get; set; }
@@ -702,11 +702,11 @@
         [Range(0, 59, ErrorMessage = "دقیقهٔ مرخصی باید بین 0 تا 59 باشد.")]
         public int LeaveMinutes { get; set; }
 
-        [Range(0, 31, ErrorMessage = "روزهای غیبت باید بین 0 تا 31 باشد.")]
-        public decimal AbsenceDaysCount { get; set; }
-
         [Range(0, 31, ErrorMessage = "روزهای مأموریت باید بین 0 تا 31 باشد.")]
         public int MissionDays { get; set; }
+
+        [Range(0, 31, ErrorMessage = "تعداد روزهای تعطیل باید بین 0 تا 31 باشد.")]
+        public int HolidaysCount { get; set; }
 
         [Range(0, 23, ErrorMessage = "ساعات مأموریت باید بین 0 تا 23 باشد.")]
         public int MissionTimeHours { get; set; }

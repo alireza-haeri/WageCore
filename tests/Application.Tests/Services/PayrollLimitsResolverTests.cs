@@ -16,8 +16,9 @@ public class PayrollLimitsResolverTests
         _resolver = new PayrollLimitsResolver(_persianCalendarService, _laborLawRuleQuery);
 
         SetupRule(LaborLawRuleKey.StandardDailyWorkHours, 7m);
-        SetupRule(LaborLawRuleKey.MaximumOvertimeHoursPerDay, 4m);
-        SetupRule(LaborLawRuleKey.MaximumNightShiftHoursPerDay, 3m);
+        SetupRule(LaborLawRuleKey.MaximumOvertimeHoursPerMonth, 100m);
+        SetupRule(LaborLawRuleKey.NightShiftHoursPerDay, 3m);
+        SetupRule(LaborLawRuleKey.FridayWorkHoursPerDay, 16m);
         _persianCalendarService
             .GetFridayCount(PeriodStart, PeriodEnd)
             .Returns(4);
@@ -28,8 +29,9 @@ public class PayrollLimitsResolverTests
         var values = new Dictionary<LaborLawRuleKey, decimal>
         {
             [LaborLawRuleKey.StandardDailyWorkHours] = 7m,
-            [LaborLawRuleKey.MaximumOvertimeHoursPerDay] = 4m,
-            [LaborLawRuleKey.MaximumNightShiftHoursPerDay] = 3m
+            [LaborLawRuleKey.MaximumOvertimeHoursPerMonth] = 100m,
+            [LaborLawRuleKey.NightShiftHoursPerDay] = 3m,
+            [LaborLawRuleKey.FridayWorkHoursPerDay] = 16m
         };
         if (value is null)
             values.Remove(key);
@@ -45,21 +47,22 @@ public class PayrollLimitsResolverTests
         _resolver.ResolveAsync(PeriodStart, periodEnd ?? PeriodEnd, CancellationToken.None);
 
     [Fact]
-    public async Task ResolveAsync_ShouldCountTheDailyCeilingsOverEveryDayOfThePeriod()
+    public async Task ResolveAsync_ShouldUseTheMonthlyOvertimeRuleAndMultiplyTheDailyRulesOverThePeriod()
     {
         var result = await Resolve();
 
         var limits = result.ShouldBeSuccess();
         using (new AssertionScope())
         {
-            limits.MaxMonthlyOvertimeHours.Should().Be(112m);
-            limits.MaxFridayHours.Should().Be(28m);
+            limits.MaxMonthlyOvertimeHours.Should().Be(100m);
+            limits.MaxFridayHours.Should().Be(64m);
             limits.MaxNightShiftHours.Should().Be(84m);
+            limits.DailyWorkingHours.Should().Be(7m);
         }
     }
 
     [Fact]
-    public async Task ResolveAsync_WithASingleDayPeriod_ShouldCountThatDayOnce()
+    public async Task ResolveAsync_WithASingleDayPeriod_ShouldMultiplyTheDailyRulesByOneDay()
     {
         _persianCalendarService
             .GetFridayCount(PeriodStart, PeriodStart)
@@ -70,8 +73,8 @@ public class PayrollLimitsResolverTests
         var limits = result.ShouldBeSuccess();
         using (new AssertionScope())
         {
-            limits.MaxMonthlyOvertimeHours.Should().Be(4m);
-            limits.MaxFridayHours.Should().Be(7m);
+            limits.MaxMonthlyOvertimeHours.Should().Be(100m);
+            limits.MaxFridayHours.Should().Be(16m);
             limits.MaxNightShiftHours.Should().Be(3m);
         }
     }
@@ -96,11 +99,11 @@ public class PayrollLimitsResolverTests
     [Fact]
     public async Task ResolveAsync_ShouldLoadTheRulesInASingleQuery()
     {
-        SetupRule(LaborLawRuleKey.MaximumOvertimeHoursPerDay, null);
+        SetupRule(LaborLawRuleKey.MaximumOvertimeHoursPerMonth, null);
 
         var result = await Resolve();
 
-        result.ShouldBeFailure("حداکثر ساعات اضافه‌کاری روزانه یافت نشد.", BadResultType.NotFound);
+        result.ShouldBeFailure("حداکثر ساعات اضافه‌کاری ماهانه یافت نشد.", BadResultType.NotFound);
         await _laborLawRuleQuery.Received(1)
             .GetActiveRuleValuesAsync(PeriodStart, Arg.Any<CancellationToken>());
     }
@@ -108,7 +111,7 @@ public class PayrollLimitsResolverTests
     [Fact]
     public async Task ResolveAsync_WhenAFridayWorkedDayIsZeroHours_ShouldAllowNoFridayHours()
     {
-        SetupRule(LaborLawRuleKey.StandardDailyWorkHours, 0m);
+        SetupRule(LaborLawRuleKey.FridayWorkHoursPerDay, 0m);
 
         var result = await Resolve();
 
@@ -116,7 +119,7 @@ public class PayrollLimitsResolverTests
         using (new AssertionScope())
         {
             limits.MaxFridayHours.Should().Be(0m);
-            limits.MaxMonthlyOvertimeHours.Should().Be(112m);
+            limits.MaxMonthlyOvertimeHours.Should().Be(100m);
         }
     }
 
@@ -138,9 +141,10 @@ public class PayrollLimitsResolverTests
     }
 
     [Theory]
-    [InlineData(LaborLawRuleKey.MaximumOvertimeHoursPerDay, "حداکثر ساعات اضافه‌کاری روزانه یافت نشد.")]
+    [InlineData(LaborLawRuleKey.MaximumOvertimeHoursPerMonth, "حداکثر ساعات اضافه‌کاری ماهانه یافت نشد.")]
+    [InlineData(LaborLawRuleKey.FridayWorkHoursPerDay, "ساعات کار روز جمعه یافت نشد.")]
+    [InlineData(LaborLawRuleKey.NightShiftHoursPerDay, "ساعات شیفت شب در روز یافت نشد.")]
     [InlineData(LaborLawRuleKey.StandardDailyWorkHours, "ساعات کار روزانه یافت نشد.")]
-    [InlineData(LaborLawRuleKey.MaximumNightShiftHoursPerDay, "حداکثر ساعات شیفت شب روزانه یافت نشد.")]
     public async Task ResolveAsync_WhenARuleIsNotConfigured_ShouldReturnNotfoundFailure(
         LaborLawRuleKey missingKey,
         string expectedMessage)

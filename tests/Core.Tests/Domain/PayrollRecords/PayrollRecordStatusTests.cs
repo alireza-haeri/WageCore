@@ -65,7 +65,7 @@ public class PayrollRecordStatusTests
         result.ShouldBeSuccess();
         using (new AssertionScope())
         {
-            record.WorkedDaysCount.Should().Be(24m);
+            record.WorkedDaysCount.Should().Be(24);
             record.OvertimeHours.Should().Be(4m);
             record.CalculatedTaxAmount.Should().Be(1_500_000m);
         }
@@ -96,15 +96,15 @@ public class PayrollRecordStatusTests
         var periodStart = new DateOnly(2025, 2, 1);
         var periodEnd = new DateOnly(2025, 2, 28);
         var workInput = new PayrollWorkInput(
-            20m,
+            20,
             3m,
             2m,
             1m,
             1m,
             1m,
-            1m,
             0m,
             0m,
+            0,
             null,
             31,
             false,
@@ -154,15 +154,15 @@ public class PayrollRecordStatusTests
         var periodStart = new DateOnly(2025, 2, 1);
         var periodEnd = new DateOnly(2025, 2, 28);
         var workInput = new PayrollWorkInput(
-            20m,
+            20,
             3m,
             2m,
             1m,
             1m,
             1m,
-            1m,
             0m,
             0m,
+            0,
             null,
             31,
             false,

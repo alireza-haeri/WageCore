@@ -34,15 +34,15 @@ public class UserWorkInputValidator : AbstractValidator<UserWorkInputDto>
             .NotNull().WithMessage("اطلاعات مرخصی اجباری است.")
             .SetValidator(new DayTimeInputValidator());
 
-        RuleFor(x => x.AbsenceDaysCount)
-            .Cascade(CascadeMode.Stop)
-            .InclusiveBetween(0, 31)
-            .WithMessage("تعداد روزهای غیبت باید بین 0 تا 31 روز باشد.");
-
-        RuleFor(x => x.MissionDays)
+            RuleFor(x => x.MissionDays)
             .Cascade(CascadeMode.Stop)
             .InclusiveBetween(0, 31)
             .WithMessage("تعداد روزهای مأموریت باید بین 0 تا 31 روز باشد.");
+
+        RuleFor(x => x.HolidaysCount)
+            .Cascade(CascadeMode.Stop)
+            .InclusiveBetween(0, 31)
+            .WithMessage("تعداد روزهای تعطیل باید بین 0 تا 31 روز باشد.");
 
         RuleFor(x => x.MissionHours)
             .Cascade(CascadeMode.Stop)

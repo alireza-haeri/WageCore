@@ -7,17 +7,18 @@ public class PayrollRecord
     public const int MaxDaysCount = 31;
     public const int MinStandardWorkingDaysCount = 28;
     public const int MaxStandardWorkingDaysCount = 31;
+    public const decimal MaxHoursPerHoliday = 24m;
 
     public Guid Id { get; private init; }
     public Guid EmployeeId { get; private init; }
     public DateOnly PeriodStart { get; private set; }
     public DateOnly PeriodEnd { get; private set; }
-    public decimal WorkedDaysCount { get; private set; }
+    public int WorkedDaysCount { get; private set; }
     public decimal OvertimeHours { get; private set; }
     public decimal NightShiftHours { get; private set; }
     public decimal FridayWorkHours { get; private set; }
     public decimal LeaveHours { get; private set; }
-    public decimal AbsenceDaysCount { get; private set; }
+    public int HolidaysCount { get; private set; }
     public decimal MissionDaysCount { get; private set; }
     public decimal MissionHours { get; private set; }
     public decimal HolidayWorkHours { get; private set; }
@@ -96,7 +97,7 @@ public class PayrollRecord
             NightShiftHours = workInput.NightShiftHours,
             FridayWorkHours = workInput.FridayWorkHours,
             LeaveHours = workInput.LeaveHours,
-            AbsenceDaysCount = workInput.AbsenceDaysCount,
+            HolidaysCount = workInput.HolidaysCount,
             MissionDaysCount = workInput.MissionDaysCount,
             MissionHours = workInput.MissionHours,
             HolidayWorkHours = workInput.HolidayWorkHours,
@@ -195,7 +196,7 @@ public class PayrollRecord
         NightShiftHours = workInput.NightShiftHours;
         FridayWorkHours = workInput.FridayWorkHours;
         LeaveHours = workInput.LeaveHours;
-        AbsenceDaysCount = workInput.AbsenceDaysCount;
+        HolidaysCount = workInput.HolidaysCount;
         MissionDaysCount = workInput.MissionDaysCount;
         MissionHours = workInput.MissionHours;
         HolidayWorkHours = workInput.HolidayWorkHours;
@@ -349,11 +350,11 @@ public class PayrollRecord
         if (!daysCountResult.IsSuccess)
             return daysCountResult;
 
-        daysCountResult = ValidateDaysCount(workInput.AbsenceDaysCount, "تعداد روزهای غیبت");
+        daysCountResult = ValidateDaysCount((int)workInput.MissionDaysCount, "تعداد روزهای مأموریت");
         if (!daysCountResult.IsSuccess)
             return daysCountResult;
 
-        daysCountResult = ValidateDaysCount(workInput.MissionDaysCount, "تعداد روزهای مأموریت");
+        daysCountResult = ValidateDaysCount(workInput.HolidaysCount, "تعداد روزهای تعطیل");
         if (!daysCountResult.IsSuccess)
             return daysCountResult;
 
@@ -363,6 +364,9 @@ public class PayrollRecord
 
         if (workInput.WorkedDaysCount > workInput.StandardWorkingDaysCount)
             return DomainResult.Failure("تعداد روزهای کارکرد نمیتواند بیشتر از روزهای کارکرد استاندارد باشد.");
+
+        if (workInput.MissionDaysCount > workInput.StandardWorkingDaysCount)
+            return DomainResult.Failure("تعداد روزهای مأموریت نمیتواند بیشتر از روزهای کارکرد استاندارد باشد.");
 
         daysCountResult = ValidateNonNegative(workInput.MissionHours, "ساعات مأموریت");
         if (!daysCountResult.IsSuccess)
@@ -419,6 +423,9 @@ public class PayrollRecord
 
         if (workInput.FridayWorkHours > maxFridayHours)
             return DomainResult.Failure("ساعات کار جمعه نباید بیشتر از حداکثر ساعات کار جمعه باشد.");
+
+        if (workInput.HolidayWorkHours > workInput.HolidaysCount * MaxHoursPerHoliday)
+            return DomainResult.Failure("ساعات تعطیل‌کاری نباید بیشتر از ۲۴ ساعت در هر روز تعطیل باشد.");
 
         return DomainResult.Success();
     }
@@ -544,7 +551,7 @@ public class PayrollRecord
         return DomainResult.Success();
     }
 
-    private static DomainResult ValidateDaysCount(decimal daysCount, string fieldName)
+    private static DomainResult ValidateDaysCount(int daysCount, string fieldName)
     {
         if (daysCount < 0 || daysCount > MaxDaysCount)
             return DomainResult.Failure($"{fieldName} باید بین 0 تا {MaxDaysCount} روز باشد.");

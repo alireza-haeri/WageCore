@@ -1,15 +1,15 @@
 namespace Core.Contracts.PayrollRecords;
 
 public record PayrollWorkInput(
-    decimal WorkedDaysCount,
+    int WorkedDaysCount,
     decimal OvertimeHours,
     decimal NightShiftHours,
     decimal FridayWorkHours,
     decimal LeaveHours,
-    decimal AbsenceDaysCount,
     decimal MissionDaysCount,
     decimal MissionHours,
     decimal HolidayWorkHours,
+    int HolidaysCount,
     decimal? MissionAmountOverride,
     int StandardWorkingDaysCount,
     bool IsEsfandPeriod,
