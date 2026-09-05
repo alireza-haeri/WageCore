@@ -40,6 +40,8 @@ public record GetPayrollRecordCalculationDetailsQueryResponse(
     decimal MaxMonthlyOvertimeHours,
     decimal MaxFridayHours,
     decimal MaxNightShiftHours,
+    decimal MaxMissionDaysCount,
+    decimal MaxHolidayWorkHours,
     decimal DailyWorkingHours,
     DateOnly DecreeEffectiveFrom,
     decimal BaseDailySalary,

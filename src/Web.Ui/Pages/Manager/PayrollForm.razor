@@ -83,7 +83,7 @@
                     </div>
                     <div class="row g-3">
                         <div class="col-md-3 col-6 field">
-                            <label class="f-label" for="r-wdays"><span class="req-s">*</span>روزهای کارکرد</label>
+                            <label class="f-label" for="r-wdays"><span class="req-s">*</span>کارکرد</label>
                             <InputNumber @bind-Value="_formHelper.Model.WorkedDaysCount" class="in num"
                                          id="r-wdays" min="0" max="31"/>
                             <ValidationMessage TValue="int" For="() => _formHelper.Model.WorkedDaysCount"
@@ -291,7 +291,7 @@
                 <div class="crow"><span>روزهای سال خورشیدی</span><span>@details.DaysInYear.ToString().ToPersianNumber()</span></div>
 
                 <div class="calc-sec">کارکرد این ماه</div>
-                <div class="crow"><span>روزهای کارکرد</span><span>@FormatDecimal(details.WorkedDaysCount)</span></div>
+                <div class="crow"><span>کارکرد</span><span>@FormatDecimal(details.WorkedDaysCount)</span></div>
                 <div class="crow"><span>مرخصی</span><span>@FormatLeave(details.LeaveHours, details.DailyWorkingHours)</span></div>
                 <div class="crow"><span>مأموریت</span><span>@FormatDecimal(details.MissionDaysCount) روز و @FormatDecimal(details.MissionHours) ساعت</span></div>
                 <div class="crow sub"><span>مبلغ مأموریت (اختیاری)</span><span>@FormatAmountOptional(details.MissionAmountOverride)</span></div>
@@ -312,6 +312,8 @@
                 <div class="crow"><span>سقف اضافه‌کاری ماهانه</span><span>@FormatDecimal(details.MaxMonthlyOvertimeHours) ساعت</span></div>
                 <div class="crow"><span>سقف جمعه‌کاری ماهانه</span><span>@FormatDecimal(details.MaxFridayHours) ساعت</span></div>
                 <div class="crow"><span>سقف شب‌کاری ماهانه</span><span>@FormatDecimal(details.MaxNightShiftHours) ساعت</span></div>
+<div class="crow"><span>سقف مأموریت</span><span>@FormatDecimal(details.MaxMissionDaysCount) روز</span></div>
+<div class="crow"><span>سقف تعطیل‌کاری</span><span>@FormatDecimal(details.MaxHolidayWorkHours) ساعت</span></div>
 
                 <div class="calc-sec">اطلاعات حکم حقوقی</div>
                 <div class="crow"><span>اعتبار حکم از</span><span>@ToPersianDate(details.DecreeEffectiveFrom)</span></div>
@@ -690,7 +692,7 @@
         [Range(1, 12, ErrorMessage = "ماه شمسی نامعتبر است.")]
         public int PersianMonth { get; set; }
 
-        [Range(0, 31, ErrorMessage = "روزهای کارکرد باید بین 0 تا 31 باشد.")]
+        [Range(0, 31, ErrorMessage = "کارکرد باید بین 0 تا 31 باشد.")]
         public int WorkedDaysCount { get; set; }
 
         [Range(0, 31, ErrorMessage = "روزهای مرخصی باید بین 0 تا 31 باشد.")]

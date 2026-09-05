@@ -136,6 +136,8 @@ public class GetPayrollRecordCalculationDetailsQueryHandlerTests
             response.MaxMonthlyOvertimeHours.Should().Be(20m);
             response.MaxFridayHours.Should().Be(12m);
             response.MaxNightShiftHours.Should().Be(3m);
+            response.MaxMissionDaysCount.Should().Be(31);
+            response.MaxHolidayWorkHours.Should().Be(0m);
             response.DailyWorkingHours.Should().Be(8m);
             response.DecreeEffectiveFrom.Should().Be(DecreeEffectiveFrom);
             response.BaseDailySalary.Should().Be(_salaryDecree.BaseDailySalary);
@@ -155,6 +157,25 @@ public class GetPayrollRecordCalculationDetailsQueryHandlerTests
             response.Amounts.InsuranceAmount.Should().Be(1_400_000m);
             response.Amounts.CalculatedTaxAmount.Should().Be(1_500_000m);
             response.Amounts.NetPayableAmount.Should().Be(15_000_000m);
+        }
+    }
+
+    [Fact]
+    public async Task Handle_WithHolidayDays_ShouldCapHolidayWorkAt24HoursPerHoliday()
+    {
+        SetupPayrollRecord(
+            new PayrollRecordBuilder()
+                .WithHolidaysCount(3)
+                .CreateResult()
+                .ShouldBeSuccess());
+
+        var response = (await _handler.Handle(CreateValidQuery(), CancellationToken.None)).ShouldBeSuccess();
+
+        using (new FluentAssertions.Execution.AssertionScope())
+        {
+            response.HolidaysCount.Should().Be(3);
+            response.MaxHolidayWorkHours.Should().Be(72m);
+            response.MaxMissionDaysCount.Should().Be(31);
         }
     }
 

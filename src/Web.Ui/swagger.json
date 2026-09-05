@@ -5979,6 +5979,14 @@
             "type": "number",
             "format": "decimal"
           },
+          "maxMissionDaysCount": {
+            "type": "number",
+            "format": "double"
+          },
+          "maxHolidayWorkHours": {
+            "type": "number",
+            "format": "double"
+          },
           "dailyWorkingHours": {
             "type": "number",
             "format": "decimal"

@@ -113,6 +113,8 @@ public class PayrollRecordController(IMediator mediator) : BaseController
             pr.MaxMonthlyOvertimeHours,
             pr.MaxFridayHours,
             pr.MaxNightShiftHours,
+            pr.MaxMissionDaysCount,
+            pr.MaxHolidayWorkHours,
             pr.DailyWorkingHours,
             pr.DecreeEffectiveFrom,
             pr.BaseDailySalary,

@@ -5167,7 +5167,7 @@ namespace Web.Ui.Services
     public partial record GetPayrollRecordCalculationDetailsResponse
     {
         [Newtonsoft.Json.JsonConstructor]
-        public GetPayrollRecordCalculationDetailsResponse(PayrollRecordAmountsDto @amounts, GetPayrollRecordCalculationDetailsResponseAnnualBonusType? @annualBonusType, decimal? @attractionAllowance, decimal @baseDailySalary, PayrollCalculatedAmountsDto @calculatedAmounts, decimal? @cashBenefitsAmount, int @childrenCount, GetPayrollRecordCalculationDetailsResponseContractType @contractType, decimal @dailyWorkingHours, int @daysInYear, string @decreeEffectiveFrom, string @employeeHireDate, System.Guid @employeeId, string @employeeName, int @fridayCount, decimal @fridayWorkHours, decimal @holidayWorkHours, int @holidaysCount, bool @isEsfandPeriod, bool @isTaxSubject, decimal @leaveHours, GetPayrollRecordCalculationDetailsResponseMaritalStatus @maritalStatus, decimal @maxFridayHours, decimal @maxMonthlyOvertimeHours, decimal @maxNightShiftHours, decimal? @missionAmountOverride, decimal @missionDaysCount, decimal @missionHours, decimal @nightShiftHours, decimal @overtimeHours, System.Guid @payrollRecordId, decimal? @performanceBonusAmount, int @periodDaysCount, string @periodEnd, string @periodStart, int @persianMonth, int @persianYear, string @personalCode, GetPayrollRecordCalculationDetailsResponseShiftType @shiftType, int @standardWorkingDaysCount, GetPayrollRecordCalculationDetailsResponseStatus @status, decimal? @supervisionAllowance, decimal? @transportationAllowanceNet, int @workedDaysCount)
+        public GetPayrollRecordCalculationDetailsResponse(PayrollRecordAmountsDto @amounts, GetPayrollRecordCalculationDetailsResponseAnnualBonusType? @annualBonusType, decimal? @attractionAllowance, decimal @baseDailySalary, PayrollCalculatedAmountsDto @calculatedAmounts, decimal? @cashBenefitsAmount, int @childrenCount, GetPayrollRecordCalculationDetailsResponseContractType @contractType, decimal @dailyWorkingHours, int @daysInYear, string @decreeEffectiveFrom, string @employeeHireDate, System.Guid @employeeId, string @employeeName, int @fridayCount, decimal @fridayWorkHours, decimal @holidayWorkHours, int @holidaysCount, bool @isEsfandPeriod, bool @isTaxSubject, decimal @leaveHours, GetPayrollRecordCalculationDetailsResponseMaritalStatus @maritalStatus, decimal @maxFridayHours, decimal @maxHolidayWorkHours, decimal @maxMissionDaysCount, decimal @maxMonthlyOvertimeHours, decimal @maxNightShiftHours, decimal? @missionAmountOverride, decimal @missionDaysCount, decimal @missionHours, decimal @nightShiftHours, decimal @overtimeHours, System.Guid @payrollRecordId, decimal? @performanceBonusAmount, int @periodDaysCount, string @periodEnd, string @periodStart, int @persianMonth, int @persianYear, string @personalCode, GetPayrollRecordCalculationDetailsResponseShiftType @shiftType, int @standardWorkingDaysCount, GetPayrollRecordCalculationDetailsResponseStatus @status, decimal? @supervisionAllowance, decimal? @transportationAllowanceNet, int @workedDaysCount)
         {
             this.PayrollRecordId = @payrollRecordId;
             this.EmployeeId = @employeeId;
@@ -5200,6 +5200,8 @@ namespace Web.Ui.Services
             this.MaxMonthlyOvertimeHours = @maxMonthlyOvertimeHours;
             this.MaxFridayHours = @maxFridayHours;
             this.MaxNightShiftHours = @maxNightShiftHours;
+            this.MaxMissionDaysCount = @maxMissionDaysCount;
+            this.MaxHolidayWorkHours = @maxHolidayWorkHours;
             this.DailyWorkingHours = @dailyWorkingHours;
             this.DecreeEffectiveFrom = @decreeEffectiveFrom;
             this.BaseDailySalary = @baseDailySalary;
@@ -5307,6 +5309,12 @@ namespace Web.Ui.Services
 
         [Newtonsoft.Json.JsonProperty("maxNightShiftHours", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public decimal MaxNightShiftHours { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("maxMissionDaysCount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public decimal MaxMissionDaysCount { get; init; }
+
+        [Newtonsoft.Json.JsonProperty("maxHolidayWorkHours", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public decimal MaxHolidayWorkHours { get; init; }
 
         [Newtonsoft.Json.JsonProperty("dailyWorkingHours", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public decimal DailyWorkingHours { get; init; }

@@ -81,6 +81,8 @@ public class GetPayrollRecordCalculationDetailsQueryHandler(
                 MaxMonthlyOvertimeHours: payrollRecord.MaxMonthlyOvertimeHours,
                 MaxFridayHours: payrollRecord.MaxFridayHours,
                 MaxNightShiftHours: payrollRecord.MaxNightShiftHours,
+                MaxMissionDaysCount: payrollRecord.StandardWorkingDaysCount,
+                MaxHolidayWorkHours: payrollRecord.HolidaysCount * PayrollRecord.MaxHoursPerHoliday,
                 DailyWorkingHours: payrollRecord.DailyWorkingHours,
                 DecreeEffectiveFrom: salaryDecree.EffectiveFrom,
                 BaseDailySalary: salaryDecree.BaseDailySalary,
