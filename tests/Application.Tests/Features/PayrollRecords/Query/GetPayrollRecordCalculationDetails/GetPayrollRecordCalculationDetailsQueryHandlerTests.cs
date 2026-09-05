@@ -165,6 +165,9 @@ public class GetPayrollRecordCalculationDetailsQueryHandlerTests
     {
         SetupPayrollRecord(
             new PayrollRecordBuilder()
+                .WithId(ValidPayrollRecordId)
+                .WithEmployeeId(ValidEmployeeId)
+                .WithPeriod(PeriodStart, PeriodEnd)
                 .WithHolidaysCount(3)
                 .CreateResult()
                 .ShouldBeSuccess());
