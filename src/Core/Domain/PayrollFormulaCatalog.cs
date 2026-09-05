@@ -113,7 +113,7 @@ public static class PayrollFormulaCatalog
                 "([BaseSalaryPay] + [AttractionAllowancePay] + [SupervisionAllowancePay] + " +
                 "[NightShiftExtraPay] + [HolidayWorkPay] + [HousingAllowancePay] + " +
                 "[FoodAllowancePay] + [MarriageAllowancePay] + [OvertimePay] + " +
-                "[ShiftWorkPay] + [DailyMissionPay] + [FridayWorkPay] + " +
+                "[ShiftWorkPay] + [FridayWorkPay] + " +
                 "[CommutingAllowancePay] + [PerformanceBonusAmount] + [CashBenefitsAmount]) " +
                 "* [InsurancePercentage] / 100",
 

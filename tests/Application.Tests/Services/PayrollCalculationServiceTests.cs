@@ -677,6 +677,30 @@ public class PayrollCalculationServiceTests
     }
 
     [Fact]
+    public async Task CalculateAsync_WithRealFormulaEvaluation_ShouldExcludeTheMissionFromTheInsuranceBase()
+    {
+        _formulaEvaluator
+            .Evaluate(Arg.Any<string>(), Arg.Any<object[]>())
+            .Returns(ci =>
+            {
+                var expression = ci.Arg<string>();
+                var inputs = ci.Arg<object[]>();
+
+                return expression == PayrollFormulaCatalog.Expression(FormulaKey.InsurancePay)
+                    ? DomainResult<decimal>.Success(EvaluateWithRealEvaluator(expression, inputs))
+                    : DomainResult<decimal>.Success(DefaultItemAmount);
+            });
+
+        var result = await Calculate();
+
+        var response = result.ShouldBeSuccess();
+
+        // The mission (DailyMissionPay = 1,000,000) must not be part of the
+        // insurance base: 12 insurable items at 1,000,000 each * 7%.
+        response.Amounts.InsuranceAmount.Should().Be(12_000_000m * PayrollFormulaCatalog.InsurancePercentage / 100);
+    }
+
+    [Fact]
     public async Task CalculateAsync_WhenTaxFormulaExpressionChanges_ShouldChangeTheTaxWithoutAnyCodeChange()
     {
         var newTaxFormula = "[TaxableAmount] * 10 / 100";
