@@ -634,7 +634,7 @@ public class PayrollCalculationServiceTests
     }
 
     [Fact]
-    public async Task CalculateAsync_ShouldAddThePreCurrentMonthWorkedDaysToTheEndOfServiceCountInTheHireYear()
+    public async Task CalculateAsync_ShouldAddThePreCurrentMonthWorkedDaysToTheAnnualCountsInTheHireYear()
     {
         // Hired in Farvardin 1403 — the same Persian year as the calculation
         // period (2025-01-01 is Mehr 1403) — with 100 worked days before the
@@ -676,10 +676,10 @@ public class PayrollCalculationServiceTests
             .ContainSingle(v => v.Name == "AnnualWorkedDaysCount" && Equals(v.Value, 224m));
 
         var annualBonusInputs = calls.Single(c => c.Expression == PayrollFormulaCatalog.Expression(FormulaKey.AnnualBonusPay)).Inputs;
-        // The annual bonus keeps the payroll-records-only aggregate.
+        // The annual bonus is prorated the same way in the hire year.
         annualBonusInputs.OfType<FormulaVariable>()
             .Should()
-            .ContainSingle(v => v.Name == "AnnualWorkedDaysCount" && Equals(v.Value, 124m));
+            .ContainSingle(v => v.Name == "AnnualWorkedDaysCount" && Equals(v.Value, 224m));
     }
 
     [Fact]

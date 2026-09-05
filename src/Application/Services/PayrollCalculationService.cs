@@ -94,19 +94,6 @@ public class PayrollCalculationService(
 
         var annualWorkedDaysCount = previousWorkedDaysCount + workInput.WorkedDaysCount;
 
-        // Onboarding history: when the calculation happens in the employee's
-        // own hire year, the worked days accumulated before the current month
-        // (entered on the employee profile) are not covered by any payroll
-        // record, so they are added to the aggregate used by the end-of-service
-        // item, which is prorated by annual worked days. Other years are fully
-        // covered by payroll records and are left untouched.
-        var isHireYear = persianCalendarService.GetPersianYear(periodStart) ==
-                         persianCalendarService.GetPersianYear(employee.HireDate);
-        var preCurrentMonthWorkedDays = isHireYear
-            ? employee.NetWorkedDaysBeforeCurrentMonth ?? 0
-            : 0;
-        var endOfServiceWorkedDaysCount = annualWorkedDaysCount + preCurrentMonthWorkedDays;
-
         logger.LogInformation(
             "Annual context for employee {EmployeeId}: year has {DaysInYear} days and " +
             "{AnnualWorkedDaysCount} worked days in total ({PreviousWorkedDaysCount} persisted + {CurrentWorkedDaysCount} current)",
@@ -116,14 +103,24 @@ public class PayrollCalculationService(
             previousWorkedDaysCount,
             workInput.WorkedDaysCount);
 
-        if (preCurrentMonthWorkedDays > 0)
+        // Onboarding history: when the calculation happens in the employee's
+        // own hire year, the worked days accumulated before the current month
+        // (entered on the employee profile) are not covered by any payroll
+        // record. Both annual items (end-of-service and annual bonus) are
+        // prorated by annual worked days, so those days must be counted as
+        // well. Other years are fully covered by payroll records and are
+        // left untouched.
+        var isHireYear = persianCalendarService.GetPersianYear(periodStart) ==
+                         persianCalendarService.GetPersianYear(employee.HireDate);
+        if (isHireYear && employee.NetWorkedDaysBeforeCurrentMonth is > 0)
         {
+            annualWorkedDaysCount += employee.NetWorkedDaysBeforeCurrentMonth.Value;
             logger.LogInformation(
                 "Employee {EmployeeId} was hired in the calculation year; adding {PreCurrentMonthWorkedDays} " +
-                "pre-current-month worked days to the end-of-service aggregate ({EndOfServiceWorkedDaysCount} total)",
+                "pre-current-month worked days to the annual aggregate ({AnnualWorkedDaysCount} total)",
                 employee.Id,
-                preCurrentMonthWorkedDays,
-                endOfServiceWorkedDaysCount);
+                employee.NetWorkedDaysBeforeCurrentMonth.Value,
+                annualWorkedDaysCount);
         }
 
         // Every rule value active at the period start, loaded in a single
@@ -165,7 +162,6 @@ public class PayrollCalculationService(
                 period,
                 daysInYear,
                 annualWorkedDaysCount,
-                endOfServiceWorkedDaysCount,
                 ruleValues,
                 cancellationToken);
             if (!itemResult.IsSuccess)
@@ -314,7 +310,6 @@ public class PayrollCalculationService(
         PayrollPeriod period,
         int daysInYear,
         decimal annualWorkedDaysCount,
-        decimal endOfServiceWorkedDaysCount,
         IReadOnlyDictionary<LaborLawRuleKey, decimal> activeRuleValues,
         CancellationToken cancellationToken)
     {
@@ -388,7 +383,7 @@ public class PayrollCalculationService(
             item.DisplayName,
             employee.Id,
             period,
-            BuildEvaluationInputs(item, employee, workshop, salaryDecree, workInput, period, ruleValues, daysInYear, annualWorkedDaysCount, endOfServiceWorkedDaysCount),
+            BuildEvaluationInputs(item, employee, workshop, salaryDecree, workInput, period, ruleValues, daysInYear, annualWorkedDaysCount),
             cancellationToken);
     }
 
@@ -581,8 +576,7 @@ public class PayrollCalculationService(
         PayrollPeriod period,
         IReadOnlyList<(LaborLawRuleKey Key, decimal Value)> ruleValues,
         int daysInYear,
-        decimal annualWorkedDaysCount,
-        decimal endOfServiceWorkedDaysCount)
+        decimal annualWorkedDaysCount)
     {
         var inputs = new List<object>
         {
@@ -602,12 +596,7 @@ public class PayrollCalculationService(
         if (item.FormulaKey is FormulaKey.EndOfServicePay or FormulaKey.AnnualBonusPay)
         {
             inputs.Add(new FormulaVariable("DaysInYear", daysInYear));
-            // The end-of-service item sees the onboarding-adjusted aggregate;
-            // the annual bonus keeps the payroll-records-only aggregate.
-            inputs.Add(new FormulaVariable("AnnualWorkedDaysCount",
-                item.FormulaKey == FormulaKey.EndOfServicePay
-                    ? endOfServiceWorkedDaysCount
-                    : annualWorkedDaysCount));
+            inputs.Add(new FormulaVariable("AnnualWorkedDaysCount", annualWorkedDaysCount));
         }
 
         return inputs.ToArray();
