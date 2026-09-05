@@ -634,6 +634,133 @@ public class PayrollCalculationServiceTests
     }
 
     [Fact]
+    public async Task CalculateAsync_ShouldAddThePreCurrentMonthWorkedDaysToTheEndOfServiceCountInTheHireYear()
+    {
+        // Hired in Farvardin 1403 — the same Persian year as the calculation
+        // period (2025-01-01 is Mehr 1403) — with 100 worked days before the
+        // current month, unknown to any payroll record.
+        var employee = new EmployeeBuilder()
+            .WithId(EmployeeId)
+            .WithWorkshopId(WorkshopId)
+            .WithWorkshopRegistrationDate(new DateOnly(2024, 3, 20))
+            .WithHireDate(new DateOnly(2024, 4, 15))
+            .WithNetWorkedDaysBeforeCurrentMonth(100)
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        _persianCalendarService.GetPersianYear(PeriodStart).Returns(1403);
+        _persianCalendarService.GetPersianYear(new DateOnly(2024, 4, 15)).Returns(1403);
+
+        _payrollRecordQuery
+            .GetAnnualWorkedDaysCountAsync(
+                Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<DateOnly>(), Arg.Any<CancellationToken>())
+            .Returns(100m);
+
+        var workInput = BuildWorkInput() with
+        {
+            IsEsfandPeriod = true,
+            AnnualBonusType = AnnualBonusType.Maximum
+        };
+
+        var calls = CaptureEvaluationCalls();
+
+        var result = await _service.CalculateAsync(
+            employee, _workshop, _salaryDecrees, PeriodStart, PeriodEnd, workInput);
+
+        result.ShouldBeSuccess();
+
+        var endOfServiceInputs = calls.Single(c => c.Expression == PayrollFormulaCatalog.Expression(FormulaKey.EndOfServicePay)).Inputs;
+        // 100 persisted + 24 current + 100 pre-current-month hire-year days.
+        endOfServiceInputs.OfType<FormulaVariable>()
+            .Should()
+            .ContainSingle(v => v.Name == "AnnualWorkedDaysCount" && Equals(v.Value, 224m));
+
+        var annualBonusInputs = calls.Single(c => c.Expression == PayrollFormulaCatalog.Expression(FormulaKey.AnnualBonusPay)).Inputs;
+        // The annual bonus keeps the payroll-records-only aggregate.
+        annualBonusInputs.OfType<FormulaVariable>()
+            .Should()
+            .ContainSingle(v => v.Name == "AnnualWorkedDaysCount" && Equals(v.Value, 124m));
+    }
+
+    [Fact]
+    public async Task CalculateAsync_ShouldNotAddThePreCurrentMonthWorkedDaysOutsideTheHireYear()
+    {
+        // Hired in 1402 — the calculation year (1403) is a full year covered
+        // by payroll records, so the onboarding field must not be added.
+        var employee = new EmployeeBuilder()
+            .WithId(EmployeeId)
+            .WithWorkshopId(WorkshopId)
+            .WithWorkshopRegistrationDate(new DateOnly(2023, 3, 20))
+            .WithHireDate(new DateOnly(2023, 4, 15))
+            .WithNetWorkedDaysBeforeCurrentMonth(100)
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        _persianCalendarService.GetPersianYear(PeriodStart).Returns(1403);
+        _persianCalendarService.GetPersianYear(new DateOnly(2023, 4, 15)).Returns(1402);
+
+        _payrollRecordQuery
+            .GetAnnualWorkedDaysCountAsync(
+                Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<DateOnly>(), Arg.Any<CancellationToken>())
+            .Returns(100m);
+
+        var workInput = BuildWorkInput() with
+        {
+            IsEsfandPeriod = true,
+            AnnualBonusType = AnnualBonusType.Maximum
+        };
+
+        var calls = CaptureEvaluationCalls();
+
+        var result = await _service.CalculateAsync(
+            employee, _workshop, _salaryDecrees, PeriodStart, PeriodEnd, workInput);
+
+        result.ShouldBeSuccess();
+
+        var endOfServiceInputs = calls.Single(c => c.Expression == PayrollFormulaCatalog.Expression(FormulaKey.EndOfServicePay)).Inputs;
+        endOfServiceInputs.OfType<FormulaVariable>()
+            .Should()
+            .ContainSingle(v => v.Name == "AnnualWorkedDaysCount" && Equals(v.Value, 124m));
+
+        var annualBonusInputs = calls.Single(c => c.Expression == PayrollFormulaCatalog.Expression(FormulaKey.AnnualBonusPay)).Inputs;
+        annualBonusInputs.OfType<FormulaVariable>()
+            .Should()
+            .ContainSingle(v => v.Name == "AnnualWorkedDaysCount" && Equals(v.Value, 124m));
+    }
+
+    [Fact]
+    public async Task CalculateAsync_ShouldTreatAMissingPreCurrentMonthWorkedDaysAsZeroInTheHireYear()
+    {
+        var employee = new EmployeeBuilder()
+            .WithId(EmployeeId)
+            .WithWorkshopId(WorkshopId)
+            .WithWorkshopRegistrationDate(new DateOnly(2024, 3, 20))
+            .WithHireDate(new DateOnly(2024, 4, 15))
+            .CreateResult()
+            .ShouldBeSuccess();
+
+        _persianCalendarService.GetPersianYear(PeriodStart).Returns(1403);
+        _persianCalendarService.GetPersianYear(new DateOnly(2024, 4, 15)).Returns(1403);
+
+        _payrollRecordQuery
+            .GetAnnualWorkedDaysCountAsync(
+                Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<DateOnly>(), Arg.Any<CancellationToken>())
+            .Returns(100m);
+
+        var calls = CaptureEvaluationCalls();
+
+        var result = await _service.CalculateAsync(
+            employee, _workshop, _salaryDecrees, PeriodStart, PeriodEnd, BuildWorkInput());
+
+        result.ShouldBeSuccess();
+
+        var endOfServiceInputs = calls.Single(c => c.Expression == PayrollFormulaCatalog.Expression(FormulaKey.EndOfServicePay)).Inputs;
+        endOfServiceInputs.OfType<FormulaVariable>()
+            .Should()
+            .ContainSingle(v => v.Name == "AnnualWorkedDaysCount" && Equals(v.Value, 124m));
+    }
+
+    [Fact]
     public async Task CalculateAsync_WhenTheDecreeAllowancesAreNull_ShouldEvaluateTheAllowanceFormulasToZero()
     {
         var calls = CaptureEvaluationCalls();
